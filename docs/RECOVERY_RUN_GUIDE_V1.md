@@ -1,0 +1,62 @@
+# دليل التشغيل والاستئناف — RC2 Recovery
+
+## Android المحلي
+
+نزّل `options-ai-trader-v1.0-rc2-preview.apk` وتحقق من SHA256SUMS. استخدم preview الموقع، لا unsigned. هوية التطبيق منفصلة عن RC1 وV0.5؛ احتفظ بالتطبيقات القديمة وبياناتها. لا يوجد اختبار تثبيت جهاز موثق حتى الآن.
+
+Demo يعمل بلا خادم أو شبكة. ابدأ بحساب اصطناعي، فعّل إعدادات الأتمتة، وتقدم بملاحظات السوق. راقب الأوامر والجزئيات والرسوم والإغلاق وسجل القرار. التعزيز والانعكاس يحتاجان تفعيلًا مستقلًا. فتح التطبيق في وضع الطيران تجربة مناسبة للفصل عن Backend. الزمن يتوقف بالخلفية.
+
+تفاصيل الواجهات والتثبيت في `options-ai-trader-v1.0-android-guide.md` و`MOBILE_V1.md` و`RC2_RESEARCH_UI.md`.
+
+## خادم Mock اختياري
+
+من checkout للفرع `recovery/v1.0-20261011` وباستخدام Python 3.12:
+
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r backend/requirements.lock
+pip install --no-deps -e './backend[test]'
+python -m pytest -q backend
+python scripts/smoke_http.py
+python scripts/demo_lifecycle.py
+```
+
+سكربت HTTP ينشئ خادم loopback وقاعدة مؤقتة خاصة به ويغلقهما؛ لا يستخدم حساب تداول. تثبيت backend مطلوب لسكربتات العرض.
+
+لتشغيل خادم دائم داخل جهازك فقط:
+
+```bash
+export OPTIONS_API_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
+export TRADING_MODE=paper
+export BROKER_PROVIDER=mock
+export ENABLE_LIVE=false
+export DATABASE_URL="sqlite:///$PWD/options_demo.db"
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+`paper` هنا تسمية لوضع Mock القديم، وليس اتصال IBKR. `/health` عام، و`/api/*` و`/docs` و`/openapi.json` تتطلب الرمز. لا تضع الرمز في Git أو المحادثة. Demo الهاتف وMock الخادم منفصلان ولا ينقلان الحسابات تلقائيًا.
+
+في طرفية أخرى تحمل متغيرات البيئة نفسها:
+
+```bash
+python -m app.worker --once
+# بعد المصالحة الصريحة وتفعيل الحساب وتحديث بيانات Mock فقط:
+python -m app.worker --execute-mock --interval 30
+```
+
+فتح Repository في عملية جديدة يبطل الثقة حتى المصالحة؛ لا تستنتج صلاحية الحساب من بدء العامل. اقتباسات Mock تنتهي بعد 60 ثانية وتحتاج تحديثًا صريحًا؛ لا توجد تغذية سوق حقيقية. دليل `OPERATIONS_V1.md` يوضح Docker والإعدادات و`POSTGRES_BACKUP_RESTORE.md` يوضح استعادة PostgreSQL إلى هدف جديد.
+
+## iOS
+
+ملف ZIP يحتفظ بـRunner.app غير موقع ونتائج Flutter. ليس IPA أو رابط TestFlight. البناء نجح على macOS؛ التوزيع يحتاج شهادات وProvisioning وحسابًا مخولًا واختبار جهاز. لم تُشتر خدمة أو عضوية. تفاصيل إعادة البناء في `options-ai-trader-v1.0-iphone-guide.md`.
+
+## استئناف التطوير دون فقد العمل
+
+1. اقرأ `FINAL_DELIVERY.md` و`PROGRESS.md` و`RECOVERY_STATUS.md` وافحص رأس الفرع البعيد قبل التعديل.
+2. احتفظ بأي تغييرات متاحة في فرع مستقل. لا تفترض وجود workspace جلسة منتهية.
+3. أنجز دفعة محدودة، ثم الاختبارات المرتبطة وCommit ورفعًا دون force، واقرأ الرأس البعيد للتحقق قبل الدفعة التالية.
+4. حدّث PROGRESS في كل دفعة. شغّل البوابة الكاملة عند القبول؛ لا تعِد بناء الهاتف عند تغيير تقارير أو خادم فقط.
+5. النواقص الوظيفية مرتبة في `RECOVERY_REQUIREMENTS_V1.md`. لا تبدأ من main/V0.5 ولا تعِد تنفيذ ميزات RC2 المحفوظة.
+
+لم يتوفر اعتماد Git HTTPS مباشر في جلسة الاستعادة؛ نُشرت Commits عبر Git Data API بأب سابق وشجرة مطابقة وتحديث مرجع غير قسري، ثم تحققت المطابقة محليًا. المصدر وتاريخ Git محفوظان في المستودع؛ عدم توفر المصادقة المحلية لا يعني إنشاء مشروع جديد.

@@ -1,0 +1,32 @@
+{
+  "source_commit": "b39b164f6869305b1e71586ef2d6978a7612fcf1",
+  "mobile_commit": "3d35475cd92058f8470d6f81826aaa4a16f587b1",
+  "backend_run": {
+    "id": 38089730231,
+    "conclusion": "success",
+    "python": 631,
+    "failed": 0,
+    "skipped": 0,
+    "postgres_v1_checks": 10,
+    "postgres_backup_restore_checks": 10,
+    "compose_checks": 12
+  },
+  "security_run": {
+    "id": 38089730298,
+    "conclusion": "success",
+    "secret_findings": 0,
+    "python_packages": 24,
+    "pub_packages": 43
+  },
+  "mobile": {
+    "flutter_each_platform": 142,
+    "android_run": 38079870551,
+    "android_artifact": 11680317013,
+    "ios_run": 38079870547,
+    "ios_artifact": 11680341905
+  },
+  "complete_v1": false,
+  "external_orders": 0,
+  "ibkr_connected": false,
+  "live_enabled": false
+}

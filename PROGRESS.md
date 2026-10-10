@@ -40,3 +40,13 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Initial direct lifecycle/research script invocations lacked installed editable package; installed the documented backend package, then reran successfully. This was environment setup, not application failure.
 - Secret-pattern scan: zero findings in tracked source and reachable history; this is not a penetration test. Unchanged dependency locks retain the verified cloud audit.
 - Acceptance artifacts include the full Python gate, successful HTTP/worker run, deterministic lifecycle, synthetic backtest and walk-forward. CI is rerun by this script fix before delivery.
+
+## Batch 4: current delivery and resumable gaps
+
+- Batch 3 published and verified at `b39b164f6869305b1e71586ef2d6978a7612fcf1`.
+- CI 38089730231 completed successfully: Python 631, real HTTP/worker smoke, PostgreSQL integration and V1 checks, backup/restore 10 checks, Compose 12 checks. Security CI 38089730298 completed successfully. Raw artifacts and job logs copied into versioned evidence.
+- No mobile source changed from verified build `3d35475cd92058f8470d6f81826aaa4a16f587b1`; 142 Flutter tests per platform and both builds retained without unnecessary rebuild.
+- New current reports cover tests, security, backtesting, every requested requirement, remaining work and operation/resumption. README points to FINAL_DELIVERY.md; previous reports remain historical.
+- APK and iOS bytes downloaded, ZIP CRC and SHA-256 checked. Persistent conversation-file saving failed before upload because helper authentication was unavailable; no successful save is claimed. GitHub artifact links and downloadable local copies are provided, with 14-day retention clearly stated.
+- This documentation/evidence-only batch requires link/content and diff checks, not another mobile build or full test run.
+- V1.0 completeness is explicitly unclaimed. Next work is listed in docs/RECOVERY_REQUIREMENTS_V1.md. Start from this branch, retain all prior history, keep external brokers and Live disabled.

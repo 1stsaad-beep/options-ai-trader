@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "checks_passed": 10,
+  "checks_failed": 0,
+  "checks": [
+    "matching_postgresql_client_and_server_versions",
+    "custom_dump_checksum_and_offline_verification",
+    "source_changes_after_snapshot_are_independent",
+    "non_superuser_restore_to_new_database_only",
+    "second_restore_refuses_existing_target",
+    "four_account_ledger_fills_positions_migrations_and_validated_constraints_restored",
+    "restored_immutable_decisions_and_account_foreign_keys_enforced",
+    "application_invalidates_account_trust_and_reconciles_without_resubmission",
+    "tampered_archive_rejected_before_database_creation",
+    "only_owned_disposable_fixtures_cleaned_up"
+  ],
+  "database": "PostgreSQL",
+  "postgresql_major": 16,
+  "broker": "none",
+  "data": "synthetic"
+}

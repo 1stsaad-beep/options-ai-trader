@@ -1,4 +1,6 @@
-# Options AI Trader — V1.0 RC1 (محاكاة وبحث)
+# Options AI Trader — V1.0 RC2 Recovery (محاكاة وبحث)
+
+التسليم الحالي ونقطة الاستئناف: [FINAL_DELIVERY.md](FINAL_DELIVERY.md). الإصدار **غير مكتمل لجميع متطلبات V1.0**؛ راجع [مصفوفة المتطلبات والنواقص](docs/RECOVERY_REQUIREMENTS_V1.md)، [الاختبارات](docs/RECOVERY_TEST_REPORT_V1.md)، [الأمان](docs/RECOVERY_SECURITY_REPORT_V1.md)، [Backtesting](docs/RECOVERY_BACKTEST_REPORT_V1.md)، و[التشغيل](docs/RECOVERY_RUN_GUIDE_V1.md). تقارير RC1 وV0.x أدناه محفوظة كتاريخ ولا تمثل نتائج التسليم الحالي.
 
 استكمال V0.5 داخل المستودع نفسه، مع الحفاظ على التاريخ في Git و`repository/`. هذا إصدار مرشح للمراجعة، وليس تصريحًا بالتداول الحقيقي.
 
