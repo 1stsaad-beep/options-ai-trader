@@ -29,6 +29,8 @@ Future<void> destination(WidgetTester t, String label) async {
       matching: find.byType(Scrollable),
     ),
   );
+  await t.ensureVisible(target);
+  await t.pumpAndSettle();
   await t.tap(target);
   await t.pumpAndSettle();
 }
