@@ -21,7 +21,16 @@ Wave, Classic, Harmonic, Indicator and AI Confluence labs use a shared candlesti
 
 Local indicator calculations include SMA, EMA, simple-window RSI (not Wilder smoothing), MACD line, ATR, VWAP, Bollinger bands, support/resistance and Fibonacci levels. Divergence candidates use confirmed same-type pivots and bounded spacing. Harmonic candidates validate alternating XABCD geometry and ratio ranges for Gartley, Bat, Butterfly, Crab and Cypher. Impulse candidates enforce basic Elliott 1–5 geometry.
 
-The local chart engines are intentionally limited research candidates, clearly labelled synthetic/Shadow. They are not a full expert Elliott count system: nested degrees, persistent primary/alternate scenario tracking, 3-of-3 identification, ABC, multi-timeframe confluence and a complete classical-pattern library are not implemented in this local canvas. Backend research modules are independent and are not silently represented as Flutter features. The AI Confluence tab is a deterministic rules summary with no model/API call. There are no profitability claims.
+The local chart engines are intentionally limited research candidates, clearly labelled synthetic/Shadow. The RC2 wave extension adds:
+
+- Standard non-diagonal impulse 1–5, pending fifth-wave and upward/downward ABC zigzag candidates, with activation, structural invalidation and Fibonacci targets. ABC and an unfinished impulse can share the same observed geometry and remain competing interpretations.
+- Main and internal degrees defined explicitly by confirmed pivot radii 4 and 2. A provisional `3 of 3` requires an internal third-wave candidate contained within the main third-wave leg, matching direction. It cannot become known before the parent confirms; this is not an anticipatory third-wave prediction.
+- A deterministic append-only `ChartWaveJournal` with immutable detection and close-based invalidation events, primary/alternate ranking, idempotent append, source-revision rejection and historical replay views. Cursor movement never edits events or revives an invalidated scenario. Checkpoints are JSON-serializable and restore only if their event stream agrees with causal recomputation. This is semantic consistency, not cryptographic authentication.
+- The canvas reconstructs the journal from the persisted Demo cursor and fixed-origin synthetic generator when opened. It does **not** yet persist a separate signed wave audit ledger. Changing generator semantics in a future version requires a migration/version policy before historic reconstruction can be treated as durable evidence. Existing order decision snapshots remain the authority for actual recorded trade reasons.
+- Completed 1×/5×/15× observation aggregates only, with source-tick confirmation coordinates, EMA warmup availability, directional comparison and per-frame wave counts in Wave and AI Confluence tabs. These are synthetic observation groups, **not** exchange-clock minutes. Incomplete higher-frame candles never participate.
+- Distinct primary/alternate drawing colors, point labels, optional alternate overlay, scenario detail cards and recent known journal events. RSI canvas warmup now comes from the full fixed-origin prefix instead of restarting at the visible 180-candle window.
+
+This remains a constrained candidate engine, not a full expert Elliott count system. Complex corrections, diagonals, expert probability estimates and a complete classical-pattern library are not implemented. Backend research modules remain independent and are not silently represented as Flutter features. The AI Confluence tab is a deterministic rules summary with no model/API call. There are no profitability claims.
 
 The simple synthetic OHLC fixtures often produce no confirmed strict pivots or pattern candidates. Empty candidate results are displayed honestly; the canvas does not fabricate a wave or harmonic model to fill the screen.
 
@@ -38,6 +47,8 @@ The simple synthetic OHLC fixtures often produce no confirmed strict pivots or p
 Added engine regressions for all new safety policies, first-install/migration persistence, reversal partial fill/disconnection/emergency/cancellation, lost scaling response, fixed decision evidence, indicator and harmonic geometry, causal pivot timing and replay. The widget suite traverses the added Arabic screens, and includes a narrow RTL chart-lab test; the existing default-app HTTP-blocking test remains.
 
 Actual execution counts and analyze/build results belong in the release test report after the tools have run. Writing this file is not evidence of a successful Flutter test or build.
+
+RC2 adds `mobile/test/wave_analysis_test.dart`: 13 tests covering competing bullish/bearish ABC and W3 geometry, W4 overlap and shortest-W3 rejection, parent-confirmation timing for nested thirds, invalidation permanence, causal primary/alternate replay, idempotency, historical source revision rejection, serializable journal restoration/tamper disagreement, completed MTF buckets and source-tick confirmation and narrow RTL journal/alternate controls. These are written tests; their executed result must be taken from the RC2 cloud run. The existing 114-test RC1 checkpoint below applies only to its original commit.
 
 ## Verified cloud checkpoint
 

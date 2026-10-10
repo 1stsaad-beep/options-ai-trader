@@ -543,6 +543,50 @@ class DecisionMemory:
             raise ValueError("Explicit account required")
         return tuple(self._records.get(account_id, ()))
 
+    def to_state(self) -> dict:
+        """Export primitive immutable observations, not executable callbacks.
+
+        The owning service must persist this inside its authenticated immutable
+        audit store; a hash is an integrity check, not an authentication method.
+        """
+        return {"schema_version": 1, "records": [
+            {**asdict(record), "decided_at": record.decided_at.isoformat(),
+             "observed_at": record.observed_at.isoformat(), "reasons": list(record.reasons)}
+            for account in sorted(self._records) for record in self._records[account]]}
+
+    @classmethod
+    def from_state(cls, state: Mapping) -> "DecisionMemory":
+        """Validate every record, account chain, reason and digest on restoration."""
+        if (not isinstance(state, Mapping) or set(state) != {"schema_version", "records"}
+                or type(state["schema_version"]) is not int or state["schema_version"] != 1
+                or not isinstance(state["records"], list) or len(state["records"]) > 10000):
+            raise ValueError("Invalid decision memory state")
+        memory = cls()
+        expected = set(DecisionObservation.__dataclass_fields__)
+        seen = set()
+        for item in state["records"]:
+            if not isinstance(item, Mapping) or set(item) != expected:
+                raise ValueError("Invalid decision observation fields")
+            if (not isinstance(item["reasons"], list)
+                    or not all(isinstance(item[k], str) for k in expected - {"reasons"})):
+                raise ValueError("Invalid decision observation types")
+            key = (item["account_id"], item["decision_id"])
+            if key in seen:
+                raise ValueError("Duplicate persisted decision")
+            seen.add(key)
+            try:
+                evidence = json.loads(item["evidence_json"])
+                restored = memory.record(item["account_id"], item["decision_id"],
+                                         datetime.fromisoformat(item["decided_at"]),
+                                         datetime.fromisoformat(item["observed_at"]),
+                                         item["contract_id"], item["reasons"], evidence)
+            except (ValueError, TypeError, OverflowError) as exc:
+                raise ValueError("Invalid persisted decision evidence") from exc
+            if any(getattr(restored, key) != item[key]
+                   for key in ("digest", "previous_digest", "evidence_json")):
+                raise ValueError("Persisted decision integrity mismatch")
+        return memory
+
 
 class CounterfactualReplay:
     def replay(self, decision: DecisionObservation, quotes: Iterable[ResearchPoint], as_of: datetime,

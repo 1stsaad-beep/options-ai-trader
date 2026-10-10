@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'engine.dart';
 import 'store.dart';
 import 'chart_lab.dart';
+import 'research_lab.dart';
 
 class DemoScreen extends StatefulWidget {
   final DemoStore? store;
@@ -37,6 +38,7 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
     'الاستراتيجيات والإعدادات',
     'مختبر الرسوم المتقدم',
     'إعادة قرارات الصفقات',
+    'مختبر الأبحاث المحلي',
   ];
   static const icons = [
     Icons.home_outlined,
@@ -51,6 +53,7 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
     Icons.tune,
     Icons.candlestick_chart,
     Icons.replay_circle_filled,
+    Icons.science_outlined,
   ];
   DemoEngine get engine => controller.engine;
   DemoRow? get account => selected == null ? null : engine.account(selected!);
@@ -767,6 +770,9 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
           'بعد فقد الاستجابة، تحقق من الأمر ثم صالح الحساب. لن يعاد إرساله تلقائيًا. الإيقاف يمنع الشراء ويتيح إغلاق المملوك فقط في حالة موثوقة.',
         ),
       ];
+    }
+    if (page == 12) {
+      return [DemoResearchLab(key: ValueKey('research-$id'), engine: engine, accountId: id)];
     }
     if (page == 10) {
       return [

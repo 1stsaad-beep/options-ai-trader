@@ -80,7 +80,7 @@ def test_automation_config_strict_and_live_stays_locked(api):
                     {'mode': 'live'}, {'broker': 'ibkr'}, {'external_analysis_enabled': True}):
         assert client.put(path, json=payload).status_code == 409, payload
     health = client.get('/health').json()
-    assert health['version'] == '1.0.0-rc.1'
+    assert health['version'] == '1.0.0-rc.2'
     assert not health['live_enabled'] and not health['external_analysis_enabled']
 
 

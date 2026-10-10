@@ -21,7 +21,7 @@ def main():
     complete = engine.walk_forward(quotes, candidates, **settings)
     assert prefix['folds'] == complete['folds'][:len(prefix['folds'])]
     result = {
-        'version': '1.0.0-rc.1', 'source': 'synthetic_fixed_option_quote_series',
+        'version': '1.0.0-rc.2', 'source': 'synthetic_fixed_option_quote_series',
         'purpose': 'Causal selection and cost accounting demonstration only',
         'profitability_evidence': False, 'execution_authority': False,
         'observations': len(quotes), 'settings': settings,

@@ -19,7 +19,10 @@ class ChartPattern {
   final String name;
   final List<ChartPivot> points;
   final double invalidation, target;
-  const ChartPattern(this.name, this.points, this.invalidation, this.target);
+  final List<String> labels;
+  final bool alternate;
+  const ChartPattern(this.name, this.points, this.invalidation, this.target,
+    {this.labels = const [], this.alternate = false});
 }
 
 class DemoChartAnalysis {
@@ -64,12 +67,14 @@ class DemoChartAnalysis {
   }
 
   static List<ChartPivot> pivots(List<DemoCandle> bars, {int radius = 2}) {
+    if (radius < 1) throw ArgumentError.value(radius, 'radius');
     final result = <ChartPivot>[];
     for (var i = radius; i + radius < bars.length; i++) {
       final neighbors = bars.sublist(i - radius, i + radius + 1);
       final high = neighbors.where((b) => b.tick != bars[i].tick).every((b) => b.high < bars[i].high);
       final low = neighbors.where((b) => b.tick != bars[i].tick).every((b) => b.low > bars[i].low);
-      if (high != low) result.add(ChartPivot(i, i + radius, high ? bars[i].high : bars[i].low, high));
+      if (high != low) result.add(ChartPivot(bars[i].tick, bars[i + radius].tick,
+        high ? bars[i].high : bars[i].low, high));
     }
     return result;
   }

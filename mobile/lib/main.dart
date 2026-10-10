@@ -84,6 +84,7 @@ class _DashboardState extends State<Dashboard> {
     'سجل القرارات',
     'الإشعارات والإيقاف الطارئ',
     'إعدادات الاستراتيجيات',
+    'مختبر الأبحاث في الخادم',
   ];
   final icons = const [
     Icons.home_outlined,
@@ -96,6 +97,7 @@ class _DashboardState extends State<Dashboard> {
     Icons.history,
     Icons.stop_circle_outlined,
     Icons.auto_graph,
+    Icons.science_outlined,
   ];
   List<Map<String, dynamic>> accounts = [];
   List<Map<String, dynamic>> rows = [];
@@ -110,6 +112,7 @@ class _DashboardState extends State<Dashboard> {
   final pendingFillKeys = <String, String>{};
   final automationResults = <String, Map<String, dynamic>>{};
   int generation = 0;
+  String researchSymbol = 'NVDA';
 
   @override
   void initState() {
@@ -221,6 +224,21 @@ class _DashboardState extends State<Dashboard> {
         } else if (page == 4 || page == 9) {
           final value = await api.request('GET', '$accountPath/risk');
           newDetail = Map<String, dynamic>.from(value as Map);
+        } else if (page == 10) {
+          final selectedAccount = accountId!;
+          final selectedSymbol = researchSymbol;
+          final value = await api.request('GET',
+            '${pathFor(selectedAccount)}/research/${Uri.encodeComponent(selectedSymbol)}');
+          if (!mounted || requestId != generation || accountId != selectedAccount ||
+              researchSymbol != selectedSymbol) return;
+          if (value is! Map || value['account_id'] != selectedAccount ||
+              value['symbol'] != selectedSymbol || value['source'] != 'synthetic_fixture' ||
+              value['mode'] != 'SHADOW' || value['execution_authority'] != false ||
+              value['external_connections'] != false || value['modules'] is! Map ||
+              value['limitations'] is! List) {
+            throw const ApiException('استجابة البحث غير موثوقة أو لا تخص الحساب والرمز المحددين');
+          }
+          newDetail = Map<String, dynamic>.from(value);
         } else if (page == 8) {
           newDetail = Map<String, dynamic>.from(
             await api.request('GET', '$accountPath/status') as Map,
@@ -939,6 +957,53 @@ class _DashboardState extends State<Dashboard> {
     }
     if (accountId == null) {
       return [const Text('اتصل بالخادم ثم أضف حساب محاكاة من صفحة الحسابات.')];
+    }
+    if (page == 10) {
+      const moduleLabels = {
+        'scenario_battle': 'مقارنة السيناريوهات',
+        'entry_timing': 'توقيت الدخول',
+        'option_twin': 'Option Twin',
+        'liquidity_trap': 'فخ السيولة',
+        'correlation_guard': 'حارس الارتباط',
+        'strategy_tournament': 'بطولة الاستراتيجيات',
+        'safety_supervisor': 'مشرف السلامة والثقة',
+      };
+      return [
+        const Text('بحث الخادم • Shadow • بيانات اصطناعية',
+          key: Key('backend-research-banner')),
+        const Text('نتائج للقراءة فقط من المحركات الكمية في الخادم. لا ترسل هذه الصفحة أوامر أو تعدّل المخاطر.'),
+        OutlinedButton.icon(key: const Key('backend-research-symbol'),
+          onPressed: loading ? null : () async {
+            final selectedAccount = accountId;
+            final values = await form('رمز البحث في كتالوج Mock', {'الرمز': researchSymbol});
+            if (values == null || !mounted || accountId != selectedAccount) return;
+            final symbol = values['الرمز']!.toUpperCase();
+            if (!RegExp(r'^[A-Z][A-Z0-9.]{0,9}$').hasMatch(symbol)) {
+              setState(() => error = 'رمز غير صالح');
+              return;
+            }
+            setState(() => researchSymbol = symbol);
+            await reload();
+          }, icon: const Icon(Icons.search), label: Text('الرمز: $researchSymbol')),
+        if (detail.isNotEmpty) ...[
+          Text('الحساب: ${detail['account_id']} • وقت البيانات: ${detail['as_of']}'),
+          for (final entry in (detail['modules'] as Map).entries)
+            Card(child: ExpansionTile(
+              key: ValueKey('backend-research-${entry.key}'),
+              title: Text(moduleLabels[entry.key] ?? '${entry.key}'),
+              children: [entry.value is Map
+                ? recordCard(Map<String, dynamic>.from(entry.value as Map))
+                : Padding(padding: const EdgeInsets.all(12), child: Text(format(entry.value)))])),
+          if (detail['decision'] is Map) recordCard({
+            for (final e in (detail['decision'] as Map).entries)
+              if (['decision_id', 'decided_at', 'reasons'].contains(e.key)) '${e.key}': e.value,
+          }),
+          ...List<Object?>.from(detail['limitations'] as List).map((v) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6), child: Text('$v'))),
+        ],
+        if (detail.isEmpty && !loading) const Text('لا نتائج موثوقة متاحة. راجع الخطأ أو الاتصال بالخادم.'),
+        const Text('حفظ لقطات البحث وإعادة السيناريو البديل متاحان عبر API؛ هذه الواجهة تعرض البحث دون كتابة.'),
+      ];
     }
     if (page == 5) {
       return [

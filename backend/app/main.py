@@ -59,7 +59,7 @@ def create_app(repository=None, token=None):
         yield
         if repository is None:
             app.state.repository.close()
-    app = FastAPI(title='Options AI Trader — synthetic paper only', version='1.0.0-rc.1', lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
+    app = FastAPI(title='Options AI Trader — synthetic paper only', version='1.0.0-rc.2', lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
     app.add_middleware(RequestLimits)
     def auth(authorization: Optional[str] = Header(default=None)):
         if len(configured_token) < 24 or not authorization or not hmac.compare_digest(authorization.encode('utf-8'), ('Bearer '+configured_token).encode('utf-8')):
@@ -71,7 +71,7 @@ def create_app(repository=None, token=None):
         return JSONResponse(status_code=409,content={'detail':str(exc)})
     @app.get('/health')
     def health():
-        return {'status':'ok','version':'1.0.0-rc.1','mode':'paper','broker':'mock','live_enabled':False,'market_data':'synthetic','external_analysis_enabled':False}
+        return {'status':'ok','version':'1.0.0-rc.2','mode':'paper','broker':'mock','live_enabled':False,'market_data':'synthetic','external_analysis_enabled':False}
     secured = [Depends(auth)]
     @app.get('/api/readiness',dependencies=secured)
     def readiness(s=Depends(service)):
@@ -202,6 +202,18 @@ def create_app(repository=None, token=None):
     def research_demo():
         from .research import synthetic_research_demo
         return synthetic_research_demo()
+    @app.get('/api/accounts/{account_id}/research/{symbol}',dependencies=secured)
+    def research_workbench(account_id: str,symbol: str,s=Depends(service)):
+        from .research_workbench import inspect_workbench
+        return inspect_workbench(s,account_id,symbol)
+    @app.post('/api/accounts/{account_id}/research/{symbol}/snapshot',dependencies=secured)
+    def research_snapshot(account_id: str,symbol: str,body: AutomationRun,s=Depends(service)):
+        from .research_workbench import snapshot_workbench
+        return snapshot_workbench(s,account_id,symbol)
+    @app.get('/api/accounts/{account_id}/research/{symbol}/snapshots/{snapshot_id}/replay',dependencies=secured)
+    def research_replay(account_id: str,symbol: str,snapshot_id: str,s=Depends(service)):
+        from .research_workbench import replay_workbench
+        return replay_workbench(s,account_id,symbol,snapshot_id)
     @app.get('/api/accounts/{account_id}/analysis/{symbol}',dependencies=secured)
     def analysis(account_id: str,symbol: str,s=Depends(service)):
         from .analysis_service import inspect_analysis

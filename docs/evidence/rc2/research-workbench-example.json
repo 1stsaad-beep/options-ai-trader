@@ -1,0 +1,1559 @@
+{
+  "evidence_kind": "executed_synthetic_workbench_example",
+  "workbench": {
+    "schema_version": 1,
+    "mode": "SHADOW",
+    "source": "synthetic_fixture",
+    "account_id": "c23bfc88-a702-4428-ada6-31cecacd6adb",
+    "symbol": "NVDA",
+    "as_of": "2026-10-10T14:00:35+00:00",
+    "observed_at": "2026-10-10T14:00:00+00:00",
+    "contract": {
+      "contract_id": "SYNTHETIC:NVDA:CALL:103.00:2026-11-09T20:00:00+00:00",
+      "symbol": "NVDA",
+      "right": "CALL",
+      "strike": 103.0,
+      "expiry": "2026-11-09T20:00:00+00:00",
+      "observed_at": "2026-10-10T14:00:00+00:00",
+      "spot": 103.46718360334522,
+      "bid": 3.1514046732978076,
+      "ask": 3.1914046732978076,
+      "delta": 0.5,
+      "gamma": 0.04,
+      "theta_per_day": -0.04,
+      "vega_per_vol_point": 0.12,
+      "iv": 0.3,
+      "volume": 500,
+      "open_interest": 1000,
+      "multiplier": 100,
+      "commission_per_contract": 0.65,
+      "slippage_per_share": 0.01,
+      "currency": "USD",
+      "exchange": "SYNTHETIC",
+      "instrument_type": "OPTION",
+      "source": "synthetic_fixture"
+    },
+    "modules": {
+      "scenario_battle": {
+        "mode": "SHADOW",
+        "ranked": [
+          {
+            "id": "NVDA:bullish:2026-10-10T13:58:00+00:00",
+            "direction": "bullish",
+            "score": 0.615578981222439,
+            "known_at": "2026-10-10T13:58:00+00:00",
+            "invalidated": false
+          },
+          {
+            "id": "NVDA:neutral:2026-10-10T13:58:00+00:00",
+            "direction": "neutral",
+            "score": 0.40753681502204875,
+            "known_at": "2026-10-10T13:58:00+00:00",
+            "invalidated": false
+          },
+          {
+            "id": "NVDA:bearish:2026-10-10T13:58:00+00:00",
+            "direction": "bearish",
+            "score": 0.3844210187775609,
+            "known_at": "2026-10-10T13:58:00+00:00",
+            "invalidated": false
+          }
+        ],
+        "rejected": [],
+        "directional_conflict": false,
+        "preferred_id": "NVDA:bullish:2026-10-10T13:58:00+00:00",
+        "execution_authority": false,
+        "score_definition": "20-bar signed movement / high-low range, bounded by tanh; not a calibrated probability"
+      },
+      "entry_timing": {
+        "mode": "SHADOW",
+        "optimized_on_future_outcomes": false,
+        "methods": [
+          {
+            "mode": "SHADOW",
+            "entry_candidate": false,
+            "reason": "WAITING_FOR_TRIGGER",
+            "method": "early",
+            "profile": "balanced",
+            "signal_strength": 0.615578981222439,
+            "activation": 106.48835906499954,
+            "invalidation": 98.57874961281964,
+            "expires_at": "2026-10-10T14:13:00+00:00",
+            "scenario_id": "NVDA:bullish:2026-10-10T13:58:00+00:00",
+            "risk_sizing_included": false,
+            "execution_authority": false
+          },
+          {
+            "mode": "SHADOW",
+            "entry_candidate": false,
+            "reason": "WAITING_FOR_TRIGGER",
+            "method": "confirmed",
+            "profile": "balanced",
+            "signal_strength": 0.615578981222439,
+            "activation": 106.48835906499954,
+            "invalidation": 98.57874961281964,
+            "expires_at": "2026-10-10T14:13:00+00:00",
+            "scenario_id": "NVDA:bullish:2026-10-10T13:58:00+00:00",
+            "risk_sizing_included": false,
+            "execution_authority": false
+          },
+          {
+            "mode": "SHADOW",
+            "entry_candidate": false,
+            "reason": "WAITING_FOR_TRIGGER",
+            "method": "pullback",
+            "profile": "balanced",
+            "signal_strength": 0.615578981222439,
+            "activation": 106.48835906499954,
+            "invalidation": 98.57874961281964,
+            "expires_at": "2026-10-10T14:13:00+00:00",
+            "scenario_id": "NVDA:bullish:2026-10-10T13:58:00+00:00",
+            "risk_sizing_included": false,
+            "execution_authority": false
+          }
+        ],
+        "directional_conflict": false,
+        "candidate_must_not_override_conflict": true
+      },
+      "option_twin": {
+        "mode": "SHADOW",
+        "source": "synthetic_fixture",
+        "model": "fixed_greek_taylor_sensitivity",
+        "scenarios": [
+          {
+            "spot": 98.29382442317795,
+            "elapsed_days": 1,
+            "iv": 0.35,
+            "estimated_option_value": 1.6799979873545927,
+            "scenario_pnl": -156.44066859432144,
+            "entry_outlay": 320.7904673297807,
+            "exit_value_after_modeled_costs": 164.34979873545927,
+            "expiry_intrinsic_scenario": false,
+            "outside_local_approximation": false
+          },
+          {
+            "spot": 103.46718360334522,
+            "elapsed_days": 7,
+            "iv": 0.3,
+            "estimated_option_value": 2.8914046732978074,
+            "scenario_pnl": -35.299999999999955,
+            "entry_outlay": 320.7904673297807,
+            "exit_value_after_modeled_costs": 285.49046732978076,
+            "expiry_intrinsic_scenario": false,
+            "outside_local_approximation": false
+          },
+          {
+            "spot": 108.64054278351249,
+            "elapsed_days": 1,
+            "iv": 0.25,
+            "estimated_option_value": 5.65335716752186,
+            "scenario_pnl": 240.89524942240536,
+            "entry_outlay": 320.7904673297807,
+            "exit_value_after_modeled_costs": 561.6857167521861,
+            "expiry_intrinsic_scenario": false,
+            "outside_local_approximation": false
+          }
+        ],
+        "contract_quality": {
+          "mode": "SHADOW",
+          "source": "synthetic_fixture",
+          "contract_id": "SYNTHETIC:NVDA:CALL:103.00:2026-11-09T20:00:00+00:00",
+          "accepted_for_research": true,
+          "reasons": [],
+          "spread_fraction": 0.012612707654998109,
+          "round_trip_cost": 7.300000000000003,
+          "round_trip_cost_fraction": 0.023018191470371537,
+          "days_to_expiry": 30.249594907407406,
+          "broker_verified": false,
+          "execution_authority": false,
+          "exercise_risk": "Early exercise, assignment, dividends and settlement are not simulated"
+        },
+        "execution_authority": false,
+        "profitability_evidence": false,
+        "limitations": [
+          "Fixed Greeks; no IV surface or rate/dividend model",
+          "Expiry intrinsic is hypothetical economic value, not a broker fill or exercise instruction",
+          "Modeled spread and slippage can understate actual losses"
+        ]
+      },
+      "liquidity_trap": {
+        "mode": "SHADOW",
+        "status": "ASSESSED",
+        "flags": [],
+        "prior_high": 106.48835906499954,
+        "prior_low": 98.57874961281964,
+        "execution_authority": false,
+        "interpretation": "Price/volume rejection proxy; no claim to observe hidden liquidity"
+      },
+      "correlation_guard": {
+        "mode": "SHADOW",
+        "passes_guard": true,
+        "failures": [],
+        "pairs": [],
+        "exposure_input_must_include_pending_orders": true,
+        "execution_authority": false,
+        "exposure_basis": "owned_and_pending_premium_proxy",
+        "exposures": {},
+        "pair_limit_dollars": 3000.0,
+        "actual_delta_or_portfolio_var": false,
+        "scope": "selected_account_only",
+        "data_source": "synthetic_fixture"
+      },
+      "strategy_tournament": {
+        "mode": "SHADOW",
+        "folds": [
+          {
+            "selected": "momentum_8",
+            "selection_at": "2026-10-10T03:15:00+00:00",
+            "train_start": "2026-10-10T00:00:00+00:00",
+            "train_end": "2026-10-10T03:15:00+00:00",
+            "test_start": "2026-10-10T03:30:00+00:00",
+            "test_end": "2026-10-10T04:25:00+00:00",
+            "training": {
+              "pnl": 180.89805674182242,
+              "modeled_cost": 58.399999999999544,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T00:50:00+00:00",
+                  "entry_at": "2026-10-10T00:55:00+00:00",
+                  "exit_at": "2026-10-10T01:00:00+00:00",
+                  "pnl": -8.972679735659483,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T01:00:00+00:00",
+                  "entry_at": "2026-10-10T01:05:00+00:00",
+                  "exit_at": "2026-10-10T01:10:00+00:00",
+                  "pnl": 194.33834998978566,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                },
+                {
+                  "decision_at": "2026-10-10T01:10:00+00:00",
+                  "entry_at": "2026-10-10T01:15:00+00:00",
+                  "exit_at": "2026-10-10T01:20:00+00:00",
+                  "pnl": -58.193082924454494,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T01:20:00+00:00",
+                  "entry_at": "2026-10-10T01:25:00+00:00",
+                  "exit_at": "2026-10-10T01:30:00+00:00",
+                  "pnl": -4.634246695964893,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T01:30:00+00:00",
+                  "entry_at": "2026-10-10T01:35:00+00:00",
+                  "exit_at": "2026-10-10T01:40:00+00:00",
+                  "pnl": 135.72849216084134,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T01:40:00+00:00",
+                  "entry_at": "2026-10-10T01:45:00+00:00",
+                  "exit_at": "2026-10-10T01:50:00+00:00",
+                  "pnl": -126.10663689928803,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T01:50:00+00:00",
+                  "entry_at": "2026-10-10T01:55:00+00:00",
+                  "exit_at": "2026-10-10T02:00:00+00:00",
+                  "pnl": -130.45267123678485,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                },
+                {
+                  "decision_at": "2026-10-10T03:05:00+00:00",
+                  "entry_at": "2026-10-10T03:10:00+00:00",
+                  "exit_at": "2026-10-10T03:15:00+00:00",
+                  "pnl": 179.1905320833472,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                }
+              ]
+            },
+            "testing": {
+              "pnl": -169.21947860700473,
+              "modeled_cost": 29.1999999999997,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T03:25:00+00:00",
+                  "entry_at": "2026-10-10T03:30:00+00:00",
+                  "exit_at": "2026-10-10T03:35:00+00:00",
+                  "pnl": -27.626894499544374,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:35:00+00:00",
+                  "entry_at": "2026-10-10T03:40:00+00:00",
+                  "exit_at": "2026-10-10T03:45:00+00:00",
+                  "pnl": 129.4491013201699,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:45:00+00:00",
+                  "entry_at": "2026-10-10T03:50:00+00:00",
+                  "exit_at": "2026-10-10T03:55:00+00:00",
+                  "pnl": -115.31322610748545,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:55:00+00:00",
+                  "entry_at": "2026-10-10T04:00:00+00:00",
+                  "exit_at": "2026-10-10T04:05:00+00:00",
+                  "pnl": -155.7284593201448,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                }
+              ]
+            }
+          },
+          {
+            "selected": "momentum_8",
+            "selection_at": "2026-10-10T04:15:00+00:00",
+            "train_start": "2026-10-10T01:00:00+00:00",
+            "train_end": "2026-10-10T04:15:00+00:00",
+            "test_start": "2026-10-10T04:30:00+00:00",
+            "test_end": "2026-10-10T05:25:00+00:00",
+            "training": {
+              "pnl": -206.0635800162371,
+              "modeled_cost": 58.3999999999994,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T01:35:00+00:00",
+                  "entry_at": "2026-10-10T01:40:00+00:00",
+                  "exit_at": "2026-10-10T01:45:00+00:00",
+                  "pnl": 28.94790902089185,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T01:45:00+00:00",
+                  "entry_at": "2026-10-10T01:50:00+00:00",
+                  "exit_at": "2026-10-10T01:55:00+00:00",
+                  "pnl": -202.72432817084572,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:05:00+00:00",
+                  "entry_at": "2026-10-10T03:10:00+00:00",
+                  "exit_at": "2026-10-10T03:15:00+00:00",
+                  "pnl": 179.1905320833472,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                },
+                {
+                  "decision_at": "2026-10-10T03:15:00+00:00",
+                  "entry_at": "2026-10-10T03:20:00+00:00",
+                  "exit_at": "2026-10-10T03:25:00+00:00",
+                  "pnl": -42.25821434262569,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:25:00+00:00",
+                  "entry_at": "2026-10-10T03:30:00+00:00",
+                  "exit_at": "2026-10-10T03:35:00+00:00",
+                  "pnl": -27.626894499544374,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:35:00+00:00",
+                  "entry_at": "2026-10-10T03:40:00+00:00",
+                  "exit_at": "2026-10-10T03:45:00+00:00",
+                  "pnl": 129.4491013201699,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:45:00+00:00",
+                  "entry_at": "2026-10-10T03:50:00+00:00",
+                  "exit_at": "2026-10-10T03:55:00+00:00",
+                  "pnl": -115.31322610748545,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:55:00+00:00",
+                  "entry_at": "2026-10-10T04:00:00+00:00",
+                  "exit_at": "2026-10-10T04:05:00+00:00",
+                  "pnl": -155.7284593201448,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                }
+              ]
+            },
+            "testing": {
+              "pnl": -14.800984190330368,
+              "modeled_cost": 7.300000000000003,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T04:40:00+00:00",
+                  "entry_at": "2026-10-10T04:45:00+00:00",
+                  "exit_at": "2026-10-10T04:50:00+00:00",
+                  "pnl": -14.800984190330368,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                }
+              ]
+            }
+          },
+          {
+            "selected": "momentum_8",
+            "selection_at": "2026-10-10T05:15:00+00:00",
+            "train_start": "2026-10-10T02:00:00+00:00",
+            "train_end": "2026-10-10T05:15:00+00:00",
+            "test_start": "2026-10-10T05:30:00+00:00",
+            "test_end": "2026-10-10T06:25:00+00:00",
+            "training": {
+              "pnl": -47.0881450566136,
+              "modeled_cost": 51.09999999999958,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T03:05:00+00:00",
+                  "entry_at": "2026-10-10T03:10:00+00:00",
+                  "exit_at": "2026-10-10T03:15:00+00:00",
+                  "pnl": 179.1905320833472,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                },
+                {
+                  "decision_at": "2026-10-10T03:15:00+00:00",
+                  "entry_at": "2026-10-10T03:20:00+00:00",
+                  "exit_at": "2026-10-10T03:25:00+00:00",
+                  "pnl": -42.25821434262569,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:25:00+00:00",
+                  "entry_at": "2026-10-10T03:30:00+00:00",
+                  "exit_at": "2026-10-10T03:35:00+00:00",
+                  "pnl": -27.626894499544374,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:35:00+00:00",
+                  "entry_at": "2026-10-10T03:40:00+00:00",
+                  "exit_at": "2026-10-10T03:45:00+00:00",
+                  "pnl": 129.4491013201699,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:45:00+00:00",
+                  "entry_at": "2026-10-10T03:50:00+00:00",
+                  "exit_at": "2026-10-10T03:55:00+00:00",
+                  "pnl": -115.31322610748545,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:55:00+00:00",
+                  "entry_at": "2026-10-10T04:00:00+00:00",
+                  "exit_at": "2026-10-10T04:05:00+00:00",
+                  "pnl": -155.7284593201448,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                },
+                {
+                  "decision_at": "2026-10-10T04:40:00+00:00",
+                  "entry_at": "2026-10-10T04:45:00+00:00",
+                  "exit_at": "2026-10-10T04:50:00+00:00",
+                  "pnl": -14.800984190330368,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                }
+              ]
+            },
+            "testing": {
+              "pnl": -177.03633013295703,
+              "modeled_cost": 29.19999999999966,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T05:25:00+00:00",
+                  "entry_at": "2026-10-10T05:30:00+00:00",
+                  "exit_at": "2026-10-10T05:35:00+00:00",
+                  "pnl": -91.30369465056783,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:35:00+00:00",
+                  "entry_at": "2026-10-10T05:40:00+00:00",
+                  "exit_at": "2026-10-10T05:45:00+00:00",
+                  "pnl": 76.816953241061,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:45:00+00:00",
+                  "entry_at": "2026-10-10T05:50:00+00:00",
+                  "exit_at": "2026-10-10T05:55:00+00:00",
+                  "pnl": 48.416951981973966,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:55:00+00:00",
+                  "entry_at": "2026-10-10T06:00:00+00:00",
+                  "exit_at": "2026-10-10T06:05:00+00:00",
+                  "pnl": -210.96654070542417,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                }
+              ]
+            }
+          },
+          {
+            "selected": "momentum_3",
+            "selection_at": "2026-10-10T06:15:00+00:00",
+            "train_start": "2026-10-10T03:00:00+00:00",
+            "train_end": "2026-10-10T06:15:00+00:00",
+            "test_start": "2026-10-10T06:30:00+00:00",
+            "test_end": "2026-10-10T07:25:00+00:00",
+            "training": {
+              "pnl": -254.9266749429053,
+              "modeled_cost": 72.99999999999928,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T03:10:00+00:00",
+                  "entry_at": "2026-10-10T03:15:00+00:00",
+                  "exit_at": "2026-10-10T03:20:00+00:00",
+                  "pnl": 103.50324097577736,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:20:00+00:00",
+                  "entry_at": "2026-10-10T03:25:00+00:00",
+                  "exit_at": "2026-10-10T03:30:00+00:00",
+                  "pnl": -98.68186641823922,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:40:00+00:00",
+                  "entry_at": "2026-10-10T03:45:00+00:00",
+                  "exit_at": "2026-10-10T03:50:00+00:00",
+                  "pnl": 38.23153892436756,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T03:50:00+00:00",
+                  "entry_at": "2026-10-10T03:55:00+00:00",
+                  "exit_at": "2026-10-10T04:00:00+00:00",
+                  "pnl": -203.9882470565603,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T04:15:00+00:00",
+                  "entry_at": "2026-10-10T04:20:00+00:00",
+                  "exit_at": "2026-10-10T04:25:00+00:00",
+                  "pnl": -37.09254875696347,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T05:10:00+00:00",
+                  "entry_at": "2026-10-10T05:15:00+00:00",
+                  "exit_at": "2026-10-10T05:20:00+00:00",
+                  "pnl": 160.2448351957826,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                },
+                {
+                  "decision_at": "2026-10-10T05:20:00+00:00",
+                  "entry_at": "2026-10-10T05:25:00+00:00",
+                  "exit_at": "2026-10-10T05:30:00+00:00",
+                  "pnl": -16.781621298051974,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:30:00+00:00",
+                  "entry_at": "2026-10-10T05:35:00+00:00",
+                  "exit_at": "2026-10-10T05:40:00+00:00",
+                  "pnl": -37.81241778556766,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:45:00+00:00",
+                  "entry_at": "2026-10-10T05:50:00+00:00",
+                  "exit_at": "2026-10-10T05:55:00+00:00",
+                  "pnl": 48.416951981973966,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:55:00+00:00",
+                  "entry_at": "2026-10-10T06:00:00+00:00",
+                  "exit_at": "2026-10-10T06:05:00+00:00",
+                  "pnl": -210.96654070542417,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                }
+              ]
+            },
+            "testing": {
+              "pnl": -21.454023710572464,
+              "modeled_cost": 21.90000000000001,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T06:25:00+00:00",
+                  "entry_at": "2026-10-10T06:30:00+00:00",
+                  "exit_at": "2026-10-10T06:35:00+00:00",
+                  "pnl": 2.0332978024808837,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T06:40:00+00:00",
+                  "entry_at": "2026-10-10T06:45:00+00:00",
+                  "exit_at": "2026-10-10T06:50:00+00:00",
+                  "pnl": -8.974948629724155,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T06:50:00+00:00",
+                  "entry_at": "2026-10-10T06:55:00+00:00",
+                  "exit_at": "2026-10-10T07:00:00+00:00",
+                  "pnl": -14.512372883329194,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                }
+              ]
+            }
+          },
+          {
+            "selected": "momentum_3",
+            "selection_at": "2026-10-10T07:15:00+00:00",
+            "train_start": "2026-10-10T04:00:00+00:00",
+            "train_end": "2026-10-10T07:15:00+00:00",
+            "test_start": "2026-10-10T07:30:00+00:00",
+            "test_end": "2026-10-10T08:25:00+00:00",
+            "training": {
+              "pnl": -152.68932514507028,
+              "modeled_cost": 72.99999999999963,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T04:15:00+00:00",
+                  "entry_at": "2026-10-10T04:20:00+00:00",
+                  "exit_at": "2026-10-10T04:25:00+00:00",
+                  "pnl": -37.09254875696347,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T05:10:00+00:00",
+                  "entry_at": "2026-10-10T05:15:00+00:00",
+                  "exit_at": "2026-10-10T05:20:00+00:00",
+                  "pnl": 160.2448351957826,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                },
+                {
+                  "decision_at": "2026-10-10T05:20:00+00:00",
+                  "entry_at": "2026-10-10T05:25:00+00:00",
+                  "exit_at": "2026-10-10T05:30:00+00:00",
+                  "pnl": -16.781621298051974,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:30:00+00:00",
+                  "entry_at": "2026-10-10T05:35:00+00:00",
+                  "exit_at": "2026-10-10T05:40:00+00:00",
+                  "pnl": -37.81241778556766,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:45:00+00:00",
+                  "entry_at": "2026-10-10T05:50:00+00:00",
+                  "exit_at": "2026-10-10T05:55:00+00:00",
+                  "pnl": 48.416951981973966,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:55:00+00:00",
+                  "entry_at": "2026-10-10T06:00:00+00:00",
+                  "exit_at": "2026-10-10T06:05:00+00:00",
+                  "pnl": -210.96654070542417,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T06:20:00+00:00",
+                  "entry_at": "2026-10-10T06:25:00+00:00",
+                  "exit_at": "2026-10-10T06:30:00+00:00",
+                  "pnl": -34.26117934469258,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T06:30:00+00:00",
+                  "entry_at": "2026-10-10T06:35:00+00:00",
+                  "exit_at": "2026-10-10T06:40:00+00:00",
+                  "pnl": -0.9494829190736287,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T06:40:00+00:00",
+                  "entry_at": "2026-10-10T06:45:00+00:00",
+                  "exit_at": "2026-10-10T06:50:00+00:00",
+                  "pnl": -8.974948629724155,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T06:50:00+00:00",
+                  "entry_at": "2026-10-10T06:55:00+00:00",
+                  "exit_at": "2026-10-10T07:00:00+00:00",
+                  "pnl": -14.512372883329194,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                }
+              ]
+            },
+            "testing": {
+              "pnl": -176.5108861351958,
+              "modeled_cost": 29.19999999999966,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T07:25:00+00:00",
+                  "entry_at": "2026-10-10T07:30:00+00:00",
+                  "exit_at": "2026-10-10T07:35:00+00:00",
+                  "pnl": 5.433650167852723,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T07:35:00+00:00",
+                  "entry_at": "2026-10-10T07:40:00+00:00",
+                  "exit_at": "2026-10-10T07:45:00+00:00",
+                  "pnl": -41.603109998830774,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T07:50:00+00:00",
+                  "entry_at": "2026-10-10T07:55:00+00:00",
+                  "exit_at": "2026-10-10T08:00:00+00:00",
+                  "pnl": 69.22493583548821,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T08:00:00+00:00",
+                  "entry_at": "2026-10-10T08:05:00+00:00",
+                  "exit_at": "2026-10-10T08:10:00+00:00",
+                  "pnl": -209.56636213970594,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                }
+              ]
+            }
+          },
+          {
+            "selected": "momentum_3",
+            "selection_at": "2026-10-10T08:15:00+00:00",
+            "train_start": "2026-10-10T05:00:00+00:00",
+            "train_end": "2026-10-10T08:15:00+00:00",
+            "test_start": "2026-10-10T08:30:00+00:00",
+            "test_end": "2026-10-10T09:25:00+00:00",
+            "training": {
+              "pnl": -292.1076625233026,
+              "modeled_cost": 94.89999999999928,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T05:10:00+00:00",
+                  "entry_at": "2026-10-10T05:15:00+00:00",
+                  "exit_at": "2026-10-10T05:20:00+00:00",
+                  "pnl": 160.2448351957826,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                },
+                {
+                  "decision_at": "2026-10-10T05:20:00+00:00",
+                  "entry_at": "2026-10-10T05:25:00+00:00",
+                  "exit_at": "2026-10-10T05:30:00+00:00",
+                  "pnl": -16.781621298051974,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:30:00+00:00",
+                  "entry_at": "2026-10-10T05:35:00+00:00",
+                  "exit_at": "2026-10-10T05:40:00+00:00",
+                  "pnl": -37.81241778556766,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:45:00+00:00",
+                  "entry_at": "2026-10-10T05:50:00+00:00",
+                  "exit_at": "2026-10-10T05:55:00+00:00",
+                  "pnl": 48.416951981973966,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T05:55:00+00:00",
+                  "entry_at": "2026-10-10T06:00:00+00:00",
+                  "exit_at": "2026-10-10T06:05:00+00:00",
+                  "pnl": -210.96654070542417,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T06:20:00+00:00",
+                  "entry_at": "2026-10-10T06:25:00+00:00",
+                  "exit_at": "2026-10-10T06:30:00+00:00",
+                  "pnl": -34.26117934469258,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T06:30:00+00:00",
+                  "entry_at": "2026-10-10T06:35:00+00:00",
+                  "exit_at": "2026-10-10T06:40:00+00:00",
+                  "pnl": -0.9494829190736287,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T06:40:00+00:00",
+                  "entry_at": "2026-10-10T06:45:00+00:00",
+                  "exit_at": "2026-10-10T06:50:00+00:00",
+                  "pnl": -8.974948629724155,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T06:50:00+00:00",
+                  "entry_at": "2026-10-10T06:55:00+00:00",
+                  "exit_at": "2026-10-10T07:00:00+00:00",
+                  "pnl": -14.512372883329194,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T07:25:00+00:00",
+                  "entry_at": "2026-10-10T07:30:00+00:00",
+                  "exit_at": "2026-10-10T07:35:00+00:00",
+                  "pnl": 5.433650167852723,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T07:35:00+00:00",
+                  "entry_at": "2026-10-10T07:40:00+00:00",
+                  "exit_at": "2026-10-10T07:45:00+00:00",
+                  "pnl": -41.603109998830774,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T07:50:00+00:00",
+                  "entry_at": "2026-10-10T07:55:00+00:00",
+                  "exit_at": "2026-10-10T08:00:00+00:00",
+                  "pnl": 69.22493583548821,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T08:00:00+00:00",
+                  "entry_at": "2026-10-10T08:05:00+00:00",
+                  "exit_at": "2026-10-10T08:10:00+00:00",
+                  "pnl": -209.56636213970594,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                }
+              ]
+            },
+            "testing": {
+              "pnl": -17.29952953030449,
+              "modeled_cost": 29.200000000000014,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T08:30:00+00:00",
+                  "entry_at": "2026-10-10T08:35:00+00:00",
+                  "exit_at": "2026-10-10T08:40:00+00:00",
+                  "pnl": 1.1530377225301158,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T08:45:00+00:00",
+                  "entry_at": "2026-10-10T08:50:00+00:00",
+                  "exit_at": "2026-10-10T08:55:00+00:00",
+                  "pnl": 0.9161101341003242,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T08:55:00+00:00",
+                  "entry_at": "2026-10-10T09:00:00+00:00",
+                  "exit_at": "2026-10-10T09:05:00+00:00",
+                  "pnl": -6.3212181977131285,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T09:05:00+00:00",
+                  "entry_at": "2026-10-10T09:10:00+00:00",
+                  "exit_at": "2026-10-10T09:15:00+00:00",
+                  "pnl": -13.047459189221799,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                }
+              ]
+            }
+          },
+          {
+            "selected": "momentum_8",
+            "selection_at": "2026-10-10T09:15:00+00:00",
+            "train_start": "2026-10-10T06:00:00+00:00",
+            "train_end": "2026-10-10T09:15:00+00:00",
+            "test_start": "2026-10-10T09:30:00+00:00",
+            "test_end": "2026-10-10T10:25:00+00:00",
+            "training": {
+              "pnl": -236.67641477344918,
+              "modeled_cost": 65.69999999999963,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T06:45:00+00:00",
+                  "entry_at": "2026-10-10T06:50:00+00:00",
+                  "exit_at": "2026-10-10T06:55:00+00:00",
+                  "pnl": -12.405703390459133,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T06:55:00+00:00",
+                  "entry_at": "2026-10-10T07:00:00+00:00",
+                  "exit_at": "2026-10-10T07:05:00+00:00",
+                  "pnl": -14.912520485962155,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T07:25:00+00:00",
+                  "entry_at": "2026-10-10T07:30:00+00:00",
+                  "exit_at": "2026-10-10T07:35:00+00:00",
+                  "pnl": 5.433650167852723,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T07:35:00+00:00",
+                  "entry_at": "2026-10-10T07:40:00+00:00",
+                  "exit_at": "2026-10-10T07:45:00+00:00",
+                  "pnl": -41.603109998830774,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T07:45:00+00:00",
+                  "entry_at": "2026-10-10T07:50:00+00:00",
+                  "exit_at": "2026-10-10T07:55:00+00:00",
+                  "pnl": 135.38309711452249,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T07:55:00+00:00",
+                  "entry_at": "2026-10-10T08:00:00+00:00",
+                  "exit_at": "2026-10-10T08:05:00+00:00",
+                  "pnl": -87.09959110564941,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T08:05:00+00:00",
+                  "entry_at": "2026-10-10T08:10:00+00:00",
+                  "exit_at": "2026-10-10T08:15:00+00:00",
+                  "pnl": -202.103559687988,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                },
+                {
+                  "decision_at": "2026-10-10T08:55:00+00:00",
+                  "entry_at": "2026-10-10T09:00:00+00:00",
+                  "exit_at": "2026-10-10T09:05:00+00:00",
+                  "pnl": -6.3212181977131285,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T09:05:00+00:00",
+                  "entry_at": "2026-10-10T09:10:00+00:00",
+                  "exit_at": "2026-10-10T09:15:00+00:00",
+                  "pnl": -13.047459189221799,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                }
+              ]
+            },
+            "testing": {
+              "pnl": -155.18727869439408,
+              "modeled_cost": 36.499999999999616,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T09:30:00+00:00",
+                  "entry_at": "2026-10-10T09:35:00+00:00",
+                  "exit_at": "2026-10-10T09:40:00+00:00",
+                  "pnl": 18.46068822642123,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T09:40:00+00:00",
+                  "entry_at": "2026-10-10T09:45:00+00:00",
+                  "exit_at": "2026-10-10T09:50:00+00:00",
+                  "pnl": -51.33235404424168,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T09:50:00+00:00",
+                  "entry_at": "2026-10-10T09:55:00+00:00",
+                  "exit_at": "2026-10-10T10:00:00+00:00",
+                  "pnl": 142.62072983278625,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T10:00:00+00:00",
+                  "entry_at": "2026-10-10T10:05:00+00:00",
+                  "exit_at": "2026-10-10T10:10:00+00:00",
+                  "pnl": -56.15728698071206,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T10:10:00+00:00",
+                  "entry_at": "2026-10-10T10:15:00+00:00",
+                  "exit_at": "2026-10-10T10:20:00+00:00",
+                  "pnl": -208.77905572864782,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                }
+              ]
+            }
+          },
+          {
+            "selected": "momentum_8",
+            "selection_at": "2026-10-10T10:15:00+00:00",
+            "train_start": "2026-10-10T07:00:00+00:00",
+            "train_end": "2026-10-10T10:15:00+00:00",
+            "test_start": "2026-10-10T10:30:00+00:00",
+            "test_end": "2026-10-10T11:25:00+00:00",
+            "training": {
+              "pnl": -175.35474468292483,
+              "modeled_cost": 80.29999999999936,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T07:35:00+00:00",
+                  "entry_at": "2026-10-10T07:40:00+00:00",
+                  "exit_at": "2026-10-10T07:45:00+00:00",
+                  "pnl": -41.603109998830774,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T07:45:00+00:00",
+                  "entry_at": "2026-10-10T07:50:00+00:00",
+                  "exit_at": "2026-10-10T07:55:00+00:00",
+                  "pnl": 135.38309711452249,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T07:55:00+00:00",
+                  "entry_at": "2026-10-10T08:00:00+00:00",
+                  "exit_at": "2026-10-10T08:05:00+00:00",
+                  "pnl": -87.09959110564941,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T08:05:00+00:00",
+                  "entry_at": "2026-10-10T08:10:00+00:00",
+                  "exit_at": "2026-10-10T08:15:00+00:00",
+                  "pnl": -202.103559687988,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                },
+                {
+                  "decision_at": "2026-10-10T08:55:00+00:00",
+                  "entry_at": "2026-10-10T09:00:00+00:00",
+                  "exit_at": "2026-10-10T09:05:00+00:00",
+                  "pnl": -6.3212181977131285,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T09:05:00+00:00",
+                  "entry_at": "2026-10-10T09:10:00+00:00",
+                  "exit_at": "2026-10-10T09:15:00+00:00",
+                  "pnl": -13.047459189221799,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T09:15:00+00:00",
+                  "entry_at": "2026-10-10T09:20:00+00:00",
+                  "exit_at": "2026-10-10T09:25:00+00:00",
+                  "pnl": -14.154680652297957,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T09:30:00+00:00",
+                  "entry_at": "2026-10-10T09:35:00+00:00",
+                  "exit_at": "2026-10-10T09:40:00+00:00",
+                  "pnl": 18.46068822642123,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T09:40:00+00:00",
+                  "entry_at": "2026-10-10T09:45:00+00:00",
+                  "exit_at": "2026-10-10T09:50:00+00:00",
+                  "pnl": -51.33235404424168,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T09:50:00+00:00",
+                  "entry_at": "2026-10-10T09:55:00+00:00",
+                  "exit_at": "2026-10-10T10:00:00+00:00",
+                  "pnl": 142.62072983278625,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T10:00:00+00:00",
+                  "entry_at": "2026-10-10T10:05:00+00:00",
+                  "exit_at": "2026-10-10T10:10:00+00:00",
+                  "pnl": -56.15728698071206,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                }
+              ]
+            },
+            "testing": {
+              "pnl": -8.24702878208294,
+              "modeled_cost": 14.600000000000007,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T11:05:00+00:00",
+                  "entry_at": "2026-10-10T11:10:00+00:00",
+                  "exit_at": "2026-10-10T11:15:00+00:00",
+                  "pnl": -0.4371136811586951,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T11:15:00+00:00",
+                  "entry_at": "2026-10-10T11:20:00+00:00",
+                  "exit_at": "2026-10-10T11:25:00+00:00",
+                  "pnl": -7.809915100924246,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                }
+              ]
+            }
+          },
+          {
+            "selected": "momentum_3",
+            "selection_at": "2026-10-10T11:15:00+00:00",
+            "train_start": "2026-10-10T08:00:00+00:00",
+            "train_end": "2026-10-10T11:15:00+00:00",
+            "test_start": "2026-10-10T11:30:00+00:00",
+            "test_end": "2026-10-10T12:25:00+00:00",
+            "training": {
+              "pnl": -155.89338633201686,
+              "modeled_cost": 80.29999999999966,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T08:30:00+00:00",
+                  "entry_at": "2026-10-10T08:35:00+00:00",
+                  "exit_at": "2026-10-10T08:40:00+00:00",
+                  "pnl": 1.1530377225301158,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T08:45:00+00:00",
+                  "entry_at": "2026-10-10T08:50:00+00:00",
+                  "exit_at": "2026-10-10T08:55:00+00:00",
+                  "pnl": 0.9161101341003242,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T08:55:00+00:00",
+                  "entry_at": "2026-10-10T09:00:00+00:00",
+                  "exit_at": "2026-10-10T09:05:00+00:00",
+                  "pnl": -6.3212181977131285,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T09:05:00+00:00",
+                  "entry_at": "2026-10-10T09:10:00+00:00",
+                  "exit_at": "2026-10-10T09:15:00+00:00",
+                  "pnl": -13.047459189221799,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T09:30:00+00:00",
+                  "entry_at": "2026-10-10T09:35:00+00:00",
+                  "exit_at": "2026-10-10T09:40:00+00:00",
+                  "pnl": 18.46068822642123,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T09:40:00+00:00",
+                  "entry_at": "2026-10-10T09:45:00+00:00",
+                  "exit_at": "2026-10-10T09:50:00+00:00",
+                  "pnl": -51.33235404424168,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T09:55:00+00:00",
+                  "entry_at": "2026-10-10T10:00:00+00:00",
+                  "exit_at": "2026-10-10T10:05:00+00:00",
+                  "pnl": 95.3071212897802,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T10:05:00+00:00",
+                  "entry_at": "2026-10-10T10:10:00+00:00",
+                  "exit_at": "2026-10-10T10:15:00+00:00",
+                  "pnl": -193.1744316349371,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T10:35:00+00:00",
+                  "entry_at": "2026-10-10T10:40:00+00:00",
+                  "exit_at": "2026-10-10T10:45:00+00:00",
+                  "pnl": -10.028703472902578,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T10:55:00+00:00",
+                  "entry_at": "2026-10-10T11:00:00+00:00",
+                  "exit_at": "2026-10-10T11:05:00+00:00",
+                  "pnl": 2.610936515326258,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T11:05:00+00:00",
+                  "entry_at": "2026-10-10T11:10:00+00:00",
+                  "exit_at": "2026-10-10T11:15:00+00:00",
+                  "pnl": -0.4371136811586951,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                }
+              ]
+            },
+            "testing": {
+              "pnl": -209.02263613110415,
+              "modeled_cost": 36.49999999999971,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T11:25:00+00:00",
+                  "entry_at": "2026-10-10T11:30:00+00:00",
+                  "exit_at": "2026-10-10T11:35:00+00:00",
+                  "pnl": 60.817778021084294,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T11:35:00+00:00",
+                  "entry_at": "2026-10-10T11:40:00+00:00",
+                  "exit_at": "2026-10-10T11:45:00+00:00",
+                  "pnl": 30.18229192474412,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T11:45:00+00:00",
+                  "entry_at": "2026-10-10T11:50:00+00:00",
+                  "exit_at": "2026-10-10T11:55:00+00:00",
+                  "pnl": -69.09820336291564,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T12:05:00+00:00",
+                  "entry_at": "2026-10-10T12:10:00+00:00",
+                  "exit_at": "2026-10-10T12:15:00+00:00",
+                  "pnl": -26.34279259213531,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T12:15:00+00:00",
+                  "entry_at": "2026-10-10T12:20:00+00:00",
+                  "exit_at": "2026-10-10T12:25:00+00:00",
+                  "pnl": -204.58171012188163,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999959
+                }
+              ]
+            }
+          },
+          {
+            "selected": "momentum_8",
+            "selection_at": "2026-10-10T12:15:00+00:00",
+            "train_start": "2026-10-10T09:00:00+00:00",
+            "train_end": "2026-10-10T12:15:00+00:00",
+            "test_start": "2026-10-10T12:30:00+00:00",
+            "test_end": "2026-10-10T13:25:00+00:00",
+            "training": {
+              "pnl": 11.512532586190247,
+              "modeled_cost": 80.29999999999932,
+              "trades": [
+                {
+                  "decision_at": "2026-10-10T09:35:00+00:00",
+                  "entry_at": "2026-10-10T09:40:00+00:00",
+                  "exit_at": "2026-10-10T09:45:00+00:00",
+                  "pnl": -78.79529957511055,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T09:45:00+00:00",
+                  "entry_at": "2026-10-10T09:50:00+00:00",
+                  "exit_at": "2026-10-10T09:55:00+00:00",
+                  "pnl": 62.94417017141977,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T09:55:00+00:00",
+                  "entry_at": "2026-10-10T10:00:00+00:00",
+                  "exit_at": "2026-10-10T10:05:00+00:00",
+                  "pnl": 95.3071212897802,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T10:05:00+00:00",
+                  "entry_at": "2026-10-10T10:10:00+00:00",
+                  "exit_at": "2026-10-10T10:15:00+00:00",
+                  "pnl": -193.1744316349371,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T11:05:00+00:00",
+                  "entry_at": "2026-10-10T11:10:00+00:00",
+                  "exit_at": "2026-10-10T11:15:00+00:00",
+                  "pnl": -0.4371136811586951,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T11:15:00+00:00",
+                  "entry_at": "2026-10-10T11:20:00+00:00",
+                  "exit_at": "2026-10-10T11:25:00+00:00",
+                  "pnl": -7.809915100924246,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T11:25:00+00:00",
+                  "entry_at": "2026-10-10T11:30:00+00:00",
+                  "exit_at": "2026-10-10T11:35:00+00:00",
+                  "pnl": 60.817778021084294,
+                  "commission": 1.3,
+                  "modeled_cost": 7.300000000000003
+                },
+                {
+                  "decision_at": "2026-10-10T11:35:00+00:00",
+                  "entry_at": "2026-10-10T11:40:00+00:00",
+                  "exit_at": "2026-10-10T11:45:00+00:00",
+                  "pnl": 30.18229192474412,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T11:45:00+00:00",
+                  "entry_at": "2026-10-10T11:50:00+00:00",
+                  "exit_at": "2026-10-10T11:55:00+00:00",
+                  "pnl": -69.09820336291564,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T11:55:00+00:00",
+                  "entry_at": "2026-10-10T12:00:00+00:00",
+                  "exit_at": "2026-10-10T12:05:00+00:00",
+                  "pnl": 137.9189271263434,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                },
+                {
+                  "decision_at": "2026-10-10T12:05:00+00:00",
+                  "entry_at": "2026-10-10T12:10:00+00:00",
+                  "exit_at": "2026-10-10T12:15:00+00:00",
+                  "pnl": -26.34279259213531,
+                  "commission": 1.3,
+                  "modeled_cost": 7.299999999999915
+                }
+              ]
+            },
+            "testing": {
+              "pnl": 0.0,
+              "modeled_cost": 0.0,
+              "trades": []
+            }
+          }
+        ],
+        "purge_observations": 2,
+        "out_of_sample_pnl": -948.778175913946,
+        "profitability_evidence": false,
+        "limitations": [
+          "Single provided option series; synthetic data is not market evidence",
+          "No capital sizing, assignment, overnight liquidity or contract rolling",
+          "Multiple-comparison bias and statistical significance not estimated"
+        ],
+        "source": "synthetic_fixture",
+        "session_id": "SYNTHETIC-UTC:2026-10-10",
+        "observation_interval_minutes": 5,
+        "fixed_contract": {
+          "contract_id": "SYNTHETIC-FIXED:NVDA:CALL:100.00:2027-12-31",
+          "symbol": "NVDA",
+          "right": "CALL",
+          "strike": 100.0,
+          "known_at": "2026-01-01T00:00:00+00:00",
+          "expiry": "2027-12-31T20:00:00+00:00"
+        },
+        "contract_id": "SYNTHETIC-FIXED:NVDA:CALL:100.00:2027-12-31",
+        "contract_selection_uses_end_of_sample_data": false,
+        "real_contract_chain_selection_tested": false,
+        "execution_authority": false,
+        "status": "EVALUATED",
+        "observations": 169
+      },
+      "safety_supervisor": {
+        "mode": "SHADOW",
+        "new_entry_gate_passes": true,
+        "hard_failures": [],
+        "owned_close_gate_passes": false,
+        "trust": {
+          "score": 1.0,
+          "status": "DIAGNOSTIC_ONLY",
+          "may_override_hard_gate": false
+        },
+        "execution_authority": false,
+        "emergency_policy": "Only reconciled, priced, owned reductions; unknown state blocks sending orders",
+        "qualification_scope": "synthetic_contract_only_not_broker_verified"
+      }
+    },
+    "decision": {
+      "account_id": "c23bfc88-a702-4428-ada6-31cecacd6adb",
+      "decision_id": "19a30fd68450d30cff772a9cddbc9207fce1db48c41e0f971e8c30de0ee04b4b",
+      "decided_at": "2026-10-10T14:00:35+00:00",
+      "observed_at": "2026-10-10T14:00:00+00:00",
+      "contract_id": "SYNTHETIC:NVDA:CALL:103.00:2026-11-09T20:00:00+00:00",
+      "reasons": [
+        "SYNTHETIC_SHADOW_ONLY",
+        "RANGE_SCORED_SCENARIO_COMPARISON",
+        "DIRECTIONAL_COMPARISON_AVAILABLE"
+      ],
+      "evidence_json": "{\"activation\":106.48835906499954,\"entry_reasons\":[\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\"],\"execution_authority\":false,\"hard_failures\":[],\"holding_observations\":1,\"invalidation\":98.57874961281964,\"observed_at\":\"2026-10-10T14:00:00+00:00\",\"right\":\"CALL\",\"scenario_scores\":{\"bearish\":0.3844210187775609,\"bullish\":0.615578981222439,\"neutral\":0.40753681502204875},\"source\":\"synthetic_fixture\",\"symbol\":\"NVDA\"}",
+      "previous_digest": "",
+      "digest": "cb3991a888c6d8b21555dd62beb10a87a7943e348a94ea62a155bf386fbd54f4"
+    },
+    "execution_authority": false,
+    "external_connections": false,
+    "profitability_evidence": false,
+    "limitations": [
+      "Synthetic quotes and scores do not establish profitability or broker qualification.",
+      "Every module is read-only research; execution must independently recheck all mandatory risk gates.",
+      "Correlation uses owned cost plus pending buy commitments, not measured Greeks or a nonlinear portfolio model.",
+      "A displayed Call contract when scenarios conflict is illustrative, not an accepted entry.",
+      "Each saved snapshot is an independent immutable research journal; it is not a broker order.",
+      "Tournament uses a separately predefined fixed Call contract, five-minute synthetic UTC sessions, and no hindsight contract-chain selection.",
+      "No LLM, external network, account reconciliation or market observation refresh is performed."
+    ]
+  },
+  "counterfactual_replay": {
+    "mode": "SHADOW",
+    "source": "synthetic_fixture",
+    "snapshot_id": "0fb4f951-6cd9-47d0-9b5c-747a02f3b179",
+    "account_id": "c23bfc88-a702-4428-ada6-31cecacd6adb",
+    "symbol": "NVDA",
+    "original_decision": {
+      "account_id": "c23bfc88-a702-4428-ada6-31cecacd6adb",
+      "contract_id": "SYNTHETIC:NVDA:CALL:103.00:2026-11-09T20:00:00+00:00",
+      "decided_at": "2026-10-10T14:00:35+00:00",
+      "decision_id": "19a30fd68450d30cff772a9cddbc9207fce1db48c41e0f971e8c30de0ee04b4b",
+      "digest": "cb3991a888c6d8b21555dd62beb10a87a7943e348a94ea62a155bf386fbd54f4",
+      "evidence_json": "{\"activation\":106.48835906499954,\"entry_reasons\":[\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\"],\"execution_authority\":false,\"hard_failures\":[],\"holding_observations\":1,\"invalidation\":98.57874961281964,\"observed_at\":\"2026-10-10T14:00:00+00:00\",\"right\":\"CALL\",\"scenario_scores\":{\"bearish\":0.3844210187775609,\"bullish\":0.615578981222439,\"neutral\":0.40753681502204875},\"source\":\"synthetic_fixture\",\"symbol\":\"NVDA\"}",
+      "observed_at": "2026-10-10T14:00:00+00:00",
+      "previous_digest": "",
+      "reasons": [
+        "SYNTHETIC_SHADOW_ONLY",
+        "RANGE_SCORED_SCENARIO_COMPARISON",
+        "DIRECTIONAL_COMPARISON_AVAILABLE"
+      ]
+    },
+    "counterfactual": {
+      "mode": "SHADOW",
+      "counterfactual": true,
+      "decision_digest": "cb3991a888c6d8b21555dd62beb10a87a7943e348a94ea62a155bf386fbd54f4",
+      "decision_reasons": [
+        "SYNTHETIC_SHADOW_ONLY",
+        "RANGE_SCORED_SCENARIO_COMPARISON",
+        "DIRECTIONAL_COMPARISON_AVAILABLE"
+      ],
+      "execution_authority": false,
+      "holding_observations": 1,
+      "profitability_evidence": false,
+      "status": "REPLAYED",
+      "entry_at": "2026-10-10T14:01:00+00:00",
+      "exit_at": "2026-10-10T14:02:00+00:00",
+      "pnl": -7.558283016572408,
+      "commissions": 1.3,
+      "limitations": "Fixed 100 multiplier; hypothetical later quotes; no fill, liquidity or exercise guarantee"
+    },
+    "execution_authority": false,
+    "external_connections": false,
+    "profitability_evidence": false
+  },
+  "orders_created": 0
+}

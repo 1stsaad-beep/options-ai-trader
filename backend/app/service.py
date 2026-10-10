@@ -656,9 +656,16 @@ class TradingService:
                 if (-(daily['pnl'] if daily else 0)+self._open_loss(db,member))*100 >= equity*member['config']['daily_loss_pct']:
                     raise Rejected('Account daily loss reached')
                 self._check_supervisor(db,member)
-            except Rejected as exc:
+            except Exception as exc:
+                # A verified owned close must not be undone because a risk
+                # calculation for pending entries is unavailable. Cancel those
+                # synthetic reservations; every future entry/fill still runs
+                # the mandatory supervisor and fails closed on its exception.
+                # Unexpected diagnostics may contain sensitive implementation
+                # details, so persist only the generic outage category.
+                reason = str(exc) if isinstance(exc, Rejected) else 'Risk supervision unavailable; pending Mock buys cancelled'
                 db.execute("UPDATE orders SET status='CANCELLED' WHERE account_id=? AND side='BUY' AND status IN ('PENDING','PARTIAL')",(member_id,))
-                self.audit(db,member_id,'RISK_PENDING_BUYS_CANCELLED',{'reason':str(exc),'source':'synthetic_mock'})
+                self.audit(db,member_id,'RISK_PENDING_BUYS_CANCELLED',{'reason':reason,'source':'synthetic_mock'})
 
     def cancel(self, account_id, order_id):
         with self.repo.transaction() as db:

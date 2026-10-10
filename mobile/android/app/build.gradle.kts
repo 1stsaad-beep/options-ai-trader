@@ -17,8 +17,8 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.optionsaitrader.options_ai_trader"
-        if (System.getenv("OAT_PREVIEW_BUILD") == "true") applicationIdSuffix = ".v1preview"
-        manifestPlaceholders["oatLabel"] = if (System.getenv("OAT_PREVIEW_BUILD") == "true") "Options AI Trader V1 Preview" else "Options AI Trader"
+        if (System.getenv("OAT_PREVIEW_BUILD") == "true") applicationIdSuffix = ".v1previewrc2"
+        manifestPlaceholders["oatLabel"] = if (System.getenv("OAT_PREVIEW_BUILD") == "true") "Options AI Trader V1 RC2" else "Options AI Trader"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

@@ -49,7 +49,7 @@ with tempfile.TemporaryDirectory(prefix='mock-smoke-', dir=root) as temp:
                         raise RuntimeError('Server startup failed: '+Path(temp,'server.log').read_text())
                     time.sleep(.1)
             assert health['live_enabled'] is False
-            assert health['version'] == '1.0.0-rc.1'
+            assert health['version'] == '1.0.0-rc.2'
             call('GET','/api/accounts',auth=False,expected=401)
             call('GET','/openapi.json',auth=False,expected=401)
             call('GET','/docs',auth=False,expected=401)
@@ -131,7 +131,7 @@ with tempfile.TemporaryDirectory(prefix='mock-smoke-', dir=root) as temp:
                 'idempotency':'passed','partial_fill_duplicate':'passed','disconnect_reconcile':'passed',
                 'independent_shadow_worker':'passed','emergency_stop':'passed',
                 'worker_preserves_untrusted_state':'passed','market_data_outage':'passed',
-                'safe_emergency_owned_close':'passed','version':'1.0.0-rc.1',
+                'safe_emergency_owned_close':'passed','version':'1.0.0-rc.2',
                 'automatic_mock_partial_entry_stop_loss_close':'passed',
                 'automatic_daily_entry_replay':'passed',
                 'live_orders_sent':0,'data_source':'synthetic','database':'SQLite'}
