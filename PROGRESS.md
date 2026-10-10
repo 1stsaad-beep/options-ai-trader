@@ -30,3 +30,13 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Added six regression cases. Targeted lifecycle/automation/RC2 suite: 78 passed, zero failed/skipped. A no-trigger analysis outage leaves the owned position untouched. Repeated ticks do not duplicate orders or P&L.
 - Test development initially exposed fixture defects (rolled synthetic expiry and an unintended nested transaction); these fixtures were corrected before the definitive reproduction. All attempt logs are retained; `protective-reproduced.*` and `protective-acceptance.*` are the authoritative before/after pair.
 - No Flutter source changed, so existing verified RC2 APK/iOS artifacts remain applicable to mobile source. Backend final acceptance and current reports are next.
+
+## Batch 3: acceptance harness correction
+
+- Batch 2 published and verified at `bb95d170460b3d99c3a2bcf1011bb4f55a2af3f3`. Full local Python gate: 631 passed, zero failed/skipped (one existing Starlette deprecation warning).
+- The real HTTP smoke failed at the one-order assertion when executed after the configured UTC intraday cutoff. This also failed CI run 38089561046; Python itself passed. The newly opened account legitimately attempted a timed exit, so the test scenario was time-dependent.
+- Isolated this partial-entry/explicit-stop scenario with `holding=swing`; production intraday policy is unchanged and its existing deterministic tests remain in the critical suite. The actual HTTP smoke now passes.
+- Aligned Python package and lifecycle evidence metadata with RC2. Added the recovery branch to existing security CI; no new service or deployment.
+- Initial direct lifecycle/research script invocations lacked installed editable package; installed the documented backend package, then reran successfully. This was environment setup, not application failure.
+- Secret-pattern scan: zero findings in tracked source and reachable history; this is not a penetration test. Unchanged dependency locks retain the verified cloud audit.
+- Acceptance artifacts include the full Python gate, successful HTTP/worker run, deterministic lifecycle, synthetic backtest and walk-forward. CI is rerun by this script fix before delivery.

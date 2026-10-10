@@ -1,7 +1,7 @@
 name: Source and dependency security checks
 on:
   push:
-    branches: [main, develop/v1.0, develop/v1.0-rc2]
+    branches: [main, develop/v1.0, develop/v1.0-rc2, recovery/v1.0-20261011]
     paths: ["backend/**", "mobile/**", "scripts/**", ".github/workflows/**"]
   pull_request:
   workflow_dispatch:

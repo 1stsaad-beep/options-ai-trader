@@ -1,0 +1,4 @@
+{
+  "status": "failed_attempt",
+  "reason": "Initial smoke attempt failed its one-order assertion after the intraday UTC cutoff; superseded by http-accepted.json."
+}

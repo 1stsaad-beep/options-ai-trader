@@ -1,0 +1,4 @@
+{
+  "status": "failed_attempt",
+  "reason": "Initial invocation before editable backend installation: ModuleNotFoundError app; superseded by walk-forward-release.json."
+}

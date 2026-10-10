@@ -91,7 +91,10 @@ with tempfile.TemporaryDirectory(prefix='mock-smoke-', dir=root) as temp:
             c=call('POST','/api/accounts',{'name':'Automatic HTTP Mock','equity_cents':3000000},expected=201)['id']
             auto_base='/api/accounts/'+c
             call('POST',auto_base+'/watchlist',{'symbol':'NVDA','enabled':True})
-            call('PUT',auto_base+'/risk',{'automation_enabled':True,'auto_quantity':2,'auto_fill_chunk':1})
+            # This scenario tests partial entry and an explicit stop, not the
+            # wall-clock intraday cutoff. Use a newly opened swing fixture so
+            # running the smoke after the UTC cutoff cannot add a timed exit.
+            call('PUT',auto_base+'/risk',{'automation_enabled':True,'auto_quantity':2,'auto_fill_chunk':1,'holding':'swing'})
             call('POST',auto_base+'/automation/run',{},auth=False,expected=401)
             call('POST',auto_base+'/automation/run',{'force':True},expected=422)
             cycle=call('POST',auto_base+'/automation/run',{})
