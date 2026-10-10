@@ -1,0 +1,11 @@
+{
+  "name": "v05-flutter-all-2",
+  "command": [
+    "flutter",
+    "test",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "seconds": 8.41,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/v05-flutter-all-2.log"
+}

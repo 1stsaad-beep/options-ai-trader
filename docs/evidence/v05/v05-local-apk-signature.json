@@ -1,0 +1,13 @@
+{
+  "name": "v05-local-apk-signature",
+  "command": [
+    "/workspace/scratch/79a9a91d65ea/.tooling/android/build-tools/36.0.0/apksigner",
+    "verify",
+    "--verbose",
+    "--print-certs",
+    "mobile/build/app/outputs/flutter-apk/app-debug.apk"
+  ],
+  "exit_code": 0,
+  "seconds": 0.52,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/v05-local-apk-signature.log"
+}

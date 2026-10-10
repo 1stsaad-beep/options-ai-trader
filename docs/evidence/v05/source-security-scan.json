@@ -1,0 +1,7 @@
+{
+  "files_scanned": 227,
+  "findings": [],
+  "scope": "tracked and new unignored source and evidence; pattern-based review, not exhaustive secret detection",
+  "real_broker_credentials_used": false,
+  "private_signing_material_in_repository": false
+}

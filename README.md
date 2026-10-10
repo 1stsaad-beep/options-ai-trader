@@ -47,4 +47,4 @@ python -m app.worker --execute-mock --interval 30
 - الحفظ المحلي مناسب للمحاكاة وليس دفترًا ماليًا إنتاجيًا. تلف الحفظ يوقف الفتح ولا يمسح البيانات تلقائيًا.
 - ملفات الإصدارات والتقارير السابقة بقيت في Git. التاريخ الأصلي محفوظ أيضًا في `repository/`.
 
-راجع [تصميم Demo](docs/DEMO_V05.md) و[التوقيع](docs/DEVELOPMENT_SIGNING.md). تقارير V0.4 تاريخية؛ تقارير V0.5 تسجل نتائج التشغيل الجديدة بعد انتهاء البناء.
+راجع [تصميم Demo](docs/DEMO_V05.md) و[التوقيع](docs/DEVELOPMENT_SIGNING.md). تقارير V0.4 تاريخية. [نتائج V0.5 الفعلية](docs/TEST_REPORT_V05_AR.md): 203 Python و65 Flutter ناجحة، PostgreSQL ناجح، Android مبني وموقع محليًا، وiOS مبني سحابيًا دون توقيع. راجع [التثبيت](docs/SETUP_V05_AR.md) و[الأمان](docs/SECURITY_REPORT_V05_AR.md) و[الإنجاز والنواقص](docs/REVIEW_V05_AR.md).

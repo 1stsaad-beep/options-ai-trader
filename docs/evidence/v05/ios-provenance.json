@@ -1,0 +1,16 @@
+{
+  "bytes": 7583122,
+  "sha256": "39b7dd831ef618b7d3d7d6a1989b75e386ce0872c423731e28d89f10c5b2e965",
+  "zip_crc_verified": true,
+  "bundle_id": "com.optionsaitrader.optionsAiTrader",
+  "version": "0.5.0",
+  "build": "5",
+  "unsigned": true,
+  "device_install_tested": false,
+  "flutter_tests": {
+    "passed": 65,
+    "failed": 0,
+    "skipped": 0
+  },
+  "run_id": 38056917758
+}

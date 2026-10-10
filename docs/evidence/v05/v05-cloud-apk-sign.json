@@ -1,0 +1,21 @@
+{
+  "name": "v05-cloud-apk-sign",
+  "command": [
+    "/workspace/scratch/79a9a91d65ea/.tooling/android/build-tools/36.0.0/apksigner",
+    "sign",
+    "--ks",
+    "/workspace/scratch/79a9a91d65ea/.tooling/android-user/debug.keystore",
+    "--ks-key-alias",
+    "androiddebugkey",
+    "--ks-pass",
+    "env:OAT_DEV_STORE_PASS",
+    "--key-pass",
+    "env:OAT_DEV_STORE_PASS",
+    "--out",
+    "/workspace/scratch/79a9a91d65ea/deliverables-v05/options-ai-trader-v0.5.apk",
+    "/workspace/scratch/79a9a91d65ea/.oat-v05-upload/cloud-unsigned.apk"
+  ],
+  "exit_code": 0,
+  "seconds": 1.22,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/v05-cloud-apk-sign.log"
+}

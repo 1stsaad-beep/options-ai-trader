@@ -1,0 +1,13 @@
+{
+  "name": "v05-delivered-apk-signature",
+  "command": [
+    "/workspace/scratch/79a9a91d65ea/.tooling/android/build-tools/36.0.0/apksigner",
+    "verify",
+    "--verbose",
+    "--print-certs",
+    "/workspace/scratch/79a9a91d65ea/deliverables-v05/options-ai-trader-v0.5.apk"
+  ],
+  "exit_code": 0,
+  "seconds": 0.57,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/v05-delivered-apk-signature.log"
+}

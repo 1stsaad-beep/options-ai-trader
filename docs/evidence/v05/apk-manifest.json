@@ -1,0 +1,14 @@
+{
+  "name": "v05-manifest-verified",
+  "command": [
+    "env",
+    "LD_LIBRARY_PATH=/workspace/scratch/79a9a91d65ea/.tooling/android/build-tools/36.0.0/lib64",
+    "/workspace/scratch/79a9a91d65ea/.tooling/android/build-tools/36.0.0/aapt",
+    "dump",
+    "badging",
+    "mobile/build/app/outputs/flutter-apk/app-debug.apk"
+  ],
+  "exit_code": 0,
+  "seconds": 0.01,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/v05-manifest-verified.log"
+}

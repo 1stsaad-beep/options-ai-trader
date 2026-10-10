@@ -1,0 +1,14 @@
+{
+  "version": "0.5.0",
+  "version_code": 5,
+  "source_commit": "e5b6076ee484b3fded6ec8f0221db7c9cf92798d",
+  "source_tree": "117c60d494a971cd64d19c054fbce728cf9484e2",
+  "build_environment": "local Linux Flutter 3.47.7",
+  "sha256": "55bcc6abfdcccc999d5067e41a2c20663749a7e09c537f1866fc0f00bdc6f1e6",
+  "bytes": 154801560,
+  "signer_sha256": "a04b4b0907e5e275818e0975ae8ee33cc93e5789552b2d8ec65e226ff0ed9025",
+  "signature_v2_verified": true,
+  "zip_crc_verified": true,
+  "native_elf_section_bounds_verified": true,
+  "physical_device_tested": false
+}

@@ -1,0 +1,14 @@
+{
+  "name": "v05-delivered-apk-manifest",
+  "command": [
+    "env",
+    "LD_LIBRARY_PATH=/workspace/scratch/79a9a91d65ea/.tooling/android/build-tools/36.0.0/lib64",
+    "/workspace/scratch/79a9a91d65ea/.tooling/android/build-tools/36.0.0/aapt",
+    "dump",
+    "badging",
+    "/workspace/scratch/79a9a91d65ea/deliverables-v05/options-ai-trader-v0.5.apk"
+  ],
+  "exit_code": 0,
+  "seconds": 0.01,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/v05-delivered-apk-manifest.log"
+}

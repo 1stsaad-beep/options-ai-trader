@@ -1,0 +1,14 @@
+{
+  "name": "v05-local-apk",
+  "command": [
+    "flutter",
+    "build",
+    "apk",
+    "--debug",
+    "--build-name=0.5.0",
+    "--build-number=5"
+  ],
+  "exit_code": 0,
+  "seconds": 191.27,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/v05-local-apk.log"
+}

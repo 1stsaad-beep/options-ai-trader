@@ -1,0 +1,488 @@
+﻿2026-10-10T13:45:04.4694279Z Current runner version: '2.337.0'
+2026-10-10T13:45:04.4720885Z ##[group]Runner Image Provisioner
+2026-10-10T13:45:04.4721807Z Hosted Compute Agent
+2026-10-10T13:45:04.4722330Z Version: 20261002.596
+2026-10-10T13:45:04.4722873Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-10T13:45:04.4723576Z Build Date: 2026-10-02T22:28:27Z
+2026-10-10T13:45:04.4724168Z Worker ID: {1e2b3142-31e5-449c-9066-72f855d375cf}
+2026-10-10T13:45:04.4724878Z Region: centralus
+2026-10-10T13:45:04.4725428Z Cloud: Azure
+2026-10-10T13:45:04.4725886Z ##[endgroup]
+2026-10-10T13:45:04.4727686Z ##[group]Operating System
+2026-10-10T13:45:04.4728248Z Ubuntu
+2026-10-10T13:45:04.4728760Z 24.04.5
+2026-10-10T13:45:04.4729261Z LTS
+2026-10-10T13:45:04.4729697Z ##[endgroup]
+2026-10-10T13:45:04.4730208Z ##[group]Runner Image
+2026-10-10T13:45:04.4731047Z Image: ubuntu-24.04
+2026-10-10T13:45:04.4731577Z Version: 20261004.327.1
+2026-10-10T13:45:04.4732793Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-10T13:45:04.4734211Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-10T13:45:04.4735171Z ##[endgroup]
+2026-10-10T13:45:04.4736254Z ##[group]GITHUB_TOKEN Permissions
+2026-10-10T13:45:04.4738380Z Contents: read
+2026-10-10T13:45:04.4738890Z Metadata: read
+2026-10-10T13:45:04.4739503Z ##[endgroup]
+2026-10-10T13:45:04.4741964Z Secret source: Actions
+2026-10-10T13:45:04.4742799Z Cache mode: write
+2026-10-10T13:45:04.4743623Z Prepare workflow directory
+2026-10-10T13:45:04.7076233Z Prepare all required actions
+2026-10-10T13:45:04.7107611Z Getting action download info
+2026-10-10T13:45:04.9301247Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-10T13:45:05.9109315Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-10T13:45:06.4597179Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-10T13:45:07.2322254Z Complete job name: backend
+2026-10-10T13:45:07.2631001Z ##[group]Checking docker version
+2026-10-10T13:45:07.2638848Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+2026-10-10T13:45:07.3540091Z '1.48'
+2026-10-10T13:45:07.3554597Z Docker daemon API version: '1.48'
+2026-10-10T13:45:07.3554963Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+2026-10-10T13:45:07.3692470Z '1.48'
+2026-10-10T13:45:07.3695164Z Docker client API version: '1.48'
+2026-10-10T13:45:07.3700042Z ##[endgroup]
+2026-10-10T13:45:07.3702376Z ##[group]Clean up resources from previous jobs
+2026-10-10T13:45:07.3706083Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=dd4bc7"
+2026-10-10T13:45:07.3825623Z ##[command]/usr/bin/docker network prune --force --filter "label=dd4bc7"
+2026-10-10T13:45:07.3934122Z ##[endgroup]
+2026-10-10T13:45:07.3934336Z ##[group]Create local container network
+2026-10-10T13:45:07.3941537Z ##[command]/usr/bin/docker network create --label dd4bc7 github_network_c0b9b0e66b8048ffbb79d403d387aa5d
+2026-10-10T13:45:07.5215370Z 87e25de3f584e218f7913e4fe574a15dacbc400dae0192e4c805af7f5829a576
+2026-10-10T13:45:07.5232174Z ##[endgroup]
+2026-10-10T13:45:07.5252135Z ##[group]Starting postgres service container
+2026-10-10T13:45:07.5269861Z ##[command]/usr/bin/docker pull postgres:16-alpine
+2026-10-10T13:45:08.1316177Z 16-alpine: Pulling from library/postgres
+2026-10-10T13:45:08.2542607Z e2de96513ba9: Already exists
+2026-10-10T13:45:08.2572921Z 1b7f9cd581ee: Pulling fs layer
+2026-10-10T13:45:08.2573213Z 210b280f9556: Pulling fs layer
+2026-10-10T13:45:08.2573413Z 81717818649a: Pulling fs layer
+2026-10-10T13:45:08.2573611Z 3ae6141cfd99: Pulling fs layer
+2026-10-10T13:45:08.2573811Z 25b77f59fd95: Pulling fs layer
+2026-10-10T13:45:08.2574015Z 6c25da34e03f: Pulling fs layer
+2026-10-10T13:45:08.2574233Z a88782f92806: Pulling fs layer
+2026-10-10T13:45:08.2574466Z d8d21be4bf02: Pulling fs layer
+2026-10-10T13:45:08.2574665Z 6117bd39f23f: Pulling fs layer
+2026-10-10T13:45:08.2575166Z 509688edf37b: Pulling fs layer
+2026-10-10T13:45:08.2581755Z 6c25da34e03f: Waiting
+2026-10-10T13:45:08.2581933Z a88782f92806: Waiting
+2026-10-10T13:45:08.2582070Z d8d21be4bf02: Waiting
+2026-10-10T13:45:08.2582201Z 6117bd39f23f: Waiting
+2026-10-10T13:45:08.2582316Z 509688edf37b: Waiting
+2026-10-10T13:45:08.2582428Z 3ae6141cfd99: Waiting
+2026-10-10T13:45:08.2582544Z 25b77f59fd95: Waiting
+2026-10-10T13:45:08.4357302Z 81717818649a: Verifying Checksum
+2026-10-10T13:45:08.4357917Z 81717818649a: Download complete
+2026-10-10T13:45:08.4455361Z 1b7f9cd581ee: Verifying Checksum
+2026-10-10T13:45:08.4456063Z 1b7f9cd581ee: Download complete
+2026-10-10T13:45:08.5176884Z 210b280f9556: Verifying Checksum
+2026-10-10T13:45:08.5179012Z 210b280f9556: Download complete
+2026-10-10T13:45:08.5804022Z 3ae6141cfd99: Verifying Checksum
+2026-10-10T13:45:08.5807517Z 3ae6141cfd99: Download complete
+2026-10-10T13:45:08.6594992Z 6c25da34e03f: Download complete
+2026-10-10T13:45:08.7352584Z a88782f92806: Verifying Checksum
+2026-10-10T13:45:08.7358837Z a88782f92806: Download complete
+2026-10-10T13:45:08.8126940Z d8d21be4bf02: Verifying Checksum
+2026-10-10T13:45:08.8132684Z d8d21be4bf02: Download complete
+2026-10-10T13:45:08.8943150Z 6117bd39f23f: Verifying Checksum
+2026-10-10T13:45:08.8944460Z 6117bd39f23f: Download complete
+2026-10-10T13:45:08.9514211Z 509688edf37b: Verifying Checksum
+2026-10-10T13:45:08.9516298Z 509688edf37b: Download complete
+2026-10-10T13:45:09.1806914Z 25b77f59fd95: Verifying Checksum
+2026-10-10T13:45:09.1807445Z 25b77f59fd95: Download complete
+2026-10-10T13:45:15.9954598Z 1b7f9cd581ee: Pull complete
+2026-10-10T13:45:16.0951715Z 210b280f9556: Pull complete
+2026-10-10T13:45:16.1139381Z 81717818649a: Pull complete
+2026-10-10T13:45:16.1289232Z 3ae6141cfd99: Pull complete
+2026-10-10T13:45:21.0185528Z 25b77f59fd95: Pull complete
+2026-10-10T13:45:21.0394483Z 6c25da34e03f: Pull complete
+2026-10-10T13:45:21.0607453Z a88782f92806: Pull complete
+2026-10-10T13:45:21.0784559Z d8d21be4bf02: Pull complete
+2026-10-10T13:45:21.0894077Z 6117bd39f23f: Pull complete
+2026-10-10T13:45:21.0996704Z 509688edf37b: Pull complete
+2026-10-10T13:45:21.1032485Z Digest: sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
+2026-10-10T13:45:21.1058436Z Status: Downloaded newer image for postgres:16-alpine
+2026-10-10T13:45:21.1065830Z docker.io/library/postgres:16-alpine
+2026-10-10T13:45:21.1122335Z ##[command]/usr/bin/docker create --name 0cda6b0ca1b14f5fb10fa54a2a55dcbf_postgres16alpine_1aee4f --label dd4bc7 --network github_network_c0b9b0e66b8048ffbb79d403d387aa5d --network-alias postgres -p 5432:5432 --health-cmd "pg_isready -U trader -d options_test" --health-interval 5s --health-timeout 3s --health-retries 20 -e "POSTGRES_USER=trader" -e "POSTGRES_PASSWORD=ci_ephemeral_demo" -e "POSTGRES_DB=options_test" -e GITHUB_ACTIONS=true -e CI=true postgres:16-alpine
+2026-10-10T13:45:21.1429405Z 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707
+2026-10-10T13:45:21.1442995Z ##[command]/usr/bin/docker start 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707
+2026-10-10T13:45:21.3725135Z 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707
+2026-10-10T13:45:21.3743716Z ##[command]/usr/bin/docker ps --all --filter id=1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707 --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+2026-10-10T13:45:21.3847954Z 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707 Up Less than a second (health: starting)
+2026-10-10T13:45:21.3865092Z ##[command]/usr/bin/docker port 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707
+2026-10-10T13:45:21.3962429Z 5432/tcp -> 0.0.0.0:5432
+2026-10-10T13:45:21.3972470Z 5432/tcp -> [::]:5432
+2026-10-10T13:45:21.3998752Z ##[endgroup]
+2026-10-10T13:45:21.4005742Z ##[group]Waiting for all services to be ready
+2026-10-10T13:45:21.4016082Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707
+2026-10-10T13:45:21.4125436Z starting
+2026-10-10T13:45:21.4143427Z postgres service is starting, waiting 2 seconds before checking again.
+2026-10-10T13:45:23.4137888Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707
+2026-10-10T13:45:23.4252007Z starting
+2026-10-10T13:45:23.4265800Z postgres service is starting, waiting 3 seconds before checking again.
+2026-10-10T13:45:27.2300832Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707
+2026-10-10T13:45:27.2431485Z healthy
+2026-10-10T13:45:27.2457055Z postgres service is healthy.
+2026-10-10T13:45:27.2457611Z ##[endgroup]
+2026-10-10T13:45:27.2711298Z ##[group]Run actions/checkout@v4
+2026-10-10T13:45:27.2711592Z with:
+2026-10-10T13:45:27.2711740Z   repository: 1stsaad-beep/options-ai-trader
+2026-10-10T13:45:27.2713540Z   token: ***
+2026-10-10T13:45:27.2713654Z   ssh-strict: true
+2026-10-10T13:45:27.2713768Z   ssh-user: git
+2026-10-10T13:45:27.2713888Z   persist-credentials: true
+2026-10-10T13:45:27.2714019Z   clean: true
+2026-10-10T13:45:27.2714146Z   sparse-checkout-cone-mode: true
+2026-10-10T13:45:27.2714290Z   fetch-depth: 1
+2026-10-10T13:45:27.2714404Z   fetch-tags: false
+2026-10-10T13:45:27.2714519Z   show-progress: true
+2026-10-10T13:45:27.2714639Z   lfs: false
+2026-10-10T13:45:27.2714747Z   submodules: false
+2026-10-10T13:45:27.2714867Z   set-safe-directory: true
+2026-10-10T13:45:27.2715009Z   allow-unsafe-pr-checkout: false
+2026-10-10T13:45:27.2715227Z env:
+2026-10-10T13:45:27.2715332Z   CI: true
+2026-10-10T13:45:27.2715438Z   BOT: true
+2026-10-10T13:45:27.2715557Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T13:45:27.2715751Z ##[endgroup]
+2026-10-10T13:45:27.3543285Z Syncing repository: 1stsaad-beep/options-ai-trader
+2026-10-10T13:45:27.3544612Z ##[group]Getting Git version info
+2026-10-10T13:45:27.3545044Z Working directory is '/home/runner/work/options-ai-trader/options-ai-trader'
+2026-10-10T13:45:27.3546032Z [command]/usr/bin/git version
+2026-10-10T13:45:27.3598025Z git version 2.55.0
+2026-10-10T13:45:27.3629543Z ##[endgroup]
+2026-10-10T13:45:27.3638005Z Temporarily overriding HOME='/home/runner/work/_temp/68b2d6e1-0880-43c9-a921-7ddb2ad95806' before making global git config changes
+2026-10-10T13:45:27.3638877Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T13:45:27.3645675Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/options-ai-trader/options-ai-trader
+2026-10-10T13:45:27.3727966Z Deleting the contents of '/home/runner/work/options-ai-trader/options-ai-trader'
+2026-10-10T13:45:27.3749634Z ##[group]Initializing the repository
+2026-10-10T13:45:27.3750127Z [command]/usr/bin/git init /home/runner/work/options-ai-trader/options-ai-trader
+2026-10-10T13:45:27.3859861Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-10T13:45:27.3863837Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-10T13:45:27.3880089Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-10T13:45:27.3885399Z hint: call:
+2026-10-10T13:45:27.3885731Z hint:
+2026-10-10T13:45:27.3886127Z hint: 	git config --global init.defaultBranch <name>
+2026-10-10T13:45:27.3886572Z hint:
+2026-10-10T13:45:27.3886959Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-10T13:45:27.3887522Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-10T13:45:27.3887956Z hint:
+2026-10-10T13:45:27.3888259Z hint: 	git branch -m <name>
+2026-10-10T13:45:27.3890940Z hint:
+2026-10-10T13:45:27.3891429Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-10T13:45:27.3892120Z Initialized empty Git repository in /home/runner/work/options-ai-trader/options-ai-trader/.git/
+2026-10-10T13:45:27.3893972Z [command]/usr/bin/git remote add origin https://github.com/1stsaad-beep/options-ai-trader
+2026-10-10T13:45:27.4201592Z ##[endgroup]
+2026-10-10T13:45:27.4202229Z ##[group]Disabling automatic garbage collection
+2026-10-10T13:45:27.4202740Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-10T13:45:27.4236379Z ##[endgroup]
+2026-10-10T13:45:27.4236720Z ##[group]Setting up auth
+2026-10-10T13:45:27.4237106Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T13:45:27.4271199Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T13:45:27.4609060Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T13:45:27.4645709Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T13:45:27.4849054Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T13:45:27.4882773Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-10T13:45:27.5099398Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-10T13:45:27.5139180Z ##[endgroup]
+2026-10-10T13:45:27.5139861Z ##[group]Fetching the repository
+2026-10-10T13:45:27.5146919Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e5b6076ee484b3fded6ec8f0221db7c9cf92798d:refs/remotes/origin/main
+2026-10-10T13:45:28.0861405Z From https://github.com/1stsaad-beep/options-ai-trader
+2026-10-10T13:45:28.0861763Z  * [new ref]         e5b6076ee484b3fded6ec8f0221db7c9cf92798d -> origin/main
+2026-10-10T13:45:28.0862817Z ##[endgroup]
+2026-10-10T13:45:28.0863053Z ##[group]Determining the checkout info
+2026-10-10T13:45:28.0863282Z ##[endgroup]
+2026-10-10T13:45:28.0865263Z [command]/usr/bin/git sparse-checkout disable
+2026-10-10T13:45:28.0917800Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-10T13:45:28.0950058Z ##[group]Checking out the ref
+2026-10-10T13:45:28.0954920Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-10-10T13:45:28.1137334Z Switched to a new branch 'main'
+2026-10-10T13:45:28.1144157Z branch 'main' set up to track 'origin/main'.
+2026-10-10T13:45:28.1147173Z ##[endgroup]
+2026-10-10T13:45:28.1189236Z [command]/usr/bin/git log -1 --format=%H
+2026-10-10T13:45:28.1219543Z e5b6076ee484b3fded6ec8f0221db7c9cf92798d
+2026-10-10T13:45:28.1430043Z ##[group]Run actions/setup-python@v5
+2026-10-10T13:45:28.1430211Z with:
+2026-10-10T13:45:28.1430332Z   python-version: 3.12
+2026-10-10T13:45:28.1430592Z   check-latest: false
+2026-10-10T13:45:28.1432143Z   token: ***
+2026-10-10T13:45:28.1432318Z   update-environment: true
+2026-10-10T13:45:28.1432461Z   allow-prereleases: false
+2026-10-10T13:45:28.1432598Z   freethreaded: false
+2026-10-10T13:45:28.1432719Z env:
+2026-10-10T13:45:28.1432824Z   CI: true
+2026-10-10T13:45:28.1432936Z   BOT: true
+2026-10-10T13:45:28.1433059Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T13:45:28.1433207Z ##[endgroup]
+2026-10-10T13:45:28.2380956Z ##[group]Installed versions
+2026-10-10T13:45:28.2443844Z (node:2332) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T13:45:28.2444596Z Successfully set up CPython (3.12.15)
+2026-10-10T13:45:28.2445098Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T13:45:28.2445859Z ##[endgroup]
+2026-10-10T13:45:28.2587035Z ##[group]Run pip install -r backend/requirements.lock && pip install --no-deps -e './backend[test]'
+2026-10-10T13:45:28.2587759Z [36;1mpip install -r backend/requirements.lock && pip install --no-deps -e './backend[test]'[0m
+2026-10-10T13:45:28.2908612Z shell: /usr/bin/bash -e {0}
+2026-10-10T13:45:28.2908878Z env:
+2026-10-10T13:45:28.2909061Z   CI: true
+2026-10-10T13:45:28.2909220Z   BOT: true
+2026-10-10T13:45:28.2909346Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T13:45:28.2909555Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:28.2909903Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T13:45:28.2910167Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:28.2910390Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:28.2910705Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:28.2911004Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T13:45:28.2911199Z ##[endgroup]
+2026-10-10T13:45:31.1011889Z Collecting annotated-doc==0.0.5 (from -r backend/requirements.lock (line 2))
+2026-10-10T13:45:31.1670359Z   Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+2026-10-10T13:45:31.1877206Z Collecting annotated-types==0.8.0 (from -r backend/requirements.lock (line 3))
+2026-10-10T13:45:31.1981190Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-10-10T13:45:31.2300598Z Collecting anyio==4.15.1 (from -r backend/requirements.lock (line 4))
+2026-10-10T13:45:31.2404549Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+2026-10-10T13:45:31.2665006Z Collecting certifi==2026.7.22 (from -r backend/requirements.lock (line 5))
+2026-10-10T13:45:31.2768792Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+2026-10-10T13:45:31.3018873Z Collecting click==8.5.0 (from -r backend/requirements.lock (line 6))
+2026-10-10T13:45:31.3120364Z   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+2026-10-10T13:45:31.3627220Z Collecting fastapi==0.143.0 (from -r backend/requirements.lock (line 7))
+2026-10-10T13:45:31.3731995Z   Downloading fastapi-0.143.0-py3-none-any.whl.metadata (26 kB)
+2026-10-10T13:45:31.4002973Z Collecting h11==0.16.0 (from -r backend/requirements.lock (line 8))
+2026-10-10T13:45:31.4106578Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-10-10T13:45:31.4369667Z Collecting httpcore==1.0.9 (from -r backend/requirements.lock (line 9))
+2026-10-10T13:45:31.4477105Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-10-10T13:45:31.4883165Z Collecting httpx==0.28.1 (from -r backend/requirements.lock (line 10))
+2026-10-10T13:45:31.4986189Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-10-10T13:45:31.5201293Z Collecting idna==3.20 (from -r backend/requirements.lock (line 11))
+2026-10-10T13:45:31.5302703Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-10-10T13:45:31.5502838Z Collecting iniconfig==2.3.1 (from -r backend/requirements.lock (line 12))
+2026-10-10T13:45:31.5604963Z   Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+2026-10-10T13:45:31.5842327Z Collecting opentelemetry-api==1.45.1 (from -r backend/requirements.lock (line 13))
+2026-10-10T13:45:31.5944641Z   Downloading opentelemetry_api-1.45.1-py3-none-any.whl.metadata (1.4 kB)
+2026-10-10T13:45:31.6165020Z Collecting packaging==26.3 (from -r backend/requirements.lock (line 14))
+2026-10-10T13:45:31.6334691Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-10-10T13:45:31.6540091Z Collecting pluggy==1.6.0 (from -r backend/requirements.lock (line 15))
+2026-10-10T13:45:31.6642217Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+2026-10-10T13:45:31.6867454Z Collecting psycopg==3.3.6 (from -r backend/requirements.lock (line 16))
+2026-10-10T13:45:31.6970055Z   Downloading psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+2026-10-10T13:45:31.8202246Z Collecting psycopg-binary==3.3.6 (from -r backend/requirements.lock (line 17))
+2026-10-10T13:45:31.8308117Z   Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+2026-10-10T13:45:31.9071516Z Collecting pydantic==2.14.0 (from -r backend/requirements.lock (line 18))
+2026-10-10T13:45:31.9177633Z   Downloading pydantic-2.14.0-py3-none-any.whl.metadata (131 kB)
+2026-10-10T13:45:32.3776353Z Collecting pydantic-core==2.50.0 (from -r backend/requirements.lock (line 19))
+2026-10-10T13:45:32.3884689Z   Downloading pydantic_core-2.50.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.5 kB)
+2026-10-10T13:45:32.4125367Z Collecting pygments==2.21.0 (from -r backend/requirements.lock (line 20))
+2026-10-10T13:45:32.4229551Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-10T13:45:32.4509313Z Collecting pytest==9.1.1 (from -r backend/requirements.lock (line 21))
+2026-10-10T13:45:32.4613518Z   Downloading pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+2026-10-10T13:45:32.4879941Z Collecting starlette==1.7.0 (from -r backend/requirements.lock (line 22))
+2026-10-10T13:45:32.4984081Z   Downloading starlette-1.7.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-10T13:45:32.5222243Z Collecting typing-extensions==4.16.0 (from -r backend/requirements.lock (line 23))
+2026-10-10T13:45:32.5330806Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-10T13:45:32.5528005Z Collecting typing-inspection==0.4.4 (from -r backend/requirements.lock (line 24))
+2026-10-10T13:45:32.5635815Z   Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+2026-10-10T13:45:32.5891715Z Collecting uvicorn==0.54.0 (from -r backend/requirements.lock (line 25))
+2026-10-10T13:45:32.5991193Z   Downloading uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-10T13:45:32.6303598Z Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+2026-10-10T13:45:32.6421986Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-10-10T13:45:32.6540340Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+2026-10-10T13:45:32.6682193Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+2026-10-10T13:45:32.6812895Z Downloading click-8.5.0-py3-none-any.whl (125 kB)
+2026-10-10T13:45:32.6935773Z Downloading fastapi-0.143.0-py3-none-any.whl (144 kB)
+2026-10-10T13:45:32.7073209Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-10-10T13:45:32.7189487Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-10-10T13:45:32.7307403Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-10-10T13:45:32.7424847Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+2026-10-10T13:45:32.7542449Z Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+2026-10-10T13:45:32.7656647Z Downloading opentelemetry_api-1.45.1-py3-none-any.whl (60 kB)
+2026-10-10T13:45:32.7774412Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+2026-10-10T13:45:32.7899745Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+2026-10-10T13:45:32.8014831Z Downloading psycopg-3.3.6-py3-none-any.whl (215 kB)
+2026-10-10T13:45:32.8153492Z Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+2026-10-10T13:45:32.9172005Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 50.5 MB/s  0:00:00
+2026-10-10T13:45:32.9281335Z Downloading pydantic-2.14.0-py3-none-any.whl (487 kB)
+2026-10-10T13:45:32.9414183Z Downloading pydantic_core-2.50.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+2026-10-10T13:45:32.9665252Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 81.4 MB/s  0:00:00
+2026-10-10T13:45:32.9777243Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-10-10T13:45:32.9869543Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 148.5 MB/s  0:00:00
+2026-10-10T13:45:32.9971253Z Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+2026-10-10T13:45:33.0097037Z Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+2026-10-10T13:45:33.0214960Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-10-10T13:45:33.0329630Z Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+2026-10-10T13:45:33.0444855Z Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+2026-10-10T13:45:33.2348680Z Installing collected packages: typing-extensions, pygments, psycopg-binary, pluggy, packaging, iniconfig, idna, h11, click, certifi, annotated-types, annotated-doc, uvicorn, typing-inspection, pytest, pydantic-core, psycopg, opentelemetry-api, httpcore, anyio, starlette, pydantic, httpx, fastapi
+2026-10-10T13:45:34.8551737Z 
+2026-10-10T13:45:34.8570977Z Successfully installed annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 certifi-2026.7.22 click-8.5.0 fastapi-0.143.0 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.20 iniconfig-2.3.1 opentelemetry-api-1.45.1 packaging-26.3 pluggy-1.6.0 psycopg-3.3.6 psycopg-binary-3.3.6 pydantic-2.14.0 pydantic-core-2.50.0 pygments-2.21.0 pytest-9.1.1 starlette-1.7.0 typing-extensions-4.16.0 typing-inspection-0.4.4 uvicorn-0.54.0
+2026-10-10T13:45:35.1611091Z Obtaining file:///home/runner/work/options-ai-trader/options-ai-trader/backend
+2026-10-10T13:45:35.1623433Z   Installing build dependencies: started
+2026-10-10T13:45:35.7677784Z   Installing build dependencies: finished with status 'done'
+2026-10-10T13:45:35.7683969Z   Checking if build backend supports build_editable: started
+2026-10-10T13:45:36.0291788Z   Checking if build backend supports build_editable: finished with status 'done'
+2026-10-10T13:45:36.0301136Z   Getting requirements to build editable: started
+2026-10-10T13:45:36.2772057Z   Getting requirements to build editable: finished with status 'done'
+2026-10-10T13:45:36.2773162Z   Preparing editable metadata (pyproject.toml): started
+2026-10-10T13:45:36.4093314Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2026-10-10T13:45:36.4131521Z Building wheels for collected packages: options-ai-trader-backend
+2026-10-10T13:45:36.4139842Z   Building editable for options-ai-trader-backend (pyproject.toml): started
+2026-10-10T13:45:36.5905644Z   Building editable for options-ai-trader-backend (pyproject.toml): finished with status 'done'
+2026-10-10T13:45:36.5921922Z   Created wheel for options-ai-trader-backend: filename=options_ai_trader_backend-0.5.0-0.editable-py3-none-any.whl size=3025 sha256=64249b2358a0e9f4a128e8d48151e5c5bfae4ddeebc565801ba6f788c403979e
+2026-10-10T13:45:36.5923430Z   Stored in directory: /tmp/pip-ephem-wheel-cache-92566s7v/wheels/29/51/d0/9108e4fa75fbe075729996edadbea1e201e80ad98d3e707ce4
+2026-10-10T13:45:36.5932805Z Successfully built options-ai-trader-backend
+2026-10-10T13:45:36.6019456Z Installing collected packages: options-ai-trader-backend
+2026-10-10T13:45:36.6081487Z Successfully installed options-ai-trader-backend-0.5.0
+2026-10-10T13:45:36.6702892Z ##[group]Run python -m pytest -q --junitxml=../test-results.xml
+2026-10-10T13:45:36.6703197Z [36;1mpython -m pytest -q --junitxml=../test-results.xml[0m
+2026-10-10T13:45:36.6759565Z shell: /usr/bin/bash -e {0}
+2026-10-10T13:45:36.6759721Z env:
+2026-10-10T13:45:36.6759835Z   CI: true
+2026-10-10T13:45:36.6759945Z   BOT: true
+2026-10-10T13:45:36.6760070Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T13:45:36.6760270Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:36.6760707Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T13:45:36.6760968Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:36.6761192Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:36.6761417Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:36.6761642Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T13:45:36.6761839Z ##[endgroup]
+2026-10-10T13:45:38.6026616Z ........................................................................ [ 35%]
+2026-10-10T13:45:38.8709831Z ........................................................................ [ 70%]
+2026-10-10T13:45:39.3598322Z ...........................................................              [100%]
+2026-10-10T13:45:39.3623945Z =============================== warnings summary ===============================
+2026-10-10T13:45:39.3624818Z ../../../../../../opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/fastapi/testclient.py:1
+2026-10-10T13:45:39.3626459Z   /opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+2026-10-10T13:45:39.3627437Z     from starlette.testclient import TestClient as TestClient  # noqa
+2026-10-10T13:45:39.3627834Z 
+2026-10-10T13:45:39.3628183Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2026-10-10T13:45:39.3628673Z 203 passed, 1 warning in 1.77s
+2026-10-10T13:45:39.5070164Z ##[group]Run python scripts/postgres_check.py
+2026-10-10T13:45:39.5070408Z [36;1mpython scripts/postgres_check.py[0m
+2026-10-10T13:45:39.5126357Z shell: /usr/bin/bash -e {0}
+2026-10-10T13:45:39.5126514Z env:
+2026-10-10T13:45:39.5126629Z   CI: true
+2026-10-10T13:45:39.5126745Z   BOT: true
+2026-10-10T13:45:39.5126870Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T13:45:39.5127077Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:39.5127331Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T13:45:39.5127593Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:39.5127822Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:39.5128049Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:39.5128279Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T13:45:39.5128478Z   TEST_DATABASE_ALLOW_DISPOSABLE: 1
+2026-10-10T13:45:39.5129068Z   TEST_DATABASE_URL: ***localhost:5432/options_test
+2026-10-10T13:45:39.5129248Z ##[endgroup]
+2026-10-10T13:45:39.7978394Z PostgreSQL integration checks passed: migrations, native FK constraints, isolation, duplicate, partial, disconnect, stop, cancel, owned close, cross-account denial
+2026-10-10T13:45:39.8292311Z ##[group]Run actions/upload-artifact@v4
+2026-10-10T13:45:39.8292494Z with:
+2026-10-10T13:45:39.8292621Z   name: backend-test-results
+2026-10-10T13:45:39.8292770Z   path: test-results.xml
+2026-10-10T13:45:39.8292927Z   if-no-files-found: warn
+2026-10-10T13:45:39.8293067Z   compression-level: 6
+2026-10-10T13:45:39.8293198Z   overwrite: false
+2026-10-10T13:45:39.8293326Z   include-hidden-files: false
+2026-10-10T13:45:39.8293465Z env:
+2026-10-10T13:45:39.8293572Z   CI: true
+2026-10-10T13:45:39.8293680Z   BOT: true
+2026-10-10T13:45:39.8293801Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T13:45:39.8293989Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:39.8294239Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T13:45:39.8294489Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:39.8294711Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:39.8294965Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T13:45:39.8295189Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T13:45:39.8295378Z ##[endgroup]
+2026-10-10T13:45:39.9455680Z (node:2560) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T13:45:39.9456596Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T13:45:39.9511572Z With the provided path, there will be 1 file uploaded
+2026-10-10T13:45:39.9512771Z Artifact name is valid!
+2026-10-10T13:45:39.9513130Z Root directory input is valid!
+2026-10-10T13:45:40.2241161Z Beginning upload of artifact content to blob storage
+2026-10-10T13:45:40.2354598Z (node:2560) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-10T13:45:40.4001688Z Uploaded bytes 4382
+2026-10-10T13:45:40.4462516Z Finished uploading artifact content to blob storage!
+2026-10-10T13:45:40.4463419Z SHA256 digest of uploaded artifact zip is 9277047ed12751bbc570d21ce43c0efbaaf282e62faa426afe33ca6b04d07012
+2026-10-10T13:45:40.4464793Z Finalizing artifact upload
+2026-10-10T13:45:40.6631091Z Artifact backend-test-results.zip successfully finalized. Artifact ID 11671887636
+2026-10-10T13:45:40.6651222Z Artifact backend-test-results has been successfully uploaded! Final size is 4382 bytes. Artifact ID is 11671887636
+2026-10-10T13:45:40.6664835Z Artifact download URL: https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38056917820/artifacts/11671887636
+2026-10-10T13:45:40.6795918Z Post job cleanup.
+2026-10-10T13:45:40.7673764Z (node:2572) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T13:45:40.7674834Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T13:45:40.7880122Z Post job cleanup.
+2026-10-10T13:45:40.8571098Z [command]/usr/bin/git version
+2026-10-10T13:45:40.8631363Z git version 2.55.0
+2026-10-10T13:45:40.8664812Z Temporarily overriding HOME='/home/runner/work/_temp/cc0e6ed4-5eda-40a4-a0e8-745b3be7fbba' before making global git config changes
+2026-10-10T13:45:40.8665720Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T13:45:40.8666497Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/options-ai-trader/options-ai-trader
+2026-10-10T13:45:40.8711430Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T13:45:40.8775572Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T13:45:40.9241795Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T13:45:40.9333722Z http.https://github.com/.extraheader
+2026-10-10T13:45:40.9410765Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-10T13:45:40.9415449Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T13:45:40.9841599Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T13:45:40.9864721Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-10T13:45:41.0172857Z Print service container logs: 0cda6b0ca1b14f5fb10fa54a2a55dcbf_postgres16alpine_1aee4f
+2026-10-10T13:45:41.0175823Z ##[command]/usr/bin/docker logs --details 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707
+2026-10-10T13:45:41.0282202Z  The files belonging to this database system will be owned by user "postgres".
+2026-10-10T13:45:41.0284244Z  sh: locale: not found
+2026-10-10T13:45:41.0284521Z  This user must also own the server process.
+2026-10-10T13:45:41.0285196Z  2026-10-10 13:45:22.011 UTC [33] WARNING:  no usable system locales were found
+2026-10-10T13:45:41.0285939Z  initdb: warning: enabling "trust" authentication for local connections
+2026-10-10T13:45:41.0286273Z  
+2026-10-10T13:45:41.0286784Z  The database cluster will be initialized with locale "en_US.utf8".
+2026-10-10T13:45:41.0289210Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10T13:45:41.0289865Z  The default database encoding has accordingly been set to "UTF8".
+2026-10-10T13:45:41.0290733Z  2026-10-10 13:45:23.379 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10T13:45:41.0291683Z  The default text search configuration will be set to "english".
+2026-10-10T13:45:41.0292227Z  2026-10-10 13:45:23.379 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10T13:45:41.0292695Z  
+2026-10-10T13:45:41.0293075Z  2026-10-10 13:45:23.379 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10T13:45:41.0293881Z  Data page checksums are disabled.
+2026-10-10T13:45:41.0294389Z  2026-10-10 13:45:23.380 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10T13:45:41.0294898Z  
+2026-10-10T13:45:41.0295319Z  2026-10-10 13:45:23.385 UTC [55] LOG:  database system was shut down at 2026-10-10 13:45:23 UTC
+2026-10-10T13:45:41.0295927Z  fixing permissions on existing directory /var/lib/postgresql/data ... ok
+2026-10-10T13:45:41.0296500Z  2026-10-10 13:45:23.389 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10T13:45:41.0296978Z  creating subdirectories ... ok
+2026-10-10T13:45:41.0297740Z  selecting dynamic shared memory implementation ... posix
+2026-10-10T13:45:41.0298245Z  selecting default max_connections ... 100
+2026-10-10T13:45:41.0298839Z  selecting default shared_buffers ... 128MB
+2026-10-10T13:45:41.0299118Z  selecting default time zone ... UTC
+2026-10-10T13:45:41.0299368Z  creating configuration files ... ok
+2026-10-10T13:45:41.0299623Z  running bootstrap script ... ok
+2026-10-10T13:45:41.0299908Z  performing post-bootstrap initialization ... ok
+2026-10-10T13:45:41.0300195Z  syncing data to disk ... ok
+2026-10-10T13:45:41.0300409Z  
+2026-10-10T13:45:41.0300677Z  
+2026-10-10T13:45:41.0300893Z  Success. You can now start the database server using:
+2026-10-10T13:45:41.0301167Z  
+2026-10-10T13:45:41.0301389Z      pg_ctl -D /var/lib/postgresql/data -l logfile start
+2026-10-10T13:45:41.0301671Z  
+2026-10-10T13:45:41.0302179Z  waiting for server to start....2026-10-10 13:45:22.996 UTC [39] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10T13:45:41.0302890Z  2026-10-10 13:45:22.996 UTC [39] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10T13:45:41.0303456Z  2026-10-10 13:45:22.999 UTC [42] LOG:  database system was shut down at 2026-10-10 13:45:22 UTC
+2026-10-10T13:45:41.0303916Z  2026-10-10 13:45:23.002 UTC [39] LOG:  database system is ready to accept connections
+2026-10-10T13:45:41.0304261Z   done
+2026-10-10T13:45:41.0304436Z  server started
+2026-10-10T13:45:41.0304621Z  CREATE DATABASE
+2026-10-10T13:45:41.0304801Z  
+2026-10-10T13:45:41.0304960Z  
+2026-10-10T13:45:41.0305248Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+2026-10-10T13:45:41.0305604Z  
+2026-10-10T13:45:41.0306195Z  waiting for server to shut down...2026-10-10 13:45:23.162 UTC [39] LOG:  received fast shutdown request
+2026-10-10T13:45:41.0306672Z  .2026-10-10 13:45:23.162 UTC [39] LOG:  aborting any active transactions
+2026-10-10T13:45:41.0307192Z  2026-10-10 13:45:23.166 UTC [39] LOG:  background worker "logical replication launcher" (PID 45) exited with exit code 1
+2026-10-10T13:45:41.0307673Z  2026-10-10 13:45:23.166 UTC [40] LOG:  shutting down
+2026-10-10T13:45:41.0308031Z  2026-10-10 13:45:23.167 UTC [40] LOG:  checkpoint starting: shutdown immediate
+2026-10-10T13:45:41.0308671Z  2026-10-10 13:45:23.319 UTC [40] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.125 s, sync=0.021 s, total=0.153 s; sync files=301, longest=0.020 s, average=0.001 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D60, redo lsn=0/1925D60
+2026-10-10T13:45:41.0309285Z  2026-10-10 13:45:23.326 UTC [39] LOG:  database system is shut down
+2026-10-10T13:45:41.0309476Z   done
+2026-10-10T13:45:41.0309586Z  server stopped
+2026-10-10T13:45:41.0309702Z  
+2026-10-10T13:45:41.0309852Z  PostgreSQL init process complete; ready for start up.
+2026-10-10T13:45:41.0310029Z  
+2026-10-10T13:45:41.0313915Z Stop and remove container: 0cda6b0ca1b14f5fb10fa54a2a55dcbf_postgres16alpine_1aee4f
+2026-10-10T13:45:41.0317728Z ##[command]/usr/bin/docker rm --force 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707
+2026-10-10T13:45:41.9799927Z 1200059a3d9ec5d0f7f9b691ff0f3a3303b07430de4de3a580c0c77503260707
+2026-10-10T13:45:41.9828336Z Remove container network: github_network_c0b9b0e66b8048ffbb79d403d387aa5d
+2026-10-10T13:45:41.9831203Z ##[command]/usr/bin/docker network rm github_network_c0b9b0e66b8048ffbb79d403d387aa5d
+2026-10-10T13:45:42.0433281Z github_network_c0b9b0e66b8048ffbb79d403d387aa5d
+2026-10-10T13:45:42.0494284Z Cleaning up orphan processes
+2026-10-10T13:45:42.0699308Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+

@@ -1,0 +1,10 @@
+{
+  "name": "v05-analyze-final",
+  "command": [
+    "flutter",
+    "analyze"
+  ],
+  "exit_code": 0,
+  "seconds": 10.6,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/v05-analyze-final.log"
+}

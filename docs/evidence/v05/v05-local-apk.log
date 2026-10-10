@@ -1,0 +1,6 @@
+Running Gradle task 'assembleDebug'...                          
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djava.io.tmpdir=/workspace/scratch/79a9a91d65ea/.tooling/tmp -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=35275 -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=35275
+/workspace/scratch/79a9a91d65ea/.tooling/android/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip: error: '/workspace/scratch/79a9a91d65ea/project/options-ai-trader/mobile/build/app/intermediates/merged_native_libs/debug/mergeDebugNativeLibs/out/lib/armeabi-v7a/.libflutter.so.J70FP0': section header table goes past the end of the file: e_shoff = 0x14cb8988
+
+Running Gradle task 'assembleDebug'...                            189.6s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk

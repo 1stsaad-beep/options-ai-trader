@@ -1,0 +1,1 @@
+Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djava.io.tmpdir=/workspace/scratch/79a9a91d65ea/.tooling/tmp -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=35595 -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=35595

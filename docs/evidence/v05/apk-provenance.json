@@ -1,0 +1,18 @@
+{
+  "version": "0.5.0",
+  "version_code": 5,
+  "source_commit": "e5b6076ee484b3fded6ec8f0221db7c9cf92798d",
+  "source_tree": "117c60d494a971cd64d19c054fbce728cf9484e2",
+  "build_environment": "GitHub Actions Ubuntu Flutter 3.47.7; signed locally with retained development key",
+  "run_id": 38056917858,
+  "sha256": "fab691d949f4e82498e42ca51f91d26c648cd1af3132d109f2f60b6fa66ab5a3",
+  "bytes": 154850594,
+  "unsigned_sha256": "348dd87a0a6c9e9e3cface7e0464b238429473364b70abe4163a523b53065735",
+  "signer_sha256": "a04b4b0907e5e275818e0975ae8ee33cc93e5789552b2d8ec65e226ff0ed9025",
+  "signature_v2_verified": true,
+  "signature_v3_verified": true,
+  "zip_crc_verified": true,
+  "native_elf_section_bounds_verified": true,
+  "physical_device_tested": false,
+  "github_signing_secrets_configured": false
+}
