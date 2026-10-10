@@ -73,7 +73,7 @@ class ChartWaveAnalysis {
           start + length <= points.length; start++) {
         final p = points.sublist(start, start + length);
         if (List.generate(length - 1, (i) => p[i].high == p[i + 1].high)
-            .any((v) => v)) continue;
+            .any((v) => v)) { continue; }
         final sign = p.first.high ? -1 : 1;
         final v = p.map((q) => q.price * sign).toList();
         final first = v[1] - v[0];
@@ -117,7 +117,7 @@ class ChartWaveAnalysis {
       for (final inner in internal.where((s) => s.kind == 'third' && s.degree == 'internal')) {
         if (inner.bullish != outer.bullish ||
             inner.points.first.index < outer.points[2].index ||
-            inner.points.last.index > outer.points[3].index) continue;
+            inner.points.last.index > outer.points[3].index) { continue; }
         out.add(ChartWaveScenario._('third_of_third', 'internal', inner.points,
           ['(0)', '(1)', '(2)', '(3)?'], inner.invalidation, inner.activation,
           inner.targets, math.min(inner.evidence, outer.evidence),

@@ -230,7 +230,7 @@ class _DashboardState extends State<Dashboard> {
           final value = await api.request('GET',
             '${pathFor(selectedAccount)}/research/${Uri.encodeComponent(selectedSymbol)}');
           if (!mounted || requestId != generation || accountId != selectedAccount ||
-              researchSymbol != selectedSymbol) return;
+              researchSymbol != selectedSymbol) { return; }
           if (value is! Map || value['account_id'] != selectedAccount ||
               value['symbol'] != selectedSymbol || value['source'] != 'synthetic_fixture' ||
               value['mode'] != 'SHADOW' || value['execution_authority'] != false ||

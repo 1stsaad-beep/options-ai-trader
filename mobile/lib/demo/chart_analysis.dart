@@ -73,8 +73,10 @@ class DemoChartAnalysis {
       final neighbors = bars.sublist(i - radius, i + radius + 1);
       final high = neighbors.where((b) => b.tick != bars[i].tick).every((b) => b.high < bars[i].high);
       final low = neighbors.where((b) => b.tick != bars[i].tick).every((b) => b.low > bars[i].low);
-      if (high != low) result.add(ChartPivot(bars[i].tick, bars[i + radius].tick,
-        high ? bars[i].high : bars[i].low, high));
+      if (high != low) {
+        result.add(ChartPivot(bars[i].tick, bars[i + radius].tick,
+          high ? bars[i].high : bars[i].low, high));
+      }
     }
     return result;
   }
