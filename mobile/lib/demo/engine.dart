@@ -1035,7 +1035,7 @@ class DemoEngine {
     for (final p in rows(a, 'positions').where((p) => p['symbol'] == symbol && p['right'] != right)) {
       final closes = rows(a, 'orders').where((o) => contractKey(o) == contractKey(p) &&
         o['side'] == 'SELL_TO_CLOSE' && active.contains(o['status'])).toList();
-      (v['close_orders'] as List).addAll(closes.map((o) => o['id'] as String));
+      (v['close_orders'] as List).addAll(closes.map<String>((o) => o['id'] as String));
       final pending = closes.fold<int>(0, (n, o) => n + (o['quantity'] - o['filled']) as int);
       if (p['quantity'] > pending) {
         final o = submit(id, p, 'SELL_TO_CLOSE', p['quantity'] - pending,
