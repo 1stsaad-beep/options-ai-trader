@@ -52,5 +52,24 @@ except Rejected:
     pass
 else:
     raise AssertionError('Stopped account admitted')
+# Complete the owned-only lifecycle while emergency stop remains active.
+s.cancel(a, order['id'])
+close_request = request | {'request_key': 'pg-close-1', 'side': 'SELL_TO_CLOSE', 'quantity': 1}
+close = s.submit(a, close_request)
+try:
+    s.fill(b, close['id'], 'pg-cross-'+close['id'], 1, 100)
+except Rejected:
+    pass
+else:
+    raise AssertionError('Cross-account execution admitted')
+s.fill(a, close['id'], 'pg-close-fill-'+close['id'], 1, 100)
+assert all(p['quantity'] == 0 for p in s.rows(a, 'positions'))
+assert s.rows(b, 'orders') == []
+try:
+    s.submit(a, close_request | {'request_key': 'pg-naked'})
+except Rejected:
+    pass
+else:
+    raise AssertionError('Unowned close admitted')
 repo.close()
-print('PostgreSQL integration checks passed: migrations, native FK constraints, isolation, duplicate, partial, disconnect, stop')
+print('PostgreSQL integration checks passed: migrations, native FK constraints, isolation, duplicate, partial, disconnect, stop, cancel, owned close, cross-account denial')

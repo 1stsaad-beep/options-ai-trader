@@ -1,5 +1,8 @@
-name: iOS V0.4 unsigned review build
+name: iOS V0.5 unsigned review build
 on:
+  push:
+    branches: [main]
+    paths: ["mobile/**", ".github/workflows/ios.yaml"]
   workflow_dispatch:
     inputs:
       bundle_id:
@@ -17,7 +20,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 35
     env:
-      IOS_BUNDLE_ID: ${{ inputs.bundle_id }}
+      IOS_BUNDLE_ID: ${{ inputs.bundle_id || 'com.optionsaitrader.optionsAiTrader' }}
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -30,12 +33,12 @@ jobs:
         working-directory: mobile
       - run: flutter test --machine > flutter-tests.json
         working-directory: mobile
-      - run: flutter build ios --release --no-codesign --build-name=0.4.0 --build-number=4
+      - run: flutter build ios --release --no-codesign --build-name=0.5.0 --build-number=5
         working-directory: mobile
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: options-ai-trader-v0.4-ios-unsigned
+          name: options-ai-trader-v0.5-ios-unsigned
           path: |
             mobile/build/ios/iphoneos/Runner.app
             mobile/flutter-tests.json

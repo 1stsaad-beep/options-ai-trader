@@ -26,3 +26,11 @@ pytest-of-root/
 *.jks
 key.properties
 .kotlin/
+*.p12
+*.pfx
+*.mobileprovision
+*.pem
+*.key
+*.apk
+*.idsig
+flutter-tests.json

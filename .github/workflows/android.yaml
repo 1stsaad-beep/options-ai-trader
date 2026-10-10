@@ -1,5 +1,11 @@
-name: Android V0.4 mock build
-on: [push, pull_request, workflow_dispatch]
+name: Android V0.5 offline demo
+on:
+  push:
+    branches: [main]
+    paths: ["mobile/**", ".github/workflows/android.yaml"]
+  pull_request:
+    paths: ["mobile/**", ".github/workflows/android.yaml"]
+  workflow_dispatch:
 env:
   CI: "true"
   BOT: "true"
@@ -27,20 +33,36 @@ jobs:
         working-directory: mobile
       - run: flutter test --machine > flutter-tests.json
         working-directory: mobile
-      - run: flutter build apk --debug --build-name=0.4.0 --build-number=4 --dart-define=API_URL=http://10.0.2.2:8000
+      - name: Prepare private development signing or explicit unsigned artifact
+        run: python mobile/scripts/prepare_ci_signing.py
+        env:
+          OAT_KEYSTORE_BASE64: ${{ github.event_name != 'pull_request' && secrets.OAT_KEYSTORE_BASE64 || '' }}
+          OAT_KEYSTORE_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEYSTORE_PASSWORD || '' }}
+          OAT_KEY_ALIAS: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_ALIAS || '' }}
+          OAT_KEY_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_PASSWORD || '' }}
+      - run: flutter build apk --debug --build-name=0.5.0 --build-number=5
         working-directory: mobile
-      - name: Reviewable APK and checksum
+        env:
+          OAT_KEYSTORE_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEYSTORE_PASSWORD || '' }}
+          OAT_KEY_ALIAS: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_ALIAS || '' }}
+          OAT_KEY_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_PASSWORD || '' }}
+      - name: APK provenance and checksum
         run: |
-          cp mobile/build/app/outputs/flutter-apk/app-debug.apk options-ai-trader-v0.4.apk
-          sha256sum options-ai-trader-v0.4.apk > options-ai-trader-v0.4.apk.sha256
+          cp mobile/build/app/outputs/flutter-apk/app-debug.apk "options-ai-trader-v0.5-${OAT_SIGNING_MODE}.apk"
+          sha256sum options-ai-trader-v0.5-*.apk > apk.sha256
+          printf '%s\n' "commit=${GITHUB_SHA}" "signing=${OAT_SIGNING_MODE}" > build-provenance.txt
           flutter --version > flutter-build-version.txt
+      - name: Remove runner signing material
+        if: always()
+        run: rm -f "${RUNNER_TEMP}/options-development.jks"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: options-ai-trader-v0.4-android-results
+          name: options-ai-trader-v0.5-android-results
           path: |
-            options-ai-trader-v0.4.apk
-            options-ai-trader-v0.4.apk.sha256
+            options-ai-trader-v0.5-*.apk
+            apk.sha256
+            build-provenance.txt
             flutter-build-version.txt
             mobile/flutter-tests.json
           retention-days: 14

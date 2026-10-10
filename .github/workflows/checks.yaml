@@ -1,5 +1,10 @@
 name: Mock safety checks
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    paths: ["backend/**", "scripts/**", "mobile/scripts/prepare_ci_signing.py", ".github/workflows/checks.yaml"]
+  pull_request:
+    paths: ["backend/**", "scripts/**", "mobile/scripts/prepare_ci_signing.py", ".github/workflows/checks.yaml"]
+  workflow_dispatch:
 env:
   CI: "true"
   BOT: "true"

@@ -29,13 +29,30 @@ android {
         versionName = flutter.versionName
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+    // Private development keys come only from the environment / CI Secrets.
+    // Missing signing secrets produce an explicitly unsigned CI artifact.
+    val privateKeyPath = System.getenv("OAT_KEYSTORE_PATH")
+    val unsignedBuild = System.getenv("OAT_UNSIGNED_BUILD") == "true"
+    if (!privateKeyPath.isNullOrBlank()) {
+        signingConfigs.create("privateDevelopment") {
+            storeFile = file(privateKeyPath)
+            storePassword = System.getenv("OAT_KEYSTORE_PASSWORD") ?: error("Missing keystore password")
+            keyAlias = System.getenv("OAT_KEY_ALIAS") ?: error("Missing signing alias")
+            keyPassword = System.getenv("OAT_KEY_PASSWORD") ?: error("Missing key password")
         }
     }
+    buildTypes {
+        debug {
+            if (unsignedBuild) signingConfig = null
+            else if (!privateKeyPath.isNullOrBlank()) signingConfig = signingConfigs.getByName("privateDevelopment")
+            // Local flutter run retains the SDK development key outside Git.
+        }
+        release {
+            signingConfig = if (!unsignedBuild && !privateKeyPath.isNullOrBlank())
+                signingConfigs.getByName("privateDevelopment") else null
+        }
+    }
+
 }
 
 kotlin {
