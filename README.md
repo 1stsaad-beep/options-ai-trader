@@ -13,6 +13,8 @@ Live وIBKR وGeneric Analysis Adapter معطلة. لم يُربط أي حساب
 
 ملف Android Preview يستخدم معرف تطبيق منفصلًا ويحتفظ بالتطبيق السابق وبياناته. التوقيع الثابت يحتاج الأسرار الخاصة الموضحة في [دليل التوقيع](docs/DEVELOPMENT_SIGNING.md)؛ لا تضع مفاتيح أو كلمات مرور في Git أو المحادثة.
 
+تقارير هذا الإصدار: [الاختبارات](docs/options-ai-trader-v1.0-test-report.md)، [الأمان](docs/options-ai-trader-v1.0-security-report.md)، [الإنجاز والنواقص والساعات المتبقية](docs/options-ai-trader-v1.0-review.md)، [تثبيت Android والتشغيل](docs/options-ai-trader-v1.0-setup.md).
+
 ## تشغيل محلي سريع
 
 من جذر المشروع، باستخدام Python 3.11 أو أحدث:

@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "checks_passed": 10,
+  "checks_failed": 0,
+  "checks": [
+    "concurrent_opposite_direction_admission_serialized",
+    "concurrent_duplicate_has_one_receipt",
+    "owned_plus_pending_contract_cap",
+    "same_symbol_opposite_in_independent_account_allowed",
+    "emergency_preserves_owned_close",
+    "cross_account_fill_denied",
+    "owned_close_reaches_flat",
+    "decision_update_and_delete_guards",
+    "snapshot_rollback_and_cross_connection_visibility",
+    "additive_migrations"
+  ],
+  "database": "PostgreSQL",
+  "broker": "none"
+}
