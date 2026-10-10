@@ -51,3 +51,13 @@ All seven previous delivery files were hashed again and matched their saved deli
 ## Next work
 
 Complete the remaining demonstrable local analysis/chart/replay integrations, strengthen the explicitly required lifecycle regression coverage, and publish fresh evidence and delivery reports. Existing RC1 results remain historical evidence until the changed RC2 code is tested. Live and external analysis remain disabled; all new trading exercises use synthetic fixtures and MockBroker only.
+
+## Recovery continuation — 2026-10-11 (Asia/Kuwait)
+
+- Latest verified saved source: `develop/v1.0-rc2` at `3d35475cd92058f8470d6f81826aaa4a16f587b1`, tree `c5198281dae85b17865a6f805d265447d4f0551e`.
+- Created independent remote branch `recovery/v1.0-20261011` before changing source. RC2 contains all 17 commits reachable from the five original branch heads, including RC1; no rollback to V0.5.
+- Current workspace has no previous checkout or recoverable uncommitted project files. Personal Context is disabled. Previous local delivery files and unsaved ended-session work are not available here; the earlier sections describe the earlier session only.
+- GitHub connector read/write is available. Direct HTTPS Git authentication is unavailable; publishing uses Git Data API with the existing parent and non-forced ref updates.
+- 33 workflow records found. Latest RC2 Android, unsigned iOS, and security runs succeeded at the above SHA; backend/Compose run 38079698275 succeeded at its parent df2606c9f2d5e9a27464e1c10ba38d93390eecaf. Artifact/log content verification is in progress.
+- No uncommitted source was found to rescue. This commit records recovery findings; it does not claim V1.0 completion or newly run tests.
+- All existing branches, files and Git history retained. No broker access, financial orders, Live enablement, external analysis integration, paid service, hard reset, clean or force push.
