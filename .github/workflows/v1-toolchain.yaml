@@ -28,10 +28,39 @@ jobs:
           flutter --version > toolchain/version.txt
           tar -czf flutter-test-toolchain.tar.gz -C toolchain .
           sha256sum flutter-test-toolchain.tar.gz > toolchain.sha256
+          split -b 400M -d flutter-test-toolchain.tar.gz toolchain-part-
       - uses: actions/upload-artifact@v4
         with:
-          name: options-v1-test-toolchain
+          name: options-v1-test-toolchain-0
           path: |
-            flutter-test-toolchain.tar.gz
+            toolchain-part-00
+            toolchain.sha256
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: options-v1-test-toolchain-1
+          path: |
+            toolchain-part-01
+            toolchain.sha256
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: options-v1-test-toolchain-2
+          path: |
+            toolchain-part-02
+            toolchain.sha256
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: options-v1-test-toolchain-3
+          path: |
+            toolchain-part-03
+            toolchain.sha256
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: options-v1-test-toolchain-4
+          path: |
+            toolchain-part-04
             toolchain.sha256
           retention-days: 3
