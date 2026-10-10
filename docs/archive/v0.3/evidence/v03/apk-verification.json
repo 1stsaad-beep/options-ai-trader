@@ -1,0 +1,34 @@
+{
+  "apk": "/workspace/scratch/79a9a91d65ea/deliverables/options-ai-trader-v0.3.apk",
+  "sha256": "bbf9fd9cd1b283e99bc5d39f3e40891b99d9f7ba6382f3a05750e92264c4ada3",
+  "size_bytes": 152344158,
+  "version_name": "0.3.0",
+  "version_code": 3,
+  "package": "com.optionsaitrader.options_ai_trader",
+  "min_sdk": 24,
+  "target_sdk": 36,
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86_64"
+  ],
+  "debug": true,
+  "verification": [
+    {
+      "name": "apk-manifest",
+      "exit_code": 0
+    },
+    {
+      "name": "apk-signature",
+      "exit_code": 0
+    }
+  ],
+  "device_install_tested": false,
+  "ios_build_tested": false,
+  "flutter_version": "3.47.7",
+  "dart_version": "3.13.5",
+  "gradle": "9.3.1",
+  "java": "17.0.20.1+1",
+  "apk_build_exit_code": 0,
+  "apk_build_seconds": 388.64
+}

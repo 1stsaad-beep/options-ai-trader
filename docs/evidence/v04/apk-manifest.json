@@ -1,0 +1,12 @@
+{
+  "name": "apk-manifest",
+  "command": [
+    ".tooling/android/build-tools/36.0.0/aapt2",
+    "dump",
+    "badging",
+    "deliverables-v04/options-ai-trader-v0.4.apk"
+  ],
+  "exit_code": 0,
+  "seconds": 0.01,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/apk-manifest.log"
+}

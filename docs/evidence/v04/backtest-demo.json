@@ -1,0 +1,23 @@
+{
+  "source": "synthetic_fixture",
+  "strategy": "injected_once_for_accounting_test",
+  "initial_cash": 10000,
+  "cash": 9973.400000000001,
+  "entry_price": 2.01,
+  "exit_price": 1.89,
+  "signal_time": "2026-01-01T14:50:00+00:00",
+  "entry_time": "2026-01-01T14:51:00+00:00",
+  "exit_time": "2026-01-01T14:52:00+00:00",
+  "spread_paid_per_option_share": 0.1,
+  "slippage_per_side": 0.01,
+  "commission_per_contract_per_side": 0.65,
+  "closed_trades": 1,
+  "realized_pnl": -26.59999999999998,
+  "total_commissions": 2.6,
+  "winning_closed_trades": 0,
+  "losing_closed_trades": 1,
+  "cash_excludes_open_position_value": true,
+  "open_cost_basis": 0,
+  "unfilled_final_signal": false,
+  "profitability_evidence": false
+}

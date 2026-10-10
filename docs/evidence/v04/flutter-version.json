@@ -1,0 +1,10 @@
+{
+  "name": "flutter-version",
+  "command": [
+    ".tooling/flutter/bin/flutter",
+    "--version"
+  ],
+  "exit_code": 0,
+  "seconds": 0.12,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/flutter-version.log"
+}

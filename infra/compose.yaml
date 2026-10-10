@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: trader
+      POSTGRES_DB: options_demo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Generate a local random demo database password}
+    volumes:
+      - options_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trader -d options_demo"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  api:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://trader:${POSTGRES_PASSWORD}@postgres:5432/options_demo
+      OPTIONS_API_TOKEN: ${OPTIONS_API_TOKEN:?Generate a local random API token}
+      TRADING_MODE: paper
+      BROKER_PROVIDER: mock
+      ENABLE_LIVE: "false"
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+  worker:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    command: ["python", "-m", "app.worker"]
+    environment:
+      DATABASE_URL: postgresql://trader:${POSTGRES_PASSWORD}@postgres:5432/options_demo
+      TRADING_MODE: paper
+      BROKER_PROVIDER: mock
+      ENABLE_LIVE: "false"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+volumes:
+  options_data:

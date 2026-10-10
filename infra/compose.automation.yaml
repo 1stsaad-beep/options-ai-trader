@@ -1,0 +1,4 @@
+# Explicit local Mock automation override. Each account still defaults disabled.
+services:
+  worker:
+    command: ["python", "-m", "app.worker", "--execute-mock", "--interval", "30"]

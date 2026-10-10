@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-10",
+  "python": {
+    "tests": 185,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 1.744,
+    "warnings": 1,
+    "warning": "Starlette TestClient httpx deprecation; pinned dependency compatibility retained"
+  },
+  "http_smoke_exit_code": 0,
+  "backtest_demo_exit_code": 0,
+  "lifecycle_demo_exit_code": 0,
+  "pip_check_exit_code": 0
+}

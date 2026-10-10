@@ -1,0 +1,12 @@
+{
+  "name": "flutter-pub-final",
+  "command": [
+    "/workspace/scratch/79a9a91d65ea/.tooling/flutter/bin/flutter",
+    "pub",
+    "get",
+    "--offline"
+  ],
+  "exit_code": 0,
+  "seconds": 0.37,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/flutter-pub-final.log"
+}

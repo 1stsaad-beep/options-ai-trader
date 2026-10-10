@@ -1,0 +1,17 @@
+{
+  "http_server": "passed",
+  "authentication": "passed",
+  "account_isolation": "passed",
+  "idempotency": "passed",
+  "partial_fill_duplicate": "passed",
+  "disconnect_reconcile": "passed",
+  "independent_shadow_worker": "passed",
+  "emergency_stop": "passed",
+  "worker_preserves_untrusted_state": "passed",
+  "market_data_outage": "passed",
+  "safe_emergency_owned_close": "passed",
+  "version": "0.3.0",
+  "live_orders_sent": 0,
+  "data_source": "synthetic",
+  "database": "SQLite"
+}

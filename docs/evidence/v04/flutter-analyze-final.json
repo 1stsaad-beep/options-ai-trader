@@ -1,0 +1,11 @@
+{
+  "name": "flutter-analyze-final",
+  "command": [
+    "/workspace/scratch/79a9a91d65ea/.tooling/flutter/bin/flutter",
+    "analyze",
+    "--no-pub"
+  ],
+  "exit_code": 0,
+  "seconds": 10.1,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/flutter-analyze-final.log"
+}

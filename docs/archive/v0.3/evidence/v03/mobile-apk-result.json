@@ -1,0 +1,15 @@
+{
+  "name": "apk",
+  "command": [
+    "flutter",
+    "build",
+    "apk",
+    "--debug",
+    "--build-name=0.3.0",
+    "--build-number=3",
+    "--dart-define=API_URL=http://10.0.2.2:8000",
+    "--verbose"
+  ],
+  "exit_code": 0,
+  "seconds": 388.64
+}

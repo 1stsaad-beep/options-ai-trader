@@ -1,0 +1,9 @@
+{
+  "name": "analyze",
+  "command": [
+    "flutter",
+    "analyze"
+  ],
+  "exit_code": 0,
+  "seconds": 10.3
+}

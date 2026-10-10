@@ -1,0 +1,9 @@
+.git
+**/__pycache__
+**/.pytest_cache
+**/.dart_tool
+**/build
+**/.env
+**/*.db*
+mobile
+upload

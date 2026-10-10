@@ -1,0 +1,10 @@
+{
+  "name": "test",
+  "command": [
+    "flutter",
+    "test",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "seconds": 5.1
+}

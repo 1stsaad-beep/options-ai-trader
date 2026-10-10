@@ -1,0 +1,42 @@
+name: iOS V0.4 unsigned review build
+on:
+  workflow_dispatch:
+    inputs:
+      bundle_id:
+        description: Reverse DNS bundle identifier
+        default: com.optionsaitrader.optionsAiTrader
+        required: true
+env:
+  CI: "true"
+  BOT: "true"
+  FLUTTER_SUPPRESS_ANALYTICS: "true"
+permissions:
+  contents: read
+jobs:
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 35
+    env:
+      IOS_BUNDLE_ID: ${{ inputs.bundle_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+      - run: bash scripts/bootstrap.sh
+        working-directory: mobile
+      - run: flutter analyze
+        working-directory: mobile
+      - run: flutter test --machine > flutter-tests.json
+        working-directory: mobile
+      - run: flutter build ios --release --no-codesign --build-name=0.4.0 --build-number=4
+        working-directory: mobile
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: options-ai-trader-v0.4-ios-unsigned
+          path: |
+            mobile/build/ios/iphoneos/Runner.app
+            mobile/flutter-tests.json
+          retention-days: 14

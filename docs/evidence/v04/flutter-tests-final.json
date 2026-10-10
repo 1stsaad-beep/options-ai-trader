@@ -1,0 +1,12 @@
+{
+  "name": "flutter-tests-final",
+  "command": [
+    "/workspace/scratch/79a9a91d65ea/.tooling/flutter/bin/flutter",
+    "test",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "seconds": 14.38,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/flutter-tests-final.log"
+}

@@ -1,0 +1,39 @@
+name: Mock safety checks
+on: [push, pull_request, workflow_dispatch]
+env:
+  CI: "true"
+  BOT: "true"
+  FLUTTER_SUPPRESS_ANALYTICS: "true"
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: trader
+          POSTGRES_PASSWORD: ci_ephemeral_demo
+          POSTGRES_DB: options_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U trader -d options_test"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r backend/requirements.lock && pip install --no-deps -e './backend[test]'
+      - run: python -m pytest -q --junitxml=../test-results.xml
+        working-directory: backend
+      - run: python scripts/postgres_check.py
+        env:
+          TEST_DATABASE_ALLOW_DISPOSABLE: "1"
+          TEST_DATABASE_URL: postgresql://trader:ci_ephemeral_demo@localhost:5432/options_test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-test-results
+          path: test-results.xml

@@ -1,0 +1,17 @@
+{
+  "name": "apk-build-verbose",
+  "command": [
+    "/workspace/scratch/79a9a91d65ea/.tooling/flutter/bin/flutter",
+    "--verbose",
+    "build",
+    "apk",
+    "--debug",
+    "--no-pub",
+    "--build-name=0.4.0",
+    "--build-number=4",
+    "--dart-define=API_URL=http://10.0.2.2:8000"
+  ],
+  "exit_code": 0,
+  "seconds": 298.34,
+  "log": "/workspace/scratch/79a9a91d65ea/.tooling/logs/apk-build-verbose.log"
+}

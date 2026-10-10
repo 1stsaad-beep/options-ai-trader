@@ -1,0 +1,46 @@
+name: Android V0.4 mock build
+on: [push, pull_request, workflow_dispatch]
+env:
+  CI: "true"
+  BOT: "true"
+  FLUTTER_SUPPRESS_ANALYTICS: "true"
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          cache: true
+      - run: bash scripts/bootstrap.sh
+        working-directory: mobile
+      - run: flutter analyze
+        working-directory: mobile
+      - run: flutter test --machine > flutter-tests.json
+        working-directory: mobile
+      - run: flutter build apk --debug --build-name=0.4.0 --build-number=4 --dart-define=API_URL=http://10.0.2.2:8000
+        working-directory: mobile
+      - name: Reviewable APK and checksum
+        run: |
+          cp mobile/build/app/outputs/flutter-apk/app-debug.apk options-ai-trader-v0.4.apk
+          sha256sum options-ai-trader-v0.4.apk > options-ai-trader-v0.4.apk.sha256
+          flutter --version > flutter-build-version.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: options-ai-trader-v0.4-android-results
+          path: |
+            options-ai-trader-v0.4.apk
+            options-ai-trader-v0.4.apk.sha256
+            flutter-build-version.txt
+            mobile/flutter-tests.json
+          retention-days: 14
