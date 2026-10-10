@@ -127,6 +127,13 @@ void main() {
     e.configure(id,{'trade_pct':1});step();
     expect(added['filled'],0);expect(e.rows(a,'positions').single['quantity'],1);
   });
+  test('pending scale never fills after profit disappears or scaling is disabled',(){
+    buy();step();e.configure(id,{'scaling_enabled':true,'scaling_cooldown':1});
+    e.scenario='rally';step();final addition=e.scale(id,e.rows(a,'positions').single);
+    e.scenario='flat';step();expect(addition['filled'],0);
+    e.scenario='rally';e.configure(id,{'scaling_enabled':false});step();
+    expect(addition['filled'],0);expect(e.rows(a,'positions').single['quantity'],1);
+  });
   test('decision snapshot is fixed before later configuration and exit',(){
     final evidence=<String,dynamic>{'rule':'breakout','as_of':e.tick};
     final o=e.submit(id,e.contract('NVDA','CALL'),'BUY',1,'snapshot',reason:'quant-rule',evidence:evidence);

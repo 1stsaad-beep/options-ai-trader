@@ -644,6 +644,15 @@ class DemoEngine {
     final fee = qty * o['commission'] as int;
     if (o['side'] == 'BUY') {
       _directionLock(a, o, existing: o);
+      if (o['reason'] == 'تعزيز مركز رابح') {
+        final owned = rows(a, 'positions').where((p) => contractKey(p) == contractKey(o));
+        _require(r['scaling_enabled'] == true && owned.length == 1,
+          'التعزيز متوقف أو المركز لم يعد مملوكًا');
+        final p = owned.single;
+        _require(p['scale_count'] <= r['scaling_max'] &&
+          q['bid'] * p['quantity'] * 100 > p['cost'],
+          'شروط التعزيز الرابح لم تعد متحققة عند التنفيذ');
+      }
       _admitBuy(a, reserved(o), remaining, existing: o, contract: o);
       _require(a['watch'][o['symbol']] == true, 'الرمز متوقف؛ ألغِ الدخول');
       final cost = price * qty * 100 + fee as int;
@@ -941,7 +950,7 @@ class DemoEngine {
   bool _entryEligible(DemoRow a, DemoRow signal) {
     final r = risk(a);
     if (signal['strategy'] == null || signal['as_of'] != tick ||
-        signal['expires_tick'] < tick) return false;
+        signal['expires_tick'] < tick) { return false; }
     if (r['entry_profile'] == 'conservative' && signal['score'] < 80) return false;
     if (r['entry_method'] == 'pullback') return signal['strategy'] == 'pullback';
     if (r['entry_method'] == 'confirmed') {
@@ -1050,7 +1059,7 @@ class DemoEngine {
       }
       if (tick > v['expires_tick']) { v['state'] = 'EXPIRED'; continue; }
       if (rows(a, 'positions').any((p) => p['symbol'] == v['symbol']) ||
-          rows(a, 'orders').any((o) => o['symbol'] == v['symbol'] && active.contains(o['status']))) continue;
+          rows(a, 'orders').any((o) => o['symbol'] == v['symbol'] && active.contains(o['status']))) { continue; }
       if (!(v['close_orders'] as List).every((oid) => order(a['id'], oid)['status'] == 'FILLED')) {
         v['state'] = 'BLOCKED'; continue;
       }

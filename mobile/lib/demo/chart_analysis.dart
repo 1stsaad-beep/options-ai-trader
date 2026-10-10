@@ -83,7 +83,7 @@ class DemoChartAnalysis {
       final q = p.map((v) => v.price * sign).toList();
       final w1 = q[1]-q[0], w3 = q[3]-q[2], w5 = q[5]-q[4];
       if (q[2] <= q[0] || q[3] <= q[1] || q[4] <= q[1] || q[5] <= q[3] ||
-          w1 <= 0 || w3 <= 0 || w5 <= 0 || w3 < math.min(w1,w5)) continue;
+          w1 <= 0 || w3 <= 0 || w5 <= 0 || w3 < math.min(w1,w5)) { continue; }
       out.add(ChartPattern('مرشح 1–5 مؤكد القمم', p, p[4].price, p[5].price));
     }
     return out;
