@@ -1,0 +1,294 @@
+{
+  "files_scanned": 247,
+  "finding_count": 6,
+  "findings": [
+    {
+      "line": 1,
+      "path": "docs/evidence/v1/python-tests.xml",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a",
+      "rule": "private_key"
+    },
+    {
+      "line": 1,
+      "path": "docs/evidence/v1/python-tests.xml",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a",
+      "rule": "github_token"
+    },
+    {
+      "line": 1,
+      "path": "docs/evidence/v1/python-tests.xml",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a",
+      "rule": "aws_access_key"
+    },
+    {
+      "line": 1,
+      "path": "docs/evidence/v1/python-tests.xml",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a",
+      "rule": "openai_key"
+    },
+    {
+      "line": 1,
+      "path": "docs/evidence/v1/python-tests.xml",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a",
+      "rule": "slack_token"
+    },
+    {
+      "line": 1,
+      "path": "docs/evidence/v1/python-tests.xml",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a",
+      "rule": "credential_url"
+    }
+  ],
+  "format_version": 1,
+  "history_blobs_scanned": 387,
+  "history_commits": 35,
+  "limitations": [
+    "Pattern matching does not prove absence of secrets or vulnerabilities.",
+    "Untracked and ignored files, unreachable Git objects, submodules and archived/binary contents are not scanned.",
+    "No remote secret validation, dependency vulnerability lookup or paid service is used."
+  ],
+  "scope": "tracked_working_tree_and_all_reachable_history",
+  "skipped": [
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "working-tree"
+    },
+    {
+      "path": "repository/options-ai-trader-v0.4-original.bundle",
+      "reason": "opaque_archive",
+      "ref": "working-tree"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "mobile/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png",
+      "reason": "binary_or_non_utf8",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    },
+    {
+      "path": "repository/options-ai-trader-v0.4-original.bundle",
+      "reason": "opaque_archive",
+      "ref": "21d0c65a61ec2e32e985bf428396cd4da4d0067a"
+    }
+  ],
+  "status": "findings_require_review"
+}

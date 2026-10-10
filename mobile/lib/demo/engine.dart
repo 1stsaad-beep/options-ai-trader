@@ -61,6 +61,22 @@ class DemoEngine {
     'group': '',
     'group_allocation_pct': 30,
     'group_daily_pct': 3,
+    'exposure_pct': 30,
+    'elevated_risk_ack': false,
+    'risk_ack_values': null,
+    'entry_profile': 'balanced',
+    'entry_method': 'confirmed',
+    'trailing_pct': 0,
+    'partial_take_pct': 0,
+    'swing_max_ticks': 2880,
+    'expiry_guard_days': 1,
+    'scaling_enabled': false,
+    'reversal_enabled': false,
+    'scaling_max': 2,
+    'scaling_quantity': 1,
+    'scaling_cooldown': 10,
+    'scaling_decreasing': true,
+
   };
 
   DemoRow account(String id) => accounts.firstWhere(
@@ -96,6 +112,7 @@ class DemoEngine {
       'positions': <DemoRow>[],
       'trades': <DemoRow>[],
       'audit': <DemoRow>[],
+      'reversals': <DemoRow>[],
       'watch': <String, dynamic>{for (final s in symbols.take(3)) s: true},
     };
     accounts.add(a);
@@ -113,9 +130,17 @@ class DemoEngine {
 
   void validateRisk(DemoRow r) {
     const bounds = {
-      'trade_pct': [1, 2],
-      'daily_pct': [1, 3],
-      'allocation_pct': [1, 30],
+      'trade_pct': [0, 100],
+      'daily_pct': [0, 100],
+      'allocation_pct': [0, 100],
+      'exposure_pct': [0, 100],
+      'trailing_pct': [0, 95],
+      'partial_take_pct': [0, 500],
+      'swing_max_ticks': [1, 50000],
+      'expiry_guard_days': [0, 30],
+      'scaling_max': [0, 20],
+      'scaling_quantity': [1, 100],
+      'scaling_cooldown': [1, 10000],
       'max_contracts': [1, 100],
       'stop_pct': [1, 95],
       'take_pct': [1, 500],
@@ -123,8 +148,8 @@ class DemoEngine {
       'fill_chunk': [1, 100],
       'commission': [0, 1000],
       'slippage': [0, 100],
-      'group_allocation_pct': [1, 30],
-      'group_daily_pct': [1, 3],
+      'group_allocation_pct': [0, 100],
+      'group_daily_pct': [0, 100],
     };
     _require(
       r.keys.toSet().length == defaults().length &&
@@ -159,10 +184,25 @@ class DemoEngine {
       'استراتيجية غير مدعومة',
     );
     _require(r['quantity'] <= r['max_contracts'], 'الكمية تتجاوز حد العقود');
+    _require(r['elevated_risk_ack'] is bool && r['scaling_enabled'] is bool &&
+      r['scaling_decreasing'] is bool && r['reversal_enabled'] is bool, 'إعداد أمان غير صالح');
+    _require(['conservative', 'balanced', 'opportunistic'].contains(r['entry_profile']) &&
+      ['early', 'confirmed', 'pullback'].contains(r['entry_method']), 'ملف الدخول غير صالح');
+    _require(!elevated(r) || (r['elevated_risk_ack'] == true && r['risk_ack_values'] == riskAcknowledgement(r)),
+      'المخاطر المرتفعة تحتاج إقرارًا صريحًا بإمكان خسارة كامل رأس المال الاصطناعي');
   }
+
+  static String riskAcknowledgement(DemoRow r) => jsonEncode({for (final key in
+    ['trade_pct','daily_pct','allocation_pct','exposure_pct','group_allocation_pct','group_daily_pct']) key:r[key]});
+
+  static bool elevated(DemoRow r) => r['trade_pct'] > 2 || r['daily_pct'] > 3 ||
+    r['allocation_pct'] > 30 || r['exposure_pct'] > 30 ||
+    r['group_allocation_pct'] > 30 || r['group_daily_pct'] > 3;
 
   void configure(String id, DemoRow changes) {
     final a = account(id), updated = {...risk(a), ...changes};
+    if (changes['elevated_risk_ack'] == true) updated['risk_ack_values'] = riskAcknowledgement(updated);
+    if (changes['elevated_risk_ack'] == false) updated['risk_ack_values'] = null;
     validateRisk(updated);
     a['risk'] = updated;
     log(a, 'إعدادات', 'حُفظت إعدادات هذا الحساب فقط');
@@ -213,6 +253,7 @@ class DemoEngine {
 
   List<DemoRow> opportunities(String id, {int? at}) {
     final a = account(id), index = at ?? tick;
+    _require(index >= 24 && index <= tick, 'لا يمكن تحليل ملاحظات مستقبلية');
     final result = <DemoRow>[];
     if (!marketAvailable) return result;
     for (final s in (a['watch'] as Map).keys.cast<String>()) {
@@ -250,11 +291,23 @@ class DemoEngine {
             ? 'اختراق إغلاق 20 ملاحظة وحجم ≥ 1.2 من الأساس الاصطناعي'
             : 'قرب المتوسط في اتجاه الحركة الاصطناعية',
         'as_of': index,
+        'expires_tick': index + 3,
+        'activation': bars.last,
+        'invalidation': up ? prior.reduce(math.min) : prior.reduce(math.max),
+        'entry_method': risk(a)['entry_method'],
+        'entry_profile': risk(a)['entry_profile'],
         'source': source,
       });
     }
     result.sort((a, b) => (b['score'] as int).compareTo(a['score'] as int));
     return result;
+  }
+
+  DemoRow catalogEntry(String symbol) {
+    _require(symbols.contains(symbol), 'الرمز غير موجود في الكتالوج الاصطناعي');
+    return {'symbol':symbol,'instrument':'STK','exchange':'DEMO','currency':'USD',
+      'contract_id':'DEMO-$symbol','options_available':true,'market_data':'synthetic_only',
+      'broker_verified':false,'option_multiplier':100};
   }
 
   DemoRow contract(
@@ -346,7 +399,7 @@ class DemoEngine {
     );
   }
 
-  void _admitBuy(DemoRow a, int premium, int quantity, {DemoRow? existing}) {
+  void _admitBuy(DemoRow a, int premium, int quantity, {DemoRow? existing, required DemoRow contract}) {
     final r = risk(a);
     _require(
       !globalStop && a['stopped'] == false,
@@ -355,16 +408,18 @@ class DemoEngine {
     _require(r['mode'] == 'demo', 'وضع المراقبة لا يفتح مراكز');
     final old = existing == null ? 0 : reserved(existing);
     final total = exposure(a) - old + premium;
-    final originalCost = existing == null
-        ? premium
-        : existing['quantity'] *
-              (existing['limit'] * 100 + existing['commission']);
+    final originalCost = premium +
+        rows(a, 'positions').where((p) => contractKey(p) == contractKey(contract))
+          .fold<int>(0, (n, p) => n + (p['cost'] as int)) +
+        rows(a, 'orders').where((o) => o != existing && o['side'] == 'BUY' &&
+          active.contains(o['status']) && contractKey(o) == contractKey(contract))
+          .fold<int>(0, (n, o) => n + reserved(o));
     _require(
       originalCost <= a['initial'] * r['trade_pct'] ~/ 100,
       'تجاوز مخاطرة الصفقة',
     );
     _require(
-      total <= a['initial'] * r['allocation_pct'] ~/ 100,
+      total <= a['initial'] * math.min(r['allocation_pct'] as int, r['exposure_pct'] as int) ~/ 100,
       'تجاوز التعرض المفتوح',
     );
     _require(
@@ -438,6 +493,7 @@ class DemoEngine {
     String requestKey, {
     int? limit,
     String reason = 'يدوي',
+    DemoRow? evidence,
     bool loseResponse = false,
   }) {
     final a = account(id), r = risk(a);
@@ -485,11 +541,12 @@ class DemoEngine {
       'حد السعر غير صالح',
     );
     if (side == 'BUY') {
+      _directionLock(a, c);
       _require(
         a['watch'][c['symbol']] == true,
         'فعّل الرمز في قائمة هذا الحساب',
       );
-      _admitBuy(a, quantity * (price * 100 + r['commission']) as int, quantity);
+      _admitBuy(a, quantity * (price * 100 + r['commission']) as int, quantity, contract: c);
     } else {
       final owned = rows(a, 'positions')
           .where((p) => contractKey(p) == contractKey(c))
@@ -508,7 +565,7 @@ class DemoEngine {
       );
     }
     final o = <String, dynamic>{
-      ...c,
+      ...contract(c['symbol'], c['right'], expiry: c['expiry'], strike: c['strike']),
       'id': _id('order'),
       'account_id': id,
       'request_key': requestKey,
@@ -523,6 +580,16 @@ class DemoEngine {
       'created_tick': tick,
       'last_fill_tick': -1,
       'reason': reason,
+      // JSON text is an immutable decision-time value, never recomputed at replay.
+      'decision_json': jsonEncode({
+        'account_id': id, 'tick': tick, 'source': source, 'reason': reason,
+        'contract': contract(c['symbol'], c['right'], expiry: c['expiry'], strike: c['strike']),
+        'side': side, 'quantity': quantity, 'limit': price,
+        'risk': jsonDecode(jsonEncode(r)), 'evidence': evidence,
+        'quote': q, 'known': a['known'], 'connected': a['connected'],
+        'analysis_label': 'قرار محلي كمي/يدوي؛ لا تفسير لاحق من AI',
+      }),
+      'fills': <DemoRow>[],
     };
     rows(a, 'orders').add(o);
     log(a, 'أمر محلي', '$side ${c['symbol']} — $reason');
@@ -576,7 +643,8 @@ class DemoEngine {
     final qty = math.min(remaining, r['fill_chunk'] as int);
     final fee = qty * o['commission'] as int;
     if (o['side'] == 'BUY') {
-      _admitBuy(a, reserved(o), remaining, existing: o);
+      _directionLock(a, o, existing: o);
+      _admitBuy(a, reserved(o), remaining, existing: o, contract: o);
       _require(a['watch'][o['symbol']] == true, 'الرمز متوقف؛ ألغِ الدخول');
       final cost = price * qty * 100 + fee as int;
       _require(a['cash'] >= cost, 'الرصيد غير كافٍ للتنفيذ');
@@ -596,14 +664,22 @@ class DemoEngine {
           'cost': 0,
           'entry_tick': tick,
           'last_bid': q['bid'],
+          'high_bid': q['bid'],
+          'scale_count': 0, 'last_scale_tick': tick,
+          'partial_taken': false,
+          'entry_decisions': <String>[],
         };
         positions.add(p);
       } else {
         p = found.single;
       }
+      if (o['decision_json'] != null && !(p['entry_decisions'] as List).contains(o['decision_json'])) {
+        (p['entry_decisions'] as List).add(o['decision_json']);
+      }
       p['quantity'] += qty;
       p['cost'] += cost;
       p['last_bid'] = q['bid'];
+      p['high_bid'] = math.max(p['high_bid'] as int, q['bid'] as int);
       a['cash'] -= cost;
     } else {
       final p = rows(a, 'positions').firstWhere(
@@ -619,6 +695,7 @@ class DemoEngine {
       a['cash'] += proceeds;
       p['cost'] -= basis;
       p['quantity'] -= qty;
+      if (o['reason'] == 'جني ربح مرحلي') p['partial_taken'] = true;
       rows(a, 'trades').add({
         'day': day,
         'tick': tick,
@@ -627,9 +704,15 @@ class DemoEngine {
         'pnl': proceeds - basis,
         'reason': o['reason'],
         'account_id': id,
+        'right': p['right'], 'expiry': p['expiry'], 'strike': p['strike'],
+        'entry_tick': p['entry_tick'], 'exit_price': price,
+        'cost_basis': basis, 'exit_fee': fee, 'order_id': o['id'],
+        'entry_decisions': List<String>.from(p['entry_decisions']),
+        'exit_decision': o['decision_json'],
       });
       if (p['quantity'] == 0) rows(a, 'positions').remove(p);
     }
+    (o['fills'] as List).add({'tick': tick, 'quantity': qty, 'price': price, 'fee': fee});
     o['filled'] += qty;
     o['fees_paid'] += fee;
     o['last_fill_tick'] = tick;
@@ -703,6 +786,12 @@ class DemoEngine {
             'pnl': -(p['cost'] as int),
             'reason': 'انتهاء تحفظي دون ممارسة',
             'account_id': a['id'],
+            'right': p['right'], 'expiry': p['expiry'], 'strike': p['strike'],
+            'entry_tick': p['entry_tick'], 'exit_price': 0,
+            'cost_basis': p['cost'], 'exit_fee': 0,
+            'entry_decisions': List<String>.from(p['entry_decisions']),
+            'exit_decision': jsonEncode({'tick': tick, 'source': source,
+              'reason': 'انتهاء تحفظي دون ممارسة', 'expiry': p['expiry']}),
           });
           rows(a, 'positions').remove(p);
           log(
@@ -737,17 +826,39 @@ class DemoEngine {
       final r = risk(a);
       for (final p in List<DemoRow>.from(rows(a, 'positions'))) {
         p['last_bid'] = quote(p)['bid'];
+        p['high_bid'] = math.max(p['high_bid'] as int, p['last_bid'] as int);
         if (r['automation'] != true) continue;
         final mark = p['last_bid'] * p['quantity'] * 100;
         String? reason;
+        var exitQty = p['quantity'] as int;
         if (mark * 100 <= p['cost'] * (100 - r['stop_pct'])) {
           reason = 'وقف خسارة';
         }
         if (mark * 100 >= p['cost'] * (100 + r['take_pct'])) reason = 'جني ربح';
-        if (r['holding'] == 'intraday' && now.hour >= 20) {
-          reason = 'إغلاق الجلسة الاصطناعية';
+        if (r['trailing_pct'] > 0 && p['high_bid'] > p['cost'] / p['quantity'] / 100 &&
+            p['last_bid'] * 100 <= p['high_bid'] * (100 - r['trailing_pct'])) {
+          reason = 'وقف متحرك';
         }
-        if (reason == null) continue;
+        if (reason == null && r['partial_take_pct'] > 0 && p['partial_taken'] != true &&
+            p['quantity'] >= 2 && mark * 100 >= p['cost'] * (100 + r['partial_take_pct'])) {
+          reason = 'جني ربح مرحلي'; exitQty = p['quantity'] ~/ 2;
+        }
+        if (r['holding'] == 'swing' && tick - p['entry_tick'] >= r['swing_max_ticks']) {
+          reason = 'خروج Swing زمني'; exitQty = p['quantity'];
+        }
+        final daysToExpiry = DateTime.parse('${p['expiry']}T00:00:00Z').difference(now).inMinutes / 1440;
+        if (r['expiry_guard_days'] > 0 && daysToExpiry <= r['expiry_guard_days']) {
+          reason = 'حماية اقتراب الانتهاء'; exitQty = p['quantity'];
+        }
+        if (r['holding'] == 'intraday' && now.hour >= 20) {
+          reason = 'إغلاق الجلسة الاصطناعية'; exitQty = p['quantity'];
+        }
+        if (reason == null) {
+          if (r['scaling_enabled'] == true) {
+            try { scale(a['id'], p); } on DemoRejected { /* hard gates remain authoritative */ }
+          }
+          continue;
+        }
         final pendingClose = rows(a, 'orders').where(
           (o) =>
               contractKey(o) == contractKey(p) &&
@@ -756,6 +867,7 @@ class DemoEngine {
         );
         if (pendingClose.isNotEmpty) {
           for (final o in pendingClose) {
+            log(a, 'تعديل حد إغلاق', '${o['id']}: سعر اصطناعي محدث دون ضمان تنفيذ');
             o['limit'] = math.max(1, p['last_bid'] - o['slippage']);
           }
           continue;
@@ -767,19 +879,25 @@ class DemoEngine {
             o['status'] = 'CANCELLED';
           }
         }
+        // A known terminal cancellation may be replaced by a new decision.
+        // Pending or unknown orders are never retried with a new key.
+        final prefix = 'exit-${a['id']}-${contractKey(p)}-${p['entry_tick']}-$reason';
+        final attempt = rows(a, 'orders').where((o) => (o['request_key'] as String).startsWith(prefix)).length;
         try {
           submit(
             a['id'],
             p,
             'SELL_TO_CLOSE',
-            p['quantity'],
-            'exit-${a['id']}-${contractKey(p)}-${p['entry_tick']}',
+            exitQty,
+            '$prefix-$attempt',
             reason: reason,
+            evidence: {'high_bid': p['high_bid'], 'mark': mark, 'cost': p['cost']},
           );
         } on DemoRejected catch (e) {
           log(a, 'رفض الإغلاق', e.message);
         }
       }
+      _advanceReversals(a);
       if (!enter ||
           r['automation'] != true ||
           r['mode'] != 'demo' ||
@@ -789,8 +907,16 @@ class DemoEngine {
         continue;
       }
       for (final signal in opportunities(a['id'])) {
-        if (signal['strategy'] == null) {
+        if (rows(a, 'reversals').any((v) => v['symbol'] == signal['symbol'] && !['COMPLETED', 'BLOCKED', 'EXPIRED'].contains(v['state']))) continue;
+        if (!_entryEligible(a, signal)) {
           log(a, 'فرصة ضائعة', '${signal['symbol']}: ${signal['reason']}');
+          continue;
+        }
+        final opposite = rows(a, 'positions').any((p) => p['symbol'] == signal['symbol'] && p['right'] != signal['right']);
+        if (opposite && r['reversal_enabled'] == true) {
+          try {
+            requestReversal(a['id'], signal['symbol'], signal['right'], 'auto-reverse-${a['id']}-${signal['symbol']}-$day');
+          } on DemoRejected catch (e) { log(a, 'رفض انعكاس', e.message); }
           continue;
         }
         final key = 'auto-${a['id']}-${signal['symbol']}-$day';
@@ -803,10 +929,142 @@ class DemoEngine {
             r['quantity'],
             key,
             reason: signal['strategy'],
+            evidence: signal,
           );
         } on DemoRejected catch (e) {
           log(a, 'رفض فرصة', '${signal['symbol']}: ${e.message}');
         }
+      }
+    }
+  }
+
+  bool _entryEligible(DemoRow a, DemoRow signal) {
+    final r = risk(a);
+    if (signal['strategy'] == null || signal['as_of'] != tick ||
+        signal['expires_tick'] < tick) return false;
+    if (r['entry_profile'] == 'conservative' && signal['score'] < 80) return false;
+    if (r['entry_method'] == 'pullback') return signal['strategy'] == 'pullback';
+    if (r['entry_method'] == 'confirmed') {
+      if (tick <= 24) return false;
+      return opportunities(a['id'], at: tick - 1).any((s) =>
+        s['symbol'] == signal['symbol'] && s['right'] == signal['right'] &&
+        s['strategy'] != null);
+    }
+    return true;
+  }
+
+  void _directionLock(DemoRow a, DemoRow c, {DemoRow? existing}) {
+    final conflict = rows(a, 'positions').any((p) =>
+      p['symbol'] == c['symbol'] && p['right'] != c['right'] && p['quantity'] > 0) ||
+      rows(a, 'orders').any((o) => o != existing && o['side'] == 'BUY' &&
+        active.contains(o['status']) && o['symbol'] == c['symbol'] && o['right'] != c['right']);
+    _require(!conflict, 'قفل الاتجاه: أغلق الاتجاه القديم بالكامل وصالح الحساب قبل العكس');
+  }
+
+  /// Profitable additions reserve their number and cooldown at acceptance, even
+  /// when the response is lost. The persisted order key prevents a retry duplicate.
+  DemoRow scale(String id, DemoRow c, {bool loseResponse = false}) {
+    final a = account(id), r = risk(a);
+    _trusted(a);
+    _require(r['scaling_enabled'] == true, 'التعزيز معطل');
+    final p = rows(a, 'positions').firstWhere((p) => contractKey(p) == contractKey(c),
+      orElse: () => throw const DemoRejected('التعزيز يحتاج مركزًا مملوكًا'));
+    _require(p['scale_count'] < r['scaling_max'], 'بلغ حد التعزيز');
+    _require(tick - p['last_scale_tick'] >= r['scaling_cooldown'], 'فترة تهدئة التعزيز قائمة');
+    _require(!rows(a, 'orders').any((o) => o['symbol'] == p['symbol'] && active.contains(o['status'])),
+      'أمر غير محسوم يمنع التعزيز');
+    final q = quote(p);
+    _require(q['bid'] * p['quantity'] * 100 > p['cost'], 'التعزيز للمركز الرابح فقط');
+    final qty = r['scaling_decreasing'] == true
+      ? math.max(1, (r['scaling_quantity'] as int) ~/ ((p['scale_count'] as int) + 1))
+      : r['scaling_quantity'] as int;
+    final added = qty * ((q['ask'] + r['slippage']) * 100 + r['commission']);
+    _require(p['cost'] + added <= a['initial'] * r['trade_pct'] ~/ 100,
+      'التعزيز يتجاوز مخاطرة المركز الإجمالية');
+    final key = 'scale-$id-${contractKey(p)}-${p['entry_tick']}-${p['scale_count']}';
+    final o = submit(id, p, 'BUY', qty, key, reason: 'تعزيز مركز رابح',
+      evidence: {'profit_at_decision': q['bid'] * p['quantity'] * 100 - p['cost'],
+        'addition_number': p['scale_count'] + 1, 'cooldown_ticks': r['scaling_cooldown']});
+    p['scale_count'] += 1;
+    p['last_scale_tick'] = tick;
+    if (loseResponse) {
+      a['known'] = false;
+      throw const DemoRejected('فقد رد التعزيز؛ الأمر محفوظ. المصالحة لازمة ولا يعاد الإرسال');
+    }
+    return o;
+  }
+
+  DemoRow requestReversal(String id, String symbol, String right, String requestKey) {
+    final a = account(id);
+    _require(requestKey.isNotEmpty && requestKey.length <= 120, 'مفتاح انعكاس غير صالح');
+    final previous = rows(a, 'reversals').where((v) => v['request_key'] == requestKey);
+    if (previous.isNotEmpty) {
+      _require(previous.single['symbol'] == symbol && previous.single['right'] == right,
+        'مفتاح انعكاس مكرر بمحتوى مختلف');
+      return previous.single;
+    }
+    _trusted(a);
+    _require(!globalStop && a['stopped'] == false && risk(a)['mode'] == 'demo', 'الدخول متوقف');
+    _require(['CALL', 'PUT'].contains(right) && symbols.contains(symbol), 'اتجاه انعكاس غير صالح');
+    final signals = opportunities(id).where((s) => s['symbol'] == symbol &&
+      s['right'] == right && _entryEligible(a, s));
+    _require(signals.isNotEmpty, 'لا إشارة كمية صالحة للانعكاس');
+    _require(!rows(a, 'reversals').any((v) => v['symbol'] == symbol &&
+      !['COMPLETED', 'EXPIRED', 'BLOCKED'].contains(v['state'])), 'انعكاس آخر غير محسوم');
+    _require(rows(a, 'positions').any((p) => p['symbol'] == symbol && p['right'] != right),
+      'لا مركز معاكس مملوك لإغلاقه');
+    final v = <String, dynamic>{'request_key': requestKey, 'account_id': id,
+      'symbol': symbol, 'right': right, 'state': 'CLOSING', 'created_tick': tick,
+      'expires_tick': tick + 12, 'signal_json': jsonEncode(signals.first),
+      'close_orders': <String>[], 'entry_order': null};
+    rows(a, 'reversals').add(v);
+    for (final o in rows(a, 'orders')) {
+      if (o['symbol'] == symbol && o['side'] == 'BUY' && active.contains(o['status'])) {
+        o['status'] = 'CANCELLED';
+      }
+    }
+    for (final p in rows(a, 'positions').where((p) => p['symbol'] == symbol && p['right'] != right)) {
+      final closes = rows(a, 'orders').where((o) => contractKey(o) == contractKey(p) &&
+        o['side'] == 'SELL_TO_CLOSE' && active.contains(o['status'])).toList();
+      (v['close_orders'] as List).addAll(closes.map((o) => o['id']));
+      final pending = closes.fold<int>(0, (n, o) => n + (o['quantity'] - o['filled']) as int);
+      if (p['quantity'] > pending) {
+        final o = submit(id, p, 'SELL_TO_CLOSE', p['quantity'] - pending,
+          'reverse-close-$requestKey-${contractKey(p)}', reason: 'إغلاق قبل انعكاس كمي',
+          evidence: signals.first);
+        (v['close_orders'] as List).add(o['id']);
+      }
+    }
+    log(a, 'انعكاس محلي', 'إغلاق $symbol أولًا؛ لا شراء معاكس قبل المصالحة');
+    return v;
+  }
+
+  void _advanceReversals(DemoRow a) {
+    for (final v in rows(a, 'reversals')) {
+      if (['COMPLETED', 'EXPIRED', 'BLOCKED'].contains(v['state'])) continue;
+      if (v['state'] == 'ENTERING') {
+        final o = order(a['id'], v['entry_order']);
+        if (o['status'] == 'FILLED') v['state'] = 'COMPLETED';
+        if (o['status'] == 'CANCELLED') v['state'] = 'BLOCKED';
+        continue;
+      }
+      if (tick > v['expires_tick']) { v['state'] = 'EXPIRED'; continue; }
+      if (rows(a, 'positions').any((p) => p['symbol'] == v['symbol']) ||
+          rows(a, 'orders').any((o) => o['symbol'] == v['symbol'] && active.contains(o['status']))) continue;
+      if (!(v['close_orders'] as List).every((oid) => order(a['id'], oid)['status'] == 'FILLED')) {
+        v['state'] = 'BLOCKED'; continue;
+      }
+      try {
+        _trusted(a);
+        reconcile(a['id']);
+        final signals = opportunities(a['id']).where((s) => s['symbol'] == v['symbol'] &&
+          s['right'] == v['right'] && _entryEligible(a, s));
+        if (signals.isEmpty) { v['state'] = 'BLOCKED'; continue; }
+        final o = submit(a['id'], contract(v['symbol'], v['right']), 'BUY', risk(a)['quantity'],
+          'reverse-entry-${v['request_key']}', reason: 'انعكاس بعد إغلاق ومصالحة', evidence: signals.first);
+        v['entry_order'] = o['id']; v['state'] = 'ENTERING';
+      } on DemoRejected catch (e) {
+        v['state'] = 'BLOCKED'; log(a, 'انعكاس مرفوض', e.message);
       }
     }
   }
@@ -848,7 +1106,7 @@ class DemoEngine {
   }
 
   DemoRow toJson() => {
-    'version': 1,
+    'version': 2,
     'source': source,
     'tick': tick,
     'sequence': sequence,
@@ -862,7 +1120,7 @@ class DemoEngine {
   static DemoEngine decode(String raw) {
     try {
       final data = jsonDecode(raw) as DemoRow;
-      if (data['version'] != 1 || data['source'] != source) {
+      if (![1, 2].contains(data['version']) || data['source'] != source) {
         throw const DemoRejected('صيغة حفظ Demo غير مدعومة');
       }
       final e = DemoEngine()
@@ -873,6 +1131,20 @@ class DemoEngine {
         ..marketAvailable = data['market'] as bool
         ..globalStop = data['global_stop'] as bool;
       e.accounts.addAll((data['accounts'] as List).cast<DemoRow>());
+      if (data['version'] == 1) {
+        for (final a in e.accounts) {
+          a['risk'] = {...defaults(), ...e.risk(a)};
+          a['reversals'] = <DemoRow>[];
+          for (final o in e.rows(a, 'orders')) {
+            o['decision_json'] = null; o['fills'] = <DemoRow>[];
+          }
+          for (final p in e.rows(a, 'positions')) {
+            p.addAll({'high_bid': p['last_bid'], 'scale_count': 0,
+              'last_scale_tick': p['entry_tick'], 'partial_taken': false,
+              'entry_decisions': <String>[]});
+          }
+        }
+      }
       e.validate();
       return e;
     } on DemoRejected {
@@ -949,6 +1221,8 @@ class DemoEngine {
         validateContract(o);
         checkId(o['id'], 'order');
         _require(
+          (o['decision_json'] == null || o['decision_json'] is String) &&
+          o['fills'] is List &&
           o['account_id'] == a['id'] &&
               orderIds.add(o['id']) &&
               o['request_key'] is String &&
@@ -995,10 +1269,72 @@ class DemoEngine {
           'دفتر الأوامر تالف أو يخلط الحسابات',
         );
       }
+      for (final o in rows(a, 'orders')) {
+        var fillQty = 0, fillFee = 0, lastTick = o['created_tick'] as int;
+        for (final receipt in (o['fills'] as List)) {
+          _require(receipt is Map<String,dynamic> && receipt['quantity'] is int && receipt['quantity'] > 0 &&
+            receipt['quantity'] <= o['quantity'] && receipt['fee'] is int &&
+            receipt['fee'] == receipt['quantity'] * o['commission'] && receipt['tick'] is int &&
+            receipt['tick'] > lastTick && receipt['tick'] <= tick && receipt['price'] is int &&
+            receipt['price'] > 0 && receipt['price'] <= 1000000, 'إيصال تنفيذ محلي غير صالح');
+          fillQty += receipt['quantity'] as int; fillFee += receipt['fee'] as int;
+          lastTick = receipt['tick'] as int;
+        }
+        _require(fillQty <= o['filled'] && fillFee <= o['fees_paid'], 'مجاميع إيصالات التنفيذ غير صالحة');
+        if ((o['fills'] as List).isNotEmpty) _require(lastTick == o['last_fill_tick'], 'توقيت آخر تنفيذ غير متطابق');
+        if (o['decision_json'] != null) {
+          _require(fillQty == o['filled'] && fillFee == o['fees_paid'], 'إيصالات التنفيذ لا تطابق الأمر');
+          final snapshot = jsonDecode(o['decision_json'] as String) as DemoRow;
+          _require(snapshot['account_id'] == a['id'] && snapshot['tick'] == o['created_tick'] &&
+            snapshot['source'] == source && snapshot['reason'] == o['reason'] &&
+            snapshot['side'] == o['side'] && snapshot['quantity'] == o['quantity'] &&
+            contractKey(snapshot['contract'] as DemoRow) == contractKey(o), 'لقطة القرار لا تطابق الأمر');
+        }
+      }
+      final directions = <String,String>{};
+      for (final row in [
+        ...rows(a, 'positions'),
+        ...rows(a, 'orders').where((o) => o['side'] == 'BUY' && active.contains(o['status']))
+      ]) {
+        final previous = directions[row['symbol']];
+        _require(previous == null || previous == row['right'],
+          'دفتر محلي متعارض الاتجاه؛ التنفيذ مقفل حتى مراجعة الحالة');
+        directions[row['symbol']] = row['right'];
+      }
+      final reversalKeys = <String>{};
+      for (final v in rows(a, 'reversals')) {
+        _require(v['account_id'] == a['id'] && v['request_key'] is String &&
+          reversalKeys.add(v['request_key']) && symbols.contains(v['symbol']) &&
+          ['CALL', 'PUT'].contains(v['right']) &&
+          ['CLOSING', 'ENTERING', 'COMPLETED', 'BLOCKED', 'EXPIRED'].contains(v['state']) &&
+          v['created_tick'] is int && v['created_tick'] <= tick &&
+          v['expires_tick'] is int && v['expires_tick'] > v['created_tick'] &&
+          v['signal_json'] is String && v['close_orders'] is List &&
+          (v['close_orders'] as List).every((oid) => rows(a, 'orders').any((o) => o['id'] == oid && o['side'] == 'SELL_TO_CLOSE' && o['symbol'] == v['symbol'] && o['right'] != v['right'])) &&
+          (v['entry_order'] == null || rows(a, 'orders').any((o) => o['id'] == v['entry_order'] && o['side'] == 'BUY' && o['symbol'] == v['symbol'] && o['right'] == v['right'])),
+          'سجل الانعكاس غير صالح أو يخلط الحسابات');
+      }
+      void validateEntrySnapshots(dynamic value, DemoRow contract) {
+        _require(value is List, 'لقطات الدخول غير صالحة');
+        for (final text in value as List) {
+          _require(text is String && rows(a, 'orders').any((o) => o['side'] == 'BUY' &&
+            o['decision_json'] == text && contractKey(o) == contractKey(contract)),
+            'لقطة دخول لا تخص هذا الحساب والعقد');
+          final snapshot = jsonDecode(text as String) as DemoRow;
+          _require(snapshot['account_id'] == a['id'] && snapshot['tick'] <= tick,
+            'لقطة دخول تتجاوز الحساب أو الزمن');
+        }
+      }
       final contracts = <String>{};
       for (final p in rows(a, 'positions')) {
         validateContract(p);
+        validateEntrySnapshots(p['entry_decisions'], p);
         _require(
+          p['high_bid'] is int && p['high_bid'] >= p['last_bid'] &&
+          p['scale_count'] is int && p['scale_count'] >= 0 && p['scale_count'] <= 20 &&
+          p['last_scale_tick'] is int && p['last_scale_tick'] >= p['entry_tick'] && p['last_scale_tick'] <= tick &&
+          p['partial_taken'] is bool && p['entry_decisions'] is List &&
+          (p['entry_decisions'] as List).every((v) => v is String) &&
           p['account_id'] == a['id'] &&
               p['quantity'] is int &&
               p['quantity'] > 0 &&
@@ -1030,6 +1366,23 @@ class DemoEngine {
         _require(closing <= owned, 'إغلاق معلق يتجاوز المملوك');
       }
       for (final t in rows(a, 'trades')) {
+        if (t.containsKey('entry_decisions')) {
+          validateContract(t);
+          validateEntrySnapshots(t['entry_decisions'], t);
+          _require(t['exit_decision'] == null || t['exit_decision'] is String, 'لقطة خروج غير صالحة');
+          if (t['exit_decision'] != null) {
+            final exit = jsonDecode(t['exit_decision'] as String) as DemoRow;
+            if (t['order_id'] != null) {
+              _require(rows(a, 'orders').any((o) => o['id'] == t['order_id'] &&
+                o['side'] == 'SELL_TO_CLOSE' && o['decision_json'] == t['exit_decision'] &&
+                contractKey(o) == contractKey(t)), 'لقطة خروج لا تخص أمر الحساب');
+            } else {
+              _require(t['reason'] == 'انتهاء تحفظي دون ممارسة' && exit['reason'] == t['reason'] &&
+                exit['source'] == source && exit['tick'] == t['tick'] && exit['expiry'] == t['expiry'],
+                'لقطة انتهاء غير صالحة');
+            }
+          }
+        }
         _require(
           t['account_id'] == a['id'] &&
               t['pnl'] is int &&

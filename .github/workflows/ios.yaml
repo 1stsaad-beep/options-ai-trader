@@ -1,7 +1,7 @@
-name: iOS V0.5 unsigned review build
+name: iOS V1.0 RC unsigned review build
 on:
   push:
-    branches: [main]
+    branches: [main, develop/v1.0]
     paths: ["mobile/**", ".github/workflows/ios.yaml"]
   workflow_dispatch:
     inputs:
@@ -13,6 +13,9 @@ env:
   CI: "true"
   BOT: "true"
   FLUTTER_SUPPRESS_ANALYTICS: "true"
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -22,8 +25,8 @@ jobs:
     env:
       IOS_BUNDLE_ID: ${{ inputs.bundle_id || 'com.optionsaitrader.optionsAiTrader' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version: '3.47.7'
           channel: stable
@@ -33,12 +36,12 @@ jobs:
         working-directory: mobile
       - run: flutter test --machine > flutter-tests.json
         working-directory: mobile
-      - run: flutter build ios --release --no-codesign --build-name=0.5.0 --build-number=5
+      - run: flutter build ios --release --no-codesign --build-name=1.0.0 --build-number=10
         working-directory: mobile
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
-          name: options-ai-trader-v0.5-ios-unsigned
+          name: options-ai-trader-v1.0-ios-unsigned
           path: |
             mobile/build/ios/iphoneos/Runner.app
             mobile/flutter-tests.json

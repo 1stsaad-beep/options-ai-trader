@@ -43,6 +43,9 @@ class TransactionReviewTests(unittest.TestCase):
         self.assertEqual(self.service.rows(self.b, "orders"), [])
 
     def test_partial_fill_replay_and_collision_are_atomic(self):
+        # Keep the overfill/replay checks independent of missing market marks.
+        with self.repo.transaction() as db:
+            self.service.record_option_mark(db,self.a,'AAPL','CALL','2026-11-20',20000,90,100,NOW)
         order = self.service.submit(self.a, self.request())
         self.service.fill(self.a, order['id'], "first", 1, 90)
         self.service.fill(self.a, order['id'], "first", 1, 90)
@@ -73,6 +76,7 @@ class TransactionReviewTests(unittest.TestCase):
             self.service.submit(self.a, self.request("after-loss"))
 
     def test_concurrent_orders_cannot_overallocate(self):
+        self.service.configure(self.a, {'max_contracts': 100})  # Exercise allocation independently.
         def submit(index):
             try:
                 return self.service.submit(self.a, self.request(str(index)))
@@ -98,6 +102,7 @@ class TransactionReviewTests(unittest.TestCase):
             services = [TradingService(repo, today=lambda: NOW.date(), now=lambda: NOW) for repo in repositories]
             account = services[0].create_account('multiple workers')['id']
             services[0].watch(account, 'AAPL', True)
+            services[0].configure(account, {'max_contracts': 100})
             def submit(index):
                 try:
                     return services[index % 2].submit(account, self.request(str(index)))

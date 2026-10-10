@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictBool
 from .repository import Repository
 from .service import TradingService, Rejected
+from .http_security import RequestLimits
 
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -36,6 +37,11 @@ class FillCreate(StrictModel):
     price_cents: StrictInt
 class StopCreate(StrictModel):
     account_id: Optional[str] = None
+class LifecycleRequest(StrictModel):
+    request_key: str
+    symbol: str
+    right: str
+
 class AutomationRun(StrictModel):
     """A run accepts no signals, prices, account override or risk bypass flags."""
     pass
@@ -53,7 +59,8 @@ def create_app(repository=None, token=None):
         yield
         if repository is None:
             app.state.repository.close()
-    app = FastAPI(title='Options AI Trader — synthetic paper only', version='0.5.0', lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
+    app = FastAPI(title='Options AI Trader — synthetic paper only', version='1.0.0-rc.1', lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
+    app.add_middleware(RequestLimits)
     def auth(authorization: Optional[str] = Header(default=None)):
         if len(configured_token) < 24 or not authorization or not hmac.compare_digest(authorization.encode('utf-8'), ('Bearer '+configured_token).encode('utf-8')):
             raise HTTPException(401, 'Valid API bearer token required')
@@ -64,8 +71,16 @@ def create_app(repository=None, token=None):
         return JSONResponse(status_code=409,content={'detail':str(exc)})
     @app.get('/health')
     def health():
-        return {'status':'ok','version':'0.5.0','mode':'paper','broker':'mock','live_enabled':False,'market_data':'synthetic','external_analysis_enabled':False}
+        return {'status':'ok','version':'1.0.0-rc.1','mode':'paper','broker':'mock','live_enabled':False,'market_data':'synthetic','external_analysis_enabled':False}
     secured = [Depends(auth)]
+    @app.get('/api/readiness',dependencies=secured)
+    def readiness(s=Depends(service)):
+        from .monitoring import readiness as inspect
+        try:
+            return inspect(s)
+        except Exception:
+            return JSONResponse(status_code=503, content={'api_ready': False, 'database_ready': False,
+                'live_enabled': False, 'detail': 'Readiness unavailable; no entry authority'})
     @app.get('/openapi.json',dependencies=secured,include_in_schema=False)
     def protected_schema():
         return app.openapi()
@@ -85,6 +100,22 @@ def create_app(repository=None, token=None):
     @app.post('/api/accounts/{account_id}/mock-market-data',dependencies=secured)
     def market_data(account_id: str,body: MarketObservation,s=Depends(service)):
         return s.mock_market_data(account_id,body.symbol,body.available)
+    @app.post('/api/accounts/{account_id}/mock-option-quotes/refresh',dependencies=secured)
+    def refresh_option_quotes(account_id: str,body: AutomationRun,s=Depends(service)):
+        from .automation import fixture_quotes
+        with s.repo.transaction() as db:
+            s.account(db,account_id)
+            contracts = db.all('SELECT * FROM positions WHERE account_id=?',(account_id,))
+            symbols = sorted({p['symbol'] for p in contracts})
+            quotes = []
+            for symbol in symbols:
+                if not s.market_valid(db,account_id,symbol):
+                    raise Rejected('Refresh the synthetic stock observation before option marks')
+                quotes += fixture_quotes(symbol,s.now(),contracts)
+            for q in quotes:
+                s.record_option_mark(db,account_id,q.symbol,q.right,q.expiry.isoformat(),round(q.strike*100),round(q.bid*100),round(q.ask*100),q.timestamp)
+            s.audit(db,account_id,'EXPLICIT_MOCK_OPTION_REFRESH',{'quotes':len(quotes),'source':'synthetic_fixture'})
+            return {'quotes_refreshed':len(quotes),'source':'synthetic_fixture','account_reconciled':False,'live_enabled':False}
     @app.get('/api/accounts/{account_id}/risk',dependencies=secured)
     def risk(account_id: str,s=Depends(service)):
         with s.repo.transaction() as db:
@@ -136,6 +167,49 @@ def create_app(repository=None, token=None):
         with s.repo.transaction() as db:
             s.account(db,account_id)
         return run_account(s,account_id)
+    @app.get('/api/accounts/{account_id}/decisions',dependencies=secured)
+    def decisions(account_id: str,s=Depends(service)):
+        return s.rows(account_id,'decision_snapshots')
+    @app.get('/api/accounts/{account_id}/lifecycle',dependencies=secured)
+    def lifecycle(account_id: str,s=Depends(service)):
+        return s.rows(account_id,'lifecycle_intents')
+    def lifecycle_inputs(s, account_id, symbol):
+        from .worker import fixture_bars
+        from .automation import fixture_quotes
+        contracts = s.rows(account_id,'positions') + s.rows(account_id,'orders')
+        now = s.now()
+        return fixture_bars(symbol,now),fixture_quotes(symbol,now,contracts)
+    @app.post('/api/accounts/{account_id}/reversal',dependencies=secured)
+    def reversal(account_id: str,body: LifecycleRequest,s=Depends(service)):
+        from .lifecycle import request_reversal
+        bars,quotes = lifecycle_inputs(s,account_id,body.symbol)
+        return request_reversal(s,account_id,body.request_key,body.symbol,body.right,bars,quotes)
+    @app.post('/api/accounts/{account_id}/reversal/{intent_id}/advance',dependencies=secured)
+    def advance(account_id: str,intent_id: str,body: AutomationRun,s=Depends(service)):
+        from .lifecycle import advance_reversal
+        intents = s.rows(account_id,'lifecycle_intents')
+        intent = next((i for i in intents if i['id']==intent_id and i['kind']=='REVERSAL'),None)
+        if intent is None:
+            raise Rejected('Unknown account reversal')
+        bars,quotes = lifecycle_inputs(s,account_id,intent['symbol'])
+        return advance_reversal(s,account_id,intent_id,bars,quotes)
+    @app.post('/api/accounts/{account_id}/scaling',dependencies=secured)
+    def scaling(account_id: str,body: LifecycleRequest,s=Depends(service)):
+        from .lifecycle import request_scaling
+        bars,quotes = lifecycle_inputs(s,account_id,body.symbol)
+        return request_scaling(s,account_id,body.request_key,body.symbol,body.right,bars,quotes)
+    @app.get('/api/research/demo',dependencies=secured)
+    def research_demo():
+        from .research import synthetic_research_demo
+        return synthetic_research_demo()
+    @app.get('/api/accounts/{account_id}/analysis/{symbol}',dependencies=secured)
+    def analysis(account_id: str,symbol: str,s=Depends(service)):
+        from .analysis_service import inspect_analysis
+        return inspect_analysis(s,account_id,symbol)
+    @app.post('/api/accounts/{account_id}/analysis/{symbol}/snapshot',dependencies=secured)
+    def analysis_snapshot(account_id: str,symbol: str,body: AutomationRun,s=Depends(service)):
+        from .analysis_service import snapshot_analysis
+        return snapshot_analysis(s,account_id,symbol)
     @app.post('/api/emergency-stop',dependencies=secured)
     def stop(body: StopCreate,s=Depends(service)):
         return s.stop(body.account_id)

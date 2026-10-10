@@ -82,6 +82,8 @@ void main() {
       'سجل القرارات',
       'الطوارئ واختبار الأعطال',
       'الاستراتيجيات والإعدادات',
+      'مختبر الرسوم المتقدم',
+      'إعادة قرارات الصفقات',
       'الرئيسية',
     ]) {
       await destination(t, page);
@@ -106,7 +108,7 @@ void main() {
       await t.pumpAndSettle();
       await t.pump(const Duration(milliseconds: 400));
       await t.pumpAndSettle();
-      expect(DemoEngine.decode(store.data!).accounts.length, 2);
+      expect(DemoEngine.decode(store.data!).accounts.length, 5);
       await destination(t, 'قوائم المراقبة');
       await t.tap(find.text('إضافة سهم'));
       await t.pumpAndSettle();
@@ -121,7 +123,7 @@ void main() {
       await t.pumpWidget(const SizedBox());
       await t.pumpWidget(TraderApp(demoStore: store));
       await t.pumpAndSettle();
-      expect(DemoEngine.decode(store.data!).accounts.length, 2);
+      expect(DemoEngine.decode(store.data!).accounts.length, 5);
       expect(t.takeException(), isNull);
     },
   );

@@ -54,7 +54,12 @@ class DemoController extends ChangeNotifier {
     try {
       final data = await store.load();
       if (data == null) {
-        engine = DemoEngine()..createAccount('حساب تجريبي محلي', 1000000);
+        engine = DemoEngine();
+        for (final name in ['حساب تجريبي محلي', 'محفظة التوازن', 'مختبر Swing', 'مراقبة الفرص']) {
+          final a = engine.createAccount(name, 1000000);
+          if (name == 'مختبر Swing') engine.configure(a['id'], {'holding': 'swing'});
+          if (name == 'مراقبة الفرص') engine.configure(a['id'], {'mode': 'observe'});
+        }
         await store.save(engine.encode());
       } else {
         engine = DemoEngine.decode(data);

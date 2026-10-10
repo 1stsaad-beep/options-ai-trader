@@ -375,17 +375,17 @@ class _DashboardState extends State<Dashboard> {
     final loss = int.tryParse(values['الخسارة اليومية']!);
     final allocation = int.tryParse(values['إجمالي التخصيص']!);
     if (trade == null ||
-        trade < 1 ||
-        trade > 2 ||
+        trade < 0 ||
+        trade > 100 ||
         loss == null ||
-        loss < 1 ||
-        loss > 3 ||
+        loss < 0 ||
+        loss > 100 ||
         allocation == null ||
-        allocation < 1 ||
-        allocation > 30) {
+        allocation < 0 ||
+        allocation > 100) {
       setState(
         () => error =
-            'الحدود الحالية: الصفقة 1–2%، الخسارة اليومية 1–3%، التخصيص 1–30%',
+            'أدخل نسبًا صحيحة بين 0 و100؛ الصفر يقفل ميزانية الدخول ذات الصلة',
       );
       return;
     }
@@ -395,7 +395,22 @@ class _DashboardState extends State<Dashboard> {
       setState(() => error = 'عدد العقود يجب أن يكون عددًا صحيحًا موجبًا');
       return;
     }
+    final groupAllocation=int.tryParse(values['حد تخصيص المجموعة %']!),
+      groupLoss=int.tryParse(values['حد خسارة المجموعة اليومية %']!);
+    if(groupAllocation==null || groupLoss==null || groupAllocation<0 || groupAllocation>100 || groupLoss<0 || groupLoss>100) {
+      setState(()=>error='حدود المجموعة بين 0 و100');return;
+    }
+    final elevated=trade>2 || loss>3 || allocation>30 || groupAllocation>30 || groupLoss>3 ||
+      ((r['global_allocation_pct'] as int?)??30)>30 || ((r['global_daily_loss_pct'] as int?)??3)>3;
+    if(elevated) {
+      final approved=await showDialog<bool>(context:context,builder:(c)=>AlertDialog(
+        title:const Text('تأكيد مخاطر مرتفعة'),content:const Text('قد تستنفد هذه الحدود رأس المال الاصطناعي. هل تقر بهذه النسب المحددة لهذا الحساب؟'),
+        actions:[TextButton(onPressed:()=>Navigator.pop(c,false),child:const Text('إلغاء')),
+          FilledButton(onPressed:()=>Navigator.pop(c,true),child:const Text('أقرّ بالمخاطر وأحفظ'))]));
+      if(approved!=true || !stillSelected(target)) return;
+    }
     await mutate('PUT', '${pathFor(target)}/risk', {
+      if(elevated) 'elevated_risk_ack':true,
       'trade_risk_pct': trade,
       'daily_loss_pct': loss,
       'allocation_pct': allocation,

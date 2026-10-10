@@ -69,7 +69,36 @@ def balance_baseline(db, postgres):
         db.execute('INSERT INTO audit VALUES(?,?,?,?,?)', (str(uuid.uuid4()), account['id'], 'MIGRATION_BALANCE_BASELINE', detail, datetime.now(timezone.utc).isoformat()))
 
 
-MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline)]
+def lifecycle_schema(db, postgres):
+    """V1 adds side tables and widens money fields without recalculating history."""
+    if postgres:
+        for table,column in (('accounts','equity'),('accounts','realized'),('positions','cost'),('daily_pnl','pnl')):
+            db.execute(f'ALTER TABLE {table} ALTER COLUMN {column} TYPE BIGINT')
+    db.execute('CREATE UNIQUE INDEX uq_order_account_identity ON orders(account_id,id)')
+    db.execute('CREATE TABLE order_costs (order_id TEXT PRIMARY KEY REFERENCES orders(id), commission_cents INTEGER NOT NULL CHECK(commission_cents>=0))')
+    db.execute('CREATE TABLE runtime_health (name TEXT PRIMARY KEY, updated_at TEXT NOT NULL, payload TEXT NOT NULL)')
+    db.execute('CREATE TABLE lifecycle_intents (id TEXT PRIMARY KEY, account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, kind TEXT NOT NULL, symbol TEXT NOT NULL, fingerprint TEXT NOT NULL, payload TEXT NOT NULL, state TEXT NOT NULL, order_id TEXT REFERENCES orders(id), created TEXT NOT NULL, updated TEXT NOT NULL, UNIQUE(account_id,request_key), UNIQUE(account_id,id), FOREIGN KEY(account_id,order_id) REFERENCES orders(account_id,id))')
+    db.execute('CREATE TABLE decision_snapshots (id TEXT PRIMARY KEY, account_id TEXT NOT NULL REFERENCES accounts(id), order_id TEXT REFERENCES orders(id), intent_id TEXT, action TEXT NOT NULL, payload TEXT NOT NULL, digest TEXT NOT NULL, created TEXT NOT NULL, FOREIGN KEY(account_id,order_id) REFERENCES orders(account_id,id), FOREIGN KEY(account_id,intent_id) REFERENCES lifecycle_intents(account_id,id) DEFERRABLE INITIALLY DEFERRED)')
+    db.execute('CREATE TABLE position_policies (account_id TEXT NOT NULL REFERENCES accounts(id), symbol TEXT NOT NULL, right_kind TEXT NOT NULL, expiry TEXT NOT NULL, strike INTEGER NOT NULL, generation INTEGER NOT NULL, high_bid INTEGER NOT NULL, partial_taken INTEGER NOT NULL DEFAULT 0, opened_at TEXT NOT NULL, PRIMARY KEY(account_id,symbol,right_kind,expiry,strike))')
+    # A V0.5 position has no persisted high-water/time policy. Start tracking
+    # prospectively at migration; do not invent its historical opening timestamp.
+    for position in db.all('SELECT * FROM positions'):
+        generation=db.one("SELECT COALESCE(MAX(f.sequence),0) AS n FROM fills f JOIN orders o ON o.id=f.order_id WHERE o.account_id=? AND o.symbol=? AND o.right_kind=? AND o.expiry=? AND o.strike=? AND o.side='BUY'",(position['account_id'],position['symbol'],position['right_kind'],position['expiry'],position['strike']))['n']
+        db.execute('INSERT INTO position_policies VALUES(?,?,?,?,?,?,?,?,?)',(position['account_id'],position['symbol'],position['right_kind'],position['expiry'],position['strike'],generation,0,0,datetime.now(timezone.utc).isoformat()))
+    db.execute('CREATE TABLE option_marks (account_id TEXT NOT NULL REFERENCES accounts(id), symbol TEXT NOT NULL, right_kind TEXT NOT NULL, expiry TEXT NOT NULL, strike INTEGER NOT NULL, bid INTEGER NOT NULL, ask INTEGER NOT NULL, observed_at TEXT NOT NULL, PRIMARY KEY(account_id,symbol,right_kind,expiry,strike))')
+    db.execute('CREATE INDEX ix_decisions_account_created ON decision_snapshots(account_id,created)')
+    db.execute('CREATE INDEX ix_intents_account_state ON lifecycle_intents(account_id,state)')
+    if postgres:
+        db.execute("CREATE FUNCTION immutable_decision_v1() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'decision snapshots are immutable'; END $$")
+        db.execute('CREATE TRIGGER immutable_decision_v1 BEFORE UPDATE OR DELETE ON decision_snapshots FOR EACH ROW EXECUTE FUNCTION immutable_decision_v1()')
+        db.execute('CREATE TRIGGER immutable_cost_v1 BEFORE UPDATE OR DELETE ON order_costs FOR EACH ROW EXECUTE FUNCTION immutable_decision_v1()')
+    else:
+        for action in ('UPDATE', 'DELETE'):
+            db.execute(f"CREATE TRIGGER immutable_decision_v1_{action.lower()} BEFORE {action} ON decision_snapshots BEGIN SELECT RAISE(ABORT, 'decision snapshots are immutable'); END")
+            db.execute(f"CREATE TRIGGER immutable_cost_v1_{action.lower()} BEFORE {action} ON order_costs BEGIN SELECT RAISE(ABORT, 'order costs are immutable'); END")
+
+
+MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema)]
 
 
 def migrate(db, postgres):

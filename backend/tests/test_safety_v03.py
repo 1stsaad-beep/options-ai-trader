@@ -52,6 +52,9 @@ class V03SafetyTests(unittest.TestCase):
         self.s.cancel(self.a,order['id'])
         self.s.disconnect(self.a)
         self.s.reconcile(self.a)
+        # Reconciliation never invents an option quote; publish this fixture.
+        with self.repo.transaction() as db:
+            self.s.record_option_mark(db,self.a,'NVDA','CALL','2026-11-20',15000,50,50,self.now)
         self.assertEqual(self.s.rows(self.a,'positions')[0]['quantity'],1)
         self.assertEqual(self.s.submit(self.a,self.req())['status'],'CANCELLED')
         self.assertEqual(self.s.submit(self.a,self.req('new'))['status'],'PENDING')

@@ -1,8 +1,5 @@
 name: V1 isolated test toolchain
 on:
-  push:
-    branches: [develop/v1.0]
-    paths: [".github/workflows/v1-toolchain.yaml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version: '3.47.7'
           channel: stable
@@ -29,35 +26,35 @@ jobs:
           tar -czf flutter-test-toolchain.tar.gz -C toolchain .
           sha256sum flutter-test-toolchain.tar.gz > toolchain.sha256
           split -b 400M -d flutter-test-toolchain.tar.gz toolchain-part-
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: options-v1-test-toolchain-0
           path: |
             toolchain-part-00
             toolchain.sha256
           retention-days: 3
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: options-v1-test-toolchain-1
           path: |
             toolchain-part-01
             toolchain.sha256
           retention-days: 3
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: options-v1-test-toolchain-2
           path: |
             toolchain-part-02
             toolchain.sha256
           retention-days: 3
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: options-v1-test-toolchain-3
           path: |
             toolchain-part-03
             toolchain.sha256
           retention-days: 3
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: options-v1-test-toolchain-4
           path: |

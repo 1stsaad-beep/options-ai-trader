@@ -18,3 +18,9 @@ The workflow writes the key to a mode-0600 temporary runner file and removes it 
 Local development can reuse an already retained Android SDK debug keystore outside the repository. Such a key is development-only (its conventional password does not make it suitable for production). If the connected GitHub tools cannot configure Secrets, this is reported as a remaining limitation, not claimed as successful permanent cloud signing.
 
 Inspect signatures with `apksigner verify --verbose --print-certs app.apk`. Android updates require both the same application ID and signer. Do not erase existing app data merely to resolve a certificate mismatch; preserve the older installation or test on a separate device/profile.
+
+## V1 restoration and separately identified preview
+
+The V0.5 local development key was not present after workspace recovery. It is not stored in Git and cannot be recreated from the old APK or certificate. The four signing Secrets mechanism remains the path to stable upgrade-compatible builds; configuration of those Secrets has not been claimed.
+
+When no signing Secrets are configured, V1 Android CI builds the ordinary unsigned artifact and also an installable development preview with application ID `com.optionsaitrader.options_ai_trader.v1preview`. The preview uses the ephemeral runner debug signer; the private key is neither uploaded nor cached. It can coexist with the older installation and does not migrate or erase its saved Demo data. Its signer is **not stable between runners**. This is a testing deliverable, not a Play release or an upgrade to V0.5. CI verifies its APK signature and publishes only public certificate evidence. The remaining stable-signing setup must be performed through secure GitHub Secrets controls, never by posting passwords or private keys in chat.

@@ -37,6 +37,9 @@ def test_lost_response_replay_after_disconnect_and_expiry_never_resends(demo):
     service.disconnect(a)
     assert service.submit(a, request())["id"] == order["id"]
     clock[0] = datetime(2026, 11, 21, 14, tzinfo=timezone.utc)
+    with pytest.raises(Rejected, match='trusted reconciliation'):
+        service.expire()  # V1 never settles an untrusted account, including global expiry.
+    service.reconcile(a)
     service.expire()
     replay = service.submit(a, request())
     assert replay["id"] == order["id"]
@@ -149,6 +152,7 @@ def test_linked_group_requires_trusted_other_account_balance(demo):
 def test_global_supervisor_cannot_use_disconnected_capital(demo):
     _, service, a, b, _ = demo
     # B's committed exposure is retained even when its capital becomes untrusted.
+    service.configure(b, {'max_contracts': 100})  # Isolate global capital policy.
     for index in range(15):
         service.submit(b, request(f"reserved-{index}"))
     service.disconnect(b)

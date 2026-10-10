@@ -70,7 +70,11 @@ def run_account(service, account_id, now=None, feed=None, quote_feed=None):
             bound = copy(service)
             bound.repo = _BoundRepository(db)
             bound._automation_authorized = True
+            before_orders=db.one('SELECT COUNT(*) AS n FROM orders WHERE account_id=?',(account_id,))['n']
+            before_fills=db.one('SELECT COUNT(*) AS n FROM fills f JOIN orders o ON o.id=f.order_id WHERE o.account_id=?',(account_id,))['n']
             _cycle(bound, db, account_id, now, feed, quote_feed, result)
+            result['orders_submitted']=db.one('SELECT COUNT(*) AS n FROM orders WHERE account_id=?',(account_id,))['n']-before_orders
+            result['fills_applied']=db.one('SELECT COUNT(*) AS n FROM fills f JOIN orders o ON o.id=f.order_id WHERE o.account_id=?',(account_id,))['n']-before_fills
     except Exception as exc:
         # An unhandled cycle error rolled back every partial local mutation.
         result.update(orders_submitted=0, fills_applied=0, expired_positions=0, actions=[])
@@ -138,6 +142,7 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
                 raise Rejected('Future or stale option quote snapshot')
             _cents(q.bid)
             _cents(q.ask)
+            service.record_option_mark(db,account_id,q.symbol,q.right,q.expiry.isoformat(),_cents(q.strike),_cents(q.bid),_cents(q.ask),q.timestamp)
         cache[symbol] = values
         return values
 
@@ -150,9 +155,10 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
             raise Rejected('Option spread exceeds account limit')
         return q
 
-    def submit(request, reason, quote):
+    def submit(request, reason, quote, facts=None):
         guard(quote)
         prior = db.one('SELECT id FROM orders WHERE account_id=? AND request_key=?', (account_id, request['request_key']))
+        service._decision_context={'reason':reason,'quote':{'bid_cents':_cents(quote.bid),'ask_cents':_cents(quote.ask),'observed_at':quote.timestamp.isoformat()},'strategy_source':'completed_bar_quantitative_worker','facts':facts or {}}
         order = service.submit(account_id, request)
         if not prior:
             result['orders_submitted'] += 1
@@ -181,7 +187,23 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
         if 'ledger' in reason.lower() or 'provenance' in reason.lower():
             raise Rejected(reason)
 
+    from .lifecycle import request_reversal, request_scaling
     exit_symbols = set()
+    # Opposite signals are an explicit opt-in exit-and-revalidate policy. The
+    # lifecycle captures the original facts before cancelling any old entries.
+    if config['reversal_enabled'] and not account['stopped'] and not db.one('SELECT stopped FROM supervisor WHERE id=1')['stopped']:
+        for row in db.all('SELECT DISTINCT symbol,right_kind FROM positions WHERE account_id=?',(account_id,)):
+            try:
+                analysis=AnalysisPipeline().analyze((feed or fixture_bars)(row['symbol'],now),now)
+                signal=next((s for s in analysis.signals if s.right!=row['right_kind'] and s.strategy in config['strategies']),None)
+                if signal is None:
+                    continue
+                policy=db.one('SELECT generation FROM position_policies WHERE account_id=? AND symbol=?',(account_id,row['symbol']))
+                generation=policy['generation'] if policy else 0
+                intent=request_reversal(service,account_id,_key('reverse:',account_id,row['symbol'],generation,signal.right),row['symbol'],signal.right,(feed or fixture_bars)(row['symbol'],now),quotes(row['symbol']))
+                result['actions'].append({'type':'REVERSAL_INTENT','intent_id':intent['id'],'state':intent['state']})
+            except Exception as exc:
+                blocked(row['symbol'],exc)
     for position in db.all('SELECT * FROM positions WHERE account_id=? ORDER BY symbol', (account_id,)):
         try:
             q = quote_for(position)
@@ -190,11 +212,25 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
             profit = premium*100 >= position['cost']*(100+config['take_profit_pct'])
             owned_key = (account_id, position['symbol'], position['right_kind'], position['expiry'], position['strike'])
             pending_closes = db.all("SELECT * FROM orders WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=? AND side='SELL_TO_CLOSE' AND status IN ('PENDING','PARTIAL')", owned_key)
-            automatic_closes = [o for o in pending_closes if o['request_key'].startswith('auto-x:')]
-            if not (loss or profit or automatic_closes):
+            automatic_closes = [o for o in pending_closes if o['request_key'].startswith(('auto-x:', 'v1-r:'))]
+            policy=db.one('SELECT * FROM position_policies WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?',owned_key)
+            bid=_cents(q.bid)
+            high=max(policy['high_bid'] if policy else 0,bid)
+            if policy:
+                db.execute('UPDATE position_policies SET high_bid=? WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?',(high,)+owned_key)
+            trailing=bool(config['trailing_stop_pct'] and bid*100<=high*(100-config['trailing_stop_pct']))
+            intraday=config['holding']=='intraday' and now.hour>=config['intraday_exit_hour_utc']
+            swing=config['holding']=='swing' and policy is not None and (now-datetime.fromisoformat(policy['opened_at'])).days>=config['swing_max_days']
+            near_expiry=(date.fromisoformat(position['expiry'])-now.date()).days<=config['expiry_exit_days']
+            partial=bool(config['partial_profit_pct'] and policy and not policy['partial_taken'] and position['quantity']>=2 and premium*100>=position['cost']*(100+config['partial_profit_pct']))
+            invalidated=False
+            if config['scenario_exit_enabled']:
+                current_analysis=AnalysisPipeline().analyze((feed or fixture_bars)(position['symbol'],now),now)
+                invalidated=any(s.right!=position['right_kind'] and s.strategy in config['strategies'] for s in current_analysis.signals)
+            if not (loss or profit or trailing or intraday or swing or near_expiry or partial or invalidated or automatic_closes):
                 continue
             exit_symbols.add(position['symbol'])
-            reason = 'STOP_LOSS' if loss else 'TAKE_PROFIT' if profit else 'RESUME_CLOSE'
+            reason = 'STOP_LOSS' if loss else 'TAKE_PROFIT' if profit else 'TRAILING_STOP' if trailing else 'EXPIRY_PROTECTION' if near_expiry else 'INTRADAY_EXIT' if intraday else 'SWING_TIME_EXIT' if swing else 'SCENARIO_INVALIDATED' if invalidated else 'PARTIAL_PROFIT' if partial else 'RESUME_CLOSE'
             # Cancel every residual entry for this contract before managing its
             # owned partial inventory, including manually submitted entries.
             for order in db.all("SELECT * FROM orders WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=? AND side='BUY' AND status IN ('PENDING','PARTIAL')", owned_key):
@@ -219,28 +255,53 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
             request = {'request_key': _key('auto-x:', *owned_key, generation, q.timestamp.isoformat()),
                        'symbol': position['symbol'], 'right': position['right_kind'], 'expiry': position['expiry'],
                        'strike_cents': position['strike'], 'side': 'SELL_TO_CLOSE',
-                       'quantity': min(available, config['max_contracts']), 'limit_cents': _cents(q.bid)}
+                       'quantity': max(1,min(available-1,available*config['partial_exit_pct']//100)) if reason=='PARTIAL_PROFIT' else available, 'limit_cents': _cents(q.bid)}
             prior = db.one('SELECT * FROM orders WHERE account_id=? AND request_key=?', (account_id, request['request_key']))
             # A consumed observation cannot close another chunk or create an
             # altered idempotent payload after a partial fill/repeated tick.
             if prior:
                 fill(prior, q)
             else:
-                fill(submit(request, reason, q), q)
+                close=submit(request, reason, q, {'owned_quantity':current['quantity'],'owned_cost_cents':current['cost'],'bid_mark_cents':_cents(q.bid),'policy':policy})
+                if reason=='PARTIAL_PROFIT':
+                    db.execute('UPDATE position_policies SET partial_taken=1 WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?',owned_key)
+                fill(close, q)
         except Exception as exc:
             blocked(position['symbol'], exc)
 
     # Resume durable automatic entries after lost responses/restart. Manual
     # orders remain under operator control, except residual risk-exit cancels.
     for order in db.all("SELECT * FROM orders WHERE account_id=? AND side='BUY' AND status IN ('PENDING','PARTIAL') ORDER BY id", (account_id,)):
-        if not order['request_key'].startswith('auto-e:') or order['symbol'] in exit_symbols:
+        if not order['request_key'].startswith(('auto-e:', 'v1-r:', 'v1-s:')) or order['symbol'] in exit_symbols:
             continue
         try:
             fill(order, quote_for(order))
         except Exception as exc:
             blocked(order['symbol'], exc)
 
+    # Durable reversals only advance after old fills/cancellations are settled.
+    from .lifecycle import advance_reversal
+    for intent in db.all("SELECT * FROM lifecycle_intents WHERE account_id=? AND kind='REVERSAL' AND state NOT IN ('COMPLETE','EXPIRED','CANCELLED')",(account_id,)):
+        try:
+            advance_reversal(service,account_id,intent['id'],(feed or fixture_bars)(intent['symbol'],now),quotes(intent['symbol']))
+        except Exception as exc:
+            blocked(intent['symbol'],exc)
+
+    if config['scaling_enabled']:
+        for position in db.all('SELECT * FROM positions WHERE account_id=?',(account_id,)):
+            if position['symbol'] in exit_symbols:
+                continue
+            try:
+                q=quote_for(position)
+                if _cents(q.bid)*100*position['quantity']<=position['cost']:
+                    continue
+                intent=request_scaling(service,account_id,_key('scale:',account_id,position['symbol'],q.timestamp.isoformat()),position['symbol'],position['right_kind'],(feed or fixture_bars)(position['symbol'],now),quotes(position['symbol']))
+                result['actions'].append({'type':'SCALING_INTENT','intent_id':intent['id'],'state':intent['state']})
+            except Exception as exc:
+                blocked(position['symbol'],exc)
+
     ranked = []
+    analysis_facts = {}
     current = service.account(db, account_id)
     if not current['stopped'] and not db.one('SELECT stopped FROM supervisor WHERE id=1')['stopped']:
         for watch in db.all('SELECT * FROM watchlist WHERE account_id=? AND enabled=1 AND verified=1 ORDER BY symbol', (account_id,)):
@@ -254,7 +315,9 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
                 continue
             try:
                 quotes(symbol)
-                analysis = AnalysisPipeline().analyze((feed or fixture_bars)(symbol, now), now)
+                completed_bars=list((feed or fixture_bars)(symbol, now))
+                analysis = AnalysisPipeline().analyze(completed_bars, now)
+                analysis_facts[symbol]={'regime':analysis.regime,'atr':analysis.atr,'realized_volatility':analysis.realized_volatility,'completed_bars':[{'at':b.timestamp.isoformat(),'open':b.open,'high':b.high,'low':b.low,'close':b.close,'volume':b.volume} for b in completed_bars[-512:]]}
                 for signal in analysis.signals:
                     if signal.strategy in config['strategies']:
                         ranked.append((symbol, signal))
@@ -272,7 +335,8 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
             request = {'request_key': entry_key, 'symbol': symbol, 'right': q.right, 'expiry': q.expiry.isoformat(),
                        'strike_cents': _cents(q.strike), 'side': 'BUY', 'quantity': config['auto_quantity'],
                        'limit_cents': _cents(q.ask)}
-            order = submit(request, signal.strategy, q)
+            facts=analysis_facts[symbol]|{'signal':{'strategy':signal.strategy,'right':signal.right,'score':signal.score,'reason':signal.reason,'observed_at':signal.timestamp.isoformat()}}
+            order = submit(request, signal.strategy, q, facts)
             fill(order, q)
         except Exception as exc:
             blocked(symbol, exc)

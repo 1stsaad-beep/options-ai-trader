@@ -115,6 +115,10 @@ def tick(service, now=None, feed=None, execute_mock=False, quote_feed=None):
             service.audit(db, account['id'], 'SHADOW_SCAN', {
                 'source': 'synthetic_fixture', 'mode': account['config']['mode'],
                 'decisions': len(opportunities), 'orders_submitted': 0})
+    with service.repo.transaction() as db:
+        db.execute('INSERT INTO runtime_health(name,updated_at,payload) VALUES(?,?,?) ON CONFLICT(name) DO UPDATE SET updated_at=excluded.updated_at,payload=excluded.payload',
+                   ('worker', now.isoformat(), json.dumps({'status': 'OK', 'source': 'synthetic_fixture',
+                    'accounts_scanned': len(account_ids), 'execute_mock': execute_mock})))
     return {'shadow_decisions_recorded': recorded, 'orders_submitted': sum(r['orders_submitted'] for r in automation), 'source': 'synthetic_fixture', 'automation': automation}
 
 

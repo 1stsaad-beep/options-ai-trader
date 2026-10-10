@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'engine.dart';
 import 'store.dart';
+import 'chart_lab.dart';
 
 class DemoScreen extends StatefulWidget {
   final DemoStore? store;
@@ -22,6 +23,7 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
   int page = 0;
   DemoRow? replay;
   bool positionsTab = false;
+  String chartSymbol = 'NVDA';
   static const pages = [
     'الرئيسية',
     'الحسابات المحلية',
@@ -33,6 +35,8 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
     'سجل القرارات',
     'الطوارئ واختبار الأعطال',
     'الاستراتيجيات والإعدادات',
+    'مختبر الرسوم المتقدم',
+    'إعادة قرارات الصفقات',
   ];
   static const icons = [
     Icons.home_outlined,
@@ -45,6 +49,8 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
     Icons.history,
     Icons.emergency_outlined,
     Icons.tune,
+    Icons.candlestick_chart,
+    Icons.replay_circle_filled,
   ];
   DemoEngine get engine => controller.engine;
   DemoRow? get account => selected == null ? null : engine.account(selected!);
@@ -172,26 +178,35 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
   Future<void> editRisk() async {
     final id = selected!, r = engine.risk(account!);
     const fields = {
-      'مخاطرة الصفقة % (1–2)': 'trade_pct',
-      'الخسارة اليومية % (1–3)': 'daily_pct',
-      'التعرض المفتوح % (1–30)': 'allocation_pct',
+      'مخاطرة الصفقة % (0–100)': 'trade_pct',
+      'الخسارة اليومية % (0–100)': 'daily_pct',
+      'تخصيص رأس المال % (0–100)': 'allocation_pct',
+      'التعرض المفتوح % (0–100)': 'exposure_pct',
       'حد العقود (1–100)': 'max_contracts',
       'مجموعة مخاطر مترابطة (اختياري)': 'group',
-      'تعرض المجموعة % (1–30)': 'group_allocation_pct',
-      'خسارة المجموعة % (1–3)': 'group_daily_pct',
+      'تعرض المجموعة % (0–100)': 'group_allocation_pct',
+      'خسارة المجموعة % (0–100)': 'group_daily_pct',
     };
     final result = await form('مخاطر الحساب المحلي', {
       for (final e in fields.entries) e.key: '${r[e.value]}',
     });
     if (result == null || !mounted || selected != id) return;
-    await act(
-      (e) => e.configure(id, {
-        for (final f in fields.entries)
-          f.value: f.value == 'group'
-              ? result[f.key]
-              : int.tryParse(result[f.key]!),
-      }),
-    );
+    final changes = <String,dynamic>{for(final f in fields.entries)
+      f.value:f.value=='group'?result[f.key]:int.tryParse(result[f.key]!)};
+    if(changes.values.any((v)=>v==null)) {
+      await act((_)=>throw const DemoRejected('أدخل نسبًا وأعدادًا صحيحة')); return;
+    }
+    final elevated=DemoEngine.elevated({...r,...changes});
+    if(elevated) {
+      final confirmed=await showDialog<bool>(context:context,builder:(c)=>AlertDialog(
+        title:const Text('تأكيد مخاطر مرتفعة'),
+        content:const Text('قد تستنفد هذه الحدود كامل رأس المال الاصطناعي. تخصيص رأس المال يختلف عن خسارة الصفقة والخسارة اليومية. هل تقرّ بهذه المخاطر لحساب Demo المحدد؟'),
+        actions:[TextButton(onPressed:()=>Navigator.pop(c,false),child:const Text('إلغاء')),
+          FilledButton(onPressed:()=>Navigator.pop(c,true),child:const Text('أقرّ بالمخاطر وأحفظ'))]));
+      if(confirmed!=true || !mounted) return;
+    }
+    changes['elevated_risk_ack']=elevated;
+    await act((e)=>e.configure(id,changes));
   }
 
   Future<void> editExecution() async {
@@ -199,6 +214,13 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
     const fields = {
       'وقف الخسارة %': 'stop_pct',
       'جني الربح %': 'take_pct',
+      'الوقف المتحرك % (0 لتعطيله)': 'trailing_pct',
+      'جني مرحلي % (0 لتعطيله)': 'partial_take_pct',
+      'حد احتفاظ Swing بالملاحظات': 'swing_max_ticks',
+      'حماية الانتهاء بالأيام (0 لتعطيلها)': 'expiry_guard_days',
+      'أقصى عدد تعزيزات': 'scaling_max',
+      'عقود كل إضافة': 'scaling_quantity',
+      'تهدئة التعزيز بالملاحظات': 'scaling_cooldown',
       'كمية الدخول': 'quantity',
       'عقود التنفيذ لكل خطوة': 'fill_chunk',
       'العمولة لكل عقد بالسنت': 'commission',
@@ -313,7 +335,7 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
                     style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 12),
-                  Text('V0.5 • Demo محلي بلا إنترنت'),
+                  Text('V1.0 • Demo محلي بلا إنترنت'),
                 ],
               ),
             ),
@@ -549,10 +571,16 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
                 (pos) => card(
                   '${pos['symbol']} ${pos['right']} × ${pos['quantity']}',
                   'التكلفة مع عمولة الدخول: ${money(pos['cost'])}\nانتهاء: ${pos['expiry']}',
-                  action: TextButton(
-                    onPressed: () => manualOrder(position: pos),
-                    child: const Text('إغلاق'),
-                  ),
+                  action: PopupMenuButton<String>(tooltip:'إدارة المركز',
+                    onSelected:(v) {
+                      if(v=='close') {manualOrder(position:pos);}
+                      if(v=='scale') {act((e)=>e.scale(id,pos));}
+                      if(v=='reverse') {act((e)=>e.requestReversal(id,pos['symbol'],
+                        pos['right']=='CALL'?'PUT':'CALL','ui-$id-${e.sequence}-${e.tick}'));}
+                    },
+                    itemBuilder:(_)=>const [PopupMenuItem(value:'close',child:Text('إغلاق المملوك')),
+                      PopupMenuItem(value:'scale',child:Text('تعزيز وفق المخاطر')),
+                      PopupMenuItem(value:'reverse',child:Text('انعكاس بعد إغلاق ومصالحة'))]),
                 ),
               )
         else
@@ -580,7 +608,7 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
         button('تعديل مخاطر الحساب', editRisk, icon: Icons.shield_outlined),
         card(
           'حدود الدخول',
-          'مخاطرة الصفقة: ${r['trade_pct']}%\nالخسارة اليومية: ${r['daily_pct']}%\nالتعرض: ${r['allocation_pct']}%\nحد العقود: ${r['max_contracts']}',
+          'مخاطرة الصفقة: ${r['trade_pct']}%\nالخسارة اليومية: ${r['daily_pct']}%\nتخصيص رأس المال: ${r['allocation_pct']}%\nالتعرض المفتوح: ${r['exposure_pct']}%\nحد العقود: ${r['max_contracts']}',
         ),
         card(
           'المشرف العام',
@@ -740,6 +768,28 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
         ),
       ];
     }
+    if (page == 10) {
+      return [
+        DropdownButtonFormField<String>(initialValue:chartSymbol,
+          decoration:const InputDecoration(labelText:'رمز مختبر الرسم'),
+          items:DemoEngine.symbols.map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(),
+          onChanged:(s)=>setState(()=>chartSymbol=s!)),
+        DemoChartLab(key:ValueKey('$id-$chartSymbol'),engine:engine,symbol:chartSymbol),
+      ];
+    }
+    if (page == 11) {
+      return [
+        const Text('لقطات القرار محفوظة وقت إرسال الأمر. افتح الصفقة لرؤية الدخول والإضافات والخروج دون تفسير لاحق مختلق.'),
+        for(final trade in engine.rows(a,'trades').reversed) card(
+          '${trade['symbol']} • ${money(trade['pnl'])}',
+          '${trade['reason']} • الملاحظة ${trade['tick']}',
+          action:TextButton(onPressed:()=>Navigator.push(context,MaterialPageRoute<void>(
+            builder:(_)=>DemoDecisionReplay(engine:engine,trade:trade))),child:const Text('إعادة القرار'))),
+        if(engine.rows(a,'trades').isEmpty) const Text('لا صفقات مغلقة بعد. نفّذ دورة تجريبية لعرض قراراتها.'),
+        for(final v in engine.rows(a,'reversals')) card('انعكاس ${v['symbol']}',
+          '${v['state']} • ${v['right']} • مفتاح ${v['request_key']}'),
+      ];
+    }
     return [
       SwitchListTile(
         key: const Key('demo-automation'),
@@ -750,6 +800,26 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
         value: r['automation'],
         onChanged: (v) => act((e) => e.configure(id, {'automation': v})),
       ),
+      SwitchListTile(title:const Text('انعكاس آلي بعد إغلاق ومصالحة'),
+        subtitle:const Text('إشارة كمية معاكسة صالحة؛ التنفيذ الجديد ينتظر الإغلاق الكامل'),
+        value:r['reversal_enabled'],onChanged:(v)=>act((e)=>e.configure(id,{'reversal_enabled':v}))),
+      SwitchListTile(title:const Text('تعزيز المراكز الرابحة'),
+        subtitle:const Text('معطل افتراضيًا؛ يشمل المخاطر والحجوزات والتهدئة'),
+        value:r['scaling_enabled'],onChanged:(v)=>act((e)=>e.configure(id,{'scaling_enabled':v}))),
+      SwitchListTile(title:const Text('إضافات متناقصة'),value:r['scaling_decreasing'],
+        onChanged:(v)=>act((e)=>e.configure(id,{'scaling_decreasing':v}))),
+      DropdownButtonFormField<String>(initialValue:r['entry_profile'],
+        decoration:const InputDecoration(labelText:'ملف الدخول — لا يغير حجم المخاطرة'),
+        items:const [DropdownMenuItem(value:'conservative',child:Text('محافظ — اختراق فقط')),
+          DropdownMenuItem(value:'balanced',child:Text('متوازن')),
+          DropdownMenuItem(value:'opportunistic',child:Text('انتهازي — قواعد كمية'))],
+        onChanged:(v)=>act((e)=>e.configure(id,{'entry_profile':v}))),
+      DropdownButtonFormField<String>(initialValue:r['entry_method'],
+        decoration:const InputDecoration(labelText:'توقيت الدخول'),
+        items:const [DropdownMenuItem(value:'early',child:Text('مبكر')),
+          DropdownMenuItem(value:'confirmed',child:Text('مؤكد بملاحظتين')),
+          DropdownMenuItem(value:'pullback',child:Text('تراجع'))],
+        onChanged:(v)=>act((e)=>e.configure(id,{'entry_method':v}))),
       for (final s in ['breakout', 'pullback'])
         CheckboxListTile(
           title: Text(label(s)),

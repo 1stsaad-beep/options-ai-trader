@@ -28,6 +28,9 @@ class ExecutionTests(unittest.TestCase):
         with self.assertRaises(Rejected): self.s.fill(self.b,a['id'],'f',1,50)
         self.assertEqual(len(self.s.rows(self.a,'orders')),1)
     def test_partial_fill_idempotent_and_limit_enforced(self):
+        # Fresh synthetic quote supports the risk check on the second fill.
+        with self.repo.transaction() as db:
+            self.s.record_option_mark(db,self.a,'NVDA','CALL','2026-11-20',15000,50,50,self.now)
         order=self.s.submit(self.a,self.req())
         with self.assertRaises(Rejected): self.s.fill(self.a,order['id'],'f',1,51)
         self.assertEqual(self.s.fill(self.a,order['id'],'f',1,50)['status'],'PARTIAL')
@@ -87,6 +90,7 @@ class ExecutionTests(unittest.TestCase):
         self.s.watch(self.a,'AAPL',False)
         with self.assertRaises(Rejected): self.s.submit(self.a,self.req(symbol='AAPL'))
     def test_atomic_risk_concurrent_admission(self):
+        self.s.configure(self.a, {'max_contracts': 100})  # Isolate allocation from the V1 aggregate quantity gate.
         def submit(index):
             try:
                 self.s.submit(self.a,self.req(request_key=str(index),quantity=2,limit_cents=100))

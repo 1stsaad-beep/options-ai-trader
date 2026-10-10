@@ -17,6 +17,9 @@ def review_demo():
     b = service.create_account("review B")["id"]
     for account in (a, b):
         service.watch(account, "AAPL", True)
+        # Explicit fixture quote, independent of fills; V1 values open losses.
+        with repo.transaction() as db:
+            service.record_option_mark(db, account, "AAPL", "CALL", "2026-11-20", 20000, 100, 100, clock[0])
     yield repo, service, a, b, clock
     repo.close()
 
@@ -102,6 +105,8 @@ def test_restart_preserves_partial_receipt_and_requires_explicit_reconcile(tmp_p
     service = TradingService(repo, now=lambda: now, today=lambda: now.date())
     account = service.create_account("restart")['id']
     service.watch(account, "AAPL", True)
+    with repo.transaction() as db:
+        service.record_option_mark(db, account, "AAPL", "CALL", "2026-11-20", 20000, 100, 100, now)
     order = service.submit(account, request())
     service.fill(account, order["id"], "before-restart", 1, 100)
     repo.close()

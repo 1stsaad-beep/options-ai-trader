@@ -1,8 +1,5 @@
 name: V1 source and history checkpoint
 on:
-  push:
-    branches: [develop/v1.0]
-    paths: [".github/workflows/v10-checkpoint.yaml"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -21,7 +18,7 @@ jobs:
           git bundle create options-ai-trader-history.bundle --all HEAD
           git bundle verify options-ai-trader-history.bundle
           sha256sum options-ai-trader-source.zip options-ai-trader-history.bundle > checkpoint.sha256
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: options-ai-trader-v1-checkpoint
           path: |

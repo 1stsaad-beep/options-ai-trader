@@ -1,0 +1,22 @@
+# Optional local HTTPS only; combine with compose.yaml and --profile local-https.
+# No cloud deployment, public certificate request, broker or public port.
+services:
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["local-https"]
+    ports:
+      - "127.0.0.1:8443:8443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - local_caddy_data:/data
+      - local_caddy_config:/config
+    depends_on:
+      - api
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: unless-stopped
+volumes:
+  local_caddy_data:
+  local_caddy_config:
