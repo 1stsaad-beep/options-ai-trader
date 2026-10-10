@@ -1,0 +1,31 @@
+name: V1 source and history checkpoint
+on:
+  push:
+    branches: [develop/v1.0]
+    paths: [".github/workflows/v10-checkpoint.yaml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checkpoint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Archive committed source and complete Git history
+        run: |
+          git archive --format=zip --prefix=options-ai-trader/ -o options-ai-trader-source.zip HEAD
+          git bundle create options-ai-trader-history.bundle --all HEAD
+          git bundle verify options-ai-trader-history.bundle
+          sha256sum options-ai-trader-source.zip options-ai-trader-history.bundle > checkpoint.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: options-ai-trader-v1-checkpoint
+          path: |
+            options-ai-trader-source.zip
+            options-ai-trader-history.bundle
+            checkpoint.sha256
+          retention-days: 30
