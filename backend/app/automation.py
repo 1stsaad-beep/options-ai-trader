@@ -224,7 +224,12 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
             near_expiry=(date.fromisoformat(position['expiry'])-now.date()).days<=config['expiry_exit_days']
             partial=bool(config['partial_profit_pct'] and policy and not policy['partial_taken'] and position['quantity']>=2 and premium*100>=position['cost']*(100+config['partial_profit_pct']))
             invalidated=False
-            if config['scenario_exit_enabled']:
+            # Protective exits and accepted close receipts have priority over
+            # optional scenario research. A failed bar feed must not strand an
+            # owned close already justified by fresh prices or holding policy.
+            # Quote/account/ledger checks and fill admission still run below.
+            protective_exit = loss or profit or trailing or intraday or swing or near_expiry or bool(automatic_closes)
+            if config['scenario_exit_enabled'] and not protective_exit:
                 current_analysis=AnalysisPipeline().analyze((feed or fixture_bars)(position['symbol'],now),now)
                 invalidated=any(s.right!=position['right_kind'] and s.strategy in config['strategies'] for s in current_analysis.signals)
             if not (loss or profit or trailing or intraday or swing or near_expiry or partial or invalidated or automatic_closes):

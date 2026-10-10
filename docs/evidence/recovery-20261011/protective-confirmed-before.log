@@ -1,0 +1,192 @@
+FFFFF.                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_protective_exit_survives_optional_scenario_outage[STOP_LOSS-0.7-config0-0] _
+
+tmp_path = PosixPath('/workspace/scratch/30bf1042c108/options-ai-trader-rc2/pytest-of-root/pytest-3/test_protective_exit_survives_0')
+reason = 'STOP_LOSS', bid = 0.7, config = {}, seconds = 0
+
+    @pytest.mark.parametrize('reason,bid,config,seconds', [
+        ('STOP_LOSS', .70, {}, 0),
+        ('TAKE_PROFIT', 1.50, {}, 0),
+        ('TRAILING_STOP', 1.10, {'trailing_stop_pct': 10}, 0),
+        ('INTRADAY_EXIT', 1.00, {'intraday_exit_hour_utc': 14}, 0),
+        ('SWING_TIME_EXIT', 1.00, {'holding': 'swing', 'swing_max_days': 1}, 86400),
+    ])
+    def test_protective_exit_survives_optional_scenario_outage(tmp_path, reason, bid, config, seconds):
+        world = DurableWorld(tmp_path / 'scenario-outage.db')
+        try:
+            world.own()
+            world.service.configure(world.account, {
+                'automation_enabled': True, 'scenario_exit_enabled': True, **config,
+            })
+            world.time += timedelta(seconds=seconds)
+            world.service.reconcile(world.account)
+            world.service.mock_market_data(world.account, 'NVDA')
+            if reason == 'TRAILING_STOP':
+                with world.repo.transaction() as db:
+                    db.execute('UPDATE position_policies SET high_bid=130 WHERE account_id=?', (world.account,))
+    
+            def unavailable(symbol, now):
+                raise RuntimeError('optional scenario analysis unavailable')
+    
+            result = run_account(world.service, world.account, feed=unavailable,
+                quote_feed=lambda symbol, now: [replace(q, bid=bid, ask=bid+.03)
+                    for q in fixture_quotes(symbol, now, world.service.rows(world.account, 'positions'))])
+>           assert result['orders_submitted'] == result['fills_applied'] == 1
+E           assert 0 == 1
+
+backend/tests/test_recovery_protective_exits.py:38: AssertionError
+_ test_protective_exit_survives_optional_scenario_outage[TAKE_PROFIT-1.5-config1-0] _
+
+tmp_path = PosixPath('/workspace/scratch/30bf1042c108/options-ai-trader-rc2/pytest-of-root/pytest-3/test_protective_exit_survives_1')
+reason = 'TAKE_PROFIT', bid = 1.5, config = {}, seconds = 0
+
+    @pytest.mark.parametrize('reason,bid,config,seconds', [
+        ('STOP_LOSS', .70, {}, 0),
+        ('TAKE_PROFIT', 1.50, {}, 0),
+        ('TRAILING_STOP', 1.10, {'trailing_stop_pct': 10}, 0),
+        ('INTRADAY_EXIT', 1.00, {'intraday_exit_hour_utc': 14}, 0),
+        ('SWING_TIME_EXIT', 1.00, {'holding': 'swing', 'swing_max_days': 1}, 86400),
+    ])
+    def test_protective_exit_survives_optional_scenario_outage(tmp_path, reason, bid, config, seconds):
+        world = DurableWorld(tmp_path / 'scenario-outage.db')
+        try:
+            world.own()
+            world.service.configure(world.account, {
+                'automation_enabled': True, 'scenario_exit_enabled': True, **config,
+            })
+            world.time += timedelta(seconds=seconds)
+            world.service.reconcile(world.account)
+            world.service.mock_market_data(world.account, 'NVDA')
+            if reason == 'TRAILING_STOP':
+                with world.repo.transaction() as db:
+                    db.execute('UPDATE position_policies SET high_bid=130 WHERE account_id=?', (world.account,))
+    
+            def unavailable(symbol, now):
+                raise RuntimeError('optional scenario analysis unavailable')
+    
+            result = run_account(world.service, world.account, feed=unavailable,
+                quote_feed=lambda symbol, now: [replace(q, bid=bid, ask=bid+.03)
+                    for q in fixture_quotes(symbol, now, world.service.rows(world.account, 'positions'))])
+>           assert result['orders_submitted'] == result['fills_applied'] == 1
+E           assert 0 == 1
+
+backend/tests/test_recovery_protective_exits.py:38: AssertionError
+_ test_protective_exit_survives_optional_scenario_outage[TRAILING_STOP-1.1-config2-0] _
+
+tmp_path = PosixPath('/workspace/scratch/30bf1042c108/options-ai-trader-rc2/pytest-of-root/pytest-3/test_protective_exit_survives_2')
+reason = 'TRAILING_STOP', bid = 1.1, config = {'trailing_stop_pct': 10}
+seconds = 0
+
+    @pytest.mark.parametrize('reason,bid,config,seconds', [
+        ('STOP_LOSS', .70, {}, 0),
+        ('TAKE_PROFIT', 1.50, {}, 0),
+        ('TRAILING_STOP', 1.10, {'trailing_stop_pct': 10}, 0),
+        ('INTRADAY_EXIT', 1.00, {'intraday_exit_hour_utc': 14}, 0),
+        ('SWING_TIME_EXIT', 1.00, {'holding': 'swing', 'swing_max_days': 1}, 86400),
+    ])
+    def test_protective_exit_survives_optional_scenario_outage(tmp_path, reason, bid, config, seconds):
+        world = DurableWorld(tmp_path / 'scenario-outage.db')
+        try:
+            world.own()
+            world.service.configure(world.account, {
+                'automation_enabled': True, 'scenario_exit_enabled': True, **config,
+            })
+            world.time += timedelta(seconds=seconds)
+            world.service.reconcile(world.account)
+            world.service.mock_market_data(world.account, 'NVDA')
+            if reason == 'TRAILING_STOP':
+                with world.repo.transaction() as db:
+                    db.execute('UPDATE position_policies SET high_bid=130 WHERE account_id=?', (world.account,))
+    
+            def unavailable(symbol, now):
+                raise RuntimeError('optional scenario analysis unavailable')
+    
+            result = run_account(world.service, world.account, feed=unavailable,
+                quote_feed=lambda symbol, now: [replace(q, bid=bid, ask=bid+.03)
+                    for q in fixture_quotes(symbol, now, world.service.rows(world.account, 'positions'))])
+>           assert result['orders_submitted'] == result['fills_applied'] == 1
+E           assert 0 == 1
+
+backend/tests/test_recovery_protective_exits.py:38: AssertionError
+_ test_protective_exit_survives_optional_scenario_outage[INTRADAY_EXIT-1.0-config3-0] _
+
+tmp_path = PosixPath('/workspace/scratch/30bf1042c108/options-ai-trader-rc2/pytest-of-root/pytest-3/test_protective_exit_survives_3')
+reason = 'INTRADAY_EXIT', bid = 1.0, config = {'intraday_exit_hour_utc': 14}
+seconds = 0
+
+    @pytest.mark.parametrize('reason,bid,config,seconds', [
+        ('STOP_LOSS', .70, {}, 0),
+        ('TAKE_PROFIT', 1.50, {}, 0),
+        ('TRAILING_STOP', 1.10, {'trailing_stop_pct': 10}, 0),
+        ('INTRADAY_EXIT', 1.00, {'intraday_exit_hour_utc': 14}, 0),
+        ('SWING_TIME_EXIT', 1.00, {'holding': 'swing', 'swing_max_days': 1}, 86400),
+    ])
+    def test_protective_exit_survives_optional_scenario_outage(tmp_path, reason, bid, config, seconds):
+        world = DurableWorld(tmp_path / 'scenario-outage.db')
+        try:
+            world.own()
+            world.service.configure(world.account, {
+                'automation_enabled': True, 'scenario_exit_enabled': True, **config,
+            })
+            world.time += timedelta(seconds=seconds)
+            world.service.reconcile(world.account)
+            world.service.mock_market_data(world.account, 'NVDA')
+            if reason == 'TRAILING_STOP':
+                with world.repo.transaction() as db:
+                    db.execute('UPDATE position_policies SET high_bid=130 WHERE account_id=?', (world.account,))
+    
+            def unavailable(symbol, now):
+                raise RuntimeError('optional scenario analysis unavailable')
+    
+            result = run_account(world.service, world.account, feed=unavailable,
+                quote_feed=lambda symbol, now: [replace(q, bid=bid, ask=bid+.03)
+                    for q in fixture_quotes(symbol, now, world.service.rows(world.account, 'positions'))])
+>           assert result['orders_submitted'] == result['fills_applied'] == 1
+E           assert 0 == 1
+
+backend/tests/test_recovery_protective_exits.py:38: AssertionError
+_ test_protective_exit_survives_optional_scenario_outage[SWING_TIME_EXIT-1.0-config4-86400] _
+
+tmp_path = PosixPath('/workspace/scratch/30bf1042c108/options-ai-trader-rc2/pytest-of-root/pytest-3/test_protective_exit_survives_4')
+reason = 'SWING_TIME_EXIT', bid = 1.0
+config = {'holding': 'swing', 'swing_max_days': 1}, seconds = 86400
+
+    @pytest.mark.parametrize('reason,bid,config,seconds', [
+        ('STOP_LOSS', .70, {}, 0),
+        ('TAKE_PROFIT', 1.50, {}, 0),
+        ('TRAILING_STOP', 1.10, {'trailing_stop_pct': 10}, 0),
+        ('INTRADAY_EXIT', 1.00, {'intraday_exit_hour_utc': 14}, 0),
+        ('SWING_TIME_EXIT', 1.00, {'holding': 'swing', 'swing_max_days': 1}, 86400),
+    ])
+    def test_protective_exit_survives_optional_scenario_outage(tmp_path, reason, bid, config, seconds):
+        world = DurableWorld(tmp_path / 'scenario-outage.db')
+        try:
+            world.own()
+            world.service.configure(world.account, {
+                'automation_enabled': True, 'scenario_exit_enabled': True, **config,
+            })
+            world.time += timedelta(seconds=seconds)
+            world.service.reconcile(world.account)
+            world.service.mock_market_data(world.account, 'NVDA')
+            if reason == 'TRAILING_STOP':
+                with world.repo.transaction() as db:
+                    db.execute('UPDATE position_policies SET high_bid=130 WHERE account_id=?', (world.account,))
+    
+            def unavailable(symbol, now):
+                raise RuntimeError('optional scenario analysis unavailable')
+    
+            result = run_account(world.service, world.account, feed=unavailable,
+                quote_feed=lambda symbol, now: [replace(q, bid=bid, ask=bid+.03)
+                    for q in fixture_quotes(symbol, now, world.service.rows(world.account, 'positions'))])
+>           assert result['orders_submitted'] == result['fills_applied'] == 1
+E           assert 0 == 1
+
+backend/tests/test_recovery_protective_exits.py:38: AssertionError
+=========================== short test summary info ============================
+FAILED backend/tests/test_recovery_protective_exits.py::test_protective_exit_survives_optional_scenario_outage[STOP_LOSS-0.7-config0-0]
+FAILED backend/tests/test_recovery_protective_exits.py::test_protective_exit_survives_optional_scenario_outage[TAKE_PROFIT-1.5-config1-0]
+FAILED backend/tests/test_recovery_protective_exits.py::test_protective_exit_survives_optional_scenario_outage[TRAILING_STOP-1.1-config2-0]
+FAILED backend/tests/test_recovery_protective_exits.py::test_protective_exit_survives_optional_scenario_outage[INTRADAY_EXIT-1.0-config3-0]
+FAILED backend/tests/test_recovery_protective_exits.py::test_protective_exit_survives_optional_scenario_outage[SWING_TIME_EXIT-1.0-config4-86400]
+5 failed, 1 passed in 0.10s

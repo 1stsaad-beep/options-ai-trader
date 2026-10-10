@@ -21,3 +21,12 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Re-ran the existing 51 critical selected Python cases locally: all passed. Exact command, JUnit and output retained.
 - No application code changed in this batch. Evidence is in docs/evidence/recovery-20261011.
 - Next: failure-injection review of optional analysis versus protective exits; then current delivery reports.
+
+## Batch 2: protective exits survive optional research failure
+
+- Previous batch published and read back at `7dbf350a406f36339709ab3848110f78c11a2b7a`.
+- Reproduced a real safety defect: when scenario_exit_enabled was true, an optional bar/analysis failure stranded five independently justified exits (SL, TP, trailing, intraday, swing). Corrected-fixture reproduction: 5 failed, 1 passed.
+- The fix gives validated protective triggers and accepted automatic close receipts priority over optional scenario research. Account, inventory, quote freshness/spread, order/fill risk admission and idempotency checks remain mandatory. No failed scenario is treated as a signal.
+- Added six regression cases. Targeted lifecycle/automation/RC2 suite: 78 passed, zero failed/skipped. A no-trigger analysis outage leaves the owned position untouched. Repeated ticks do not duplicate orders or P&L.
+- Test development initially exposed fixture defects (rolled synthetic expiry and an unintended nested transaction); these fixtures were corrected before the definitive reproduction. All attempt logs are retained; `protective-reproduced.*` and `protective-acceptance.*` are the authoritative before/after pair.
+- No Flutter source changed, so existing verified RC2 APK/iOS artifacts remain applicable to mobile source. Backend final acceptance and current reports are next.
