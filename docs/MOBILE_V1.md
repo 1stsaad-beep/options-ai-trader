@@ -23,6 +23,8 @@ Local indicator calculations include SMA, EMA, simple-window RSI (not Wilder smo
 
 The local chart engines are intentionally limited research candidates, clearly labelled synthetic/Shadow. They are not a full expert Elliott count system: nested degrees, persistent primary/alternate scenario tracking, 3-of-3 identification, ABC, multi-timeframe confluence and a complete classical-pattern library are not implemented in this local canvas. Backend research modules are independent and are not silently represented as Flutter features. The AI Confluence tab is a deterministic rules summary with no model/API call. There are no profitability claims.
 
+The simple synthetic OHLC fixtures often produce no confirmed strict pivots or pattern candidates. Empty candidate results are displayed honestly; the canvas does not fabricate a wave or harmonic model to fill the screen.
+
 ## Safety and persistence limits
 
 - No HTTP, socket, API or broker dependency is imported by the local engine or chart analytics. Live/Paper/IBKR modes are rejected in local account configuration.
@@ -36,3 +38,12 @@ The local chart engines are intentionally limited research candidates, clearly l
 Added engine regressions for all new safety policies, first-install/migration persistence, reversal partial fill/disconnection/emergency/cancellation, lost scaling response, fixed decision evidence, indicator and harmonic geometry, causal pivot timing and replay. The widget suite traverses the added Arabic screens, and includes a narrow RTL chart-lab test; the existing default-app HTTP-blocking test remains.
 
 Actual execution counts and analyze/build results belong in the release test report after the tools have run. Writing this file is not evidence of a successful Flutter test or build.
+
+## Verified cloud checkpoint
+
+At commit `32531f772200cbb798a98a744323f007bbb2d210`, GitHub Actions completed the following on 2026-10-10:
+
+- Android run [38067549917](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067549917): analyze, shared Flutter tests, APK compilation, preview signature verification and artifact upload succeeded.
+- macOS/iOS run [38067549913](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067549913): analyze, **114 passed / 0 failed / 0 skipped** shared Flutter tests, and `flutter build ios --release --no-codesign` succeeded. Six hidden test-suite loaders are excluded from the test count. The downloaded artifact passed ZIP CRC verification and contains the compiled `Runner.app/Runner` executable.
+
+The iOS result is an unsigned device build, not an installable signed IPA or a TestFlight upload. Android signature identity and final downloadable APK hashes are recorded in the release report. These results do not establish a successful installation on a physical phone, live-market qualification, or strategy profitability. Local scratch Dart execution remained blocked by its runtime stack-bounds limitation; these successful runs used actual GitHub-hosted runners.

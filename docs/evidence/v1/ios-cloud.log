@@ -1,0 +1,363 @@
+﻿2026-10-10T16:24:49.8955030Z Current runner version: '2.337.0'
+2026-10-10T16:24:49.8981040Z ##[group]Runner Image Provisioner
+2026-10-10T16:24:49.8981730Z Hosted Compute Agent
+2026-10-10T16:24:49.8982100Z Version: 20260828.587
+2026-10-10T16:24:49.8982620Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-10-10T16:24:49.8983090Z Build Date: 2026-08-28T16:44:25Z
+2026-10-10T16:24:49.8984770Z Worker ID: {e5d9eca5-1ee1-487e-8879-e873a55cc278}
+2026-10-10T16:24:49.8985360Z Azure Region: westus
+2026-10-10T16:24:49.8985730Z ##[endgroup]
+2026-10-10T16:24:49.8986820Z ##[group]Operating System
+2026-10-10T16:24:49.8987200Z macOS
+2026-10-10T16:24:49.8987520Z 26.6.2
+2026-10-10T16:24:49.8987830Z 25G83
+2026-10-10T16:24:49.8988150Z ##[endgroup]
+2026-10-10T16:24:49.8988490Z ##[group]Runner Image
+2026-10-10T16:24:49.8988860Z Image: macos-26-arm64
+2026-10-10T16:24:49.8989220Z Version: 20260907.0351.1
+2026-10-10T16:24:49.8990040Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20260907.0351/images/macos/macos-26-arm64-Readme.md
+2026-10-10T16:24:49.8991170Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20260907.0351
+2026-10-10T16:24:49.8991830Z ##[endgroup]
+2026-10-10T16:24:49.8992590Z ##[group]GITHUB_TOKEN Permissions
+2026-10-10T16:24:49.8994160Z Contents: read
+2026-10-10T16:24:49.8994540Z Metadata: read
+2026-10-10T16:24:49.8994990Z ##[endgroup]
+2026-10-10T16:24:49.8996610Z Secret source: Actions
+2026-10-10T16:24:49.8997220Z Cache mode: write
+2026-10-10T16:24:49.8997660Z Prepare workflow directory
+2026-10-10T16:24:49.9402520Z Prepare all required actions
+2026-10-10T16:24:49.9434790Z Getting action download info
+2026-10-10T16:24:50.1129600Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-10T16:24:50.3613770Z Download action repository 'subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2' (SHA:1a449444c387b1966244ae4d4f8c696479add0b2)
+2026-10-10T16:24:50.9240950Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-10T16:24:51.1764610Z Getting action download info
+2026-10-10T16:24:51.2475460Z Download action repository 'actions/cache@v5' (SHA:caa296126883cff596d87d8935842f9db880ef25)
+2026-10-10T16:24:51.4169890Z Complete job name: ios
+2026-10-10T16:24:51.4777390Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-10-10T16:24:51.4778680Z with:
+2026-10-10T16:24:51.4779130Z   repository: 1stsaad-beep/options-ai-trader
+2026-10-10T16:24:51.4785180Z   token: ***
+2026-10-10T16:24:51.4785620Z   ssh-strict: true
+2026-10-10T16:24:51.4785990Z   ssh-user: git
+2026-10-10T16:24:51.4786410Z   persist-credentials: true
+2026-10-10T16:24:51.4786880Z   clean: true
+2026-10-10T16:24:51.4787270Z   sparse-checkout-cone-mode: true
+2026-10-10T16:24:51.4787720Z   fetch-depth: 1
+2026-10-10T16:24:51.4788050Z   fetch-tags: false
+2026-10-10T16:24:51.4788390Z   show-progress: true
+2026-10-10T16:24:51.4788900Z   lfs: false
+2026-10-10T16:24:51.4789210Z   submodules: false
+2026-10-10T16:24:51.4789560Z   set-safe-directory: true
+2026-10-10T16:24:51.4789950Z   allow-unsafe-pr-checkout: false
+2026-10-10T16:24:51.4790960Z env:
+2026-10-10T16:24:51.4791260Z   CI: true
+2026-10-10T16:24:51.4791570Z   BOT: true
+2026-10-10T16:24:51.4791950Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T16:24:51.4792740Z   IOS_BUNDLE_ID: com.optionsaitrader.optionsAiTrader
+2026-10-10T16:24:51.4793230Z ##[endgroup]
+2026-10-10T16:24:51.9376810Z Syncing repository: 1stsaad-beep/options-ai-trader
+2026-10-10T16:24:51.9383440Z ##[group]Getting Git version info
+2026-10-10T16:24:51.9385240Z Working directory is '/Users/runner/work/options-ai-trader/options-ai-trader'
+2026-10-10T16:24:51.9387730Z [command]/opt/homebrew/bin/git version
+2026-10-10T16:24:52.0021140Z git version 2.55.0
+2026-10-10T16:24:52.0037900Z ##[endgroup]
+2026-10-10T16:24:52.0045560Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/74752e2f-0d48-4e4d-bf78-3c69a3948ada/.gitconfig'
+2026-10-10T16:24:52.0079440Z Temporarily overriding HOME='/Users/runner/work/_temp/74752e2f-0d48-4e4d-bf78-3c69a3948ada' before making global git config changes
+2026-10-10T16:24:52.0117720Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T16:24:52.0124870Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/options-ai-trader/options-ai-trader
+2026-10-10T16:24:52.0285110Z Deleting the contents of '/Users/runner/work/options-ai-trader/options-ai-trader'
+2026-10-10T16:24:52.0289640Z ##[group]Initializing the repository
+2026-10-10T16:24:52.0290530Z [command]/opt/homebrew/bin/git init /Users/runner/work/options-ai-trader/options-ai-trader
+2026-10-10T16:24:52.0661020Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-10T16:24:52.0664280Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-10T16:24:52.0667250Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-10T16:24:52.0669280Z hint: call:
+2026-10-10T16:24:52.0670880Z hint:
+2026-10-10T16:24:52.0671740Z hint: 	git config --global init.defaultBranch <name>
+2026-10-10T16:24:52.0672270Z hint:
+2026-10-10T16:24:52.0672790Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-10T16:24:52.0676180Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-10T16:24:52.0677250Z hint:
+2026-10-10T16:24:52.0677630Z hint: 	git branch -m <name>
+2026-10-10T16:24:52.0678010Z hint:
+2026-10-10T16:24:52.0678510Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-10T16:24:52.0679490Z Initialized empty Git repository in /Users/runner/work/options-ai-trader/options-ai-trader/.git/
+2026-10-10T16:24:52.0681470Z [command]/opt/homebrew/bin/git remote add origin https://github.com/1stsaad-beep/options-ai-trader
+2026-10-10T16:24:52.0765940Z ##[endgroup]
+2026-10-10T16:24:52.0767240Z ##[group]Disabling automatic garbage collection
+2026-10-10T16:24:52.0768080Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-10-10T16:24:52.0851360Z ##[endgroup]
+2026-10-10T16:24:52.0852060Z ##[group]Setting up auth
+2026-10-10T16:24:52.0856060Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T16:24:52.0942530Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T16:24:52.2212850Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T16:24:52.2292860Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T16:24:52.3381810Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T16:24:52.3468080Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-10T16:24:52.4896750Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-10T16:24:52.5014020Z ##[endgroup]
+2026-10-10T16:24:52.5016730Z ##[group]Fetching the repository
+2026-10-10T16:24:52.5021570Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +32531f772200cbb798a98a744323f007bbb2d210:refs/remotes/origin/develop/v1.0
+2026-10-10T16:24:53.5440770Z From https://github.com/1stsaad-beep/options-ai-trader
+2026-10-10T16:24:53.5463490Z  * [new ref]         32531f772200cbb798a98a744323f007bbb2d210 -> origin/develop/v1.0
+2026-10-10T16:24:53.5495780Z ##[endgroup]
+2026-10-10T16:24:53.5507590Z ##[group]Determining the checkout info
+2026-10-10T16:24:53.5510490Z ##[endgroup]
+2026-10-10T16:24:53.5518920Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-10-10T16:24:53.5567280Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-10T16:24:53.5659870Z ##[group]Checking out the ref
+2026-10-10T16:24:53.5668200Z [command]/opt/homebrew/bin/git checkout --progress --force -B develop/v1.0 refs/remotes/origin/develop/v1.0
+2026-10-10T16:24:53.6322010Z Switched to a new branch 'develop/v1.0'
+2026-10-10T16:24:53.6331910Z branch 'develop/v1.0' set up to track 'origin/develop/v1.0'.
+2026-10-10T16:24:53.6336030Z ##[endgroup]
+2026-10-10T16:24:53.6451870Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-10-10T16:24:53.6534530Z 32531f772200cbb798a98a744323f007bbb2d210
+2026-10-10T16:24:53.6970660Z ##[group]Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+2026-10-10T16:24:53.6971440Z with:
+2026-10-10T16:24:53.6971890Z   flutter-version: 3.47.7
+2026-10-10T16:24:53.6972330Z   channel: stable
+2026-10-10T16:24:53.6972730Z   architecture: ARM64
+2026-10-10T16:24:53.6973210Z   cache: false
+2026-10-10T16:24:53.6973620Z   pub-cache-path: default
+2026-10-10T16:24:53.6974070Z   dry-run: false
+2026-10-10T16:24:53.6974540Z   git-source: https://github.com/flutter/flutter.git
+2026-10-10T16:24:53.6975120Z env:
+2026-10-10T16:24:53.6975490Z   CI: true
+2026-10-10T16:24:53.6975850Z   BOT: true
+2026-10-10T16:24:53.6976280Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T16:24:53.6976900Z   IOS_BUNDLE_ID: com.optionsaitrader.optionsAiTrader
+2026-10-10T16:24:53.6977460Z ##[endgroup]
+2026-10-10T16:24:53.7036230Z ##[start-action display=Make yq tool available on Windows runners;id=__subosito_flutter-action.__run]
+2026-10-10T16:24:53.7076160Z ##[end-action id=__subosito_flutter-action.__run;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-10T16:24:53.7080030Z ##[start-action display=Make setup script executable;id=__subosito_flutter-action.__run_2]
+2026-10-10T16:24:53.7132080Z ##[group]Run chmod +x "$GITHUB_ACTION_PATH/setup.sh"
+2026-10-10T16:24:53.7132810Z [36;1mchmod +x "$GITHUB_ACTION_PATH/setup.sh"[0m
+2026-10-10T16:24:53.7182600Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-10T16:24:53.7183170Z env:
+2026-10-10T16:24:53.7183520Z   CI: true
+2026-10-10T16:24:53.7183920Z   BOT: true
+2026-10-10T16:24:53.7184340Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T16:24:53.7184840Z   IOS_BUNDLE_ID: com.optionsaitrader.optionsAiTrader
+2026-10-10T16:24:53.7185340Z ##[endgroup]
+2026-10-10T16:24:53.7775940Z ##[end-action id=__subosito_flutter-action.__run_2;outcome=success;conclusion=success;duration_ms=69]
+2026-10-10T16:24:53.7780480Z ##[start-action display=Set action inputs;id=__subosito_flutter-action.flutter-action]
+2026-10-10T16:24:53.7837460Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh -p \
+2026-10-10T16:24:53.7838120Z [36;1m$GITHUB_ACTION_PATH/setup.sh -p \[0m
+2026-10-10T16:24:53.7838630Z [36;1m  -n '3.47.7' \[0m
+2026-10-10T16:24:53.7839070Z [36;1m  -f '' \[0m
+2026-10-10T16:24:53.7839540Z [36;1m  -a 'ARM64' \[0m
+2026-10-10T16:24:53.7840070Z [36;1m  -k '' \[0m
+2026-10-10T16:24:53.7840550Z [36;1m  -c '' \[0m
+2026-10-10T16:24:53.7840980Z [36;1m  -l '' \[0m
+2026-10-10T16:24:53.7841400Z [36;1m  -d 'default' \[0m
+2026-10-10T16:24:53.7841960Z [36;1m  -g 'https://github.com/flutter/flutter.git' \[0m
+2026-10-10T16:24:53.7842510Z [36;1m  stable[0m
+2026-10-10T16:24:53.7880220Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-10T16:24:53.7880840Z env:
+2026-10-10T16:24:53.7881260Z   CI: true
+2026-10-10T16:24:53.7881620Z   BOT: true
+2026-10-10T16:24:53.7882050Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T16:24:53.7882580Z   IOS_BUNDLE_ID: com.optionsaitrader.optionsAiTrader
+2026-10-10T16:24:53.7883080Z ##[endgroup]
+2026-10-10T16:24:54.2432790Z ##[end-action id=__subosito_flutter-action.flutter-action;outcome=success;conclusion=success;duration_ms=464]
+2026-10-10T16:24:54.2436550Z ##[start-action display=Cache Flutter;id=__subosito_flutter-action.cache-flutter]
+2026-10-10T16:24:54.2440620Z ##[end-action id=__subosito_flutter-action.cache-flutter;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-10T16:24:54.2442730Z ##[start-action display=Cache pub dependencies;id=__subosito_flutter-action.cache-pub]
+2026-10-10T16:24:54.2447670Z ##[end-action id=__subosito_flutter-action.cache-pub;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-10T16:24:54.2449160Z ##[start-action display=Run setup script;id=__subosito_flutter-action.__run_3]
+2026-10-10T16:24:54.2531590Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh \
+2026-10-10T16:24:54.2531930Z [36;1m$GITHUB_ACTION_PATH/setup.sh \[0m
+2026-10-10T16:24:54.2532210Z [36;1m  -n '3.47.7' \[0m
+2026-10-10T16:24:54.2532410Z [36;1m  -a 'arm64' \[0m
+2026-10-10T16:24:54.2533310Z [36;1m  -c '/Users/runner/hostedtoolcache/flutter/stable-3.47.7-arm64' \[0m
+2026-10-10T16:24:54.2533660Z [36;1m  -d '/Users/runner/.pub-cache' \[0m
+2026-10-10T16:24:54.2533910Z [36;1m  stable[0m
+2026-10-10T16:24:54.2563260Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-10T16:24:54.2563530Z env:
+2026-10-10T16:24:54.2563670Z   CI: true
+2026-10-10T16:24:54.2563810Z   BOT: true
+2026-10-10T16:24:54.2563960Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T16:24:54.2564200Z   IOS_BUNDLE_ID: com.optionsaitrader.optionsAiTrader
+2026-10-10T16:24:54.2564440Z ##[endgroup]
+2026-10-10T16:24:54.7146500Z   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2026-10-10T16:24:54.7149400Z                                  Dload  Upload   Total   Spent    Left  Speed
+2026-10-10T16:24:54.7149760Z 
+2026-10-10T16:24:55.3499220Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2026-10-10T16:24:56.3504240Z   0 2159M    0 2448k    0     0  3854k      0  0:09:33 --:--:--  0:09:33 3849k
+2026-10-10T16:24:57.3514780Z   0 2159M    0 8447k    0     0  5166k      0  0:07:07  0:00:01  0:07:06 5163k
+2026-10-10T16:24:58.3547370Z   1 2159M    1 42.3M    0     0  16.0M      0  0:02:14  0:00:02  0:02:12 16.0M
+2026-10-10T16:24:59.3551300Z   4 2159M    4  105M    0     0  29.1M      0  0:01:14  0:00:03  0:01:11 29.1M
+2026-10-10T16:25:00.3561530Z   7 2159M    7  162M    0     0  35.1M      0  0:01:01  0:00:04  0:00:57 35.1M
+2026-10-10T16:25:01.3530910Z  10 2159M   10  221M    0     0  39.2M      0  0:00:55  0:00:05  0:00:50 43.7M
+2026-10-10T16:25:02.3534900Z  13 2159M   13  281M    0     0  42.4M      0  0:00:50  0:00:06  0:00:44 54.6M
+2026-10-10T16:25:03.3546960Z  15 2159M   15  345M    0     0  45.2M      0  0:00:47  0:00:07  0:00:40 60.5M
+2026-10-10T16:25:04.3546860Z  19 2159M   19  416M    0     0  48.2M      0  0:00:44  0:00:08  0:00:36 62.1M
+2026-10-10T16:25:05.3551920Z  22 2159M   22  485M    0     0  50.3M      0  0:00:42  0:00:09  0:00:33 64.4M
+2026-10-10T16:25:06.3556020Z  25 2159M   25  549M    0     0  51.7M      0  0:00:41  0:00:10  0:00:31 65.8M
+2026-10-10T16:25:07.3569340Z  28 2159M   28  617M    0     0  53.0M      0  0:00:40  0:00:11  0:00:29 67.1M
+2026-10-10T16:25:08.3568170Z  31 2159M   31  681M    0     0  53.9M      0  0:00:40  0:00:12  0:00:28 67.3M
+2026-10-10T16:25:09.3571130Z  34 2159M   34  737M    0     0  54.0M      0  0:00:39  0:00:13  0:00:26 64.1M
+2026-10-10T16:25:10.3582020Z  37 2159M   37  807M    0     0  55.1M      0  0:00:39  0:00:14  0:00:25 64.4M
+2026-10-10T16:25:11.3610090Z  40 2159M   40  871M    0     0  55.7M      0  0:00:38  0:00:15  0:00:23 64.3M
+2026-10-10T16:25:12.3592560Z  42 2159M   42  925M    0     0  55.6M      0  0:00:38  0:00:16  0:00:22 61.5M
+2026-10-10T16:25:13.3609770Z  45 2159M   45  991M    0     0  56.2M      0  0:00:38  0:00:17  0:00:21 61.9M
+2026-10-10T16:25:14.3603470Z  48 2159M   48 1053M    0     0  56.5M      0  0:00:38  0:00:18  0:00:20 63.1M
+2026-10-10T16:25:15.3606490Z  51 2159M   51 1118M    0     0  56.9M      0  0:00:37  0:00:19  0:00:18 62.2M
+2026-10-10T16:25:16.3611660Z  54 2159M   54 1181M    0     0  57.2M      0  0:00:37  0:00:20  0:00:17 61.9M
+2026-10-10T16:25:17.3620360Z  58 2159M   58 1257M    0     0  58.1M      0  0:00:37  0:00:21  0:00:16 66.5M
+2026-10-10T16:25:18.3614870Z  62 2159M   62 1342M    0     0  59.3M      0  0:00:36  0:00:22  0:00:14 70.1M
+2026-10-10T16:25:19.3622300Z  65 2159M   65 1422M    0     0  60.1M      0  0:00:35  0:00:23  0:00:12 73.7M
+2026-10-10T16:25:20.3678110Z  69 2159M   69 1491M    0     0  60.5M      0  0:00:35  0:00:24  0:00:11 74.6M
+2026-10-10T16:25:21.3637130Z  71 2159M   71 1544M    0     0  60.2M      0  0:00:35  0:00:25  0:00:10 72.5M
+2026-10-10T16:25:22.3639660Z  74 2159M   74 1603M    0     0  60.2M      0  0:00:35  0:00:26  0:00:09 69.1M
+2026-10-10T16:25:23.3637100Z  76 2159M   76 1661M    0     0  60.1M      0  0:00:35  0:00:27  0:00:08 63.8M
+2026-10-10T16:25:24.3648060Z  80 2159M   80 1729M    0     0  60.4M      0  0:00:35  0:00:28  0:00:07 61.5M
+2026-10-10T16:25:25.3661370Z  83 2159M   83 1798M    0     0  60.7M      0  0:00:35  0:00:29  0:00:06 61.4M
+2026-10-10T16:25:26.3653860Z  86 2159M   86 1871M    0     0  61.0M      0  0:00:35  0:00:30  0:00:05 65.5M
+2026-10-10T16:25:27.3657220Z  90 2159M   90 1956M    0     0  61.8M      0  0:00:34  0:00:31  0:00:03 70.4M
+2026-10-10T16:25:28.3689670Z  93 2159M   93 2026M    0     0  62.1M      0  0:00:34  0:00:32  0:00:02 73.0M
+2026-10-10T16:25:29.1018430Z  97 2159M   97 2101M    0     0  62.4M      0  0:00:34  0:00:33  0:00:01 74.3M
+2026-10-10T16:25:29.1019100Z 100 2159M  100 2159M    0     0  62.8M      0  0:00:34  0:00:34 --:--:-- 76.0M
+2026-10-10T16:26:18.9515730Z ##[end-action id=__subosito_flutter-action.__run_3;outcome=success;conclusion=success;duration_ms=84662]
+2026-10-10T16:26:18.9804970Z ##[group]Run bash scripts/bootstrap.sh
+2026-10-10T16:26:18.9805370Z [36;1mbash scripts/bootstrap.sh[0m
+2026-10-10T16:26:19.0015480Z shell: /bin/bash -e {0}
+2026-10-10T16:26:19.0015740Z env:
+2026-10-10T16:26:19.0016060Z   CI: true
+2026-10-10T16:26:19.0016250Z   BOT: true
+2026-10-10T16:26:19.0016530Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T16:26:19.0016980Z   IOS_BUNDLE_ID: com.optionsaitrader.optionsAiTrader
+2026-10-10T16:26:19.0017560Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.47.7-arm64/flutter
+2026-10-10T16:26:19.0018200Z   PUB_CACHE: /Users/runner/.pub-cache
+2026-10-10T16:26:19.0018540Z ##[endgroup]
+2026-10-10T16:26:26.7062360Z Recreating project ....
+2026-10-10T16:26:26.7996430Z   options_ai_trader.iml (created)
+2026-10-10T16:26:26.8156530Z   android/options_ai_trader_android.iml (created)
+2026-10-10T16:26:26.8222450Z   .idea/runConfigurations/main_dart.xml (created)
+2026-10-10T16:26:26.8237420Z   .idea/libraries/Dart_SDK.xml (created)
+2026-10-10T16:26:26.8262450Z   .idea/libraries/KotlinJavaRuntime.xml (created)
+2026-10-10T16:26:26.8263740Z   .idea/modules.xml (created)
+2026-10-10T16:26:26.8275810Z   .idea/workspace.xml (created)
+2026-10-10T16:26:27.0207760Z Resolving dependencies...
+2026-10-10T16:26:27.3275350Z Downloading packages...
+2026-10-10T16:26:29.2328360Z Got dependencies.
+2026-10-10T16:26:29.6420700Z Wrote 10 files.
+2026-10-10T16:26:29.6421160Z 
+2026-10-10T16:26:29.6421470Z All done!
+2026-10-10T16:26:29.6427680Z You can find general documentation for Flutter at: https://docs.flutter.dev/
+2026-10-10T16:26:29.6428720Z Detailed API documentation is available at: https://api.flutter.dev/
+2026-10-10T16:26:29.6429330Z If you prefer video documentation, consider: https://www.youtube.com/c/flutterdev
+2026-10-10T16:26:29.6430190Z 
+2026-10-10T16:26:29.6430440Z In order to run your application, type:
+2026-10-10T16:26:29.6430780Z 
+2026-10-10T16:26:29.6430970Z   $ flutter run
+2026-10-10T16:26:29.6431220Z 
+2026-10-10T16:26:29.6431340Z Your application code is in ./lib/main.dart.
+2026-10-10T16:26:29.6431640Z 
+2026-10-10T16:26:30.2775830Z Resolving dependencies...
+2026-10-10T16:26:30.3067730Z Downloading packages...
+2026-10-10T16:26:30.3929390Z   flutter_lints 4.0.0 (6.0.0 available)
+2026-10-10T16:26:30.3930100Z   lints 4.0.0 (6.1.0 available)
+2026-10-10T16:26:30.3930960Z   material_color_utilities 0.13.0 (0.13.1 available)
+2026-10-10T16:26:30.3931380Z   meta 1.18.3 (1.19.0 available)
+2026-10-10T16:26:30.3932230Z   test_api 0.7.12 (0.7.15 available)
+2026-10-10T16:26:30.3933120Z   vector_math 2.4.0 (2.4.3 available)
+2026-10-10T16:26:30.3940020Z Got dependencies!
+2026-10-10T16:26:30.3940580Z 6 packages have newer versions incompatible with dependency constraints.
+2026-10-10T16:26:30.3941180Z Try `flutter pub outdated` for more information.
+2026-10-10T16:26:30.5833120Z ##[group]Run flutter analyze
+2026-10-10T16:26:30.5833410Z [36;1mflutter analyze[0m
+2026-10-10T16:26:30.5869620Z shell: /bin/bash -e {0}
+2026-10-10T16:26:30.5869810Z env:
+2026-10-10T16:26:30.5870060Z   CI: true
+2026-10-10T16:26:30.5870240Z   BOT: true
+2026-10-10T16:26:30.5870480Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T16:26:30.5870850Z   IOS_BUNDLE_ID: com.optionsaitrader.optionsAiTrader
+2026-10-10T16:26:30.5871290Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.47.7-arm64/flutter
+2026-10-10T16:26:30.5871720Z   PUB_CACHE: /Users/runner/.pub-cache
+2026-10-10T16:26:30.5871960Z ##[endgroup]
+2026-10-10T16:26:39.8125890Z Analyzing mobile...                                             
+2026-10-10T16:26:39.8191560Z No issues found! (ran in 8.4s)
+2026-10-10T16:26:39.8315270Z ##[group]Run flutter test --machine > flutter-tests.json
+2026-10-10T16:26:39.8316620Z [36;1mflutter test --machine > flutter-tests.json[0m
+2026-10-10T16:26:39.8399130Z shell: /bin/bash -e {0}
+2026-10-10T16:26:39.8399400Z env:
+2026-10-10T16:26:39.8399780Z   CI: true
+2026-10-10T16:26:39.8400120Z   BOT: true
+2026-10-10T16:26:39.8400590Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T16:26:39.8401030Z   IOS_BUNDLE_ID: com.optionsaitrader.optionsAiTrader
+2026-10-10T16:26:39.8402030Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.47.7-arm64/flutter
+2026-10-10T16:26:39.8402960Z   PUB_CACHE: /Users/runner/.pub-cache
+2026-10-10T16:26:39.8403530Z ##[endgroup]
+2026-10-10T16:27:07.1429330Z ##[group]Run flutter build ios --release --no-codesign --build-name=1.0.0 --build-number=10
+2026-10-10T16:27:07.1430190Z [36;1mflutter build ios --release --no-codesign --build-name=1.0.0 --build-number=10[0m
+2026-10-10T16:27:07.1635070Z shell: /bin/bash -e {0}
+2026-10-10T16:27:07.1635620Z env:
+2026-10-10T16:27:07.1635790Z   CI: true
+2026-10-10T16:27:07.1636110Z   BOT: true
+2026-10-10T16:27:07.1636340Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T16:27:07.1636690Z   IOS_BUNDLE_ID: com.optionsaitrader.optionsAiTrader
+2026-10-10T16:27:07.1637200Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.47.7-arm64/flutter
+2026-10-10T16:27:07.1637590Z   PUB_CACHE: /Users/runner/.pub-cache
+2026-10-10T16:27:07.1637910Z ##[endgroup]
+2026-10-10T16:27:08.2423850Z Warning: Building for device with codesigning disabled. You will have to manually codesign before deploying to device.
+2026-10-10T16:27:34.9350950Z Building com.optionsaitrader.optionsAiTrader for device (ios-release)...
+2026-10-10T16:29:08.3770100Z Running Xcode build...                                          
+2026-10-10T16:29:08.3855820Z Xcode build done.                                           93.0s
+2026-10-10T16:29:11.4916220Z ✓ Built build/ios/iphoneos/Runner.app (18.0MB)
+2026-10-10T16:29:11.5660300Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-10-10T16:29:11.5661310Z with:
+2026-10-10T16:29:11.5661710Z   name: options-ai-trader-v1.0-ios-unsigned
+2026-10-10T16:29:11.5662150Z   path: mobile/build/ios/iphoneos/Runner.app
+mobile/flutter-tests.json
+
+2026-10-10T16:29:11.5662630Z   retention-days: 14
+2026-10-10T16:29:11.5662850Z   if-no-files-found: warn
+2026-10-10T16:29:11.5663200Z   compression-level: 6
+2026-10-10T16:29:11.5663480Z   overwrite: false
+2026-10-10T16:29:11.5663760Z   include-hidden-files: false
+2026-10-10T16:29:11.5664230Z env:
+2026-10-10T16:29:11.5664600Z   CI: true
+2026-10-10T16:29:11.5664850Z   BOT: true
+2026-10-10T16:29:11.5665140Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T16:29:11.5665450Z   IOS_BUNDLE_ID: com.optionsaitrader.optionsAiTrader
+2026-10-10T16:29:11.5665960Z   FLUTTER_ROOT: /Users/runner/hostedtoolcache/flutter/stable-3.47.7-arm64/flutter
+2026-10-10T16:29:11.5666370Z   PUB_CACHE: /Users/runner/.pub-cache
+2026-10-10T16:29:11.5666920Z ##[endgroup]
+2026-10-10T16:29:12.2371460Z (node:7243) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T16:29:12.2372230Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T16:29:12.2531090Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-10-10T16:29:12.2532240Z The least common ancestor is /Users/runner/work/options-ai-trader/options-ai-trader/mobile. This will be the root directory of the artifact
+2026-10-10T16:29:12.2532830Z With the provided path, there will be 51 files uploaded
+2026-10-10T16:29:12.2533300Z Artifact name is valid!
+2026-10-10T16:29:12.2533590Z Root directory input is valid!
+2026-10-10T16:29:12.5843450Z Beginning upload of artifact content to blob storage
+2026-10-10T16:29:13.1777900Z (node:7243) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-10T16:29:13.3590540Z Uploaded bytes 7740425
+2026-10-10T16:29:13.3743370Z Finished uploading artifact content to blob storage!
+2026-10-10T16:29:13.3744540Z SHA256 digest of uploaded artifact zip is 2c49733d87536282c32243e121a08224b0d92feecc2371ca88be67c63eba5066
+2026-10-10T16:29:13.3747170Z Finalizing artifact upload
+2026-10-10T16:29:13.5819060Z Artifact options-ai-trader-v1.0-ios-unsigned.zip successfully finalized. Artifact ID 11675971195
+2026-10-10T16:29:13.5822350Z Artifact options-ai-trader-v1.0-ios-unsigned has been successfully uploaded! Final size is 7740425 bytes. Artifact ID is 11675971195
+2026-10-10T16:29:13.5823940Z Artifact download URL: https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067549913/artifacts/11675971195
+2026-10-10T16:29:13.6810140Z Post job cleanup.
+2026-10-10T16:29:13.7061010Z Post job cleanup.
+2026-10-10T16:29:13.8589270Z [command]/opt/homebrew/bin/git version
+2026-10-10T16:29:13.9032870Z git version 2.55.0
+2026-10-10T16:29:13.9050830Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/f072e8af-c2a9-4e75-b2cf-2f7207d6fa47/.gitconfig'
+2026-10-10T16:29:13.9061800Z Temporarily overriding HOME='/Users/runner/work/_temp/f072e8af-c2a9-4e75-b2cf-2f7207d6fa47' before making global git config changes
+2026-10-10T16:29:13.9062810Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T16:29:13.9071390Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/options-ai-trader/options-ai-trader
+2026-10-10T16:29:13.9225330Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T16:29:13.9296960Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T16:29:14.0728720Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T16:29:14.0799760Z http.https://github.com/.extraheader
+2026-10-10T16:29:14.0811990Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-10T16:29:14.1049670Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T16:29:14.2755000Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T16:29:14.2926760Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-10T16:29:14.4714680Z Cleaning up orphan processes
+2026-10-10T16:29:16.0059260Z Terminate orphan process: pid (5545) (ibtoold)
+2026-10-10T16:29:16.0398810Z Terminate orphan process: pid (4145) (ibtoold)
+2026-10-10T16:29:16.0815900Z Terminate orphan process: pid (4132) (ibtoold)
+2026-10-10T16:29:17.6571690Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

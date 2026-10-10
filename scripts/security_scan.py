@@ -46,11 +46,18 @@ FIXTURE_CREDENTIAL_DIGESTS = {
     "docs/DATABASE_V03.md": "edc57f2c6a1f6ad3c9325288a57b74883ed4b9b24d4f00ff23df7808e221c75a",
     "docs/archive/v0.3/DATABASE_V03.md": "edc57f2c6a1f6ad3c9325288a57b74883ed4b9b24d4f00ff23df7808e221c75a",
 }
+# Historical generator expression in f8d59cb was source code, not a secret:
+# the matched value is exactly whitespace + secrets.token_hex(32) + whitespace.
+# Keep history intact and exempt only that expression in its original path.
+GENERATOR_EXPRESSION_DIGESTS = {
+    "scripts/compose_smoke.py": "04748d3e46f85073035879bbda364c06b1bf8f4dd70cbe0f1e4f2b2066d90ffd",
+}
 
 
 def _fixture(path: str, value: str) -> bool:
     return ((value in FIXTURE_TOKENS and path.startswith(("backend/tests/", "mobile/test/", ".github/workflows/")))
-            or FIXTURE_CREDENTIAL_DIGESTS.get(path) == hashlib.sha256(value.encode()).hexdigest())
+            or FIXTURE_CREDENTIAL_DIGESTS.get(path) == hashlib.sha256(value.encode()).hexdigest()
+            or GENERATOR_EXPRESSION_DIGESTS.get(path) == hashlib.sha256(value.encode()).hexdigest())
 
 
 def _placeholder(value: str) -> bool:

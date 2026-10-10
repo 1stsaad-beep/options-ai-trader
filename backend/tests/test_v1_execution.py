@@ -403,3 +403,68 @@ def test_confirmed_opposite_strategy_can_exit_without_reopening(world):
     assert any(a.get('reason')=='SCENARIO_INVALIDATED' for a in result['actions'])
     assert not world.s.rows(world.a,'positions')
     assert len(world.s.rows(world.a,'orders'))==2
+
+
+@pytest.mark.parametrize('reduction',[
+    {'scaling_max_additions':0},
+    {'scaling_quantity':1},
+])
+def test_pending_scale_rechecks_reduced_addition_budget_and_quantity(world,reduction):
+    world.owned()
+    world.s.configure(world.a,{'scaling_enabled':True,'scaling_quantity':2})
+    intent=request_scaling(world.s,world.a,'pending-add','NVDA','CALL',world.bars(),world.quotes(1.4,1.45))
+    world.s.configure(world.a,reduction)
+    with pytest.raises(Rejected,match='Scaling'):
+        world.s.fill(world.a,intent['order_id'],'after-reduction',1,145)
+    assert world.s.rows(world.a,'positions')[0]['quantity']==1
+    order=next(o for o in world.s.rows(world.a,'orders') if o['id']==intent['order_id'])
+    assert order['filled']==0
+
+
+@pytest.mark.parametrize('reduction',[
+    {'scaling_max_additions':1},
+    {'scaling_decreasing':True},
+])
+def test_second_scale_respects_current_ordinal_budget_and_decreasing_size(world,reduction):
+    world.owned()
+    world.s.configure(world.a,{'scaling_enabled':True,'scaling_quantity':1,'scaling_cooldown_seconds':1})
+    first=request_scaling(world.s,world.a,'first-add','NVDA','CALL',world.bars(),world.quotes(1.4,1.45))
+    world.s.fill(world.a,first['order_id'],'first-add-fill',1,145)
+    world.refresh()
+    world.s.configure(world.a,{'scaling_quantity':2})
+    second=request_scaling(world.s,world.a,'second-add','NVDA','CALL',world.bars(),world.quotes(1.8,1.85))
+    assert json.loads(second['payload'])['addition_number']==2
+    world.s.configure(world.a,reduction)
+    with pytest.raises(Rejected,match='Scaling'):
+        world.s.fill(world.a,second['order_id'],'after-second-reduction',1,185)
+    assert world.s.rows(world.a,'positions')[0]['quantity']==2
+
+
+def test_pending_scale_cannot_attach_to_reopened_position_generation(world):
+    world.owned()
+    world.s.configure(world.a,{'scaling_enabled':True})
+    intent=request_scaling(world.s,world.a,'old-generation-add','NVDA','CALL',world.bars(),world.quotes(1.4,1.45))
+    close=world.s.submit(world.a,world.request(key='close-original',side='SELL_TO_CLOSE',limit_cents=140))
+    world.s.fill(world.a,close['id'],'close-original-fill',1,140)
+    assert not world.s.rows(world.a,'positions')
+    reopen=world.s.submit(world.a,world.request(key='reopened',limit_cents=100))
+    world.s.fill(world.a,reopen['id'],'reopened-fill',1,100)
+    with pytest.raises(Rejected,match='generation'):
+        world.s.fill(world.a,intent['order_id'],'old-generation-fill',1,145)
+    assert world.s.rows(world.a,'positions')[0]['quantity']==1
+
+
+def test_partial_scale_reduction_preserves_fill_receipt_and_blocks_remainder(world):
+    world.owned()
+    world.s.configure(world.a,{'scaling_enabled':True,'scaling_quantity':2})
+    intent=request_scaling(world.s,world.a,'partial-add','NVDA','CALL',world.bars(),world.quotes(1.4,1.45))
+    first=world.s.fill(world.a,intent['order_id'],'partial-add-first',1,145)
+    assert first['status']=='PARTIAL'
+    world.s.configure(world.a,{'scaling_quantity':1})
+    # Reading the accepted fill again is idempotent even after policy tightens.
+    assert world.s.fill(world.a,intent['order_id'],'partial-add-first',1,145)['filled']==1
+    with pytest.raises(Rejected,match='Scaling quantity'):
+        world.s.fill(world.a,intent['order_id'],'partial-add-second',1,145)
+    assert world.s.rows(world.a,'positions')[0]['quantity']==2
+    world.s.cancel(world.a,intent['order_id'])
+    assert next(o for o in world.s.rows(world.a,'orders') if o['id']==intent['order_id'])['status']=='CANCELLED'

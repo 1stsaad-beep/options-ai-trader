@@ -1,0 +1,48 @@
+{
+  "commit": "32531f772200cbb798a98a744323f007bbb2d210",
+  "run_id": 38067549917,
+  "artifact_id": 11675916460,
+  "analyze": "passed",
+  "tests": {
+    "passed": 114,
+    "failed": 0,
+    "skipped": 0
+  },
+  "build": "success",
+  "signature_verified_by": "Android apksigner in GitHub Actions",
+  "signature": "ephemeral-runner-development-key",
+  "stable_signing": false,
+  "apk_sha256": "204ed481ffa65a801e9b5069a56d865a90ee63685068f6a7de94ecdd39bf9ad5",
+  "size_bytes": 154870500,
+  "crc": "passed",
+  "manifest": {
+    "manifest": {
+      "versionCode": 10,
+      "versionName": "1.0.0",
+      "compileSdkVersion": 36,
+      "compileSdkVersionCodename": "16",
+      "package": "com.optionsaitrader.options_ai_trader.v1preview",
+      "platformBuildVersionCode": 36,
+      "platformBuildVersionName": 16
+    },
+    "uses-sdk": {
+      "minSdkVersion": 24,
+      "targetSdkVersion": 36
+    },
+    "application": {
+      "label": "Options AI Trader V1 Preview",
+      "icon": 2131492864,
+      "name": "android.app.Application",
+      "debuggable": true,
+      "extractNativeLibs": false,
+      "usesCleartextTraffic": true,
+      "appComponentFactory": "androidx.core.app.CoreComponentFactory"
+    }
+  },
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86_64"
+  ],
+  "physical_install_tested": false
+}

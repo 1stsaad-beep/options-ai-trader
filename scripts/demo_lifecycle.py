@@ -64,7 +64,7 @@ def scenario(reason):
 
 
 if __name__ == '__main__':
-    print(json.dumps({'version': '0.4.0', 'source': 'synthetic_mock', 'live_enabled': False,
+    print(json.dumps({'version': '1.0.0-rc.1', 'source': 'synthetic_mock', 'live_enabled': False,
                       'purpose': 'Controlled lifecycle/accounting checks; not profitability evidence',
                       'scenarios': [scenario(name) for name in
                                     ('take_profit', 'stop_loss', 'expiry', 'disconnect')]}, indent=2))

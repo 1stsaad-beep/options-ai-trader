@@ -1,0 +1,22 @@
+{
+  "commit": "32531f772200cbb798a98a744323f007bbb2d210",
+  "run_id": 38067549913,
+  "artifact_id": 11675971195,
+  "analyze": "passed",
+  "tests": {
+    "passed": 114,
+    "failed": 0,
+    "skipped": 0
+  },
+  "build": "success",
+  "codesign": false,
+  "testflight": false,
+  "entries": 51,
+  "crc": "passed",
+  "sha256": "2c49733d87536282c32243e121a08224b0d92feecc2371ca88be67c63eba5066",
+  "size_bytes": 7740425,
+  "bundle_id": "com.optionsaitrader.optionsAiTrader",
+  "version": "1.0.0",
+  "build_number": "10",
+  "minimum_ios": "15.0"
+}

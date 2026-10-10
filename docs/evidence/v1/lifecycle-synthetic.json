@@ -1,0 +1,415 @@
+{
+  "version": "1.0.0-rc.1",
+  "source": "synthetic_mock",
+  "live_enabled": false,
+  "purpose": "Controlled lifecycle/accounting checks; not profitability evidence",
+  "scenarios": [
+    {
+      "scenario": "take_profit",
+      "status": "passed",
+      "orders": [
+        {
+          "side": "BUY",
+          "quantity": 3,
+          "filled": 2,
+          "status": "CANCELLED"
+        },
+        {
+          "side": "SELL_TO_CLOSE",
+          "quantity": 2,
+          "filled": 2,
+          "status": "FILLED"
+        }
+      ],
+      "realized_pnl_cents": 7000,
+      "positions_remaining": 0,
+      "cycles": [
+        {
+          "account_id": "b19acd19-13f3-4211-8490-b2d7d3b2f8eb",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "ORDER",
+              "order_id": "9a4980e5-ade4-4213-b318-3bb5a6704b4c",
+              "side": "BUY",
+              "reason": "breakout"
+            },
+            {
+              "type": "FILL",
+              "order_id": "9a4980e5-ade4-4213-b318-3bb5a6704b4c",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "b19acd19-13f3-4211-8490-b2d7d3b2f8eb",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "9a4980e5-ade4-4213-b318-3bb5a6704b4c",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "b19acd19-13f3-4211-8490-b2d7d3b2f8eb",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "CANCEL",
+              "order_id": "9a4980e5-ade4-4213-b318-3bb5a6704b4c",
+              "reason": "TAKE_PROFIT"
+            },
+            {
+              "type": "ORDER",
+              "order_id": "a1a044f1-4034-4826-928b-19516988162d",
+              "side": "SELL_TO_CLOSE",
+              "reason": "TAKE_PROFIT"
+            },
+            {
+              "type": "FILL",
+              "order_id": "a1a044f1-4034-4826-928b-19516988162d",
+              "quantity": 1,
+              "price_cents": 140
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "b19acd19-13f3-4211-8490-b2d7d3b2f8eb",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "a1a044f1-4034-4826-928b-19516988162d",
+              "quantity": 1,
+              "price_cents": 140
+            }
+          ],
+          "blocked_reasons": []
+        }
+      ]
+    },
+    {
+      "scenario": "stop_loss",
+      "status": "passed",
+      "orders": [
+        {
+          "side": "BUY",
+          "quantity": 3,
+          "filled": 2,
+          "status": "CANCELLED"
+        },
+        {
+          "side": "SELL_TO_CLOSE",
+          "quantity": 2,
+          "filled": 2,
+          "status": "FILLED"
+        }
+      ],
+      "realized_pnl_cents": -7000,
+      "positions_remaining": 0,
+      "cycles": [
+        {
+          "account_id": "228843e6-4f6a-4a17-8790-2ae744cd5d66",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "ORDER",
+              "order_id": "bc49292e-ffad-418c-bbad-600adfe429de",
+              "side": "BUY",
+              "reason": "breakout"
+            },
+            {
+              "type": "FILL",
+              "order_id": "bc49292e-ffad-418c-bbad-600adfe429de",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "228843e6-4f6a-4a17-8790-2ae744cd5d66",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "bc49292e-ffad-418c-bbad-600adfe429de",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "228843e6-4f6a-4a17-8790-2ae744cd5d66",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "CANCEL",
+              "order_id": "bc49292e-ffad-418c-bbad-600adfe429de",
+              "reason": "STOP_LOSS"
+            },
+            {
+              "type": "ORDER",
+              "order_id": "0dae7ae0-847d-4425-a151-f0a7f9da58e2",
+              "side": "SELL_TO_CLOSE",
+              "reason": "STOP_LOSS"
+            },
+            {
+              "type": "FILL",
+              "order_id": "0dae7ae0-847d-4425-a151-f0a7f9da58e2",
+              "quantity": 1,
+              "price_cents": 70
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "228843e6-4f6a-4a17-8790-2ae744cd5d66",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "0dae7ae0-847d-4425-a151-f0a7f9da58e2",
+              "quantity": 1,
+              "price_cents": 70
+            }
+          ],
+          "blocked_reasons": []
+        }
+      ]
+    },
+    {
+      "scenario": "expiry",
+      "status": "passed",
+      "orders": [
+        {
+          "side": "BUY",
+          "quantity": 3,
+          "filled": 2,
+          "status": "EXPIRED"
+        }
+      ],
+      "realized_pnl_cents": -21000,
+      "positions_remaining": 0,
+      "cycles": [
+        {
+          "account_id": "5acfe7b5-16fe-4a79-a87b-8efd7867c900",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "ORDER",
+              "order_id": "fe8e3430-4799-4f46-97ec-02988576f964",
+              "side": "BUY",
+              "reason": "breakout"
+            },
+            {
+              "type": "FILL",
+              "order_id": "fe8e3430-4799-4f46-97ec-02988576f964",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "5acfe7b5-16fe-4a79-a87b-8efd7867c900",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "fe8e3430-4799-4f46-97ec-02988576f964",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "5acfe7b5-16fe-4a79-a87b-8efd7867c900",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 0,
+          "expired_positions": 1,
+          "actions": [
+            {
+              "type": "EXPIRY_WRITEOFF",
+              "count": 1,
+              "policy": "synthetic_premium_lost_no_exercise"
+            }
+          ],
+          "blocked_reasons": [
+            "NVDA: Market observation unavailable or stale; explicit mock refresh required"
+          ]
+        }
+      ]
+    },
+    {
+      "scenario": "disconnect",
+      "status": "passed",
+      "orders": [
+        {
+          "side": "BUY",
+          "quantity": 3,
+          "filled": 2,
+          "status": "CANCELLED"
+        },
+        {
+          "side": "SELL_TO_CLOSE",
+          "quantity": 2,
+          "filled": 2,
+          "status": "FILLED"
+        }
+      ],
+      "realized_pnl_cents": -7000,
+      "positions_remaining": 0,
+      "cycles": [
+        {
+          "account_id": "9f17eb3b-2d24-4bdf-a797-cd17a03fade5",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "ORDER",
+              "order_id": "7986fca2-ca24-45a4-af70-f5598665f38d",
+              "side": "BUY",
+              "reason": "breakout"
+            },
+            {
+              "type": "FILL",
+              "order_id": "7986fca2-ca24-45a4-af70-f5598665f38d",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "9f17eb3b-2d24-4bdf-a797-cd17a03fade5",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 0,
+          "expired_positions": 0,
+          "actions": [],
+          "blocked_reasons": [
+            "Account snapshot untrusted or stale; explicit reconciliation required"
+          ]
+        },
+        {
+          "account_id": "9f17eb3b-2d24-4bdf-a797-cd17a03fade5",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "7986fca2-ca24-45a4-af70-f5598665f38d",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "9f17eb3b-2d24-4bdf-a797-cd17a03fade5",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "CANCEL",
+              "order_id": "7986fca2-ca24-45a4-af70-f5598665f38d",
+              "reason": "STOP_LOSS"
+            },
+            {
+              "type": "ORDER",
+              "order_id": "e8501a3f-f7fb-42ac-9d60-d6eea033ae60",
+              "side": "SELL_TO_CLOSE",
+              "reason": "STOP_LOSS"
+            },
+            {
+              "type": "FILL",
+              "order_id": "e8501a3f-f7fb-42ac-9d60-d6eea033ae60",
+              "quantity": 1,
+              "price_cents": 70
+            }
+          ],
+          "blocked_reasons": []
+        },
+        {
+          "account_id": "9f17eb3b-2d24-4bdf-a797-cd17a03fade5",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "e8501a3f-f7fb-42ac-9d60-d6eea033ae60",
+              "quantity": 1,
+              "price_cents": 70
+            }
+          ],
+          "blocked_reasons": []
+        }
+      ]
+    }
+  ]
+}

@@ -373,6 +373,26 @@ class TradingService:
         if not account['config']['scaling_enabled']:
             raise Rejected('Scaling disabled before fill')
         key=(account['id'],order['symbol'],order['right_kind'],order['expiry'],order['strike'])
+        intent=db.one("SELECT * FROM lifecycle_intents WHERE account_id=? AND order_id=? AND kind='SCALING'",(account['id'],order['id']))
+        try:
+            payload=json.loads(intent['payload']) if intent else {}
+            number=integer(payload.get('addition_number'),'scaling addition ordinal',1,100)
+            generation=integer(payload.get('generation'),'scaling generation',1)
+            if payload.get('quantity')!=order['quantity']:
+                raise Rejected('Scaling quantity ledger mismatch')
+        except (ValueError,TypeError,KeyError):
+            raise Rejected('Malformed scaling intent ledger') from None
+        policy=db.one('SELECT generation FROM position_policies WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?',key)
+        if not policy or policy['generation']!=generation:
+            raise Rejected('Scaling parent position generation changed before fill')
+        config=account['config']
+        if number>config['scaling_max_additions']:
+            raise Rejected('Scaling addition budget reduced before fill')
+        allowed=config['scaling_quantity']//(2**(number-1)) if config['scaling_decreasing'] else config['scaling_quantity']
+        # The accepted payload is immutable: cancel an oversized remainder;
+        # never silently rewrite it into a different idempotent order.
+        if order['quantity']>allowed:
+            raise Rejected('Scaling quantity reduced before fill')
         owned=db.one('SELECT * FROM positions WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?',key)
         mark=db.one('SELECT * FROM option_marks WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?',key)
         if not owned or not mark or not 0 <= (self.now()-datetime.fromisoformat(mark['observed_at'])).total_seconds() <= 60:

@@ -1,9 +1,9 @@
 name: Mock safety checks
 on:
   push:
-    paths: ["backend/**", "scripts/**", "mobile/scripts/prepare_ci_signing.py", ".github/workflows/checks.yaml"]
+    paths: ["backend/**", "scripts/**", "infra/**", "mobile/scripts/prepare_ci_signing.py", ".github/workflows/checks.yaml"]
   pull_request:
-    paths: ["backend/**", "scripts/**", "mobile/scripts/prepare_ci_signing.py", ".github/workflows/checks.yaml"]
+    paths: ["backend/**", "scripts/**", "infra/**", "mobile/scripts/prepare_ci_signing.py", ".github/workflows/checks.yaml"]
   workflow_dispatch:
 env:
   CI: "true"
@@ -17,6 +17,7 @@ permissions:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     services:
       postgres:
         image: postgres:16-alpine
@@ -36,6 +37,10 @@ jobs:
       - run: pip install -r backend/requirements.lock && pip install --no-deps -e './backend[test]'
       - run: python -m pytest -q --junitxml=../test-results.xml
         working-directory: backend
+      - name: Local HTTP API and independent worker smoke
+        run: python scripts/smoke_http.py > http-smoke.json
+      - name: Deterministic Mock lifecycle scenarios
+        run: python scripts/demo_lifecycle.py > lifecycle-synthetic.json
       - run: python scripts/postgres_check.py
         env:
           TEST_DATABASE_ALLOW_DISPOSABLE: "1"
@@ -48,4 +53,24 @@ jobs:
         if: always()
         with:
           name: backend-test-results
-          path: test-results.xml
+          path: |
+            test-results.xml
+            http-smoke.json
+            lifecycle-synthetic.json
+  compose-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Disposable base Compose API worker and PostgreSQL smoke
+        run: python scripts/compose_smoke.py --run > compose-smoke.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: compose-runtime-result
+          path: compose-smoke.json
+          if-no-files-found: error
+          retention-days: 14
