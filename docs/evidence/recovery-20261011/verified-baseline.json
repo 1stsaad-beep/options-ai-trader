@@ -1,0 +1,16 @@
+{
+  "source_commit": "3d35475cd92058f8470d6f81826aaa4a16f587b1",
+  "python_cloud_commit": "df2606c9f2d5e9a27464e1c10ba38d93390eecaf",
+  "mobile_cloud_commit": "3d35475cd92058f8470d6f81826aaa4a16f587b1",
+  "python_rc1_passed": 537,
+  "python_rc2_passed": 625,
+  "flutter_each_platform_passed": 142,
+  "critical_baseline_passed": 51,
+  "failed": 0,
+  "skipped": 0,
+  "android_preview_sha256": "68219f80c9d942de2c7fff2e307355ca344f7866856cfa8056739175cdf42c07",
+  "ios_artifact_sha256": "409a06178dc7a4018d796574d0283283825e4b5888033ef3abcb72ab138c8a30",
+  "android_signing": "ephemeral runner development key; APK v2 signature verified by CI and downloaded bytes match CI checksum",
+  "device_installation": "not performed",
+  "broker_connection": "none"
+}

@@ -1,0 +1,632 @@
+﻿2026-10-10T19:27:32.4748979Z Current runner version: '2.337.0'
+2026-10-10T19:27:32.4786374Z ##[group]Runner Image Provisioner
+2026-10-10T19:27:32.4788418Z Hosted Compute Agent
+2026-10-10T19:27:32.4789535Z Version: 20261002.596
+2026-10-10T19:27:32.4790626Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-10T19:27:32.4792223Z Build Date: 2026-10-02T22:28:27Z
+2026-10-10T19:27:32.4793493Z Worker ID: {9900372f-50a5-4e34-918a-993ad1c37588}
+2026-10-10T19:27:32.4795242Z Region: centralus
+2026-10-10T19:27:32.4796269Z Cloud: Azure
+2026-10-10T19:27:32.4797158Z ##[endgroup]
+2026-10-10T19:27:32.4799614Z ##[group]Operating System
+2026-10-10T19:27:32.4800668Z Ubuntu
+2026-10-10T19:27:32.4801534Z 24.04.5
+2026-10-10T19:27:32.4802544Z LTS
+2026-10-10T19:27:32.4803493Z ##[endgroup]
+2026-10-10T19:27:32.4804642Z ##[group]Runner Image
+2026-10-10T19:27:32.4806139Z Image: ubuntu-24.04
+2026-10-10T19:27:32.4807087Z Version: 20261004.327.1
+2026-10-10T19:27:32.4809457Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-10T19:27:32.4812474Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-10T19:27:32.4814247Z ##[endgroup]
+2026-10-10T19:27:32.4816876Z ##[group]GITHUB_TOKEN Permissions
+2026-10-10T19:27:32.4819880Z Contents: read
+2026-10-10T19:27:32.4820985Z Metadata: read
+2026-10-10T19:27:32.4822152Z ##[endgroup]
+2026-10-10T19:27:32.4825761Z Secret source: Actions
+2026-10-10T19:27:32.4827420Z Cache mode: write
+2026-10-10T19:27:32.4829089Z Prepare workflow directory
+2026-10-10T19:27:32.5834309Z Prepare all required actions
+2026-10-10T19:27:32.5905502Z Getting action download info
+2026-10-10T19:27:32.8522112Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-10T19:27:32.9509480Z Download action repository 'actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3' (SHA:cf277c60eb25467037889841efdb72551f06f6c3)
+2026-10-10T19:27:33.5103100Z Download action repository 'subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2' (SHA:1a449444c387b1966244ae4d4f8c696479add0b2)
+2026-10-10T19:27:33.8056224Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-10T19:27:34.0411081Z Getting action download info
+2026-10-10T19:27:34.1315012Z Download action repository 'actions/cache@v5' (SHA:caa296126883cff596d87d8935842f9db880ef25)
+2026-10-10T19:27:34.4034077Z Complete job name: android
+2026-10-10T19:27:34.5102051Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-10-10T19:27:34.5103844Z with:
+2026-10-10T19:27:34.5105019Z   repository: 1stsaad-beep/options-ai-trader
+2026-10-10T19:27:34.5113744Z   token: ***
+2026-10-10T19:27:34.5114620Z   ssh-strict: true
+2026-10-10T19:27:34.5115658Z   ssh-user: git
+2026-10-10T19:27:34.5116566Z   persist-credentials: true
+2026-10-10T19:27:34.5117565Z   clean: true
+2026-10-10T19:27:34.5118489Z   sparse-checkout-cone-mode: true
+2026-10-10T19:27:34.5119584Z   fetch-depth: 1
+2026-10-10T19:27:34.5120476Z   fetch-tags: false
+2026-10-10T19:27:34.5121388Z   show-progress: true
+2026-10-10T19:27:34.5122297Z   lfs: false
+2026-10-10T19:27:34.5123143Z   submodules: false
+2026-10-10T19:27:34.5124061Z   set-safe-directory: true
+2026-10-10T19:27:34.5125215Z   allow-unsafe-pr-checkout: false
+2026-10-10T19:27:34.5126568Z env:
+2026-10-10T19:27:34.5127366Z   CI: true
+2026-10-10T19:27:34.5128173Z   BOT: true
+2026-10-10T19:27:34.5129091Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:27:34.5130153Z ##[endgroup]
+2026-10-10T19:27:34.6456140Z Syncing repository: 1stsaad-beep/options-ai-trader
+2026-10-10T19:27:34.6460456Z ##[group]Getting Git version info
+2026-10-10T19:27:34.6463012Z Working directory is '/home/runner/work/options-ai-trader/options-ai-trader'
+2026-10-10T19:27:34.6466976Z [command]/usr/bin/git version
+2026-10-10T19:27:34.6468697Z git version 2.55.0
+2026-10-10T19:27:34.6515371Z ##[endgroup]
+2026-10-10T19:27:34.6526267Z Temporarily overriding HOME='/home/runner/work/_temp/35caf8c8-4654-46eb-9f24-9061b124f958' before making global git config changes
+2026-10-10T19:27:34.6531348Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T19:27:34.6536498Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/options-ai-trader/options-ai-trader
+2026-10-10T19:27:34.6635285Z Deleting the contents of '/home/runner/work/options-ai-trader/options-ai-trader'
+2026-10-10T19:27:34.6656660Z ##[group]Initializing the repository
+2026-10-10T19:27:34.6662688Z [command]/usr/bin/git init /home/runner/work/options-ai-trader/options-ai-trader
+2026-10-10T19:27:34.6739668Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-10T19:27:34.6766437Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-10T19:27:34.6772797Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-10T19:27:34.6776064Z hint: call:
+2026-10-10T19:27:34.6777688Z hint:
+2026-10-10T19:27:34.6779703Z hint: 	git config --global init.defaultBranch <name>
+2026-10-10T19:27:34.6782030Z hint:
+2026-10-10T19:27:34.6784166Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-10T19:27:34.6788014Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-10T19:27:34.6790818Z hint:
+2026-10-10T19:27:34.6792393Z hint: 	git branch -m <name>
+2026-10-10T19:27:34.6794194Z hint:
+2026-10-10T19:27:34.6796926Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-10T19:27:34.6801386Z Initialized empty Git repository in /home/runner/work/options-ai-trader/options-ai-trader/.git/
+2026-10-10T19:27:34.6808993Z [command]/usr/bin/git remote add origin https://github.com/1stsaad-beep/options-ai-trader
+2026-10-10T19:27:34.6842629Z ##[endgroup]
+2026-10-10T19:27:34.6845930Z ##[group]Disabling automatic garbage collection
+2026-10-10T19:27:34.6857739Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-10T19:27:34.6920280Z ##[endgroup]
+2026-10-10T19:27:34.6938238Z ##[group]Setting up auth
+2026-10-10T19:27:34.6956767Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T19:27:34.7008213Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T19:27:34.7478083Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T19:27:34.7545861Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T19:27:34.7861959Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T19:27:34.7907483Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-10T19:27:34.8179898Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-10T19:27:34.8226045Z ##[endgroup]
+2026-10-10T19:27:34.8229165Z ##[group]Fetching the repository
+2026-10-10T19:27:34.8240483Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3d35475cd92058f8470d6f81826aaa4a16f587b1:refs/remotes/origin/develop/v1.0-rc2
+2026-10-10T19:27:35.5569706Z From https://github.com/1stsaad-beep/options-ai-trader
+2026-10-10T19:27:35.5571441Z  * [new ref]         3d35475cd92058f8470d6f81826aaa4a16f587b1 -> origin/develop/v1.0-rc2
+2026-10-10T19:27:35.5575243Z ##[endgroup]
+2026-10-10T19:27:35.5576504Z ##[group]Determining the checkout info
+2026-10-10T19:27:35.5577910Z ##[endgroup]
+2026-10-10T19:27:35.5584183Z [command]/usr/bin/git sparse-checkout disable
+2026-10-10T19:27:35.5640508Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-10T19:27:35.5678132Z ##[group]Checking out the ref
+2026-10-10T19:27:35.5683048Z [command]/usr/bin/git checkout --progress --force -B develop/v1.0-rc2 refs/remotes/origin/develop/v1.0-rc2
+2026-10-10T19:27:35.6073743Z Switched to a new branch 'develop/v1.0-rc2'
+2026-10-10T19:27:35.6077800Z branch 'develop/v1.0-rc2' set up to track 'origin/develop/v1.0-rc2'.
+2026-10-10T19:27:35.6088865Z ##[endgroup]
+2026-10-10T19:27:35.6149466Z [command]/usr/bin/git log -1 --format=%H
+2026-10-10T19:27:35.6179991Z 3d35475cd92058f8470d6f81826aaa4a16f587b1
+2026-10-10T19:27:35.6498135Z ##[group]Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+2026-10-10T19:27:35.6498638Z with:
+2026-10-10T19:27:35.6498898Z   distribution: temurin
+2026-10-10T19:27:35.6499183Z   java-version: 17
+2026-10-10T19:27:35.6499450Z   java-package: jdk
+2026-10-10T19:27:35.6499721Z   check-latest: false
+2026-10-10T19:27:35.6499991Z   server-id: github
+2026-10-10T19:27:35.6500265Z   server-username: GITHUB_ACTOR
+2026-10-10T19:27:35.6500606Z   server-password: GITHUB_TOKEN
+2026-10-10T19:27:35.6500923Z   overwrite-settings: true
+2026-10-10T19:27:35.6501215Z   job-status: success
+2026-10-10T19:27:35.6503729Z   token: ***
+2026-10-10T19:27:35.6503978Z env:
+2026-10-10T19:27:35.6504202Z   CI: true
+2026-10-10T19:27:35.6505949Z   BOT: true
+2026-10-10T19:27:35.6506404Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:27:35.6506901Z ##[endgroup]
+2026-10-10T19:27:35.8412062Z ##[warning]setup-java v4 is deprecated and will no longer receive updates. Please migrate to actions/setup-java@v5.
+2026-10-10T19:27:35.8425572Z ##[group]Installed distributions
+2026-10-10T19:27:35.8577843Z Resolved Java 17.0.20+1 from tool-cache
+2026-10-10T19:27:35.8578957Z Setting Java 17.0.20+1 as the default
+2026-10-10T19:27:35.8590679Z (node:2095) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T19:27:35.8592491Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T19:27:35.8595154Z Creating toolchains.xml for JDK version 17 from temurin
+2026-10-10T19:27:35.8696326Z Writing to /home/runner/.m2/toolchains.xml
+2026-10-10T19:27:35.8729567Z 
+2026-10-10T19:27:35.8734303Z Java configuration:
+2026-10-10T19:27:35.8735874Z   Distribution: temurin
+2026-10-10T19:27:35.8736791Z   Version: 17.0.20+1
+2026-10-10T19:27:35.8737839Z   Path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:35.8738864Z 
+2026-10-10T19:27:35.8739900Z ##[endgroup]
+2026-10-10T19:27:35.8762545Z Creating settings.xml with server-id: github
+2026-10-10T19:27:35.8817637Z Writing to /home/runner/.m2/settings.xml
+2026-10-10T19:27:35.9387313Z ##[group]Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+2026-10-10T19:27:35.9388139Z with:
+2026-10-10T19:27:35.9388570Z   flutter-version: 3.47.7
+2026-10-10T19:27:35.9389051Z   channel: stable
+2026-10-10T19:27:35.9389468Z   cache: true
+2026-10-10T19:27:35.9389878Z   architecture: X64
+2026-10-10T19:27:35.9390365Z   pub-cache-path: default
+2026-10-10T19:27:35.9390843Z   dry-run: false
+2026-10-10T19:27:35.9391383Z   git-source: https://github.com/flutter/flutter.git
+2026-10-10T19:27:35.9391995Z env:
+2026-10-10T19:27:35.9392369Z   CI: true
+2026-10-10T19:27:35.9392759Z   BOT: true
+2026-10-10T19:27:35.9393195Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:27:35.9393920Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:35.9395122Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:35.9395859Z ##[endgroup]
+2026-10-10T19:27:35.9489400Z ##[start-action display=Make yq tool available on Windows runners;id=__subosito_flutter-action.__run]
+2026-10-10T19:27:35.9509013Z ##[end-action id=__subosito_flutter-action.__run;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-10T19:27:35.9513204Z ##[start-action display=Make setup script executable;id=__subosito_flutter-action.__run_2]
+2026-10-10T19:27:35.9575853Z ##[group]Run chmod +x "$GITHUB_ACTION_PATH/setup.sh"
+2026-10-10T19:27:35.9576875Z [36;1mchmod +x "$GITHUB_ACTION_PATH/setup.sh"[0m
+2026-10-10T19:27:35.9838076Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-10T19:27:35.9838546Z env:
+2026-10-10T19:27:35.9838805Z   CI: true
+2026-10-10T19:27:35.9839050Z   BOT: true
+2026-10-10T19:27:35.9839323Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:27:35.9839779Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:35.9840388Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:35.9840861Z ##[endgroup]
+2026-10-10T19:27:35.9993625Z ##[end-action id=__subosito_flutter-action.__run_2;outcome=success;conclusion=success;duration_ms=47]
+2026-10-10T19:27:35.9996991Z ##[start-action display=Set action inputs;id=__subosito_flutter-action.flutter-action]
+2026-10-10T19:27:36.0072207Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh -p \
+2026-10-10T19:27:36.0072646Z [36;1m$GITHUB_ACTION_PATH/setup.sh -p \[0m
+2026-10-10T19:27:36.0073011Z [36;1m  -n '3.47.7' \[0m
+2026-10-10T19:27:36.0073294Z [36;1m  -f '' \[0m
+2026-10-10T19:27:36.0073553Z [36;1m  -a 'X64' \[0m
+2026-10-10T19:27:36.0073814Z [36;1m  -k '' \[0m
+2026-10-10T19:27:36.0074061Z [36;1m  -c '' \[0m
+2026-10-10T19:27:36.0074308Z [36;1m  -l '' \[0m
+2026-10-10T19:27:36.0074570Z [36;1m  -d 'default' \[0m
+2026-10-10T19:27:36.0075305Z [36;1m  -g 'https://github.com/flutter/flutter.git' \[0m
+2026-10-10T19:27:36.0075700Z [36;1m  stable[0m
+2026-10-10T19:27:36.0145906Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-10T19:27:36.0146336Z env:
+2026-10-10T19:27:36.0146588Z   CI: true
+2026-10-10T19:27:36.0146831Z   BOT: true
+2026-10-10T19:27:36.0147102Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:27:36.0147542Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:36.0148107Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:36.0148553Z ##[endgroup]
+2026-10-10T19:27:36.2731278Z ##[end-action id=__subosito_flutter-action.flutter-action;outcome=success;conclusion=success;duration_ms=273]
+2026-10-10T19:27:36.2737240Z ##[start-action display=Cache Flutter;id=__subosito_flutter-action.cache-flutter]
+2026-10-10T19:27:36.2804158Z ##[group]Run actions/cache@v5
+2026-10-10T19:27:36.2804492Z with:
+2026-10-10T19:27:36.2805189Z   path: /opt/hostedtoolcache/flutter/stable-3.47.7-x64
+2026-10-10T19:27:36.2805766Z   key: flutter-linux-stable-3.47.7-x64-abaf9c523780a608bd46686fd5e53740a07077f8
+2026-10-10T19:27:36.2806275Z   enableCrossOsArchive: false
+2026-10-10T19:27:36.2806601Z   fail-on-cache-miss: false
+2026-10-10T19:27:36.2807170Z   lookup-only: false
+2026-10-10T19:27:36.2807466Z   save-always: false
+2026-10-10T19:27:36.2807730Z env:
+2026-10-10T19:27:36.2807963Z   CI: true
+2026-10-10T19:27:36.2808199Z   BOT: true
+2026-10-10T19:27:36.2808467Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:27:36.2808903Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:36.2809487Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:36.2809926Z ##[endgroup]
+2026-10-10T19:27:36.6136209Z Cache hit for: flutter-linux-stable-3.47.7-x64-abaf9c523780a608bd46686fd5e53740a07077f8
+2026-10-10T19:27:37.8356013Z Received 50331648 of 1722174873 (2.9%), 48.0 MBs/sec
+2026-10-10T19:27:38.8354033Z Received 213909504 of 1722174873 (12.4%), 101.9 MBs/sec
+2026-10-10T19:27:39.8396513Z Received 385875968 of 1722174873 (22.4%), 122.5 MBs/sec
+2026-10-10T19:27:40.8409899Z Received 536870912 of 1722174873 (31.2%), 127.9 MBs/sec
+2026-10-10T19:27:41.8387536Z Received 713031680 of 1722174873 (41.4%), 135.9 MBs/sec
+2026-10-10T19:27:42.8476127Z Received 901775360 of 1722174873 (52.4%), 143.2 MBs/sec
+2026-10-10T19:27:43.8408950Z Received 1065353216 of 1722174873 (61.9%), 145.0 MBs/sec
+2026-10-10T19:27:44.8412198Z Received 1207959552 of 1722174873 (70.1%), 143.9 MBs/sec
+2026-10-10T19:27:45.8414269Z Received 1379926016 of 1722174873 (80.1%), 146.1 MBs/sec
+2026-10-10T19:27:46.8440470Z Received 1539309568 of 1722174873 (89.4%), 146.7 MBs/sec
+2026-10-10T19:27:47.8455576Z Received 1686110208 of 1722174873 (97.9%), 146.0 MBs/sec
+2026-10-10T19:27:48.1635180Z Received 1722174873 of 1722174873 (100.0%), 145.0 MBs/sec
+2026-10-10T19:27:48.1675622Z Cache Size: ~1642 MB (1722174873 B)
+2026-10-10T19:27:48.1877179Z [command]/usr/bin/tar -xf /home/runner/work/_temp/87f14e15-e33f-4251-b26c-d1e59c09e227/cache.tzst -P -C /home/runner/work/options-ai-trader/options-ai-trader --use-compress-program unzstd
+2026-10-10T19:27:59.4201638Z Cache restored successfully
+2026-10-10T19:27:59.5905527Z Cache restored from key: flutter-linux-stable-3.47.7-x64-abaf9c523780a608bd46686fd5e53740a07077f8
+2026-10-10T19:27:59.6057329Z ##[end-action id=__subosito_flutter-action.cache-flutter;outcome=success;conclusion=success;duration_ms=23331]
+2026-10-10T19:27:59.6060500Z ##[start-action display=Cache pub dependencies;id=__subosito_flutter-action.cache-pub]
+2026-10-10T19:27:59.8636191Z ##[group]Run actions/cache@v5
+2026-10-10T19:27:59.8636474Z with:
+2026-10-10T19:27:59.8636712Z   path: /home/runner/.pub-cache
+2026-10-10T19:27:59.8637446Z   key: flutter-pub-linux-stable-3.47.7-x64-abaf9c523780a608bd46686fd5e53740a07077f8-fd57d3e5b6d95336fbbf0f83b73b86f5a27720b9756dd3f73425a2dd054e8625
+2026-10-10T19:27:59.8638200Z   enableCrossOsArchive: false
+2026-10-10T19:27:59.8638470Z   fail-on-cache-miss: false
+2026-10-10T19:27:59.8638718Z   lookup-only: false
+2026-10-10T19:27:59.8638938Z   save-always: false
+2026-10-10T19:27:59.8639149Z env:
+2026-10-10T19:27:59.8639333Z   CI: true
+2026-10-10T19:27:59.8639538Z   BOT: true
+2026-10-10T19:27:59.8639804Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:27:59.8640208Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:59.8640713Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:27:59.8641113Z ##[endgroup]
+2026-10-10T19:28:00.1893174Z Cache hit for: flutter-pub-linux-stable-3.47.7-x64-abaf9c523780a608bd46686fd5e53740a07077f8-fd57d3e5b6d95336fbbf0f83b73b86f5a27720b9756dd3f73425a2dd054e8625
+2026-10-10T19:28:01.1384258Z Received 41992941 of 41992941 (100.0%), 51.2 MBs/sec
+2026-10-10T19:28:01.1385636Z Cache Size: ~40 MB (41992941 B)
+2026-10-10T19:28:01.1420352Z [command]/usr/bin/tar -xf /home/runner/work/_temp/0c22ff6b-3e39-4e4b-bc71-5a988cb33699/cache.tzst -P -C /home/runner/work/options-ai-trader/options-ai-trader --use-compress-program unzstd
+2026-10-10T19:28:02.7607730Z Cache restored successfully
+2026-10-10T19:28:02.7708615Z Cache restored from key: flutter-pub-linux-stable-3.47.7-x64-abaf9c523780a608bd46686fd5e53740a07077f8-fd57d3e5b6d95336fbbf0f83b73b86f5a27720b9756dd3f73425a2dd054e8625
+2026-10-10T19:28:02.7804190Z ##[end-action id=__subosito_flutter-action.cache-pub;outcome=success;conclusion=success;duration_ms=3174]
+2026-10-10T19:28:02.7809035Z ##[start-action display=Run setup script;id=__subosito_flutter-action.__run_3]
+2026-10-10T19:28:02.8507267Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh \
+2026-10-10T19:28:02.8507964Z [36;1m$GITHUB_ACTION_PATH/setup.sh \[0m
+2026-10-10T19:28:02.8508548Z [36;1m  -n '3.47.7' \[0m
+2026-10-10T19:28:02.8509015Z [36;1m  -a 'x64' \[0m
+2026-10-10T19:28:02.8509652Z [36;1m  -c '/opt/hostedtoolcache/flutter/stable-3.47.7-x64' \[0m
+2026-10-10T19:28:02.8510396Z [36;1m  -d '/home/runner/.pub-cache' \[0m
+2026-10-10T19:28:02.8510965Z [36;1m  stable[0m
+2026-10-10T19:28:02.8581846Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-10T19:28:02.8582200Z env:
+2026-10-10T19:28:02.8582402Z   CI: true
+2026-10-10T19:28:02.8582596Z   BOT: true
+2026-10-10T19:28:02.8582828Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:28:02.8583223Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:02.8583736Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:02.8584140Z ##[endgroup]
+2026-10-10T19:28:03.1810002Z ##[end-action id=__subosito_flutter-action.__run_3;outcome=success;conclusion=success;duration_ms=399]
+2026-10-10T19:28:03.5340737Z ##[group]Run bash scripts/bootstrap.sh
+2026-10-10T19:28:03.5341321Z [36;1mbash scripts/bootstrap.sh[0m
+2026-10-10T19:28:03.5437143Z shell: /usr/bin/bash -e {0}
+2026-10-10T19:28:03.5437404Z env:
+2026-10-10T19:28:03.5437600Z   CI: true
+2026-10-10T19:28:03.5437801Z   BOT: true
+2026-10-10T19:28:03.5438014Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:28:03.5438417Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:03.5438942Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:03.5439466Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter
+2026-10-10T19:28:03.5439869Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-10T19:28:03.5440141Z ##[endgroup]
+2026-10-10T19:28:05.0075852Z Recreating project ....
+2026-10-10T19:28:05.0793997Z   android/options_ai_trader_android.iml (created)
+2026-10-10T19:28:05.0942121Z   .idea/modules.xml (created)
+2026-10-10T19:28:05.0944292Z   .idea/libraries/KotlinJavaRuntime.xml (created)
+2026-10-10T19:28:05.0960444Z   .idea/libraries/Dart_SDK.xml (created)
+2026-10-10T19:28:05.0980604Z   .idea/runConfigurations/main_dart.xml (created)
+2026-10-10T19:28:05.0994313Z   .idea/workspace.xml (created)
+2026-10-10T19:28:05.0995211Z   options_ai_trader.iml (created)
+2026-10-10T19:28:05.2211611Z Resolving dependencies...
+2026-10-10T19:28:05.4491707Z Downloading packages...
+2026-10-10T19:28:05.4514762Z Got dependencies.
+2026-10-10T19:28:05.6295361Z Wrote 10 files.
+2026-10-10T19:28:05.6295996Z 
+2026-10-10T19:28:05.6296519Z All done!
+2026-10-10T19:28:05.6307260Z You can find general documentation for Flutter at: https://docs.flutter.dev/
+2026-10-10T19:28:05.6308518Z Detailed API documentation is available at: https://api.flutter.dev/
+2026-10-10T19:28:05.6309874Z If you prefer video documentation, consider: https://www.youtube.com/c/flutterdev
+2026-10-10T19:28:05.6311237Z 
+2026-10-10T19:28:05.6311824Z In order to run your application, type:
+2026-10-10T19:28:05.6312610Z 
+2026-10-10T19:28:05.6313115Z   $ flutter run
+2026-10-10T19:28:05.6313600Z 
+2026-10-10T19:28:05.6314293Z Your application code is in ./lib/main.dart.
+2026-10-10T19:28:05.6315591Z 
+2026-10-10T19:28:07.1956161Z Resolving dependencies...
+2026-10-10T19:28:07.2356499Z Downloading packages...
+2026-10-10T19:28:07.3202200Z   flutter_lints 4.0.0 (6.0.0 available)
+2026-10-10T19:28:07.3203145Z   lints 4.0.0 (6.1.0 available)
+2026-10-10T19:28:07.3204024Z   material_color_utilities 0.13.0 (0.13.1 available)
+2026-10-10T19:28:07.3205178Z   meta 1.18.3 (1.19.0 available)
+2026-10-10T19:28:07.3206014Z   test_api 0.7.12 (0.7.15 available)
+2026-10-10T19:28:07.3206896Z   vector_math 2.4.0 (2.4.3 available)
+2026-10-10T19:28:07.3207647Z Got dependencies!
+2026-10-10T19:28:07.3208701Z 6 packages have newer versions incompatible with dependency constraints.
+2026-10-10T19:28:07.3209747Z Try `flutter pub outdated` for more information.
+2026-10-10T19:28:07.5114536Z ##[group]Run flutter analyze
+2026-10-10T19:28:07.5115330Z [36;1mflutter analyze[0m
+2026-10-10T19:28:07.5179046Z shell: /usr/bin/bash -e {0}
+2026-10-10T19:28:07.5179323Z env:
+2026-10-10T19:28:07.5179521Z   CI: true
+2026-10-10T19:28:07.5179727Z   BOT: true
+2026-10-10T19:28:07.5179941Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:28:07.5180354Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:07.5180898Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:07.5181432Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter
+2026-10-10T19:28:07.5181846Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-10T19:28:07.5182128Z ##[endgroup]
+2026-10-10T19:28:18.6156568Z Analyzing mobile...                                             
+2026-10-10T19:28:18.6186106Z No issues found! (ran in 10.2s)
+2026-10-10T19:28:18.6383605Z ##[group]Run flutter test --machine > flutter-tests.json
+2026-10-10T19:28:18.6384348Z [36;1mflutter test --machine > flutter-tests.json[0m
+2026-10-10T19:28:18.6537311Z shell: /usr/bin/bash -e {0}
+2026-10-10T19:28:18.6537779Z env:
+2026-10-10T19:28:18.6538117Z   CI: true
+2026-10-10T19:28:18.6538441Z   BOT: true
+2026-10-10T19:28:18.6538800Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:28:18.6539482Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:18.6540401Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:18.6541286Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter
+2026-10-10T19:28:18.6541978Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-10T19:28:18.6542443Z ##[endgroup]
+2026-10-10T19:28:54.4759508Z ##[group]Run python mobile/scripts/prepare_ci_signing.py
+2026-10-10T19:28:54.4760620Z [36;1mpython mobile/scripts/prepare_ci_signing.py[0m
+2026-10-10T19:28:54.4836644Z shell: /usr/bin/bash -e {0}
+2026-10-10T19:28:54.4836939Z env:
+2026-10-10T19:28:54.4837134Z   CI: true
+2026-10-10T19:28:54.4837330Z   BOT: true
+2026-10-10T19:28:54.4837562Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:28:54.4837994Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:54.4838522Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:54.4839020Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter
+2026-10-10T19:28:54.4839411Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-10T19:28:54.4839692Z   OAT_KEYSTORE_BASE64: 
+2026-10-10T19:28:54.4839935Z   OAT_KEYSTORE_PASSWORD: 
+2026-10-10T19:28:54.4840160Z   OAT_KEY_ALIAS: 
+2026-10-10T19:28:54.4840366Z   OAT_KEY_PASSWORD: 
+2026-10-10T19:28:54.4840610Z ##[endgroup]
+2026-10-10T19:28:54.5165223Z Signing Secrets unavailable: building UNSIGNED APK, not installable until privately signed
+2026-10-10T19:28:54.5246287Z ##[group]Run flutter build apk --debug --build-name=1.0.0 --build-number=11
+2026-10-10T19:28:54.5246905Z [36;1mflutter build apk --debug --build-name=1.0.0 --build-number=11[0m
+2026-10-10T19:28:54.5309163Z shell: /usr/bin/bash -e {0}
+2026-10-10T19:28:54.5309433Z env:
+2026-10-10T19:28:54.5309631Z   CI: true
+2026-10-10T19:28:54.5309820Z   BOT: true
+2026-10-10T19:28:54.5310031Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:28:54.5310433Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:54.5310956Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:28:54.5311458Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter
+2026-10-10T19:28:54.5311848Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-10T19:28:54.5312122Z   OAT_UNSIGNED_BUILD: true
+2026-10-10T19:28:54.5312372Z   OAT_SIGNING_MODE: unsigned
+2026-10-10T19:28:54.5312616Z   OAT_KEYSTORE_PASSWORD: 
+2026-10-10T19:28:54.5312880Z   OAT_KEY_ALIAS: 
+2026-10-10T19:28:54.5313095Z   OAT_KEY_PASSWORD: 
+2026-10-10T19:28:54.5313313Z ##[endgroup]
+2026-10-10T19:30:58.2610637Z Running Gradle task 'assembleDebug'...                          
+2026-10-10T19:30:58.2612063Z Loading package information...                                                  
+2026-10-10T19:30:58.3528920Z Loading local repository...                                                     
+2026-10-10T19:30:58.3545048Z [                                       ] 3% Loading local repository...        
+2026-10-10T19:30:58.7546072Z [                                       ] 3% Fetch remote repository...         
+2026-10-10T19:30:59.6498908Z [=                                      ] 3% Fetch remote repository...         
+2026-10-10T19:30:59.7497811Z [=                                      ] 4% Fetch remote repository...         
+2026-10-10T19:30:59.7525704Z [=                                      ] 5% Fetch remote repository...         
+2026-10-10T19:30:59.8499308Z [==                                     ] 5% Fetch remote repository...         
+2026-10-10T19:30:59.9498741Z [==                                     ] 6% Fetch remote repository...         
+2026-10-10T19:31:00.2502286Z [==                                     ] 7% Fetch remote repository...         
+2026-10-10T19:31:00.2513914Z [==                                     ] 7% Computing updates...               
+2026-10-10T19:31:00.2515248Z [===                                    ] 8% Computing updates...               
+2026-10-10T19:31:00.3499281Z [===                                    ] 10% Computing updates...              
+2026-10-10T19:31:00.3506763Z [===                                    ] 10% Installing NDK (Side by side) 28.2
+2026-10-10T19:31:01.5498142Z [===                                    ] 10% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:01.8515899Z [====                                   ] 10% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:01.9506777Z [====                                   ] 11% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.1503920Z [====                                   ] 12% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.1505731Z [=====                                  ] 13% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.2498462Z [=====                                  ] 14% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.3518066Z [=====                                  ] 15% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.3520255Z [======                                 ] 15% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.4501411Z [======                                 ] 16% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.5501181Z [======                                 ] 17% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.5502466Z [=======                                ] 18% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.6556539Z [=======                                ] 19% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.7503970Z [=======                                ] 20% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.8817671Z [========                               ] 20% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.8818632Z [========                               ] 21% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.8885370Z [========                               ] 22% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:02.9500004Z [=========                              ] 23% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:03.0521108Z [=========                              ] 24% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:03.0837192Z [=========                              ] 25% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:03.1498492Z [==========                             ] 25% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:03.2497759Z [==========                             ] 26% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:03.7498807Z [==========                             ] 27% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:03.8498510Z [===========                            ] 28% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:03.9575944Z [===========                            ] 29% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:03.9580674Z [===========                            ] 30% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:04.0506151Z [============                           ] 30% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:04.1503973Z [============                           ] 31% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:04.2498309Z [============                           ] 32% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:04.2499453Z [============                           ] 33% Downloading android-ndk-r28c-linux
+2026-10-10T19:31:06.1502996Z [============                           ] 33% Unzipping...                      
+2026-10-10T19:31:06.1880424Z [============                           ] 33% Unzipping... android-ndk-r28c/    
+2026-10-10T19:31:06.1881340Z [============                           ] 33% Unzipping... android-ndk-r28c/READ
+2026-10-10T19:31:06.1905361Z [=============                          ] 33% Unzipping... android-ndk-r28c/READ
+2026-10-10T19:31:06.1906500Z [=============                          ] 33% Unzipping... android-ndk-r28c/meta
+2026-10-10T19:31:06.4545900Z [=============                          ] 33% Unzipping... android-ndk-r28c/shad
+2026-10-10T19:31:06.4565388Z [=============                          ] 33% Unzipping... android-ndk-r28c/ndk-
+2026-10-10T19:31:06.4585470Z [=============                          ] 33% Unzipping... android-ndk-r28c/wrap
+2026-10-10T19:31:06.4605386Z [=============                          ] 33% Unzipping... android-ndk-r28c/ndk-
+2026-10-10T19:31:06.8513432Z [=============                          ] 33% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:07.3502934Z [=============                          ] 34% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:07.9506054Z [=============                          ] 35% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:08.1497705Z [==============                         ] 35% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:08.5498221Z [==============                         ] 36% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:09.4515801Z [==============                         ] 37% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:10.3516372Z [===============                        ] 38% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:10.8498953Z [===============                        ] 39% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:11.0498027Z [===============                        ] 40% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:11.3506279Z [================                       ] 40% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:11.8498691Z [================                       ] 41% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:12.4498074Z [================                       ] 42% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:13.9502744Z [=================                      ] 43% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:14.5500138Z [=================                      ] 44% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:14.8509505Z [=================                      ] 45% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:15.6500747Z [==================                     ] 45% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:16.1498327Z [==================                     ] 46% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:16.5498266Z [==================                     ] 47% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:16.9507330Z [===================                    ] 48% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:17.4498853Z [===================                    ] 49% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:17.6498600Z [===================                    ] 50% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:17.8506835Z [====================                   ] 50% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:18.3503988Z [====================                   ] 51% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:18.7498746Z [====================                   ] 52% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:19.2505260Z [=====================                  ] 53% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:19.7500448Z [=====================                  ] 54% Unzipping... android-ndk-r28c/tool
+2026-10-10T19:31:19.8510879Z [=====================                  ] 54% Unzipping... android-ndk-r28c/buil
+2026-10-10T19:31:20.1509226Z [=====================                  ] 54% Unzipping... android-ndk-r28c/sour
+2026-10-10T19:31:20.1516260Z [=====================                  ] 54% Unzipping... android-ndk-r28c/NOTI
+2026-10-10T19:31:20.1517315Z [=====================                  ] 54% Unzipping... android-ndk-r28c/ndk-
+2026-10-10T19:31:20.1518684Z [=====================                  ] 54% Unzipping... android-ndk-r28c/NOTI
+2026-10-10T19:31:20.1519598Z [=====================                  ] 54% Unzipping... android-ndk-r28c/pyth
+2026-10-10T19:31:20.1520753Z [=====================                  ] 54% Unzipping... android-ndk-r28c/preb
+2026-10-10T19:31:20.1521631Z [=====================                  ] 54% Unzipping... android-ndk-r28c/ndk-
+2026-10-10T19:31:20.1522503Z [=====================                  ] 54% Unzipping... android-ndk-r28c/sour
+2026-10-10T19:31:20.2497797Z [=====================                  ] 54% Unzipping... android-ndk-r28c/simp
+2026-10-10T19:31:20.3500532Z [=====================                  ] 55% Unzipping... android-ndk-r28c/simp
+2026-10-10T19:31:20.4500614Z [=====================                  ] 55% Unzipping... android-ndk-r28c/CHAN
+2026-10-10T19:31:20.4501416Z [=======================================] 100% Unzipping... android-ndk-r28c/CHA
+2026-10-10T19:31:20.8499574Z 
+2026-10-10T19:34:19.1342362Z Running Gradle task 'assembleDebug'...                            324.0s
+2026-10-10T19:34:20.4243707Z ✓ Built build/app/outputs/flutter-apk/app-debug.apk
+2026-10-10T19:34:20.4444162Z ##[group]Run cp mobile/build/app/outputs/flutter-apk/app-debug.apk "options-ai-trader-v1.0-rc2-${OAT_SIGNING_MODE}.apk"
+2026-10-10T19:34:20.4445494Z [36;1mcp mobile/build/app/outputs/flutter-apk/app-debug.apk "options-ai-trader-v1.0-rc2-${OAT_SIGNING_MODE}.apk"[0m
+2026-10-10T19:34:20.4446163Z [36;1msha256sum options-ai-trader-v1.0-rc2-*.apk > apk.sha256[0m
+2026-10-10T19:34:20.4446728Z [36;1mprintf '%s\n' "commit=${GITHUB_SHA}" "signing=${OAT_SIGNING_MODE}" > build-provenance.txt[0m
+2026-10-10T19:34:20.4447252Z [36;1mflutter --version > flutter-build-version.txt[0m
+2026-10-10T19:34:20.5358470Z shell: /usr/bin/bash -e {0}
+2026-10-10T19:34:20.5358786Z env:
+2026-10-10T19:34:20.5359015Z   CI: true
+2026-10-10T19:34:20.5359231Z   BOT: true
+2026-10-10T19:34:20.5359467Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:34:20.5359907Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:34:20.5360536Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:34:20.5361122Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter
+2026-10-10T19:34:20.5361561Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-10T19:34:20.5361879Z   OAT_UNSIGNED_BUILD: true
+2026-10-10T19:34:20.5362157Z   OAT_SIGNING_MODE: unsigned
+2026-10-10T19:34:20.5362427Z ##[endgroup]
+2026-10-10T19:34:21.2284241Z ##[group]Run flutter build apk --debug --build-name=1.0.0 --build-number=11
+2026-10-10T19:34:21.2285348Z [36;1mflutter build apk --debug --build-name=1.0.0 --build-number=11[0m
+2026-10-10T19:34:21.2286324Z [36;1mcp build/app/outputs/flutter-apk/app-debug.apk ../options-ai-trader-v1.0-rc2-preview.apk[0m
+2026-10-10T19:34:21.2288092Z [36;1mprintf '%s\n' 'preview_signing=ephemeral-runner-development-key' 'preview_application_id=com.optionsaitrader.options_ai_trader.v1previewrc2' >> ../build-provenance.txt[0m
+2026-10-10T19:34:21.2366037Z shell: /usr/bin/bash -e {0}
+2026-10-10T19:34:21.2366303Z env:
+2026-10-10T19:34:21.2366493Z   CI: true
+2026-10-10T19:34:21.2366688Z   BOT: true
+2026-10-10T19:34:21.2366915Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:34:21.2367308Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:34:21.2367830Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:34:21.2368349Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter
+2026-10-10T19:34:21.2368996Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-10T19:34:21.2369476Z   OAT_UNSIGNED_BUILD: false
+2026-10-10T19:34:21.2369900Z   OAT_SIGNING_MODE: unsigned
+2026-10-10T19:34:21.2370321Z   OAT_PREVIEW_BUILD: true
+2026-10-10T19:34:21.2370713Z ##[endgroup]
+2026-10-10T19:34:29.9654189Z Running Gradle task 'assembleDebug'...                              8.1s
+2026-10-10T19:34:31.2094205Z ✓ Built build/app/outputs/flutter-apk/app-debug.apk
+2026-10-10T19:34:31.2745908Z ##[group]Run APKSIGNER_BIN=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)
+2026-10-10T19:34:31.2747306Z [36;1mAPKSIGNER_BIN=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)[0m
+2026-10-10T19:34:31.2748593Z [36;1mif [ "$OAT_SIGNING_MODE" = 'stable-development' ]; then[0m
+2026-10-10T19:34:31.2749794Z [36;1m  "$APKSIGNER_BIN" verify --verbose --print-certs options-ai-trader-v1.0-rc2-stable-development.apk > apk-signature.txt[0m
+2026-10-10T19:34:31.2750840Z [36;1melse[0m
+2026-10-10T19:34:31.2751680Z [36;1m  "$APKSIGNER_BIN" verify --verbose --print-certs options-ai-trader-v1.0-rc2-preview.apk > apk-signature.txt[0m
+2026-10-10T19:34:31.2752644Z [36;1mfi[0m
+2026-10-10T19:34:31.2753157Z [36;1msha256sum options-ai-trader-v1.0-rc2-*.apk > apk.sha256[0m
+2026-10-10T19:34:31.2828744Z shell: /usr/bin/bash -e {0}
+2026-10-10T19:34:31.2829034Z env:
+2026-10-10T19:34:31.2829235Z   CI: true
+2026-10-10T19:34:31.2829464Z   BOT: true
+2026-10-10T19:34:31.2829675Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:34:31.2830073Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:34:31.2830609Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:34:31.2831108Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter
+2026-10-10T19:34:31.2831505Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-10T19:34:31.2831784Z   OAT_UNSIGNED_BUILD: true
+2026-10-10T19:34:31.2832046Z   OAT_SIGNING_MODE: unsigned
+2026-10-10T19:34:31.2832284Z ##[endgroup]
+2026-10-10T19:34:32.2411187Z ##[group]Run rm -f "${RUNNER_TEMP}/options-development.jks"
+2026-10-10T19:34:32.2411671Z [36;1mrm -f "${RUNNER_TEMP}/options-development.jks"[0m
+2026-10-10T19:34:32.2474352Z shell: /usr/bin/bash -e {0}
+2026-10-10T19:34:32.2474615Z env:
+2026-10-10T19:34:32.2474935Z   CI: true
+2026-10-10T19:34:32.2475132Z   BOT: true
+2026-10-10T19:34:32.2475337Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:34:32.2475735Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:34:32.2476255Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:34:32.2476777Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter
+2026-10-10T19:34:32.2477168Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-10T19:34:32.2477450Z   OAT_UNSIGNED_BUILD: true
+2026-10-10T19:34:32.2477695Z   OAT_SIGNING_MODE: unsigned
+2026-10-10T19:34:32.2477933Z ##[endgroup]
+2026-10-10T19:34:32.2624995Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-10-10T19:34:32.2625446Z with:
+2026-10-10T19:34:32.2625712Z   name: options-ai-trader-v1.0-rc2-android-results
+2026-10-10T19:34:32.2626426Z   path: options-ai-trader-v1.0-rc2-*.apk
+apk.sha256
+apk-signature.txt
+build-provenance.txt
+flutter-build-version.txt
+mobile/flutter-tests.json
+
+2026-10-10T19:34:32.2627083Z   retention-days: 14
+2026-10-10T19:34:32.2627311Z   if-no-files-found: warn
+2026-10-10T19:34:32.2627548Z   compression-level: 6
+2026-10-10T19:34:32.2627775Z   overwrite: false
+2026-10-10T19:34:32.2627996Z   include-hidden-files: false
+2026-10-10T19:34:32.2628255Z env:
+2026-10-10T19:34:32.2628432Z   CI: true
+2026-10-10T19:34:32.2628612Z   BOT: true
+2026-10-10T19:34:32.2628818Z   FLUTTER_SUPPRESS_ANALYTICS: true
+2026-10-10T19:34:32.2629190Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:34:32.2629709Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-10T19:34:32.2630201Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter
+2026-10-10T19:34:32.2630602Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-10T19:34:32.2630876Z   OAT_UNSIGNED_BUILD: true
+2026-10-10T19:34:32.2631117Z   OAT_SIGNING_MODE: unsigned
+2026-10-10T19:34:32.2631355Z ##[endgroup]
+2026-10-10T19:34:32.5824151Z (node:3394) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T19:34:32.5825992Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T19:34:32.6026241Z With the provided path, there will be 7 files uploaded
+2026-10-10T19:34:32.6027447Z Artifact name is valid!
+2026-10-10T19:34:32.6027945Z Root directory input is valid!
+2026-10-10T19:34:32.9182798Z Beginning upload of artifact content to blob storage
+2026-10-10T19:34:33.4352175Z (node:3394) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-10T19:34:33.9245143Z Uploaded bytes 8388608
+2026-10-10T19:34:34.3504186Z Uploaded bytes 16777216
+2026-10-10T19:34:34.9862055Z Uploaded bytes 25165824
+2026-10-10T19:34:35.6744485Z Uploaded bytes 33554432
+2026-10-10T19:34:36.3433076Z Uploaded bytes 41943040
+2026-10-10T19:34:37.0344651Z Uploaded bytes 50331648
+2026-10-10T19:34:37.3571442Z Uploaded bytes 58720256
+2026-10-10T19:34:37.6348107Z Uploaded bytes 67108864
+2026-10-10T19:34:37.9594472Z Uploaded bytes 75497472
+2026-10-10T19:34:38.5243247Z Uploaded bytes 83886080
+2026-10-10T19:34:39.2844410Z Uploaded bytes 92274688
+2026-10-10T19:34:39.8750250Z Uploaded bytes 100663296
+2026-10-10T19:34:40.5685619Z Uploaded bytes 109051904
+2026-10-10T19:34:41.2925426Z Uploaded bytes 117440512
+2026-10-10T19:34:41.9089131Z Uploaded bytes 125829120
+2026-10-10T19:34:42.1650502Z Uploaded bytes 134217728
+2026-10-10T19:34:42.4376329Z Uploaded bytes 142606336
+2026-10-10T19:34:42.7105917Z Uploaded bytes 148345504
+2026-10-10T19:34:42.7503613Z Finished uploading artifact content to blob storage!
+2026-10-10T19:34:42.7507146Z SHA256 digest of uploaded artifact zip is ef8ff273b5d323e1136d9f9b798173a354cf7ae11f773ca0ee57508bc8f54913
+2026-10-10T19:34:42.7510394Z Finalizing artifact upload
+2026-10-10T19:34:43.0668574Z Artifact options-ai-trader-v1.0-rc2-android-results.zip successfully finalized. Artifact ID 11680317013
+2026-10-10T19:34:43.0682217Z Artifact options-ai-trader-v1.0-rc2-android-results has been successfully uploaded! Final size is 148345504 bytes. Artifact ID is 11680317013
+2026-10-10T19:34:43.0684587Z Artifact download URL: https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38079870551/artifacts/11680317013
+2026-10-10T19:34:43.0991103Z Post job cleanup.
+2026-10-10T19:34:43.0995511Z ##[start-action display=Cache pub dependencies;id=__f52c03c2-ad99-40fb-bf45-3e6025191285.cache-pub]
+2026-10-10T19:34:43.6348187Z Post job cleanup.
+2026-10-10T19:34:43.7866979Z Cache hit occurred on the primary key flutter-pub-linux-stable-3.47.7-x64-abaf9c523780a608bd46686fd5e53740a07077f8-fd57d3e5b6d95336fbbf0f83b73b86f5a27720b9756dd3f73425a2dd054e8625, not saving cache.
+2026-10-10T19:34:43.7936448Z ##[end-action id=__f52c03c2-ad99-40fb-bf45-3e6025191285.cache-pub;outcome=success;conclusion=success;duration_ms=694]
+2026-10-10T19:34:43.7939095Z ##[start-action display=Cache Flutter;id=__f52c03c2-ad99-40fb-bf45-3e6025191285.cache-flutter]
+2026-10-10T19:34:43.7998070Z Post job cleanup.
+2026-10-10T19:34:43.9426503Z Cache hit occurred on the primary key flutter-linux-stable-3.47.7-x64-abaf9c523780a608bd46686fd5e53740a07077f8, not saving cache.
+2026-10-10T19:34:43.9503230Z ##[end-action id=__f52c03c2-ad99-40fb-bf45-3e6025191285.cache-flutter;outcome=success;conclusion=success;duration_ms=156]
+2026-10-10T19:34:43.9623719Z Post job cleanup.
+2026-10-10T19:34:44.1280362Z (node:3435) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T19:34:44.1282011Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T19:34:44.1541716Z Post job cleanup.
+2026-10-10T19:34:44.2774096Z [command]/usr/bin/git version
+2026-10-10T19:34:44.2857254Z git version 2.55.0
+2026-10-10T19:34:44.2916058Z Temporarily overriding HOME='/home/runner/work/_temp/7eeb32e7-262a-447c-b43f-8c70b3f1fc3f' before making global git config changes
+2026-10-10T19:34:44.2936608Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T19:34:44.2938051Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/options-ai-trader/options-ai-trader
+2026-10-10T19:34:44.3023885Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T19:34:44.3046913Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T19:34:44.3410121Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T19:34:44.3447805Z http.https://github.com/.extraheader
+2026-10-10T19:34:44.3562983Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-10T19:34:44.3569313Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T19:34:44.4241315Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T19:34:44.4245561Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-10T19:34:44.4839135Z Cleaning up orphan processes
+2026-10-10T19:34:44.5241627Z Terminate orphan process: pid (2755) (java)
+2026-10-10T19:34:44.5285859Z Terminate orphan process: pid (3029) (java)
+2026-10-10T19:34:44.5331665Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

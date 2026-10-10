@@ -1,0 +1,754 @@
+{
+  "source_commit": "3d35475cd92058f8470d6f81826aaa4a16f587b1",
+  "source_tree": "c5198281dae85b17865a6f805d265447d4f0551e",
+  "recovery_commit": "cd990434a2f3e0066953ae1df418140d544bfcbe",
+  "branches": [
+    {
+      "name": "archive/v0.4",
+      "sha": "d959ae4741cdfee57ce7f715bb013e49e5b6b76f"
+    },
+    {
+      "name": "archive/v0.5",
+      "sha": "ccd1d2c181de3968e9042ce7c1435571c1f3301a"
+    },
+    {
+      "name": "develop/v1.0-rc2",
+      "sha": "3d35475cd92058f8470d6f81826aaa4a16f587b1"
+    },
+    {
+      "name": "develop/v1.0",
+      "sha": "4a8a0d3954cf11611fa293c5eb61edf4f0af6795"
+    },
+    {
+      "name": "main",
+      "sha": "ccd1d2c181de3968e9042ce7c1435571c1f3301a"
+    }
+  ],
+  "commits": [
+    {
+      "sha": "3d35475cd92058f8470d6f81826aaa4a16f587b1",
+      "message": "Fix four Flutter analyze block lint findings in RC2 charts and research viewer",
+      "parents": [
+        "df2606c9f2d5e9a27464e1c10ba38d93390eecaf"
+      ]
+    },
+    {
+      "sha": "df2606c9f2d5e9a27464e1c10ba38d93390eecaf",
+      "message": "Complete RC2 causal wave and shadow research workbenches; protect closes on risk failure and verify PostgreSQL recovery",
+      "parents": [
+        "7f84a34cc24bc4b461f2bad577ed9bb53a7bd797"
+      ]
+    },
+    {
+      "sha": "7f84a34cc24bc4b461f2bad577ed9bb53a7bd797",
+      "message": "Record verified RC1 recovery checkpoint before RC2 development",
+      "parents": [
+        "4a8a0d3954cf11611fa293c5eb61edf4f0af6795"
+      ]
+    },
+    {
+      "sha": "4a8a0d3954cf11611fa293c5eb61edf4f0af6795",
+      "message": "Deliver V1.0 RC1 source and verified evidence: 537 Python, 114 Flutter, PostgreSQL, Compose, Android preview, unsigned iOS; preserve complete local history",
+      "parents": [
+        "825ff29ef40c326c73cef504ec615b6b7e530ca6"
+      ]
+    },
+    {
+      "sha": "825ff29ef40c326c73cef504ec615b6b7e530ca6",
+      "message": "Recheck scaling budgets and position generations; add isolated Compose runtime CI; archive verified mobile builds and 537 Python passes",
+      "parents": [
+        "32531f772200cbb798a98a744323f007bbb2d210"
+      ]
+    },
+    {
+      "sha": "32531f772200cbb798a98a744323f007bbb2d210",
+      "message": "Correct inferred runtime iterable generic for durable local reversal references",
+      "parents": [
+        "f2ee044be100b4f2079e0e43381a640fc262d11e"
+      ]
+    },
+    {
+      "sha": "f2ee044be100b4f2079e0e43381a640fc262d11e",
+      "message": "Fix runtime reversal order ID typing and offscreen drawer navigation exposed by Flutter CI",
+      "parents": [
+        "c021d3cf781b7a26db2a1005eacef303734e960a"
+      ]
+    },
+    {
+      "sha": "c021d3cf781b7a26db2a1005eacef303734e960a",
+      "message": "Fix Flutter analyzer and scaling fill rechecks; audit exact Dart dependencies; 517 Python tests passed",
+      "parents": [
+        "50333fa9138ef13725dd445c4c2e48690274d3c9"
+      ]
+    },
+    {
+      "sha": "50333fa9138ef13725dd445c4c2e48690274d3c9",
+      "message": "V1.0 RC: causal research, durable safe Mock lifecycle, offline chart labs and 511 passing Python tests",
+      "parents": [
+        "fe1623bb7360ff2b29b52ac230643ff32b3a9a4b"
+      ]
+    },
+    {
+      "sha": "fe1623bb7360ff2b29b52ac230643ff32b3a9a4b",
+      "message": "Split restored test SDK into connector-sized private artifacts",
+      "parents": [
+        "84433944aca9b494b3e0018af77fb3775608d625"
+      ]
+    },
+    {
+      "sha": "84433944aca9b494b3e0018af77fb3775608d625",
+      "message": "Prepare isolated V1 Flutter test toolchain artifact",
+      "parents": [
+        "690de7fd539696bec77900fc1b1ad0074841d8dd"
+      ]
+    },
+    {
+      "sha": "690de7fd539696bec77900fc1b1ad0074841d8dd",
+      "message": "Checkpoint V0.5 source and Git history before V1.0 development",
+      "parents": [
+        "ccd1d2c181de3968e9042ce7c1435571c1f3301a"
+      ]
+    },
+    {
+      "sha": "ccd1d2c181de3968e9042ce7c1435571c1f3301a",
+      "message": "Record V0.5 verified cloud builds, test evidence and remaining deployment limits",
+      "parents": [
+        "e5b6076ee484b3fded6ec8f0221db7c9cf92798d"
+      ]
+    },
+    {
+      "sha": "e5b6076ee484b3fded6ec8f0221db7c9cf92798d",
+      "message": "Prepare V0.5 cloud checks, unsigned iOS and private development signing",
+      "parents": [
+        "63094e19b1a938a8064d27c20599b02016aa81ef"
+      ]
+    },
+    {
+      "sha": "63094e19b1a938a8064d27c20599b02016aa81ef",
+      "message": "Add isolated offline multi-account Demo and causal historical exits",
+      "parents": [
+        "d959ae4741cdfee57ce7f715bb013e49e5b6b76f"
+      ]
+    },
+    {
+      "sha": "d959ae4741cdfee57ce7f715bb013e49e5b6b76f",
+      "message": "Import reviewed V0.4 source, safety tests, mobile builds and original Git history bundle",
+      "parents": [
+        "b3cb0bd1302975c6fc879eef56fa9118d418d12e"
+      ]
+    },
+    {
+      "sha": "b3cb0bd1302975c6fc879eef56fa9118d418d12e",
+      "message": "Initialize remote from reviewed Options AI Trader V0.4 README",
+      "parents": []
+    }
+  ],
+  "runs": [
+    {
+      "id": 38079870577,
+      "name": "Source and dependency security checks",
+      "head_sha": "3d35475cd92058f8470d6f81826aaa4a16f587b1",
+      "branch": "develop/v1.0-rc2",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38079870577",
+      "artifacts": [
+        {
+          "id": 11679722428,
+          "name": "v1-security-results",
+          "size": 2402,
+          "expired": false,
+          "digest": "sha256:fb401221e2d00622b8596db7eba438a9a031ef74d6beac1e708846a114ce5164",
+          "expires_at": "2026-10-24T19:27:46Z"
+        }
+      ]
+    },
+    {
+      "id": 38079870551,
+      "name": "Android V1.0 RC2 offline demo",
+      "head_sha": "3d35475cd92058f8470d6f81826aaa4a16f587b1",
+      "branch": "develop/v1.0-rc2",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38079870551",
+      "artifacts": [
+        {
+          "id": 11680317013,
+          "name": "options-ai-trader-v1.0-rc2-android-results",
+          "size": 148345504,
+          "expired": false,
+          "digest": "sha256:ef8ff273b5d323e1136d9f9b798173a354cf7ae11f773ca0ee57508bc8f54913",
+          "expires_at": "2026-10-24T19:34:32Z"
+        }
+      ]
+    },
+    {
+      "id": 38079870547,
+      "name": "iOS V1.0 RC2 unsigned review build",
+      "head_sha": "3d35475cd92058f8470d6f81826aaa4a16f587b1",
+      "branch": "develop/v1.0-rc2",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38079870547",
+      "artifacts": [
+        {
+          "id": 11680341905,
+          "name": "options-ai-trader-v1.0-rc2-ios-unsigned",
+          "size": 7835873,
+          "expired": false,
+          "digest": "sha256:409a06178dc7a4018d796574d0283283825e4b5888033ef3abcb72ab138c8a30",
+          "expires_at": "2026-10-24T19:32:48Z"
+        }
+      ]
+    },
+    {
+      "id": 38079698364,
+      "name": "Android V1.0 RC2 offline demo",
+      "head_sha": "df2606c9f2d5e9a27464e1c10ba38d93390eecaf",
+      "branch": "develop/v1.0-rc2",
+      "conclusion": "failure",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38079698364",
+      "artifacts": []
+    },
+    {
+      "id": 38079698348,
+      "name": "Source and dependency security checks",
+      "head_sha": "df2606c9f2d5e9a27464e1c10ba38d93390eecaf",
+      "branch": "develop/v1.0-rc2",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38079698348",
+      "artifacts": [
+        {
+          "id": 11680176223,
+          "name": "v1-security-results",
+          "size": 2401,
+          "expired": false,
+          "digest": "sha256:d8ab08f6699ba893a8aebb5d2e0d4a53b67e950a731d53aaea0408e7f5b68b56",
+          "expires_at": "2026-10-24T19:25:05Z"
+        }
+      ]
+    },
+    {
+      "id": 38079698290,
+      "name": "iOS V1.0 RC2 unsigned review build",
+      "head_sha": "df2606c9f2d5e9a27464e1c10ba38d93390eecaf",
+      "branch": "develop/v1.0-rc2",
+      "conclusion": "failure",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38079698290",
+      "artifacts": []
+    },
+    {
+      "id": 38079698275,
+      "name": "Mock safety checks",
+      "head_sha": "df2606c9f2d5e9a27464e1c10ba38d93390eecaf",
+      "branch": "develop/v1.0-rc2",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38079698275",
+      "artifacts": [
+        {
+          "id": 11679826730,
+          "name": "compose-runtime-result",
+          "size": 553,
+          "expired": false,
+          "digest": "sha256:42dab640138b6f275a2dc58539ef98704c770a688cf758460ffad22c12a7f756",
+          "expires_at": "2026-10-24T19:25:39Z"
+        },
+        {
+          "id": 11678554951,
+          "name": "backend-test-results",
+          "size": 14106,
+          "expired": false,
+          "digest": "sha256:24bca2fb017a3023887d26a362781b20a125489768e777f3f3a51420d7c313c3",
+          "expires_at": "2027-01-08T19:24:50Z"
+        }
+      ]
+    },
+    {
+      "id": 38068506590,
+      "name": "Mock safety checks",
+      "head_sha": "825ff29ef40c326c73cef504ec615b6b7e530ca6",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38068506590",
+      "artifacts": [
+        {
+          "id": 11676366042,
+          "name": "compose-runtime-result",
+          "size": 554,
+          "expired": false,
+          "digest": "sha256:45ccef88c8e9afb55c54ba3f4f9380b074567b2137afe09b6fa747086486dbe0",
+          "expires_at": "2026-10-24T16:39:37Z"
+        },
+        {
+          "id": 11675557698,
+          "name": "backend-test-results",
+          "size": 11940,
+          "expired": false,
+          "digest": "sha256:f74a33bb0f779d1ba61e5a2b1ec93cd4ba8e6f96003af3c6958e78eeca6c4137",
+          "expires_at": "2027-01-08T16:38:50Z"
+        }
+      ]
+    },
+    {
+      "id": 38068506539,
+      "name": "Source and dependency security checks",
+      "head_sha": "825ff29ef40c326c73cef504ec615b6b7e530ca6",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38068506539",
+      "artifacts": [
+        {
+          "id": 11675542758,
+          "name": "v1-security-results",
+          "size": 2394,
+          "expired": false,
+          "digest": "sha256:e01270f26d59df8d595a7069540ebf92ea3c0f40fa162afe6415ed66b6028253",
+          "expires_at": "2026-10-24T16:39:07Z"
+        }
+      ]
+    },
+    {
+      "id": 38067549982,
+      "name": "Source and dependency security checks",
+      "head_sha": "32531f772200cbb798a98a744323f007bbb2d210",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067549982",
+      "artifacts": [
+        {
+          "id": 11676145508,
+          "name": "v1-security-results",
+          "size": 2393,
+          "expired": false,
+          "digest": "sha256:17524032ec71d7fd75e236b959b5344f478ef8d06400c3e4066f6f46eb1b0ac5",
+          "expires_at": "2026-10-24T16:25:00Z"
+        }
+      ]
+    },
+    {
+      "id": 38067549917,
+      "name": "Android V1.0 RC offline demo",
+      "head_sha": "32531f772200cbb798a98a744323f007bbb2d210",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067549917",
+      "artifacts": [
+        {
+          "id": 11675916460,
+          "name": "options-ai-trader-v1.0-android-results",
+          "size": 148223117,
+          "expired": false,
+          "digest": "sha256:d6fec7176f0a9e5e854665ee526639787d187882c53f8a64354cfac09e034838",
+          "expires_at": "2026-10-24T16:31:39Z"
+        }
+      ]
+    },
+    {
+      "id": 38067549913,
+      "name": "iOS V1.0 RC unsigned review build",
+      "head_sha": "32531f772200cbb798a98a744323f007bbb2d210",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067549913",
+      "artifacts": [
+        {
+          "id": 11675971195,
+          "name": "options-ai-trader-v1.0-ios-unsigned",
+          "size": 7740425,
+          "expired": false,
+          "digest": "sha256:2c49733d87536282c32243e121a08224b0d92feecc2371ca88be67c63eba5066",
+          "expires_at": "2026-10-24T16:29:12Z"
+        }
+      ]
+    },
+    {
+      "id": 38067277545,
+      "name": "Android V1.0 RC offline demo",
+      "head_sha": "f2ee044be100b4f2079e0e43381a640fc262d11e",
+      "branch": "develop/v1.0",
+      "conclusion": "failure",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067277545",
+      "artifacts": [
+        {
+          "id": 11675790398,
+          "name": "options-ai-trader-v1.0-android-results",
+          "size": 6527,
+          "expired": false,
+          "digest": "sha256:dc78302d68ab06b12e7cd9afddef4dd24640a925802f2ebfc2e00f1cebe07256",
+          "expires_at": "2026-10-24T16:22:04Z"
+        }
+      ]
+    },
+    {
+      "id": 38067277544,
+      "name": "Source and dependency security checks",
+      "head_sha": "f2ee044be100b4f2079e0e43381a640fc262d11e",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067277544",
+      "artifacts": [
+        {
+          "id": 11676110037,
+          "name": "v1-security-results",
+          "size": 2391,
+          "expired": false,
+          "digest": "sha256:3466fca8afd0e703117e777fcff144d364b6f8e7f5680c0b6aacd5e6c0e8e478",
+          "expires_at": "2026-10-24T16:20:59Z"
+        }
+      ]
+    },
+    {
+      "id": 38067277536,
+      "name": "iOS V1.0 RC unsigned review build",
+      "head_sha": "f2ee044be100b4f2079e0e43381a640fc262d11e",
+      "branch": "develop/v1.0",
+      "conclusion": "failure",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067277536",
+      "artifacts": [
+        {
+          "id": 11674384624,
+          "name": "options-ai-trader-v1.0-ios-unsigned",
+          "size": 6501,
+          "expired": false,
+          "digest": "sha256:5f50239a1b8dc3bd97a389f30ee71a11d1428091fa38aff13915a018d2539b7f",
+          "expires_at": "2026-10-24T16:23:29Z"
+        }
+      ]
+    },
+    {
+      "id": 38067017386,
+      "name": "iOS V1.0 RC unsigned review build",
+      "head_sha": "c021d3cf781b7a26db2a1005eacef303734e960a",
+      "branch": "develop/v1.0",
+      "conclusion": "failure",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067017386",
+      "artifacts": [
+        {
+          "id": 11675515438,
+          "name": "options-ai-trader-v1.0-ios-unsigned",
+          "size": 8627,
+          "expired": false,
+          "digest": "sha256:59991232df5fabdea3c6e14d2d64ef17658b1f922555176fae0f01536aad6c70",
+          "expires_at": "2026-10-24T16:19:05Z"
+        }
+      ]
+    },
+    {
+      "id": 38067017382,
+      "name": "Mock safety checks",
+      "head_sha": "c021d3cf781b7a26db2a1005eacef303734e960a",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067017382",
+      "artifacts": [
+        {
+          "id": 11674439323,
+          "name": "backend-test-results",
+          "size": 9716,
+          "expired": false,
+          "digest": "sha256:e549f9700919060bc030014092d8f3d6bdfd1f60f1d92340d21bfff03f3c947f",
+          "expires_at": "2027-01-08T16:16:52Z"
+        }
+      ]
+    },
+    {
+      "id": 38067017347,
+      "name": "Source and dependency security checks",
+      "head_sha": "c021d3cf781b7a26db2a1005eacef303734e960a",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067017347",
+      "artifacts": [
+        {
+          "id": 11675259607,
+          "name": "v1-security-results",
+          "size": 2389,
+          "expired": false,
+          "digest": "sha256:6c2f2f6b0dcbee4303359eb93a4c52fe6474a76f6c4af23ffded3479631eb7e3",
+          "expires_at": "2026-10-24T16:17:10Z"
+        }
+      ]
+    },
+    {
+      "id": 38067017342,
+      "name": "Android V1.0 RC offline demo",
+      "head_sha": "c021d3cf781b7a26db2a1005eacef303734e960a",
+      "branch": "develop/v1.0",
+      "conclusion": "failure",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38067017342",
+      "artifacts": [
+        {
+          "id": 11674149716,
+          "name": "options-ai-trader-v1.0-android-results",
+          "size": 8652,
+          "expired": false,
+          "digest": "sha256:c34dad52258c60bf34d7264812bd98bd09e1fb77b6d270c0cac01cbe41da840b",
+          "expires_at": "2026-10-24T16:18:11Z"
+        }
+      ]
+    },
+    {
+      "id": 38066454929,
+      "name": "Source and dependency security checks",
+      "head_sha": "50333fa9138ef13725dd445c4c2e48690274d3c9",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38066454929",
+      "artifacts": [
+        {
+          "id": 11674689324,
+          "name": "v1-security-results",
+          "size": 1421,
+          "expired": false,
+          "digest": "sha256:d83892c557e09e1f77a28ae1b1a6851feab24e9e8ab24de24d49ae5a54a2e206",
+          "expires_at": "2026-10-24T16:08:56Z"
+        }
+      ]
+    },
+    {
+      "id": 38066454752,
+      "name": "iOS V1.0 RC unsigned review build",
+      "head_sha": "50333fa9138ef13725dd445c4c2e48690274d3c9",
+      "branch": "develop/v1.0",
+      "conclusion": "failure",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38066454752",
+      "artifacts": []
+    },
+    {
+      "id": 38066454749,
+      "name": "Android V1.0 RC offline demo",
+      "head_sha": "50333fa9138ef13725dd445c4c2e48690274d3c9",
+      "branch": "develop/v1.0",
+      "conclusion": "failure",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38066454749",
+      "artifacts": []
+    },
+    {
+      "id": 38066454746,
+      "name": "Mock safety checks",
+      "head_sha": "50333fa9138ef13725dd445c4c2e48690274d3c9",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38066454746",
+      "artifacts": [
+        {
+          "id": 11675058961,
+          "name": "backend-test-results",
+          "size": 9645,
+          "expired": false,
+          "digest": "sha256:d8245735f0ffa9df4414e2bee9777444d4559729f1e08f46dcc6011de44260c5",
+          "expires_at": "2027-01-08T16:08:40Z"
+        }
+      ]
+    },
+    {
+      "id": 38065307685,
+      "name": "V1 isolated test toolchain",
+      "head_sha": "fe1623bb7360ff2b29b52ac230643ff32b3a9a4b",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38065307685",
+      "artifacts": [
+        {
+          "id": 11675012350,
+          "name": "options-v1-test-toolchain-1",
+          "size": 419481571,
+          "expired": false,
+          "digest": "sha256:c85c66921f5f533c08221a29b40fd9cf03add40a73b16be2c4d7b3cd52e68b44",
+          "expires_at": "2026-10-13T15:55:25Z"
+        },
+        {
+          "id": 11674937481,
+          "name": "options-v1-test-toolchain-4",
+          "size": 90798494,
+          "expired": false,
+          "digest": "sha256:4c46eef8ff924d02276db4e14bb9140df40a5567044d9543447be258c58a3dac",
+          "expires_at": "2026-10-13T15:56:07Z"
+        },
+        {
+          "id": 11674912639,
+          "name": "options-v1-test-toolchain-0",
+          "size": 418899809,
+          "expired": false,
+          "digest": "sha256:24344958de30a32d71bc5a7229de61a1dce768172e8d5c09bfee1bd4c08cfb73",
+          "expires_at": "2026-10-13T15:55:09Z"
+        },
+        {
+          "id": 11674777803,
+          "name": "options-v1-test-toolchain-2",
+          "size": 419356170,
+          "expired": false,
+          "digest": "sha256:871ecb3b44e30eee832f12716e98330016c034e71dde2465356a5877108adcdd",
+          "expires_at": "2026-10-13T15:55:39Z"
+        },
+        {
+          "id": 11674563518,
+          "name": "options-v1-test-toolchain-3",
+          "size": 418506114,
+          "expired": false,
+          "digest": "sha256:430a31af4ad40b1065e33832185f5e6f2ae0ed8aabf9c4ab094c286b41aa4a5b",
+          "expires_at": "2026-10-13T15:55:53Z"
+        }
+      ]
+    },
+    {
+      "id": 38065010677,
+      "name": "V1 isolated test toolchain",
+      "head_sha": "84433944aca9b494b3e0018af77fb3775608d625",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38065010677",
+      "artifacts": [
+        {
+          "id": 11674747146,
+          "name": "options-v1-test-toolchain",
+          "size": 1767038736,
+          "expired": false,
+          "digest": "sha256:98d7fa0bea357ce2fc1d40d36861db03dc5307fa8417b23d18ad9cef6a9f7028",
+          "expires_at": "2026-10-13T15:49:41Z"
+        }
+      ]
+    },
+    {
+      "id": 38064512645,
+      "name": "V1 source and history checkpoint",
+      "head_sha": "690de7fd539696bec77900fc1b1ad0074841d8dd",
+      "branch": "develop/v1.0",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38064512645",
+      "artifacts": [
+        {
+          "id": 11674711053,
+          "name": "options-ai-trader-v1-checkpoint",
+          "size": 1724632,
+          "expired": false,
+          "digest": "sha256:d6ed7a1a872b5b252a98366089a94551f991bd898e4252834d4481ff732c98d1",
+          "expires_at": "2026-11-09T15:39:55Z"
+        }
+      ]
+    },
+    {
+      "id": 38056917858,
+      "name": "Android V0.5 offline demo",
+      "head_sha": "e5b6076ee484b3fded6ec8f0221db7c9cf92798d",
+      "branch": "main",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38056917858",
+      "artifacts": [
+        {
+          "id": 11671568577,
+          "name": "options-ai-trader-v0.5-android-results",
+          "size": 74042586,
+          "expired": false,
+          "digest": "sha256:e0f5e7f41740c3256cb1f3b15e19d99a7af44281d5d0bf51d2d2d019f06791bb",
+          "expires_at": "2026-10-24T13:51:23Z"
+        }
+      ]
+    },
+    {
+      "id": 38056917820,
+      "name": "Mock safety checks",
+      "head_sha": "e5b6076ee484b3fded6ec8f0221db7c9cf92798d",
+      "branch": "main",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38056917820",
+      "artifacts": [
+        {
+          "id": 11671887636,
+          "name": "backend-test-results",
+          "size": 4382,
+          "expired": false,
+          "digest": "sha256:9277047ed12751bbc570d21ce43c0efbaaf282e62faa426afe33ca6b04d07012",
+          "expires_at": "2027-01-08T13:45:01Z"
+        }
+      ]
+    },
+    {
+      "id": 38056917758,
+      "name": "iOS V0.5 unsigned review build",
+      "head_sha": "e5b6076ee484b3fded6ec8f0221db7c9cf92798d",
+      "branch": "main",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38056917758",
+      "artifacts": [
+        {
+          "id": 11671747051,
+          "name": "options-ai-trader-v0.5-ios-unsigned",
+          "size": 7583122,
+          "expired": false,
+          "digest": "sha256:39b7dd831ef618b7d3d7d6a1989b75e386ce0872c423731e28d89f10c5b2e965",
+          "expires_at": "2026-10-24T13:49:16Z"
+        }
+      ]
+    },
+    {
+      "id": 38056850182,
+      "name": "Android V0.4 mock build",
+      "head_sha": "d959ae4741cdfee57ce7f715bb013e49e5b6b76f",
+      "branch": "archive/v0.4",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38056850182",
+      "artifacts": [
+        {
+          "id": 11671338843,
+          "name": "options-ai-trader-v0.4-android-results",
+          "size": 71907443,
+          "expired": false,
+          "digest": "sha256:25b4c5e4ddb1d6cfbde3d847a7265815c22e665d773ff91455e077f728ebf806",
+          "expires_at": "2026-10-24T13:53:11Z"
+        }
+      ]
+    },
+    {
+      "id": 38056850104,
+      "name": "Mock safety checks",
+      "head_sha": "d959ae4741cdfee57ce7f715bb013e49e5b6b76f",
+      "branch": "archive/v0.4",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38056850104",
+      "artifacts": [
+        {
+          "id": 11672027326,
+          "name": "backend-test-results",
+          "size": 4065,
+          "expired": false,
+          "digest": "sha256:d74275a25a34b5e37f676872e6ffc845adc5ccb9ed48b9d8a63b8c20f7614307",
+          "expires_at": "2027-01-08T13:43:58Z"
+        }
+      ]
+    },
+    {
+      "id": 38049261066,
+      "name": "Mock safety checks",
+      "head_sha": "d959ae4741cdfee57ce7f715bb013e49e5b6b76f",
+      "branch": "main",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38049261066",
+      "artifacts": [
+        {
+          "id": 11668209808,
+          "name": "backend-test-results",
+          "size": 4058,
+          "expired": false,
+          "digest": "sha256:0c1c3e31a7e7ecb56b0fd2be4b9f654a6042ad22157ba31385ca48b86355df5e",
+          "expires_at": "2027-01-08T11:40:50Z"
+        }
+      ]
+    },
+    {
+      "id": 38049260996,
+      "name": "Android V0.4 mock build",
+      "head_sha": "d959ae4741cdfee57ce7f715bb013e49e5b6b76f",
+      "branch": "main",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38049260996",
+      "artifacts": [
+        {
+          "id": 11668976243,
+          "name": "options-ai-trader-v0.4-android-results",
+          "size": 71907443,
+          "expired": false,
+          "digest": "sha256:d5cfc50f16fd17384d07d7bb61b084b06730d6911596314807510c0fd343ed83",
+          "expires_at": "2026-10-24T11:47:26Z"
+        }
+      ]
+    }
+  ]
+}

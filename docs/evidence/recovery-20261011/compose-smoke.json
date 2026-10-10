@@ -1,0 +1,31 @@
+{
+  "accounts_created": 0,
+  "checks": [
+    "three_owned_services_running",
+    "postgres_healthy",
+    "loopback_only_ports",
+    "api_worker_nonroot_readonly",
+    "paper_mock_live_false",
+    "public_health_safe",
+    "authenticated_database_readiness",
+    "fresh_worker_heartbeat",
+    "trading_not_ready_without_accounts",
+    "unauthorized_endpoints_401",
+    "authenticated_accounts_empty",
+    "postgres_account_order_position_counts_zero"
+  ],
+  "cleanup": "owned_resources_removed",
+  "live_enabled": false,
+  "orders_created": 0,
+  "project": "oat-smoke-a5258eeabfd0643d3742c325",
+  "schema_versions": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "source": "isolated_synthetic_mock",
+  "status": "passed",
+  "test": "base_compose_runtime",
+  "worker_age_seconds": 1.940348
+}

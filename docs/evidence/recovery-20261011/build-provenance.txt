@@ -1,0 +1,4 @@
+commit=3d35475cd92058f8470d6f81826aaa4a16f587b1
+signing=unsigned
+preview_signing=ephemeral-runner-development-key
+preview_application_id=com.optionsaitrader.options_ai_trader.v1previewrc2
