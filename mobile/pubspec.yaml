@@ -1,7 +1,7 @@
 name: options_ai_trader
 description: Independent Arabic paper options trading dashboard.
 publish_to: none
-version: 0.4.0+4
+version: 0.5.0+5
 environment:
   sdk: '>=3.9.0 <4.0.0'
   flutter: '>=3.35.0'
@@ -11,6 +11,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   http: ^1.2.2
+  shared_preferences: 2.5.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

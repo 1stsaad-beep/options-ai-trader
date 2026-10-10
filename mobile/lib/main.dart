@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'api.dart';
+import 'demo/screen.dart';
+import 'demo/store.dart';
 
 void main() => runApp(const TraderApp());
 
 class TraderApp extends StatefulWidget {
   final TraderApi? api;
-  const TraderApp({super.key, this.api});
+  final DemoStore? demoStore;
+  const TraderApp({super.key, this.api, this.demoStore});
   @override
   State<TraderApp> createState() => _TraderAppState();
 }
@@ -29,10 +32,27 @@ class _TraderAppState extends State<TraderApp> {
       colorSchemeSeed: Colors.teal,
     ),
     themeMode: mode,
-    home: Dashboard(
-      api: widget.api,
-      themeMode: mode,
-      onTheme: (value) => setState(() => mode = value),
+    home: Builder(
+      builder: (context) => widget.api != null
+          ? Dashboard(
+              api: widget.api,
+              themeMode: mode,
+              onTheme: (value) => setState(() => mode = value),
+            )
+          : DemoScreen(
+              store: widget.demoStore,
+              onTheme: (value) {
+                if (mode != value) setState(() => mode = value);
+              },
+              onBackend: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => Dashboard(
+                    themeMode: mode,
+                    onTheme: (value) => setState(() => mode = value),
+                  ),
+                ),
+              ),
+            ),
     ),
   );
 }

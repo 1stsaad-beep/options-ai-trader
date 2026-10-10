@@ -30,6 +30,11 @@ class BacktestResult:
     decision_count: int
     open_cost_basis: float = 0
     unfilled_final_signal: bool = False
+    equity_curve: tuple = ()
+    max_drawdown: float = 0
+    missing_valuations: int = 0
+    entry_commissions: float = 0
+    pending_exit: str | None = None
 
     def metrics(self) -> dict:
         """Realized-only metrics; deliberately no cash-as-equity return claim."""
@@ -44,20 +49,37 @@ class BacktestResult:
             "open_cost_basis": self.open_cost_basis,
             "unfilled_final_signal": self.unfilled_final_signal,
             "profitability_evidence": False,
+            "paid_commissions_including_open": self.entry_commissions + sum(
+                0 if t.exit_reason == "EXPIRY_WRITE_OFF" else t.fees / 2 for t in self.trades),
+            "max_observed_drawdown": self.max_drawdown,
+            "missing_valuations": self.missing_valuations,
+            "drawdown_complete": self.missing_valuations == 0,
+            "pending_exit": self.pending_exit,
+
         }
 
 
 class BacktestEngine:
     def __init__(self, initial_cash: float = 10000, max_premium: float = 500,
                  commission: float = .65, slippage: float = .01, hold_bars: int = 5,
-                 quote_max_age: timedelta = timedelta(seconds=60)):
+                 quote_max_age: timedelta = timedelta(seconds=60),
+                 stop_loss_pct: float | None = None, take_profit_pct: float | None = None,
+                 daily_loss_limit: float | None = None):
         if not all(isfinite(v) for v in (initial_cash, max_premium, commission, slippage)):
             raise ValueError("Non-finite simulation parameters")
         if initial_cash <= 0 or max_premium <= 0 or commission < 0 or slippage < 0 or not isinstance(hold_bars, int) or hold_bars < 1 or quote_max_age.total_seconds() < 0:
             raise ValueError("Invalid simulation parameters")
         self.initial_cash, self.max_premium = initial_cash, max_premium
         self.commission, self.slippage, self.hold_bars = commission, slippage, hold_bars
+        for name, value in (("stop_loss_pct", stop_loss_pct), ("take_profit_pct", take_profit_pct),
+                            ("daily_loss_limit", daily_loss_limit)):
+            if value is not None and (isinstance(value, bool) or not isfinite(value) or value <= 0):
+                raise ValueError(f"Invalid {name}")
+        if stop_loss_pct is not None and stop_loss_pct >= 100:
+            raise ValueError("Stop loss must be below 100 percent")
         self.quote_max_age = quote_max_age
+        self.stop_loss_pct, self.take_profit_pct = stop_loss_pct, take_profit_pct
+        self.daily_loss_limit = daily_loss_limit
 
     def run(self, symbol: str, bars: Iterable[Bar], quotes: Iterable[OptionQuote],
             strategy: Callable[[tuple[Bar, ...]], Signal | None] | None = None):
@@ -73,6 +95,8 @@ class BacktestEngine:
             raise ValueError("Symbol required")
         cash, position, pending = self.initial_cash, None, None
         trades, skipped, decisions = [], 0, 0
+        pending_exit = None
+        curve, peak, drawdown, missing, entry_fees = [], self.initial_cash, 0., 0, 0.
         selector = OptionsSelectionEngine()
         for index, bar in enumerate(bars):
             # Only information timestamped at or before this execution bar is visible.
@@ -86,18 +110,20 @@ class BacktestEngine:
                 expired = q.expiry <= bar.timestamp.date()
                 current = known.get(q.key)
                 fresh = current is not None and bar.timestamp - current.timestamp <= self.quote_max_age
-                if expired or (index - entry_index >= self.hold_bars and fresh):
+                if expired or (fresh and (pending_exit or index - entry_index >= self.hold_bars)):
+                    reason = "EXPIRY_WRITE_OFF" if expired else pending_exit or "HOLD_LIMIT"
                     # Conservative expiry write-off, no fabricated intrinsic or exercise fill.
                     exit_price = 0 if expired else max(0, current.bid - self.slippage)
                     exit_fee = 0 if expired else quantity * self.commission
                     cash += exit_price * quantity * q.multiplier - exit_fee
                     fees = quantity * self.commission + exit_fee
                     pnl = (exit_price - entry_price) * quantity * q.multiplier - fees
-                    trades.append(Trade(q.key, entry_time, bar.timestamp, quantity, entry_price, exit_price, fees, pnl, "EXPIRY_WRITE_OFF" if expired else "HOLD_LIMIT"))
-                    position = None
+                    trades.append(Trade(q.key, entry_time, bar.timestamp, quantity, entry_price, exit_price, fees, pnl, reason))
+                    position, pending_exit = None, None
             if pending is not None and position is None:
                 q = selector.select(known.values(), symbol, pending.right, bar.timestamp, max_age=self.quote_max_age)
-                if q is None:
+                daily_pnl = sum(t.pnl for t in trades if t.exit_time.date() == bar.timestamp.date())
+                if q is None or (self.daily_loss_limit is not None and daily_pnl <= -self.daily_loss_limit):
                     skipped += 1
                 else:
                     price = q.ask + self.slippage
@@ -107,7 +133,30 @@ class BacktestEngine:
                         skipped += 1
                     else:
                         cash -= quantity * per_contract
+                        entry_fees += quantity * self.commission
                         position = (q, quantity, price, bar.timestamp, index)
+            # Stop/take decisions use the current completed observation, and may
+            # execute only at a later bar with a fresh bid, never at trigger price.
+            equity = cash
+            if position is not None:
+                q, quantity, entry_price, entry_time, entry_index = position
+                current = known.get(q.key)
+                fresh = current is not None and bar.timestamp - current.timestamp <= self.quote_max_age
+                if fresh:
+                    equity += current.bid * quantity * q.multiplier
+                    cost = (entry_price * q.multiplier + self.commission) * quantity
+                    net_liquidation = (max(0, current.bid - self.slippage) * q.multiplier - self.commission) * quantity
+                    if pending_exit is None and self.stop_loss_pct is not None and net_liquidation <= cost * (1-self.stop_loss_pct/100):
+                        pending_exit = "STOP_LOSS"
+                    elif pending_exit is None and self.take_profit_pct is not None and net_liquidation >= cost * (1+self.take_profit_pct/100):
+                        pending_exit = "TAKE_PROFIT"
+                else:
+                    equity = None
+                    missing += 1
+            if equity is not None:
+                peak = max(peak, equity)
+                drawdown = max(drawdown, peak-equity)
+            curve.append((bar.timestamp, equity))
             pending = None
             if position is None and index >= 20:
                 history = bars[:index + 1]
@@ -124,7 +173,8 @@ class BacktestEngine:
         # An unfilled last-bar signal is not a trade; open positions are reported without a fabricated exit.
         open_cost = (position[2] * position[1] * position[0].multiplier + position[1] * self.commission) if position else 0
         return BacktestResult(self.initial_cash, cash, tuple(trades), position[0].key if position else None,
-                              skipped, decisions, open_cost, pending is not None)
+                              skipped, decisions, open_cost, pending is not None,
+                              tuple(curve), drawdown, missing, entry_fees, pending_exit)
 
 
 def synthetic_demo() -> dict:

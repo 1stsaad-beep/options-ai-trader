@@ -53,7 +53,7 @@ def create_app(repository=None, token=None):
         yield
         if repository is None:
             app.state.repository.close()
-    app = FastAPI(title='Options AI Trader — synthetic paper only', version='0.4.0', lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
+    app = FastAPI(title='Options AI Trader — synthetic paper only', version='0.5.0', lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
     def auth(authorization: Optional[str] = Header(default=None)):
         if len(configured_token) < 24 or not authorization or not hmac.compare_digest(authorization.encode('utf-8'), ('Bearer '+configured_token).encode('utf-8')):
             raise HTTPException(401, 'Valid API bearer token required')
@@ -64,7 +64,7 @@ def create_app(repository=None, token=None):
         return JSONResponse(status_code=409,content={'detail':str(exc)})
     @app.get('/health')
     def health():
-        return {'status':'ok','version':'0.4.0','mode':'paper','broker':'mock','live_enabled':False,'market_data':'synthetic','external_analysis_enabled':False}
+        return {'status':'ok','version':'0.5.0','mode':'paper','broker':'mock','live_enabled':False,'market_data':'synthetic','external_analysis_enabled':False}
     secured = [Depends(auth)]
     @app.get('/openapi.json',dependencies=secured,include_in_schema=False)
     def protected_schema():
