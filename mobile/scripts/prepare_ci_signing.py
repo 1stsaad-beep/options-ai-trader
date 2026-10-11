@@ -24,4 +24,4 @@ if all(values):
 else:
     with output.open('a') as env:
         env.write('OAT_UNSIGNED_BUILD=true\nOAT_SIGNING_MODE=unsigned\n')
-    print('Signing Secrets unavailable: building UNSIGNED APK, not installable until privately signed')
+    print('Signing Secrets unavailable: default artifact policy is unsigned; the separately identified preview job may explicitly select the ephemeral SDK development key')

@@ -37,55 +37,51 @@ jobs:
         working-directory: mobile
       - run: flutter test --exclude-tags=golden --machine > flutter-tests.json
         working-directory: mobile
-      - name: Prepare private development signing or explicit unsigned artifact
+      - name: Prepare private development key when available
         run: python mobile/scripts/prepare_ci_signing.py
         env:
           OAT_KEYSTORE_BASE64: ${{ github.event_name != 'pull_request' && secrets.OAT_KEYSTORE_BASE64 || '' }}
           OAT_KEYSTORE_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEYSTORE_PASSWORD || '' }}
           OAT_KEY_ALIAS: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_ALIAS || '' }}
           OAT_KEY_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_PASSWORD || '' }}
-      - run: flutter build apk --debug --build-name=1.0.0 --build-number=14
-        working-directory: mobile
-        env:
-          OAT_KEYSTORE_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEYSTORE_PASSWORD || '' }}
-          OAT_KEY_ALIAS: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_ALIAS || '' }}
-          OAT_KEY_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_PASSWORD || '' }}
-      - name: APK provenance and checksum
-        run: |
-          cp mobile/build/app/outputs/flutter-apk/app-debug.apk "options-ai-trader-v1.0-rc2-${OAT_SIGNING_MODE}.apk"
-          sha256sum options-ai-trader-v1.0-rc2-*.apk > apk.sha256
-          printf '%s\n' "commit=${GITHUB_SHA}" "signing=${OAT_SIGNING_MODE}" > build-provenance.txt
-          flutter --version > flutter-build-version.txt
-      - name: Build separately identified installable preview when stable key is unavailable
-        if: env.OAT_SIGNING_MODE == 'unsigned'
-        run: |
-          flutter build apk --debug --build-name=1.0.0 --build-number=14
-          cp build/app/outputs/flutter-apk/app-debug.apk ../options-ai-trader-v1.0-rc2-preview.apk
-          printf '%s\n' 'preview_signing=ephemeral-runner-development-key' 'preview_application_id=com.optionsaitrader.options_ai_trader.v1previewrc2' >> ../build-provenance.txt
+      - name: Build separately identified development preview
+        run: flutter build apk --debug --build-name=1.0.0 --build-number=15
         working-directory: mobile
         env:
           OAT_UNSIGNED_BUILD: "false"
           OAT_PREVIEW_BUILD: "true"
-      - name: Verify installable artifact signatures and checksums
+          OAT_KEYSTORE_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEYSTORE_PASSWORD || '' }}
+          OAT_KEY_ALIAS: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_ALIAS || '' }}
+          OAT_KEY_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_PASSWORD || '' }}
+      - name: Verify preview identity signature checksum and provenance
         run: |
+          APK=options-ai-trader-rc2-build15-preview.apk
+          cp mobile/build/app/outputs/flutter-apk/app-debug.apk "$APK"
           APKSIGNER_BIN=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)
+          AAPT_BIN=$(find "$ANDROID_HOME/build-tools" -name aapt -type f | sort -V | tail -n 1)
+          "$APKSIGNER_BIN" verify --verbose --print-certs "$APK" > apk-signature.txt
+          "$AAPT_BIN" dump badging "$APK" > apk-package.txt
+          python mobile/scripts/verify_preview_identity.py apk-package.txt
+          sha256sum "$APK" > apk.sha256
           if [ "$OAT_SIGNING_MODE" = 'stable-development' ]; then
-            "$APKSIGNER_BIN" verify --verbose --print-certs options-ai-trader-v1.0-rc2-stable-development.apk > apk-signature.txt
+            PREVIEW_SIGNING=stable-development
           else
-            "$APKSIGNER_BIN" verify --verbose --print-certs options-ai-trader-v1.0-rc2-preview.apk > apk-signature.txt
+            PREVIEW_SIGNING=ephemeral-runner-development-key
           fi
-          sha256sum options-ai-trader-v1.0-rc2-*.apk > apk.sha256
+          printf '%s\n' "commit=${GITHUB_SHA}" "signing=${PREVIEW_SIGNING}" 'application_id=com.optionsaitrader.options_ai_trader.v1previewrc2b15' 'version_code=15' 'installation=separate-from-build14' > build-provenance.txt
+          flutter --version > flutter-build-version.txt
       - name: Remove runner signing material
         if: always()
         run: rm -f "${RUNNER_TEMP}/options-development.jks"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
-          name: options-ai-trader-v1.0-rc2-android-results
+          name: options-ai-trader-rc2-build15-android
           path: |
-            options-ai-trader-v1.0-rc2-*.apk
+            options-ai-trader-rc2-build15-preview.apk
             apk.sha256
             apk-signature.txt
+            apk-package.txt
             build-provenance.txt
             flutter-build-version.txt
             mobile/flutter-tests.json

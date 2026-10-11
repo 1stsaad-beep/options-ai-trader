@@ -37,7 +37,7 @@ jobs:
         working-directory: mobile
       - run: flutter test --exclude-tags=golden --machine > flutter-tests.json
         working-directory: mobile
-      - run: flutter build ios --release --no-codesign --build-name=1.0.0 --build-number=14
+      - run: flutter build ios --release --no-codesign --build-name=1.0.0 --build-number=15
         working-directory: mobile
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()

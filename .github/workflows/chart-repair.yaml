@@ -20,8 +20,8 @@ jobs:
         working-directory: mobile
       - run: flutter analyze
         working-directory: mobile
-      - name: All existing and new semantic regressions
-        run: flutter test --exclude-tags=golden --machine > chart-tests.json
+      - name: Affected chart semantic regressions
+        run: flutter test test/chart_phone_repair_test.dart test/wave_analysis_test.dart --machine > chart-tests.json
         working-directory: mobile
       - name: Generate DRAFT golden images for inspection (not comparison acceptance)
         run: flutter test --tags=golden --update-goldens --machine > golden-draft-tests.json

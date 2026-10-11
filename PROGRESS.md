@@ -179,3 +179,9 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 
 - Run `38179057559` stopped on one redundant import in the readable-font golden test; no safety tests were executed in that run. Removed the import without disabling analysis rules.
 - Initial visual review showed D/PRZ label bands were too close. Moved the PRZ caption below its shaded band; the next draft golden will show readable text. Runtime safety exercise code has not changed since the saved checkpoint.
+### Safety accepted; readable golden review and isolated packaging preparation
+
+- Run `38179195664` at `0307ec5ba262f2f05884ad43c5557bcc0cd16012` passed analyze and **203 visible Flutter tests**, zero failures/errors/skips. Raw JSON downloaded and CRC checked. Five actual isolated engine exercises pass, as do the negative control and phone-route network/storage isolation checks.
+- Six readable Roboto golden drafts generated and were inspected. The review identified overlapping RSI/MACD price captions; deduplicated the shared price segment and moved each indicator caption into its own pane. This painter-only change uses the affected chart/wave tests; all Flutter tests will run again at the final Android/iOS acceptance gate.
+- Prepared Build 15 as a separate `com.optionsaitrader.options_ai_trader.v1previewrc2b15` app, launcher label `Options AI Trader Lab 15`. Added a fail-closed check of actual APK badging and retained cryptographic signature verification. Build once per final gate, with the available private development key or an explicitly identified ephemeral SDK development key. No key enters Git/artifacts.
+- Added Arabic coexistence/backup/import/phone exercise instructions. No native build or phone installation of Build 15 has run yet. Golden comparison remains pending readable baseline approval; `[chart-check]` still prevents premature Android/iOS packaging.
