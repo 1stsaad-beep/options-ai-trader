@@ -106,7 +106,7 @@ class DemoCandlePainter extends CustomPainter {
           final left=math.max(plot.left,x(p.points.last.index)-12);
           canvas.drawRect(Rect.fromLTRB(left,y(p.przHigh!),plot.right,y(p.przLow!)),
             Paint()..color=color.withValues(alpha:.22));
-          text('PRZ',Offset(left,y(p.przHigh!)-14),color);
+          text('PRZ',Offset(left,y(p.przLow!)+3),color);
         }
       }
     }
