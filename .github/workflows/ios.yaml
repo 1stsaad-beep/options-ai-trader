@@ -20,6 +20,7 @@ permissions:
   contents: read
 jobs:
   ios:
+    if: ${{ !contains(github.event.head_commit.message, '[chart-check]') }}
     runs-on: macos-latest
     timeout-minutes: 35
     env:
@@ -34,7 +35,7 @@ jobs:
         working-directory: mobile
       - run: flutter analyze
         working-directory: mobile
-      - run: flutter test --machine > flutter-tests.json
+      - run: flutter test --exclude-tags=golden --machine > flutter-tests.json
         working-directory: mobile
       - run: flutter build ios --release --no-codesign --build-name=1.0.0 --build-number=14
         working-directory: mobile

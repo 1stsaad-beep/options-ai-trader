@@ -21,8 +21,24 @@ class ChartPattern {
   final double invalidation, target;
   final List<String> labels;
   final bool alternate;
+  final double? przLow, przHigh;
   const ChartPattern(this.name, this.points, this.invalidation, this.target,
-    {this.labels = const [], this.alternate = false});
+    {this.labels = const [], this.alternate = false, this.przLow, this.przHigh});
+}
+
+class ChartMacd {
+  final List<double?> line, signal, histogram;
+  const ChartMacd(this.line, this.signal, this.histogram);
+}
+
+class ChartDivergence {
+  final String indicator, kind;
+  final ChartPivot first, second;
+  final double firstValue, secondValue;
+  const ChartDivergence(this.indicator, this.kind, this.first, this.second,
+      this.firstValue, this.secondValue);
+  int get confirmedAt => second.confirmedAt;
+  String get label => '$indicator: $kind';
 }
 
 class DemoChartAnalysis {
@@ -66,13 +82,28 @@ class DemoChartAnalysis {
     return List.generate(values.length, (i) => fast[i] - slow[i]);
   }
 
+  /// First-close EMA seeding; hide MACD until 26 closes, and signal/histogram
+  /// until nine available MACD values. All computations use the observed prefix.
+  static ChartMacd macdSeries(List<double> values) {
+    final raw = macd(values), signalRaw = ema(raw.skip(25).toList(), 9);
+    return ChartMacd(
+      List.generate(raw.length, (i) => i < 25 ? null : raw[i]),
+      List.generate(raw.length, (i) => i < 33 ? null : signalRaw[i - 25]),
+      List.generate(raw.length, (i) => i < 33 ? null : raw[i] - signalRaw[i - 25]));
+  }
+
   static List<ChartPivot> pivots(List<DemoCandle> bars, {int radius = 2}) {
     if (radius < 1) throw ArgumentError.value(radius, 'radius');
     final result = <ChartPivot>[];
     for (var i = radius; i + radius < bars.length; i++) {
-      final neighbors = bars.sublist(i - radius, i + radius + 1);
-      final high = neighbors.where((b) => b.tick != bars[i].tick).every((b) => b.high < bars[i].high);
-      final low = neighbors.where((b) => b.tick != bars[i].tick).every((b) => b.low > bars[i].low);
+      // Resolve adjacent equal extrema to the rightmost bar. Require a strict
+      // movement on the left and the FULL right confirmation window. Flat
+      // plateaus longer than the left window remain unconfirmed, never guessed.
+      final left = bars.sublist(i - radius, i), right = bars.sublist(i + 1, i + radius + 1);
+      final high = left.every((b) => b.high <= bars[i].high) &&
+          left.any((b) => b.high < bars[i].high) && right.every((b) => b.high < bars[i].high);
+      final low = left.every((b) => b.low >= bars[i].low) &&
+          left.any((b) => b.low > bars[i].low) && right.every((b) => b.low > bars[i].low);
       if (high != low) {
         result.add(ChartPivot(bars[i].tick, bars[i + radius].tick,
           high ? bars[i].high : bars[i].low, high));
@@ -116,7 +147,15 @@ class DemoChartAnalysis {
       if (b>=.382 && b<=.618 && c>=.382 && c<=.886 && near(d,1.618) && extension>=2.24 && extension<=3.618) name='Crab';
       if (name != null) {
         final target=p[4].price + sign * cd * .382;
-        out.add(ChartPattern(name,p,p[4].price-sign*xa*.05,target));
+        final retracement = {'Gartley':.786,'Bat':.886,'Butterfly':1.27,'Crab':1.618}[name]!;
+        final extensions = name=='Gartley' ? [1.27,1.618] : name=='Crab' ? [2.24,3.618] : [1.618,2.618];
+        // Intersection of the detector's AD tolerance and CD/BC interval.
+        // This is a research PRZ, not the stop/invalidation band.
+        final lower = math.max(q[1] - xa * (retracement + .04), q[3] - bc * extensions[1]);
+        final upper = math.min(q[1] - xa * (retracement - .04), q[3] - bc * extensions[0]);
+        out.add(ChartPattern(name,p,p[4].price-sign*xa*.05,target,
+          przLow: math.min(lower * sign, upper * sign),
+          przHigh: math.max(lower * sign, upper * sign)));
       }
     }
     // Cypher geometry has C outside XA and uses XC for the D retracement.
@@ -128,7 +167,9 @@ class DemoChartAnalysis {
       if (xa==0 || q[2]<=q[0] || q[2]>=q[1] || q[3]<=q[1] || q[4]<=q[0] || q[4]>=q[2]) continue;
       final b=(q[1]-q[2])/xa, c=(q[3]-q[0])/xa, d=(q[3]-q[4])/(q[3]-q[0]);
       if (b>=.382 && b<=.618 && c>=1.272 && c<=1.414 && near(d,.786)) {
-        out.add(ChartPattern('Cypher',p,p[0].price,p[4].price+sign*(q[3]-q[4])*.382));
+        final lower=q[3]-(q[3]-q[0])*.826, upper=q[3]-(q[3]-q[0])*.746;
+        out.add(ChartPattern('Cypher',p,p[0].price,p[4].price+sign*(q[3]-q[4])*.382,
+          przLow:math.min(lower*sign,upper*sign), przHigh:math.max(lower*sign,upper*sign)));
       }
     }
     return out;
@@ -145,7 +186,7 @@ class DemoChartAnalysis {
     final volume=bars.fold<double>(0,(n,b)=>n+b.volume);
     final last=bars.last;
     return {'sma20':mean,'ema20':ema(closes,20).last,'rsi14':rsi(closes).last,
-      'macd':macd(closes).last,'atr14':tr/math.min(14,bars.length-1),
+      'macd':macd(closes).last,'atr14':tr/math.max(1,math.min(14,bars.length-1)),
       'vwap':bars.fold<double>(0,(n,b)=>n+(b.high+b.low+b.close)/3*b.volume)/volume,
       'bollinger_low':mean-2*std,'bollinger_high':mean+2*std,
       'support':tail.map((b)=>b.low).reduce(math.min),'resistance':tail.map((b)=>b.high).reduce(math.max),
@@ -153,22 +194,27 @@ class DemoChartAnalysis {
       'confirmed_pivots':pivots(bars).length,'as_of':last.tick};
   }
 
-  static List<String> divergences(List<DemoCandle> bars) {
+  static List<String> divergences(List<DemoCandle> bars) =>
+      divergenceSegments(bars).map((d) => d.label).toList();
+
+  static List<ChartDivergence> divergenceSegments(List<DemoCandle> bars) {
     final p=pivots(bars), closes=bars.map((b)=>b.close).toList();
-    final indicators={'RSI':rsi(closes),'MACD':macd(closes).cast<double?>()};
-    final out=<String>[];
+    final indicators={'RSI':rsi(closes),'MACD':macdSeries(closes).line};
+    final indices={for(var i=0;i<bars.length;i++) bars[i].tick:i};
+    final out=<ChartDivergence>[];
     for(final high in [false,true]) {
       final same=p.where((p)=>p.high==high).toList();
       if(same.length<2) continue;
       final a=same[same.length-2],b=same.last;
       if(b.index-a.index<3 || b.index-a.index>60) continue;
       for(final entry in indicators.entries) {
-        final first=entry.value[a.index], second=entry.value[b.index];
+        final first=entry.value[indices[a.index]!], second=entry.value[indices[b.index]!];
         if(first==null || second==null) continue;
-        if(!high && b.price<a.price && second>first) out.add('${entry.key}: صاعد عادي');
-        if(high && b.price>a.price && second<first) out.add('${entry.key}: هابط عادي');
-        if(!high && b.price>a.price && second<first) out.add('${entry.key}: صاعد خفي');
-        if(high && b.price<a.price && second>first) out.add('${entry.key}: هابط خفي');
+        void add(String kind) => out.add(ChartDivergence(entry.key,kind,a,b,first,second));
+        if(!high && b.price<a.price && second>first) add('صاعد عادي');
+        if(high && b.price>a.price && second<first) add('هابط عادي');
+        if(!high && b.price>a.price && second<first) add('صاعد خفي');
+        if(high && b.price<a.price && second>first) add('هابط خفي');
       }
     }
     return out;

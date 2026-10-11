@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'chart_analysis.dart';
 import 'engine.dart';
 import 'wave_analysis.dart';
+import 'chart_fixtures.dart';
+import 'chart_painter.dart';
+export 'chart_painter.dart' show DemoCandlePainter;
 
 class DemoChartLab extends StatefulWidget {
   final DemoEngine engine;
@@ -22,35 +25,59 @@ class _DemoChartLabState extends State<DemoChartLab> {
   late int end;
   bool overlays=true, indicators=true;
   bool showAlternate=true;
+  String fixture='demo';
+  int factor=1;
+  late bool follow;
+  final transform=TransformationController();
+  @override
+  void dispose() {transform.dispose();super.dispose();}
+  void seek(int tick) {setState(() {end=tick;follow=false;});}
+  void source(String value) {setState(() {
+    fixture=value;factor=1;waveJournal=ChartWaveJournal();
+    follow=value=='demo' && widget.initialEnd==null;
+    end=value=='demo'?(widget.initialEnd??widget.engine.tick):ChartFixtures.bars(value).last.tick;
+    transform.value=Matrix4.identity();
+  });}
   ChartWaveJournal waveJournal=ChartWaveJournal();
   @override
-  void initState() {super.initState();end=widget.initialEnd ?? widget.engine.tick;}
+  void initState() {super.initState();end=widget.initialEnd ?? widget.engine.tick;follow=widget.initialEnd==null;}
   @override
   void didUpdateWidget(covariant DemoChartLab oldWidget) {
     super.didUpdateWidget(oldWidget);
     if(oldWidget.engine!=widget.engine || oldWidget.symbol!=widget.symbol) {
       waveJournal=ChartWaveJournal();
-      end=widget.initialEnd ?? widget.engine.tick;
+      if(fixture=='demo') {end=widget.initialEnd ?? widget.engine.tick;follow=widget.initialEnd==null;}
     }
   }
   @override
   Widget build(BuildContext context) {
-    end=math.max(24,math.min(end,widget.engine.tick));
-    final bars=DemoChartAnalysis.bars(widget.engine,widget.symbol,end);
+    final maximum=fixture=='demo'?widget.engine.tick:ChartFixtures.bars(fixture).last.tick;
+    if(follow && fixture=='demo')end=maximum;
+    end=math.max(24,math.min(end,maximum));
+    final sourceBars=fixture=='demo'?DemoChartAnalysis.bars(widget.engine,widget.symbol,end):
+      ChartFixtures.bars(fixture).where((b)=>b.tick<=end).toList();
+    final bars=ChartWaveAnalysis.aggregate(sourceBars,factor);
     final summary=DemoChartAnalysis.summary(bars), pivots=DemoChartAnalysis.pivots(bars);
-    if(waveJournal.latestTick==null || end>=waveJournal.latestTick!) waveJournal.append(bars);
-    final waves=waveJournal.view(end);
+    if(waveJournal.latestTick==null || bars.last.tick>=waveJournal.latestTick!) waveJournal.append(bars);
+    final waves=waveJournal.view(bars.last.tick);
     final frames=ChartWaveAnalysis.timeframes(bars);
     final patterns=lab==0?<ChartPattern>[
       if(waves.primary!=null) waves.primary!.drawing(),
       if(showAlternate && waves.alternate!=null) waves.alternate!.drawing(alternate:true),
     ]:lab==2?DemoChartAnalysis.harmonics(pivots):<ChartPattern>[];
-    final divergences=DemoChartAnalysis.divergences(bars);
+    final divergenceSegments=DemoChartAnalysis.divergenceSegments(bars);
+    final divergences=divergenceSegments.map((d)=>d.label).toList();
     final color=Theme.of(context).colorScheme;
     String n(dynamic v)=>v is num?v.toStringAsFixed(2):'$v';
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch,children:[
       Text('${widget.symbol} • مختبر بيانات اصطناعية • Shadow',style:Theme.of(context).textTheme.titleMedium),
       const Text('الرسومات مرشحات بحثية وليست أوامر. العرض يستخدم الملاحظات حتى مؤشر إعادة التشغيل فقط.'),
+      if(widget.initialEnd==null) DropdownButtonFormField<String>(
+        key:const Key('chart-fixture-selector'),initialValue:fixture,isExpanded:true,
+        decoration:const InputDecoration(labelText:'مصدر الرسم فقط — لا يغيّر الحساب'),
+        items:ChartFixtures.labels.entries.map((e)=>DropdownMenuItem(value:e.key,child:Text(e.value))).toList(),
+        onChanged:(v){if(v!=null)source(v);}),
+      if(fixture!='demo') const Text('عينة اصطناعية مضبوطة للرسم فقط؛ ليست إشارة سوق أو صفقة.',key:Key('chart-fixture-warning')),
       SingleChildScrollView(scrollDirection:Axis.horizontal,child:Row(children:[
         for(var i=0;i<names.length;i++) Padding(padding:const EdgeInsets.all(4),child:ChoiceChip(
           key:Key('chart-lab-$i'),label:Text(names[i]),selected:lab==i,onSelected:(_)=>setState(()=>lab=i)))
@@ -62,30 +89,52 @@ class _DemoChartLabState extends State<DemoChartLab> {
           label:const Text('الترقيم البديل'),selected:showAlternate,
           onSelected:(v)=>setState(()=>showAlternate=v)),
       ]),
-      SizedBox(height:330,child:LayoutBuilder(builder:(context,constraints) {
-        final visible=bars.skip(math.max(0,bars.length-180)).toList();
-        final width=math.max(constraints.maxWidth,visible.length*9.0);
-        return ClipRect(child:InteractiveViewer(key:const Key('chart-pan-zoom'),constrained:false,
-          minScale:1,maxScale:4,boundaryMargin:const EdgeInsets.all(8),
-          child:CustomPaint(size:Size(width,330),painter:DemoCandlePainter(visible,
-            summary,patterns,widget.markers.where((m)=>(m['tick'] as int)<=end).toList(),
-            color,lab,overlays,indicators,
-            DemoChartAnalysis.rsi(bars.map((b)=>b.close).toList())
-              .skip(math.max(0,bars.length-180)).toList()))));
+      Text(lab==0?(waves.primary==null?'لا سيناريو موجي صالح عند هذا المؤشر؛ لا يُختلق ترقيم.':
+        'الأساسي: ${waves.primary!.labels.join(" → ")} • مرشح بحثي مؤكد القمم\n'
+        '${waves.alternate==null?"لا بديل صالح":showAlternate?"البديل: ${waves.alternate!.labels.join(" → ")}":"البديل مخفي"}'):
+        lab==2?(patterns.isEmpty?'لا نموذج XABCD / PRZ صالح عند هذا المؤشر.':
+          '${patterns.length} نموذج مطابق للقواعد • PRZ نطاق نسب بحثي، وليس وقفًا.'):
+        lab==3?(divergences.isEmpty?'لا دايفرجنس مؤكد عند هذا المؤشر.':divergences.join('، ')):
+        'S = دعم • R = مقاومة • Fib = فيبوناتشي',key:const Key('chart-analysis-status')),
+      Wrap(spacing:8,crossAxisAlignment:WrapCrossAlignment.center,children:[
+        const Text('تجميع الملاحظات:'),
+        for(final f in [1,5,15]) ChoiceChip(key:Key('chart-factor-$f'),label:Text('$f×'),selected:factor==f,
+          onSelected:(_)=>setState((){factor=f;waveJournal=ChartWaveJournal();transform.value=Matrix4.identity();})),
+        IconButton(key:const Key('chart-zoom-in'),tooltip:'تكبير',icon:const Icon(Icons.zoom_in),
+          onPressed:(){final scale=math.min(4.0,transform.value.getMaxScaleOnAxis()*1.5);
+            transform.value=Matrix4.diagonal3Values(scale,scale,1);}),
+        TextButton(key:const Key('chart-fit'),onPressed:()=>transform.value=Matrix4.identity(),
+          child:const Text('ملاءمة الرسم')),
+      ]),
+      SizedBox(height:440,child:LayoutBuilder(builder:(context,constraints) {
+        final offset=math.max(0,bars.length-180),visible=bars.skip(offset).toList();
+        final closes=bars.map((b)=>b.close).toList(),macd=DemoChartAnalysis.macdSeries(closes);
+        final painter=DemoCandlePainter(visible,summary,patterns,
+          widget.markers.where((m)=>(m['tick'] as int)<=end).toList(),color,lab,overlays,indicators,
+          DemoChartAnalysis.rsi(closes).skip(offset).toList(),
+          macdValues:ChartMacd(macd.line.skip(offset).toList(),macd.signal.skip(offset).toList(),
+            macd.histogram.skip(offset).toList()),divergences:divergenceSegments);
+        return Semantics(label:painter.layerLabels.join('; '),child:ClipRect(child:
+          InteractiveViewer(key:const Key('chart-pan-zoom'),transformationController:transform,
+            minScale:1,maxScale:4,child:RepaintBoundary(key:const Key('chart-canvas'),
+              child:CustomPaint(size:Size(constraints.maxWidth,440),painter:painter)))));
       })),
-      Text('Chart Replay / Wave Replay • الملاحظة $end من ${widget.engine.tick}',key:const Key('chart-cursor')),
+      Text('Chart Replay / Wave Replay • الملاحظة $end من $maximum',key:const Key('chart-cursor')),
+      Text('المحور # = رقم الملاحظة الاصطناعية، وليس وقت سوق • $factor× • '
+        '${follow?"متابعة السوق":"إعادة مثبتة"} • أصفر/برتقالي أساسي، أزرق بديل، وردي دايفرجنس'),
       Slider(key:const Key('chart-replay-slider'),value:end.toDouble(),min:24,
-        max:math.max(25,widget.engine.tick).toDouble(),divisions:math.max(1,widget.engine.tick-24),
-        onChanged:widget.engine.tick==24?null:(v)=>setState(()=>end=v.round())),
+        max:math.max(25,maximum).toDouble(),divisions:math.max(1,maximum-24),
+        onChanged:maximum==24?null:(v)=>seek(v.round())),
       Wrap(spacing:8,children:[
-        OutlinedButton(onPressed:end>24?()=>setState(()=>end--):null,child:const Text('ملاحظة سابقة')),
-        OutlinedButton(onPressed:end<widget.engine.tick?()=>setState(()=>end++):null,child:const Text('ملاحظة تالية')),
+        OutlinedButton(onPressed:end>24?()=>seek(end-1):null,child:const Text('ملاحظة سابقة')),
+        OutlinedButton(onPressed:end<maximum?()=>seek(end+1):null,child:const Text('ملاحظة تالية')),
+        if(fixture=='demo' && widget.initialEnd==null) OutlinedButton(key:const Key('chart-follow'),
+          onPressed:()=>setState(()=>follow=true),child:const Text('متابعة السوق')),
       ]),
       if(lab==0) ...[
         Text('قمم مؤكدة داخلية: ${pivots.length} • سيناريوهات نشطة: ${waves.active.length}. '
           'درجة رئيسية بتأكيد 4 ملاحظات وداخلية بتأكيد ملاحظتين. '
           '1–5 وABC والخامسة و3 of 3 مرشحات هندسية؛ لا جزم بالترقيم ولا أمر تداول.'),
-        if(waves.primary==null) const Text('لا سيناريو موجي صالح عند هذا المؤشر؛ لا يُختلق ترقيم.'),
         if(waves.primary!=null) _scenarioCard(context,'الأساسي',waves.primary!,n),
         if(waves.alternate!=null) _scenarioCard(context,'البديل',waves.alternate!,n),
         Text('Wave Scenario Tracker • أحداث معروفة حتى المؤشر: ${waves.events.length}',
@@ -97,7 +146,7 @@ class _DemoChartLabState extends State<DemoChartLab> {
             'عند الملاحظة ${event.observedAt} • إغلاق ${n(event.close)}'),
       ],
       if(lab==1) Text('دعم ${n(summary['support'])} • مقاومة ${n(summary['resistance'])}\nنطاق 20 ملاحظة وفيبوناتشي 38.2% و61.8% • ${summary['candle']}\nالكشف الكامل عن النماذج الكلاسيكية غير معتمد في هذا المختبر المحلي.'),
-      if(lab==2) Text('نماذج XABCD المطابقة: ${patterns.length} • Gartley / Bat / Butterfly / Crab / Cypher. المنطقة المظللة حول D تمثل نطاق إلغاء محلي؛ ليست توقعًا مؤكدًا.'),
+      if(lab==2) Text('نماذج XABCD المطابقة: ${patterns.length} • Gartley / Bat / Butterfly / Crab / Cypher. PRZ تقاطع نطاقات النسب المحلية (ولـ Cypher نطاق XC)؛ ليست ضمان انعكاس.'),
       if(lab==3) Text('SMA20 ${n(summary['sma20'])} • EMA20 ${n(summary['ema20'])}\nRSI14 ${n(summary['rsi14'])} • MACD ${n(summary['macd'])}\nVWAP ${n(summary['vwap'])} • ATR14 ${n(summary['atr14'])}\nBollinger ${n(summary['bollinger_low'])} – ${n(summary['bollinger_high'])}\n${divergences.isEmpty?'لا دايفرجنس مؤكد':divergences.join('، ')}'),
       if(lab==4) Text('ملخص قواعد محلي، دون استدعاء AI: ${bars.last.close>summary['sma20']?'فوق المتوسط':'تحت المتوسط'}. ${divergences.isEmpty?'لا تعارض دايفرجنس مؤكد.':divergences.join('، ')}\nالدرجة لا تتجاوز أي شرط أمان. لا نموذج لغوي ولا اتصال خارجي.'),
       if(lab==0 || lab==4) ...[
@@ -121,90 +170,6 @@ class _DemoChartLabState extends State<DemoChartLab> {
       'تفعيل هندسي ${number(scenario.activation)} • إلغاء ${number(scenario.invalidation)}\n'
       'أهداف فيبوناتشي بحثية ${scenario.targets.map<String>(number).join("، ")}'
       '${scenario.parentId==null?"":"\nمرتبط بموجة ثالثة رئيسية مؤكدة؛ لا ترقيم بأثر رجعي."}')));
-}
-
-class DemoCandlePainter extends CustomPainter {
-  final List<DemoCandle> bars;
-  final DemoRow summary;
-  final List<ChartPattern> patterns;
-  final List<DemoRow> markers;
-  final ColorScheme colors;
-  final int lab;
-  final bool overlays, indicators;
-  final List<double?> rsiValues;
-  DemoCandlePainter(this.bars,this.summary,this.patterns,this.markers,this.colors,this.lab,this.overlays,this.indicators,this.rsiValues);
-  @override
-  void paint(Canvas canvas,Size size) {
-    if(bars.isEmpty)return;
-    final low=bars.map((b)=>b.low).reduce(math.min)-.5,high=bars.map((b)=>b.high).reduce(math.max)+.5;
-    final dx=size.width/bars.length,plotHeight=indicators?230.0:290.0;
-    double y(double price)=>12+(high-price)/(high-low)*plotHeight;
-    double x(int tick)=>(tick-bars.first.tick+.5)*dx;
-    void text(String value,Offset at,Color color) {
-      final p=TextPainter(text:TextSpan(text:value,style:TextStyle(color:color,fontSize:10)),textDirection:TextDirection.ltr)..layout();
-      p.paint(canvas,at);
-    }
-    canvas.drawRect(Offset.zero&size,Paint()..color=colors.surfaceContainerLow);
-    for(var line=0;line<5;line++) {
-      final price=low+(high-low)*line/4;
-      canvas.drawLine(Offset(0,y(price)),Offset(size.width,y(price)),Paint()..color=colors.outlineVariant..strokeWidth=.5);
-      text(price.toStringAsFixed(2),Offset(3,y(price)),colors.onSurfaceVariant);
-    }
-    for(final b in bars) {
-      final color=b.close>=b.open?Colors.tealAccent.shade700:Colors.redAccent;
-      final p=Paint()..color=color..strokeWidth=1;
-      canvas.drawLine(Offset(x(b.tick),y(b.high)),Offset(x(b.tick),y(b.low)),p);
-      canvas.drawRect(Rect.fromLTRB(x(b.tick)-dx*.3,math.min(y(b.open),y(b.close)),x(b.tick)+dx*.3,
-        math.max(y(b.open),y(b.close))+1),p);
-    }
-    if(overlays) {
-      for(final field in ['support','resistance']) {
-        final price=(summary[field] as num).toDouble();
-        canvas.drawLine(Offset(0,y(price)),Offset(size.width,y(price)),Paint()..color=colors.primary..strokeWidth=.8);
-      }
-      if(lab==1) {
-        for(final ratio in [.382,.618]) {
-          final price=summary['resistance']-(summary['resistance']-summary['support'])*ratio;
-          canvas.drawLine(Offset(0,y(price)),Offset(size.width,y(price)),Paint()..color=Colors.amber..strokeWidth=1);
-          text('Fib $ratio',Offset(size.width-70,y(price)),colors.onSurface);
-        }
-      }
-      for(final pattern in patterns) {
-        final path=Path();
-        final patternColor=pattern.alternate?Colors.lightBlueAccent:Colors.amber;
-        for(var i=0;i<pattern.points.length;i++) {
-          final point=pattern.points[i];
-          if(i==0) {path.moveTo(x(point.index),y(point.price));} else {path.lineTo(x(point.index),y(point.price));}
-          final label=pattern.labels.isNotEmpty?pattern.labels[i]:lab==2?'XABCD'[i]:'$i';
-          text(label,Offset(x(point.index),y(point.price)-(pattern.alternate?26:14)),patternColor);
-        }
-        canvas.drawPath(path,Paint()..color=patternColor..style=PaintingStyle.stroke..strokeWidth=pattern.alternate?1:2);
-        final last=pattern.points.last;
-        canvas.drawRect(Rect.fromLTRB(x(last.index)-dx,y(math.max(last.price,pattern.invalidation)),
-          x(last.index)+dx,y(math.min(last.price,pattern.invalidation))),Paint()..color=patternColor.withValues(alpha:.15));
-      }
-    }
-    for(final marker in markers) {
-      final tick=marker['tick'] as int;
-      if(tick<bars.first.tick || tick>bars.last.tick)continue;
-      final b=bars[tick-bars.first.tick];
-      canvas.drawCircle(Offset(x(tick),y(b.close)),5,Paint()..color=Colors.purpleAccent);
-      text('${marker['label']}',Offset(x(tick),y(b.close)+6),colors.onSurface);
-    }
-    if(indicators) {
-      final values=rsiValues;
-      final path=Path();var started=false;
-      for(var i=0;i<values.length;i++) {
-        if(values[i]==null)continue;
-        final at=Offset((i+.5)*dx,310-values[i]!*.6);
-        if(!started){path.moveTo(at.dx,at.dy);started=true;}else{path.lineTo(at.dx,at.dy);}
-      }
-      canvas.drawPath(path,Paint()..color=colors.tertiary..style=PaintingStyle.stroke..strokeWidth=1.5);
-      text('RSI 14 • 0–100',const Offset(4,312),colors.onSurfaceVariant);
-    }
-  }
-  @override
-  bool shouldRepaint(covariant DemoCandlePainter oldDelegate)=>true;
 }
 
 class DemoDecisionReplay extends StatelessWidget {

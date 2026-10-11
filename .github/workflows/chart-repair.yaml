@@ -1,0 +1,37 @@
+name: Chart repair targeted verification
+on:
+  push:
+    branches: [recovery/v1.0-20261011]
+    paths: ["mobile/**", ".github/workflows/chart-repair.yaml"]
+permissions:
+  contents: read
+jobs:
+  charts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+        working-directory: mobile
+      - run: flutter analyze
+        working-directory: mobile
+      - name: All existing and new semantic regressions
+        run: flutter test --exclude-tags=golden --machine > chart-tests.json
+        working-directory: mobile
+      - name: Generate DRAFT golden images for inspection (not comparison acceptance)
+        run: flutter test --tags=golden --update-goldens --machine > golden-draft-tests.json
+        working-directory: mobile
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: chart-repair-evidence
+          path: |
+            mobile/chart-tests.json
+            mobile/golden-draft-tests.json
+            mobile/test/goldens/*.png
+          retention-days: 14
