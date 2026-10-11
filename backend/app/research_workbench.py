@@ -225,6 +225,57 @@ def inspect_workbench(service, account_id, symbol):
         return _project(_context(service, db, account_id, symbol), symbol, service.now())
 
 
+def _envelope(account_id, symbol):
+    return {'schema_version': 1, 'mode': 'SHADOW', 'source': 'synthetic_fixture',
+            'account_id': account_id, 'symbol': symbol, 'execution_authority': False,
+            'external_connections': False, 'profitability_evidence': False}
+
+
+def _stored_workbench(row, account_id):
+    if sha256(row['payload'].encode()).hexdigest() != row['digest']:
+        raise ValueError('Snapshot digest mismatch')
+    payload = json.loads(row['payload'])
+    result = payload['workbench']
+    expected = _envelope(account_id, payload['symbol'])
+    if any(type(result.get(k)) is not type(v) or result.get(k) != v
+           for k, v in expected.items()):
+        raise ValueError('Research identity or safety contract mismatch')
+    memory = DecisionMemory.from_state({'schema_version': 1, 'records': [result['decision']]})
+    records = memory.observations(account_id)
+    if len(records) != 1 or records[0].decided_at.isoformat() != result['as_of']:
+        raise ValueError('Decision identity mismatch')
+    return result, records[0]
+
+
+def list_workbench_snapshots(service, account_id, symbol):
+    """Bounded account journal scan, including snapshots of disabled watch symbols.
+
+    Never silently claim complete history: at most 100 results / 1000 scanned
+    records are returned. The response exposes truncation to the mobile client.
+    """
+    with service.repo.transaction() as db:
+        service.account(db, account_id)
+        rows = db.all("SELECT * FROM decision_snapshots WHERE account_id=? AND action='SHADOW_RESEARCH' "
+                      'ORDER BY created DESC, id DESC LIMIT 1001', (account_id,))
+    items = []
+    truncated = len(rows) > 1000
+    try:
+        for row in rows[:1000]:
+            result, decision = _stored_workbench(row, account_id)
+            if result['symbol'] != symbol:
+                continue
+            if len(items) == 100:
+                truncated = True
+                break
+            items.append({'snapshot_id': row['id'], 'account_id': account_id,
+                          'symbol': symbol, 'as_of': result['as_of'],
+                          'decision_id': decision.decision_id,
+                          'decided_at': decision.decided_at.isoformat(), 'digest': row['digest']})
+    except (ValueError, TypeError, KeyError, OverflowError) as exc:
+        raise Rejected('Stored research evidence failed validation; refusing to reconstruct reasons') from exc
+    return {**_envelope(account_id, symbol), 'items': items, 'truncated': truncated}
+
+
 def snapshot_workbench(service, account_id, symbol):
     with service.repo.transaction() as db:
         result = _project(_context(service, db, account_id, symbol), symbol, service.now())
@@ -232,7 +283,7 @@ def snapshot_workbench(service, account_id, symbol):
                                       'source': 'synthetic_fixture', 'workbench': result})
         service.audit(db, account_id, 'RESEARCH_SNAPSHOT', {'snapshot_id': identifier,
                       'symbol': symbol, 'execution_authority': False})
-        return {'snapshot_id': identifier, 'workbench': result}
+        return {**_envelope(account_id, symbol), 'snapshot_id': identifier, 'workbench': result}
 
 
 def replay_workbench(service, account_id, symbol, snapshot_id):
@@ -243,19 +294,9 @@ def replay_workbench(service, account_id, symbol, snapshot_id):
     if not row:
         raise Rejected('Unknown account research snapshot')
     try:
-        if sha256(row['payload'].encode()).hexdigest() != row['digest']:
-            raise ValueError('Snapshot digest mismatch')
-        payload = json.loads(row['payload'])
-        result = payload['workbench']
-        if (payload['symbol'] != symbol or result['symbol'] != symbol
-                or result['account_id'] != account_id or result['source'] != 'synthetic_fixture'
-                or result['execution_authority'] is not False):
+        result, decision = _stored_workbench(row, account_id)
+        if result['symbol'] != symbol:
             raise ValueError('Research identity mismatch')
-        memory = DecisionMemory.from_state({'schema_version': 1, 'records': [result['decision']]})
-        records = memory.observations(account_id)
-        if len(records) != 1:
-            raise ValueError('Decision account mismatch')
-        decision = records[0]
         item = result['contract']
         contract = OptionContract(**{**item, 'expiry': datetime.fromisoformat(item['expiry']),
                                      'observed_at': datetime.fromisoformat(item['observed_at'])})
@@ -276,7 +317,9 @@ def replay_workbench(service, account_id, symbol, snapshot_id):
                     contract_id=contract.contract_id)
     except (ValueError, TypeError, KeyError, OverflowError) as exc:
         raise Rejected('Stored research evidence failed validation; refusing to reconstruct reasons') from exc
-    return {'mode': 'SHADOW', 'source': 'synthetic_fixture', 'snapshot_id': snapshot_id,
+    return {**_envelope(account_id, symbol), 'snapshot_id': snapshot_id,
+            'as_of': result['as_of'], 'original_workbench': result,
+            'outcome_as_of': quotes[-1].timestamp.isoformat() if quotes else result['as_of'],
             'account_id': account_id, 'symbol': symbol, 'original_decision': result['decision'],
             'counterfactual': replay, 'execution_authority': False,
             'external_connections': False, 'profitability_evidence': False}

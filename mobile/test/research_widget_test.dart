@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +9,7 @@ import 'package:options_ai_trader/api.dart';
 import 'package:options_ai_trader/main.dart';
 import 'package:options_ai_trader/demo/engine.dart';
 import 'package:options_ai_trader/demo/research_lab.dart';
+import 'research_test_support.dart';
 
 class ResearchNoNetwork extends HttpOverrides {
   int attempts = 0;
@@ -69,11 +71,10 @@ void main() {
       if (request.url.path.endsWith('/performance')) {
         return http.Response('{"realized_pnl_cents":0,"source":"synthetic_mock"}', 200);
       }
-      return http.Response(jsonEncode({
-        'account_id': 'different', 'symbol': 'NVDA', 'source': 'synthetic_fixture',
-        'mode': 'SHADOW', 'execution_authority': false, 'external_connections': false,
-        'modules': {'option_twin': {'scenario_pnl': 12}}, 'limitations': [],
-      }), 200);
+      if (request.url.path.endsWith('/snapshots')) {
+        return http.Response(jsonEncode(researchListFixture()), 200);
+      }
+      return http.Response(jsonEncode(researchFixture(account: 'different')), 200);
     }));
     await t.pumpWidget(TraderApp(api: api));
     await t.pumpAndSettle();
@@ -93,12 +94,8 @@ void main() {
         return http.Response('{"realized_pnl_cents":0,"source":"synthetic_mock"}', 200);
       }
       final account = request.url.path.split('/')[3];
-      return http.Response(jsonEncode({
-        'account_id': account, 'symbol': 'NVDA', 'as_of': '2026-01-05T15:00:00Z',
-        'source': 'synthetic_fixture', 'mode': 'SHADOW', 'execution_authority': false,
-        'external_connections': false, 'modules': {'option_twin': {'observed': account}},
-        'limitations': ['synthetic-$account'],
-      }), 200);
+      return http.Response(jsonEncode(request.url.path.endsWith('/snapshots')
+        ? researchListFixture(account: account) : researchFixture(account: account)), 200);
     }));
     await t.pumpWidget(TraderApp(api: api));
     await t.pumpAndSettle();
@@ -113,5 +110,114 @@ void main() {
     expect(find.textContaining('الحساب: a •'), findsNothing);
     expect(calls, contains('GET /api/accounts/b/research/NVDA'));
     expect(calls.every((c) => c.startsWith('GET ')), true);
+  });
+
+  testWidgets('server research explicitly saves, lists and replays original evidence', (t) async {
+    var saved = false;
+    final calls = <String>[];
+    final api = TraderApi(client: MockClient((request) async {
+      calls.add('${request.method} ${request.url.path}');
+      if (request.url.path == '/api/accounts') {
+        return http.Response('[{"id":"a","name":"one","broker":"mock"}]', 200);
+      }
+      if (request.url.path.endsWith('/performance')) {
+        return http.Response('{"realized_pnl_cents":0,"source":"synthetic_mock"}', 200);
+      }
+      if (request.url.path.endsWith('/snapshot')) {
+        saved = true;
+        return http.Response(jsonEncode(researchSavedFixture()), 200);
+      }
+      if (request.url.path.endsWith('/snapshots')) {
+        return http.Response(jsonEncode(researchListFixture(saved: saved)), 200);
+      }
+      if (request.url.path.endsWith('/replay')) {
+        return http.Response(jsonEncode(researchReplayFixture()), 200);
+      }
+      return http.Response(jsonEncode(researchFixture()), 200);
+    }));
+    await t.pumpWidget(TraderApp(api: api));
+    await t.pumpAndSettle();
+    await openResearch(t);
+    expect(calls.where((call) => call.startsWith('POST')), isEmpty);
+    await t.ensureVisible(find.byKey(const Key('backend-research-save')));
+    await t.tap(find.byKey(const Key('backend-research-save')));
+    await t.pumpAndSettle();
+    expect(calls.where((call) => call.startsWith('POST')).toList(),
+      ['POST /api/accounts/a/research/NVDA/snapshot']);
+    expect(find.textContaining('حُفظت لقطة البحث'), findsOneWidget);
+    await t.ensureVisible(find.byKey(const Key('backend-research-replay')));
+    await t.tap(find.byKey(const Key('backend-research-replay')));
+    await t.pumpAndSettle();
+    await t.scrollUntilVisible(find.byKey(const Key('backend-replay-unavailable')), 100);
+    expect(find.byKey(const Key('backend-replay-unavailable')), findsOneWidget);
+    expect(find.byKey(const Key('backend-replay-outcome')), findsNothing);
+    expect(calls.last, 'GET /api/accounts/a/research/NVDA/snapshots/saved-a/replay');
+    expect(t.takeException(), isNull);
+  });
+
+  testWidgets('snapshot response loss is visible and does not retry the write', (t) async {
+    var saves = 0;
+    final api = TraderApi(client: MockClient((request) async {
+      if (request.url.path == '/api/accounts') {
+        return http.Response('[{"id":"a","name":"one","broker":"mock"}]', 200);
+      }
+      if (request.url.path.endsWith('/performance')) {
+        return http.Response('{"realized_pnl_cents":0,"source":"synthetic_mock"}', 200);
+      }
+      if (request.url.path.endsWith('/snapshot')) {
+        saves++;
+        throw http.ClientException('response lost');
+      }
+      return http.Response(jsonEncode(request.url.path.endsWith('/snapshots')
+        ? researchListFixture() : researchFixture()), 200);
+    }));
+    await t.pumpWidget(TraderApp(api: api));
+    await t.pumpAndSettle();
+    await openResearch(t);
+    await t.ensureVisible(find.byKey(const Key('backend-research-save')));
+    await t.tap(find.byKey(const Key('backend-research-save')));
+    await t.pumpAndSettle();
+    expect(saves, 1);
+    expect(find.textContaining('لم تُعد المحاولة تلقائيًا'), findsOneWidget);
+    expect(t.takeException(), isNull);
+  });
+
+  testWidgets('late snapshot response cannot replace another account research', (t) async {
+    final pending = Completer<http.Response>();
+    final api = TraderApi(client: MockClient((request) async {
+      if (request.url.path == '/api/accounts') {
+        return http.Response('[{"id":"a","name":"one","broker":"mock"},{"id":"b","name":"two","broker":"mock"}]', 200);
+      }
+      if (request.url.path.endsWith('/performance')) {
+        return http.Response('{"realized_pnl_cents":0,"source":"synthetic_mock"}', 200);
+      }
+      final account = request.url.path.split('/')[3];
+      if (request.url.path.endsWith('/snapshot')) return pending.future;
+      return http.Response(jsonEncode(request.url.path.endsWith('/snapshots')
+        ? researchListFixture(account: account) : researchFixture(account: account)), 200);
+    }));
+    await t.pumpWidget(TraderApp(api: api));
+    await t.pumpAndSettle();
+    await openResearch(t);
+    await t.ensureVisible(find.byKey(const Key('backend-research-save')));
+    await t.tap(find.byKey(const Key('backend-research-save')));
+    await t.pump();
+    await t.tap(find.byIcon(Icons.menu));
+    await t.pump(const Duration(milliseconds: 400));
+    final home = find.text('الرئيسية').last;
+    await t.ensureVisible(home);
+    await t.tap(home);
+    await t.pumpAndSettle();
+    await t.tap(find.byType(DropdownButtonFormField<String>));
+    await t.pumpAndSettle();
+    await t.tap(find.text('two • محاكاة اصطناعية').last);
+    await t.pumpAndSettle();
+    await openResearch(t);
+    pending.complete(http.Response(jsonEncode(researchSavedFixture()), 200));
+    await t.pumpAndSettle();
+    expect(find.textContaining('الحساب: b •'), findsOneWidget);
+    expect(find.textContaining('الحساب: a •'), findsNothing);
+    expect(find.textContaining('حُفظت لقطة البحث'), findsNothing);
+    expect(t.takeException(), isNull);
   });
 }

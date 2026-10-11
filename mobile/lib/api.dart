@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'analysis_contract.dart';
+
 class ApiException implements Exception {
   final String message;
   final int? status;
@@ -120,6 +122,51 @@ class TraderApi {
       throw const ApiException('نتيجة دورة المحاكاة لا تطابق الحساب أو المصدر');
     }
     return Map<String, dynamic>.from(value);
+  }
+
+  String _researchPath(String accountId, String symbol) {
+    if (accountId.trim().isEmpty ||
+        !RegExp(r'^[A-Z][A-Z0-9.]{0,9}$').hasMatch(symbol)) {
+      throw const ApiException('الحساب أو رمز البحث غير صالح');
+    }
+    return '/api/accounts/${Uri.encodeComponent(accountId)}/research/${Uri.encodeComponent(symbol)}';
+  }
+
+  T _researchResult<T>(T Function() parse) {
+    try {
+      return parse();
+    } on FormatException {
+      throw const ApiException(
+        'استجابة البحث غير موثوقة أو لا تخص الحساب والرمز المحددين؛ تحقق من توافق إصدار الخادم',
+      );
+    }
+  }
+
+  Future<ResearchWorkbench> inspectResearch(String accountId, String symbol) async {
+    final value = await request('GET', _researchPath(accountId, symbol));
+    return _researchResult(() => ResearchWorkbench.parse(value, accountId, symbol));
+  }
+
+  /// A snapshot journals research only. An uncertain response is never retried.
+  Future<ResearchSnapshot> saveResearchSnapshot(String accountId, String symbol) async {
+    final value = await request('POST', '${_researchPath(accountId, symbol)}/snapshot',
+      <String, dynamic>{});
+    return _researchResult(() => ResearchSnapshot.parse(value, accountId, symbol));
+  }
+
+  Future<ResearchSnapshotList> listResearchSnapshots(String accountId, String symbol) async {
+    final value = await request('GET', '${_researchPath(accountId, symbol)}/snapshots');
+    return _researchResult(() => ResearchSnapshotList.parse(value, accountId, symbol));
+  }
+
+  Future<ResearchReplay> replayResearchSnapshot(
+      String accountId, String symbol, String snapshotId) async {
+    if (snapshotId.trim().isEmpty) {
+      throw const ApiException('معرّف لقطة البحث غير صالح');
+    }
+    final value = await request('GET',
+      '${_researchPath(accountId, symbol)}/snapshots/${Uri.encodeComponent(snapshotId)}/replay');
+    return _researchResult(() => ResearchReplay.parse(value, accountId, symbol, snapshotId));
   }
 
   void close() => client.close();

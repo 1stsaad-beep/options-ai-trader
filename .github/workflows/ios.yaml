@@ -1,7 +1,7 @@
 name: iOS V1.0 RC2 unsigned review build
 on:
   push:
-    branches: [main, develop/v1.0, develop/v1.0-rc2]
+    branches: [main, develop/v1.0, develop/v1.0-rc2, recovery/v1.0-20261011]
     paths: ["mobile/**", ".github/workflows/ios.yaml"]
   workflow_dispatch:
     inputs:
@@ -36,7 +36,7 @@ jobs:
         working-directory: mobile
       - run: flutter test --machine > flutter-tests.json
         working-directory: mobile
-      - run: flutter build ios --release --no-codesign --build-name=1.0.0 --build-number=11
+      - run: flutter build ios --release --no-codesign --build-name=1.0.0 --build-number=12
         working-directory: mobile
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()

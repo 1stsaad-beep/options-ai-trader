@@ -1,0 +1,880 @@
+{
+  "current": {
+    "schema_version": 1,
+    "mode": "SHADOW",
+    "source": "synthetic_fixture",
+    "account_id": "00000000-0000-0000-0000-000000000001",
+    "symbol": "NVDA",
+    "as_of": "2026-10-09T00:40:35+00:00",
+    "observed_at": "2026-10-09T00:40:00+00:00",
+    "contract": {
+      "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+      "symbol": "NVDA",
+      "right": "CALL",
+      "strike": 108.0,
+      "expiry": "2026-11-08T20:00:00+00:00",
+      "observed_at": "2026-10-09T00:40:00+00:00",
+      "spot": 108.1406663258149,
+      "bid": 3.194030655614263,
+      "ask": 3.234030655614263,
+      "delta": 0.5,
+      "gamma": 0.04,
+      "theta_per_day": -0.04,
+      "vega_per_vol_point": 0.12,
+      "iv": 0.3,
+      "volume": 500,
+      "open_interest": 1000,
+      "multiplier": 100,
+      "commission_per_contract": 0.65,
+      "slippage_per_share": 0.01,
+      "currency": "USD",
+      "exchange": "SYNTHETIC",
+      "instrument_type": "OPTION",
+      "source": "synthetic_fixture"
+    },
+    "modules": {
+      "scenario_battle": {
+        "mode": "SHADOW",
+        "ranked": [
+          {
+            "id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+            "direction": "bullish",
+            "score": 0.6689206007829015,
+            "known_at": "2026-10-09T00:38:00+00:00",
+            "invalidated": false
+          },
+          {
+            "id": "NVDA:neutral:2026-10-09T00:38:00+00:00",
+            "direction": "neutral",
+            "score": 0.3648635193736788,
+            "known_at": "2026-10-09T00:38:00+00:00",
+            "invalidated": false
+          },
+          {
+            "id": "NVDA:bearish:2026-10-09T00:38:00+00:00",
+            "direction": "bearish",
+            "score": 0.3310793992170985,
+            "known_at": "2026-10-09T00:38:00+00:00",
+            "invalidated": false
+          }
+        ],
+        "rejected": [],
+        "directional_conflict": false,
+        "preferred_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+        "execution_authority": false,
+        "score_definition": "20-bar signed movement / high-low range, bounded by tanh; not a calibrated probability"
+      },
+      "entry_timing": {
+        "mode": "SHADOW",
+        "optimized_on_future_outcomes": false,
+        "methods": [
+          {
+            "mode": "SHADOW",
+            "entry_candidate": false,
+            "reason": "WAITING_FOR_TRIGGER",
+            "method": "early",
+            "profile": "balanced",
+            "signal_strength": 0.6689206007829015,
+            "activation": 109.92164355058259,
+            "invalidation": 102.9879551005031,
+            "expires_at": "2026-10-09T00:53:00+00:00",
+            "scenario_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+            "risk_sizing_included": false,
+            "execution_authority": false
+          },
+          {
+            "mode": "SHADOW",
+            "entry_candidate": false,
+            "reason": "WAITING_FOR_TRIGGER",
+            "method": "confirmed",
+            "profile": "balanced",
+            "signal_strength": 0.6689206007829015,
+            "activation": 109.92164355058259,
+            "invalidation": 102.9879551005031,
+            "expires_at": "2026-10-09T00:53:00+00:00",
+            "scenario_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+            "risk_sizing_included": false,
+            "execution_authority": false
+          },
+          {
+            "mode": "SHADOW",
+            "entry_candidate": false,
+            "reason": "WAITING_FOR_TRIGGER",
+            "method": "pullback",
+            "profile": "balanced",
+            "signal_strength": 0.6689206007829015,
+            "activation": 109.92164355058259,
+            "invalidation": 102.9879551005031,
+            "expires_at": "2026-10-09T00:53:00+00:00",
+            "scenario_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+            "risk_sizing_included": false,
+            "execution_authority": false
+          }
+        ],
+        "directional_conflict": false,
+        "candidate_must_not_override_conflict": true
+      },
+      "option_twin": {
+        "mode": "SHADOW",
+        "source": "synthetic_fixture",
+        "model": "fixed_greek_taylor_sensitivity",
+        "scenarios": [
+          {
+            "spot": 102.73363300952415,
+            "elapsed_days": 1,
+            "iv": 0.35,
+            "estimated_option_value": 1.6552341831384507,
+            "scenario_pnl": -163.1796472475812,
+            "entry_outlay": 325.05306556142625,
+            "exit_value_after_modeled_costs": 161.87341831384506,
+            "expiry_intrinsic_scenario": false,
+            "outside_local_approximation": false
+          },
+          {
+            "spot": 108.1406663258149,
+            "elapsed_days": 7,
+            "iv": 0.3,
+            "estimated_option_value": 2.9340306556142632,
+            "scenario_pnl": -35.2999999999999,
+            "entry_outlay": 325.05306556142625,
+            "exit_value_after_modeled_costs": 289.75306556142635,
+            "expiry_intrinsic_scenario": false,
+            "outside_local_approximation": false
+          },
+          {
+            "spot": 113.54769964210566,
+            "elapsed_days": 1,
+            "iv": 0.25,
+            "estimated_option_value": 5.862267499429201,
+            "scenario_pnl": 257.5236843814939,
+            "entry_outlay": 325.05306556142625,
+            "exit_value_after_modeled_costs": 582.5767499429202,
+            "expiry_intrinsic_scenario": false,
+            "outside_local_approximation": false
+          }
+        ],
+        "contract_quality": {
+          "mode": "SHADOW",
+          "source": "synthetic_fixture",
+          "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+          "accepted_for_research": true,
+          "reasons": [],
+          "spread_fraction": 0.012445432009221227,
+          "round_trip_cost": 7.300000000000003,
+          "round_trip_cost_fraction": 0.02271291341682873,
+          "days_to_expiry": 30.805150462962963,
+          "broker_verified": false,
+          "execution_authority": false,
+          "exercise_risk": "Early exercise, assignment, dividends and settlement are not simulated"
+        },
+        "execution_authority": false,
+        "profitability_evidence": false,
+        "limitations": [
+          "Fixed Greeks; no IV surface or rate/dividend model",
+          "Expiry intrinsic is hypothetical economic value, not a broker fill or exercise instruction",
+          "Modeled spread and slippage can understate actual losses"
+        ]
+      },
+      "liquidity_trap": {
+        "mode": "SHADOW",
+        "status": "ASSESSED",
+        "flags": [],
+        "prior_high": 109.92164355058259,
+        "prior_low": 102.9879551005031,
+        "execution_authority": false,
+        "interpretation": "Price/volume rejection proxy; no claim to observe hidden liquidity"
+      },
+      "correlation_guard": {
+        "mode": "SHADOW",
+        "passes_guard": true,
+        "failures": [],
+        "pairs": [],
+        "exposure_input_must_include_pending_orders": true,
+        "execution_authority": false,
+        "exposure_basis": "owned_and_pending_premium_proxy",
+        "exposures": {},
+        "pair_limit_dollars": 3000.0,
+        "actual_delta_or_portfolio_var": false,
+        "scope": "selected_account_only",
+        "data_source": "synthetic_fixture"
+      },
+      "strategy_tournament": {
+        "mode": "SHADOW",
+        "source": "synthetic_fixture",
+        "session_id": "SYNTHETIC-UTC:2026-10-09",
+        "observation_interval_minutes": 5,
+        "fixed_contract": {
+          "contract_id": "SYNTHETIC-FIXED:NVDA:CALL:100.00:2027-12-31",
+          "symbol": "NVDA",
+          "right": "CALL",
+          "strike": 100.0,
+          "known_at": "2026-01-01T00:00:00+00:00",
+          "expiry": "2027-12-31T20:00:00+00:00"
+        },
+        "contract_id": "SYNTHETIC-FIXED:NVDA:CALL:100.00:2027-12-31",
+        "contract_selection_uses_end_of_sample_data": false,
+        "real_contract_chain_selection_tested": false,
+        "execution_authority": false,
+        "profitability_evidence": false,
+        "status": "INSUFFICIENT_SESSION_HISTORY",
+        "observations": 9,
+        "required_observations": 54,
+        "folds": [],
+        "out_of_sample_pnl": null
+      },
+      "safety_supervisor": {
+        "mode": "SHADOW",
+        "new_entry_gate_passes": true,
+        "hard_failures": [],
+        "owned_close_gate_passes": false,
+        "trust": {
+          "score": 1.0,
+          "status": "DIAGNOSTIC_ONLY",
+          "may_override_hard_gate": false
+        },
+        "execution_authority": false,
+        "emergency_policy": "Only reconciled, priced, owned reductions; unknown state blocks sending orders",
+        "qualification_scope": "synthetic_contract_only_not_broker_verified"
+      }
+    },
+    "decision": {
+      "account_id": "00000000-0000-0000-0000-000000000001",
+      "decision_id": "8df716515ffde1396dff65b4822f23771cd5e600a3aaee93c606a71592f360e7",
+      "decided_at": "2026-10-09T00:40:35+00:00",
+      "observed_at": "2026-10-09T00:40:00+00:00",
+      "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+      "reasons": [
+        "SYNTHETIC_SHADOW_ONLY",
+        "RANGE_SCORED_SCENARIO_COMPARISON",
+        "DIRECTIONAL_COMPARISON_AVAILABLE"
+      ],
+      "evidence_json": "{\"activation\":109.92164355058259,\"entry_reasons\":[\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\"],\"execution_authority\":false,\"hard_failures\":[],\"holding_observations\":1,\"invalidation\":102.9879551005031,\"observed_at\":\"2026-10-09T00:40:00+00:00\",\"right\":\"CALL\",\"scenario_scores\":{\"bearish\":0.3310793992170985,\"bullish\":0.6689206007829015,\"neutral\":0.3648635193736788},\"source\":\"synthetic_fixture\",\"symbol\":\"NVDA\"}",
+      "previous_digest": "",
+      "digest": "b1b3d99be8d914532597e3fda8181faae2567c81bbc2398155bb92efd5ca62b3"
+    },
+    "execution_authority": false,
+    "external_connections": false,
+    "profitability_evidence": false,
+    "limitations": [
+      "Synthetic quotes and scores do not establish profitability or broker qualification.",
+      "Every module is read-only research; execution must independently recheck all mandatory risk gates.",
+      "Correlation uses owned cost plus pending buy commitments, not measured Greeks or a nonlinear portfolio model.",
+      "A displayed Call contract when scenarios conflict is illustrative, not an accepted entry.",
+      "Each saved snapshot is an independent immutable research journal; it is not a broker order.",
+      "Tournament uses a separately predefined fixed Call contract, five-minute synthetic UTC sessions, and no hindsight contract-chain selection.",
+      "No LLM, external network, account reconciliation or market observation refresh is performed."
+    ]
+  },
+  "snapshot": {
+    "schema_version": 1,
+    "mode": "SHADOW",
+    "source": "synthetic_fixture",
+    "account_id": "00000000-0000-0000-0000-000000000001",
+    "symbol": "NVDA",
+    "execution_authority": false,
+    "external_connections": false,
+    "profitability_evidence": false,
+    "snapshot_id": "00000000-0000-0000-0000-000000000004",
+    "workbench": {
+      "schema_version": 1,
+      "mode": "SHADOW",
+      "source": "synthetic_fixture",
+      "account_id": "00000000-0000-0000-0000-000000000001",
+      "symbol": "NVDA",
+      "as_of": "2026-10-09T00:40:35+00:00",
+      "observed_at": "2026-10-09T00:40:00+00:00",
+      "contract": {
+        "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+        "symbol": "NVDA",
+        "right": "CALL",
+        "strike": 108.0,
+        "expiry": "2026-11-08T20:00:00+00:00",
+        "observed_at": "2026-10-09T00:40:00+00:00",
+        "spot": 108.1406663258149,
+        "bid": 3.194030655614263,
+        "ask": 3.234030655614263,
+        "delta": 0.5,
+        "gamma": 0.04,
+        "theta_per_day": -0.04,
+        "vega_per_vol_point": 0.12,
+        "iv": 0.3,
+        "volume": 500,
+        "open_interest": 1000,
+        "multiplier": 100,
+        "commission_per_contract": 0.65,
+        "slippage_per_share": 0.01,
+        "currency": "USD",
+        "exchange": "SYNTHETIC",
+        "instrument_type": "OPTION",
+        "source": "synthetic_fixture"
+      },
+      "modules": {
+        "scenario_battle": {
+          "mode": "SHADOW",
+          "ranked": [
+            {
+              "id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+              "direction": "bullish",
+              "score": 0.6689206007829015,
+              "known_at": "2026-10-09T00:38:00+00:00",
+              "invalidated": false
+            },
+            {
+              "id": "NVDA:neutral:2026-10-09T00:38:00+00:00",
+              "direction": "neutral",
+              "score": 0.3648635193736788,
+              "known_at": "2026-10-09T00:38:00+00:00",
+              "invalidated": false
+            },
+            {
+              "id": "NVDA:bearish:2026-10-09T00:38:00+00:00",
+              "direction": "bearish",
+              "score": 0.3310793992170985,
+              "known_at": "2026-10-09T00:38:00+00:00",
+              "invalidated": false
+            }
+          ],
+          "rejected": [],
+          "directional_conflict": false,
+          "preferred_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+          "execution_authority": false,
+          "score_definition": "20-bar signed movement / high-low range, bounded by tanh; not a calibrated probability"
+        },
+        "entry_timing": {
+          "mode": "SHADOW",
+          "optimized_on_future_outcomes": false,
+          "methods": [
+            {
+              "mode": "SHADOW",
+              "entry_candidate": false,
+              "reason": "WAITING_FOR_TRIGGER",
+              "method": "early",
+              "profile": "balanced",
+              "signal_strength": 0.6689206007829015,
+              "activation": 109.92164355058259,
+              "invalidation": 102.9879551005031,
+              "expires_at": "2026-10-09T00:53:00+00:00",
+              "scenario_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+              "risk_sizing_included": false,
+              "execution_authority": false
+            },
+            {
+              "mode": "SHADOW",
+              "entry_candidate": false,
+              "reason": "WAITING_FOR_TRIGGER",
+              "method": "confirmed",
+              "profile": "balanced",
+              "signal_strength": 0.6689206007829015,
+              "activation": 109.92164355058259,
+              "invalidation": 102.9879551005031,
+              "expires_at": "2026-10-09T00:53:00+00:00",
+              "scenario_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+              "risk_sizing_included": false,
+              "execution_authority": false
+            },
+            {
+              "mode": "SHADOW",
+              "entry_candidate": false,
+              "reason": "WAITING_FOR_TRIGGER",
+              "method": "pullback",
+              "profile": "balanced",
+              "signal_strength": 0.6689206007829015,
+              "activation": 109.92164355058259,
+              "invalidation": 102.9879551005031,
+              "expires_at": "2026-10-09T00:53:00+00:00",
+              "scenario_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+              "risk_sizing_included": false,
+              "execution_authority": false
+            }
+          ],
+          "directional_conflict": false,
+          "candidate_must_not_override_conflict": true
+        },
+        "option_twin": {
+          "mode": "SHADOW",
+          "source": "synthetic_fixture",
+          "model": "fixed_greek_taylor_sensitivity",
+          "scenarios": [
+            {
+              "spot": 102.73363300952415,
+              "elapsed_days": 1,
+              "iv": 0.35,
+              "estimated_option_value": 1.6552341831384507,
+              "scenario_pnl": -163.1796472475812,
+              "entry_outlay": 325.05306556142625,
+              "exit_value_after_modeled_costs": 161.87341831384506,
+              "expiry_intrinsic_scenario": false,
+              "outside_local_approximation": false
+            },
+            {
+              "spot": 108.1406663258149,
+              "elapsed_days": 7,
+              "iv": 0.3,
+              "estimated_option_value": 2.9340306556142632,
+              "scenario_pnl": -35.2999999999999,
+              "entry_outlay": 325.05306556142625,
+              "exit_value_after_modeled_costs": 289.75306556142635,
+              "expiry_intrinsic_scenario": false,
+              "outside_local_approximation": false
+            },
+            {
+              "spot": 113.54769964210566,
+              "elapsed_days": 1,
+              "iv": 0.25,
+              "estimated_option_value": 5.862267499429201,
+              "scenario_pnl": 257.5236843814939,
+              "entry_outlay": 325.05306556142625,
+              "exit_value_after_modeled_costs": 582.5767499429202,
+              "expiry_intrinsic_scenario": false,
+              "outside_local_approximation": false
+            }
+          ],
+          "contract_quality": {
+            "mode": "SHADOW",
+            "source": "synthetic_fixture",
+            "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+            "accepted_for_research": true,
+            "reasons": [],
+            "spread_fraction": 0.012445432009221227,
+            "round_trip_cost": 7.300000000000003,
+            "round_trip_cost_fraction": 0.02271291341682873,
+            "days_to_expiry": 30.805150462962963,
+            "broker_verified": false,
+            "execution_authority": false,
+            "exercise_risk": "Early exercise, assignment, dividends and settlement are not simulated"
+          },
+          "execution_authority": false,
+          "profitability_evidence": false,
+          "limitations": [
+            "Fixed Greeks; no IV surface or rate/dividend model",
+            "Expiry intrinsic is hypothetical economic value, not a broker fill or exercise instruction",
+            "Modeled spread and slippage can understate actual losses"
+          ]
+        },
+        "liquidity_trap": {
+          "mode": "SHADOW",
+          "status": "ASSESSED",
+          "flags": [],
+          "prior_high": 109.92164355058259,
+          "prior_low": 102.9879551005031,
+          "execution_authority": false,
+          "interpretation": "Price/volume rejection proxy; no claim to observe hidden liquidity"
+        },
+        "correlation_guard": {
+          "mode": "SHADOW",
+          "passes_guard": true,
+          "failures": [],
+          "pairs": [],
+          "exposure_input_must_include_pending_orders": true,
+          "execution_authority": false,
+          "exposure_basis": "owned_and_pending_premium_proxy",
+          "exposures": {},
+          "pair_limit_dollars": 3000.0,
+          "actual_delta_or_portfolio_var": false,
+          "scope": "selected_account_only",
+          "data_source": "synthetic_fixture"
+        },
+        "strategy_tournament": {
+          "mode": "SHADOW",
+          "source": "synthetic_fixture",
+          "session_id": "SYNTHETIC-UTC:2026-10-09",
+          "observation_interval_minutes": 5,
+          "fixed_contract": {
+            "contract_id": "SYNTHETIC-FIXED:NVDA:CALL:100.00:2027-12-31",
+            "symbol": "NVDA",
+            "right": "CALL",
+            "strike": 100.0,
+            "known_at": "2026-01-01T00:00:00+00:00",
+            "expiry": "2027-12-31T20:00:00+00:00"
+          },
+          "contract_id": "SYNTHETIC-FIXED:NVDA:CALL:100.00:2027-12-31",
+          "contract_selection_uses_end_of_sample_data": false,
+          "real_contract_chain_selection_tested": false,
+          "execution_authority": false,
+          "profitability_evidence": false,
+          "status": "INSUFFICIENT_SESSION_HISTORY",
+          "observations": 9,
+          "required_observations": 54,
+          "folds": [],
+          "out_of_sample_pnl": null
+        },
+        "safety_supervisor": {
+          "mode": "SHADOW",
+          "new_entry_gate_passes": true,
+          "hard_failures": [],
+          "owned_close_gate_passes": false,
+          "trust": {
+            "score": 1.0,
+            "status": "DIAGNOSTIC_ONLY",
+            "may_override_hard_gate": false
+          },
+          "execution_authority": false,
+          "emergency_policy": "Only reconciled, priced, owned reductions; unknown state blocks sending orders",
+          "qualification_scope": "synthetic_contract_only_not_broker_verified"
+        }
+      },
+      "decision": {
+        "account_id": "00000000-0000-0000-0000-000000000001",
+        "decision_id": "8df716515ffde1396dff65b4822f23771cd5e600a3aaee93c606a71592f360e7",
+        "decided_at": "2026-10-09T00:40:35+00:00",
+        "observed_at": "2026-10-09T00:40:00+00:00",
+        "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+        "reasons": [
+          "SYNTHETIC_SHADOW_ONLY",
+          "RANGE_SCORED_SCENARIO_COMPARISON",
+          "DIRECTIONAL_COMPARISON_AVAILABLE"
+        ],
+        "evidence_json": "{\"activation\":109.92164355058259,\"entry_reasons\":[\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\"],\"execution_authority\":false,\"hard_failures\":[],\"holding_observations\":1,\"invalidation\":102.9879551005031,\"observed_at\":\"2026-10-09T00:40:00+00:00\",\"right\":\"CALL\",\"scenario_scores\":{\"bearish\":0.3310793992170985,\"bullish\":0.6689206007829015,\"neutral\":0.3648635193736788},\"source\":\"synthetic_fixture\",\"symbol\":\"NVDA\"}",
+        "previous_digest": "",
+        "digest": "b1b3d99be8d914532597e3fda8181faae2567c81bbc2398155bb92efd5ca62b3"
+      },
+      "execution_authority": false,
+      "external_connections": false,
+      "profitability_evidence": false,
+      "limitations": [
+        "Synthetic quotes and scores do not establish profitability or broker qualification.",
+        "Every module is read-only research; execution must independently recheck all mandatory risk gates.",
+        "Correlation uses owned cost plus pending buy commitments, not measured Greeks or a nonlinear portfolio model.",
+        "A displayed Call contract when scenarios conflict is illustrative, not an accepted entry.",
+        "Each saved snapshot is an independent immutable research journal; it is not a broker order.",
+        "Tournament uses a separately predefined fixed Call contract, five-minute synthetic UTC sessions, and no hindsight contract-chain selection.",
+        "No LLM, external network, account reconciliation or market observation refresh is performed."
+      ]
+    }
+  },
+  "list": {
+    "schema_version": 1,
+    "mode": "SHADOW",
+    "source": "synthetic_fixture",
+    "account_id": "00000000-0000-0000-0000-000000000001",
+    "symbol": "NVDA",
+    "execution_authority": false,
+    "external_connections": false,
+    "profitability_evidence": false,
+    "items": [
+      {
+        "snapshot_id": "00000000-0000-0000-0000-000000000004",
+        "account_id": "00000000-0000-0000-0000-000000000001",
+        "symbol": "NVDA",
+        "as_of": "2026-10-09T00:40:35+00:00",
+        "decision_id": "8df716515ffde1396dff65b4822f23771cd5e600a3aaee93c606a71592f360e7",
+        "decided_at": "2026-10-09T00:40:35+00:00",
+        "digest": "462615b1c0208d58ce4980332ab270991b11d7a513a244c4e63948e2f34e46c9"
+      }
+    ],
+    "truncated": false
+  },
+  "replay": {
+    "schema_version": 1,
+    "mode": "SHADOW",
+    "source": "synthetic_fixture",
+    "account_id": "00000000-0000-0000-0000-000000000001",
+    "symbol": "NVDA",
+    "execution_authority": false,
+    "external_connections": false,
+    "profitability_evidence": false,
+    "snapshot_id": "00000000-0000-0000-0000-000000000004",
+    "as_of": "2026-10-09T00:40:35+00:00",
+    "original_workbench": {
+      "account_id": "00000000-0000-0000-0000-000000000001",
+      "as_of": "2026-10-09T00:40:35+00:00",
+      "contract": {
+        "ask": 3.234030655614263,
+        "bid": 3.194030655614263,
+        "commission_per_contract": 0.65,
+        "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+        "currency": "USD",
+        "delta": 0.5,
+        "exchange": "SYNTHETIC",
+        "expiry": "2026-11-08T20:00:00+00:00",
+        "gamma": 0.04,
+        "instrument_type": "OPTION",
+        "iv": 0.3,
+        "multiplier": 100,
+        "observed_at": "2026-10-09T00:40:00+00:00",
+        "open_interest": 1000,
+        "right": "CALL",
+        "slippage_per_share": 0.01,
+        "source": "synthetic_fixture",
+        "spot": 108.1406663258149,
+        "strike": 108.0,
+        "symbol": "NVDA",
+        "theta_per_day": -0.04,
+        "vega_per_vol_point": 0.12,
+        "volume": 500
+      },
+      "decision": {
+        "account_id": "00000000-0000-0000-0000-000000000001",
+        "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+        "decided_at": "2026-10-09T00:40:35+00:00",
+        "decision_id": "8df716515ffde1396dff65b4822f23771cd5e600a3aaee93c606a71592f360e7",
+        "digest": "b1b3d99be8d914532597e3fda8181faae2567c81bbc2398155bb92efd5ca62b3",
+        "evidence_json": "{\"activation\":109.92164355058259,\"entry_reasons\":[\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\"],\"execution_authority\":false,\"hard_failures\":[],\"holding_observations\":1,\"invalidation\":102.9879551005031,\"observed_at\":\"2026-10-09T00:40:00+00:00\",\"right\":\"CALL\",\"scenario_scores\":{\"bearish\":0.3310793992170985,\"bullish\":0.6689206007829015,\"neutral\":0.3648635193736788},\"source\":\"synthetic_fixture\",\"symbol\":\"NVDA\"}",
+        "observed_at": "2026-10-09T00:40:00+00:00",
+        "previous_digest": "",
+        "reasons": [
+          "SYNTHETIC_SHADOW_ONLY",
+          "RANGE_SCORED_SCENARIO_COMPARISON",
+          "DIRECTIONAL_COMPARISON_AVAILABLE"
+        ]
+      },
+      "execution_authority": false,
+      "external_connections": false,
+      "limitations": [
+        "Synthetic quotes and scores do not establish profitability or broker qualification.",
+        "Every module is read-only research; execution must independently recheck all mandatory risk gates.",
+        "Correlation uses owned cost plus pending buy commitments, not measured Greeks or a nonlinear portfolio model.",
+        "A displayed Call contract when scenarios conflict is illustrative, not an accepted entry.",
+        "Each saved snapshot is an independent immutable research journal; it is not a broker order.",
+        "Tournament uses a separately predefined fixed Call contract, five-minute synthetic UTC sessions, and no hindsight contract-chain selection.",
+        "No LLM, external network, account reconciliation or market observation refresh is performed."
+      ],
+      "mode": "SHADOW",
+      "modules": {
+        "correlation_guard": {
+          "actual_delta_or_portfolio_var": false,
+          "data_source": "synthetic_fixture",
+          "execution_authority": false,
+          "exposure_basis": "owned_and_pending_premium_proxy",
+          "exposure_input_must_include_pending_orders": true,
+          "exposures": {},
+          "failures": [],
+          "mode": "SHADOW",
+          "pair_limit_dollars": 3000.0,
+          "pairs": [],
+          "passes_guard": true,
+          "scope": "selected_account_only"
+        },
+        "entry_timing": {
+          "candidate_must_not_override_conflict": true,
+          "directional_conflict": false,
+          "methods": [
+            {
+              "activation": 109.92164355058259,
+              "entry_candidate": false,
+              "execution_authority": false,
+              "expires_at": "2026-10-09T00:53:00+00:00",
+              "invalidation": 102.9879551005031,
+              "method": "early",
+              "mode": "SHADOW",
+              "profile": "balanced",
+              "reason": "WAITING_FOR_TRIGGER",
+              "risk_sizing_included": false,
+              "scenario_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+              "signal_strength": 0.6689206007829015
+            },
+            {
+              "activation": 109.92164355058259,
+              "entry_candidate": false,
+              "execution_authority": false,
+              "expires_at": "2026-10-09T00:53:00+00:00",
+              "invalidation": 102.9879551005031,
+              "method": "confirmed",
+              "mode": "SHADOW",
+              "profile": "balanced",
+              "reason": "WAITING_FOR_TRIGGER",
+              "risk_sizing_included": false,
+              "scenario_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+              "signal_strength": 0.6689206007829015
+            },
+            {
+              "activation": 109.92164355058259,
+              "entry_candidate": false,
+              "execution_authority": false,
+              "expires_at": "2026-10-09T00:53:00+00:00",
+              "invalidation": 102.9879551005031,
+              "method": "pullback",
+              "mode": "SHADOW",
+              "profile": "balanced",
+              "reason": "WAITING_FOR_TRIGGER",
+              "risk_sizing_included": false,
+              "scenario_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+              "signal_strength": 0.6689206007829015
+            }
+          ],
+          "mode": "SHADOW",
+          "optimized_on_future_outcomes": false
+        },
+        "liquidity_trap": {
+          "execution_authority": false,
+          "flags": [],
+          "interpretation": "Price/volume rejection proxy; no claim to observe hidden liquidity",
+          "mode": "SHADOW",
+          "prior_high": 109.92164355058259,
+          "prior_low": 102.9879551005031,
+          "status": "ASSESSED"
+        },
+        "option_twin": {
+          "contract_quality": {
+            "accepted_for_research": true,
+            "broker_verified": false,
+            "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+            "days_to_expiry": 30.805150462962963,
+            "execution_authority": false,
+            "exercise_risk": "Early exercise, assignment, dividends and settlement are not simulated",
+            "mode": "SHADOW",
+            "reasons": [],
+            "round_trip_cost": 7.300000000000003,
+            "round_trip_cost_fraction": 0.02271291341682873,
+            "source": "synthetic_fixture",
+            "spread_fraction": 0.012445432009221227
+          },
+          "execution_authority": false,
+          "limitations": [
+            "Fixed Greeks; no IV surface or rate/dividend model",
+            "Expiry intrinsic is hypothetical economic value, not a broker fill or exercise instruction",
+            "Modeled spread and slippage can understate actual losses"
+          ],
+          "mode": "SHADOW",
+          "model": "fixed_greek_taylor_sensitivity",
+          "profitability_evidence": false,
+          "scenarios": [
+            {
+              "elapsed_days": 1,
+              "entry_outlay": 325.05306556142625,
+              "estimated_option_value": 1.6552341831384507,
+              "exit_value_after_modeled_costs": 161.87341831384506,
+              "expiry_intrinsic_scenario": false,
+              "iv": 0.35,
+              "outside_local_approximation": false,
+              "scenario_pnl": -163.1796472475812,
+              "spot": 102.73363300952415
+            },
+            {
+              "elapsed_days": 7,
+              "entry_outlay": 325.05306556142625,
+              "estimated_option_value": 2.9340306556142632,
+              "exit_value_after_modeled_costs": 289.75306556142635,
+              "expiry_intrinsic_scenario": false,
+              "iv": 0.3,
+              "outside_local_approximation": false,
+              "scenario_pnl": -35.2999999999999,
+              "spot": 108.1406663258149
+            },
+            {
+              "elapsed_days": 1,
+              "entry_outlay": 325.05306556142625,
+              "estimated_option_value": 5.862267499429201,
+              "exit_value_after_modeled_costs": 582.5767499429202,
+              "expiry_intrinsic_scenario": false,
+              "iv": 0.25,
+              "outside_local_approximation": false,
+              "scenario_pnl": 257.5236843814939,
+              "spot": 113.54769964210566
+            }
+          ],
+          "source": "synthetic_fixture"
+        },
+        "safety_supervisor": {
+          "emergency_policy": "Only reconciled, priced, owned reductions; unknown state blocks sending orders",
+          "execution_authority": false,
+          "hard_failures": [],
+          "mode": "SHADOW",
+          "new_entry_gate_passes": true,
+          "owned_close_gate_passes": false,
+          "qualification_scope": "synthetic_contract_only_not_broker_verified",
+          "trust": {
+            "may_override_hard_gate": false,
+            "score": 1.0,
+            "status": "DIAGNOSTIC_ONLY"
+          }
+        },
+        "scenario_battle": {
+          "directional_conflict": false,
+          "execution_authority": false,
+          "mode": "SHADOW",
+          "preferred_id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+          "ranked": [
+            {
+              "direction": "bullish",
+              "id": "NVDA:bullish:2026-10-09T00:38:00+00:00",
+              "invalidated": false,
+              "known_at": "2026-10-09T00:38:00+00:00",
+              "score": 0.6689206007829015
+            },
+            {
+              "direction": "neutral",
+              "id": "NVDA:neutral:2026-10-09T00:38:00+00:00",
+              "invalidated": false,
+              "known_at": "2026-10-09T00:38:00+00:00",
+              "score": 0.3648635193736788
+            },
+            {
+              "direction": "bearish",
+              "id": "NVDA:bearish:2026-10-09T00:38:00+00:00",
+              "invalidated": false,
+              "known_at": "2026-10-09T00:38:00+00:00",
+              "score": 0.3310793992170985
+            }
+          ],
+          "rejected": [],
+          "score_definition": "20-bar signed movement / high-low range, bounded by tanh; not a calibrated probability"
+        },
+        "strategy_tournament": {
+          "contract_id": "SYNTHETIC-FIXED:NVDA:CALL:100.00:2027-12-31",
+          "contract_selection_uses_end_of_sample_data": false,
+          "execution_authority": false,
+          "fixed_contract": {
+            "contract_id": "SYNTHETIC-FIXED:NVDA:CALL:100.00:2027-12-31",
+            "expiry": "2027-12-31T20:00:00+00:00",
+            "known_at": "2026-01-01T00:00:00+00:00",
+            "right": "CALL",
+            "strike": 100.0,
+            "symbol": "NVDA"
+          },
+          "folds": [],
+          "mode": "SHADOW",
+          "observation_interval_minutes": 5,
+          "observations": 9,
+          "out_of_sample_pnl": null,
+          "profitability_evidence": false,
+          "real_contract_chain_selection_tested": false,
+          "required_observations": 54,
+          "session_id": "SYNTHETIC-UTC:2026-10-09",
+          "source": "synthetic_fixture",
+          "status": "INSUFFICIENT_SESSION_HISTORY"
+        }
+      },
+      "observed_at": "2026-10-09T00:40:00+00:00",
+      "profitability_evidence": false,
+      "schema_version": 1,
+      "source": "synthetic_fixture",
+      "symbol": "NVDA"
+    },
+    "outcome_as_of": "2026-10-09T00:42:00+00:00",
+    "original_decision": {
+      "account_id": "00000000-0000-0000-0000-000000000001",
+      "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+      "decided_at": "2026-10-09T00:40:35+00:00",
+      "decision_id": "8df716515ffde1396dff65b4822f23771cd5e600a3aaee93c606a71592f360e7",
+      "digest": "b1b3d99be8d914532597e3fda8181faae2567c81bbc2398155bb92efd5ca62b3",
+      "evidence_json": "{\"activation\":109.92164355058259,\"entry_reasons\":[\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\",\"WAITING_FOR_TRIGGER\"],\"execution_authority\":false,\"hard_failures\":[],\"holding_observations\":1,\"invalidation\":102.9879551005031,\"observed_at\":\"2026-10-09T00:40:00+00:00\",\"right\":\"CALL\",\"scenario_scores\":{\"bearish\":0.3310793992170985,\"bullish\":0.6689206007829015,\"neutral\":0.3648635193736788},\"source\":\"synthetic_fixture\",\"symbol\":\"NVDA\"}",
+      "observed_at": "2026-10-09T00:40:00+00:00",
+      "previous_digest": "",
+      "reasons": [
+        "SYNTHETIC_SHADOW_ONLY",
+        "RANGE_SCORED_SCENARIO_COMPARISON",
+        "DIRECTIONAL_COMPARISON_AVAILABLE"
+      ]
+    },
+    "counterfactual": {
+      "mode": "SHADOW",
+      "counterfactual": true,
+      "decision_digest": "b1b3d99be8d914532597e3fda8181faae2567c81bbc2398155bb92efd5ca62b3",
+      "decision_reasons": [
+        "SYNTHETIC_SHADOW_ONLY",
+        "RANGE_SCORED_SCENARIO_COMPARISON",
+        "DIRECTIONAL_COMPARISON_AVAILABLE"
+      ],
+      "execution_authority": false,
+      "holding_observations": 1,
+      "profitability_evidence": false,
+      "status": "REPLAYED",
+      "entry_at": "2026-10-09T00:41:00+00:00",
+      "exit_at": "2026-10-09T00:42:00+00:00",
+      "pnl": -7.0102708889233964,
+      "commissions": 1.3,
+      "limitations": "Fixed 100 multiplier; hypothetical later quotes; no fill, liquidity or exercise guarantee"
+    }
+  }
+}

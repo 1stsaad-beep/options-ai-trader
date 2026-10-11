@@ -50,3 +50,12 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - APK and iOS bytes downloaded, ZIP CRC and SHA-256 checked. Persistent conversation-file saving failed before upload because helper authentication was unavailable; no successful save is claimed. GitHub artifact links and downloadable local copies are provided, with 14-day retention clearly stated.
 - This documentation/evidence-only batch requires link/content and diff checks, not another mobile build or full test run.
 - V1.0 completeness is explicitly unclaimed. Next work is listed in docs/RECOVERY_REQUIREMENTS_V1.md. Start from this branch, retain all prior history, keep external brokers and Live disabled.
+
+## Engineering mission batch 1: connected research journal
+
+- Started from verified clean local/remote Recovery head `72abca1c637fbabf55ecf5d30dcb276c9798170c`; no unsaved work was present at mission start.
+- Added a versioned server/mobile research boundary, account/symbol-scoped snapshot list, and exact original workbench in replay. The phone can explicitly save, list and replay server snapshots, and drops responses after identity/page changes.
+- Added a shared real-service JSON fixture consumed by Python and Flutter, rather than relying only on handwritten mock payloads. Python targeted research/contract gate: **34 passed**, zero failed/skipped; raw output/JUnit in `docs/evidence/engineering-20261011`.
+- Mobile tests and builds require GitHub runners; no local Flutter execution is claimed. Recovery branch now triggers the existing Android/iOS gates. Build number raised to 12, without changing the preview app identity or adding keys.
+- List history is explicitly bounded; counterfactual results remain synthetic fixture outcomes, not actual option observations. All external execution remains locked. Full contract and limits: `docs/RESEARCH_CONTRACT_V1.md`.
+- Independent safety review reproduced partial-profit over-closing, optional-analysis blocking partial exits, and pending reversal fills after permissions changed. These are next-batch safety fixes; no acceptance completion is claimed while they remain.

@@ -1,7 +1,7 @@
 name: Android V1.0 RC2 offline demo
 on:
   push:
-    branches: [main, develop/v1.0, develop/v1.0-rc2]
+    branches: [main, develop/v1.0, develop/v1.0-rc2, recovery/v1.0-20261011]
     paths: ["mobile/**", ".github/workflows/android.yaml"]
   pull_request:
     paths: ["mobile/**", ".github/workflows/android.yaml"]
@@ -43,7 +43,7 @@ jobs:
           OAT_KEYSTORE_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEYSTORE_PASSWORD || '' }}
           OAT_KEY_ALIAS: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_ALIAS || '' }}
           OAT_KEY_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEY_PASSWORD || '' }}
-      - run: flutter build apk --debug --build-name=1.0.0 --build-number=11
+      - run: flutter build apk --debug --build-name=1.0.0 --build-number=12
         working-directory: mobile
         env:
           OAT_KEYSTORE_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.OAT_KEYSTORE_PASSWORD || '' }}
@@ -58,7 +58,7 @@ jobs:
       - name: Build separately identified installable preview when stable key is unavailable
         if: env.OAT_SIGNING_MODE == 'unsigned'
         run: |
-          flutter build apk --debug --build-name=1.0.0 --build-number=11
+          flutter build apk --debug --build-name=1.0.0 --build-number=12
           cp build/app/outputs/flutter-apk/app-debug.apk ../options-ai-trader-v1.0-rc2-preview.apk
           printf '%s\n' 'preview_signing=ephemeral-runner-development-key' 'preview_application_id=com.optionsaitrader.options_ai_trader.v1previewrc2' >> ../build-provenance.txt
         working-directory: mobile

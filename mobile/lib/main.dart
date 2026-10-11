@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'api.dart';
+import 'analysis_contract.dart';
 import 'demo/screen.dart';
 import 'demo/store.dart';
 
@@ -113,6 +114,10 @@ class _DashboardState extends State<Dashboard> {
   final automationResults = <String, Map<String, dynamic>>{};
   int generation = 0;
   String researchSymbol = 'NVDA';
+  ResearchSnapshotList? researchSnapshots;
+  ResearchReplay? researchReplay;
+  String? selectedResearchSnapshot;
+  String? researchNotice;
 
   @override
   void initState() {
@@ -178,6 +183,10 @@ class _DashboardState extends State<Dashboard> {
       error = null;
       rows = [];
       detail = {};
+      researchSnapshots = null;
+      researchReplay = null;
+      selectedResearchSnapshot = null;
+      researchNotice = null;
     });
     try {
       List<Map<String, dynamic>> newRows = [];
@@ -227,18 +236,14 @@ class _DashboardState extends State<Dashboard> {
         } else if (page == 10) {
           final selectedAccount = accountId!;
           final selectedSymbol = researchSymbol;
-          final value = await api.request('GET',
-            '${pathFor(selectedAccount)}/research/${Uri.encodeComponent(selectedSymbol)}');
+          final saved = await api.listResearchSnapshots(selectedAccount, selectedSymbol);
           if (!mounted || requestId != generation || accountId != selectedAccount ||
               researchSymbol != selectedSymbol) { return; }
-          if (value is! Map || value['account_id'] != selectedAccount ||
-              value['symbol'] != selectedSymbol || value['source'] != 'synthetic_fixture' ||
-              value['mode'] != 'SHADOW' || value['execution_authority'] != false ||
-              value['external_connections'] != false || value['modules'] is! Map ||
-              value['limitations'] is! List) {
-            throw const ApiException('استجابة البحث غير موثوقة أو لا تخص الحساب والرمز المحددين');
-          }
-          newDetail = Map<String, dynamic>.from(value);
+          researchSnapshots = saved;
+          final value = await api.inspectResearch(selectedAccount, selectedSymbol);
+          if (!mounted || requestId != generation || accountId != selectedAccount ||
+              researchSymbol != selectedSymbol) { return; }
+          newDetail = value.data;
         } else if (page == 8) {
           newDetail = Map<String, dynamic>.from(
             await api.request('GET', '$accountPath/status') as Map,
@@ -260,6 +265,80 @@ class _DashboardState extends State<Dashboard> {
           error = '$e';
           loading = false;
         });
+      }
+    }
+  }
+
+  bool researchRequestIsCurrent(int requestId, String account, String symbol) =>
+      mounted && requestId == generation && page == 10 &&
+      accountId == account && researchSymbol == symbol;
+
+  Future<void> saveResearchSnapshot() async {
+    if (loading || accountId == null) return;
+    final account = accountId!, symbol = researchSymbol;
+    final requestId = ++generation;
+    setState(() { loading = true; error = null; researchNotice = null; });
+    try {
+      final saved = await api.saveResearchSnapshot(account, symbol);
+      if (!researchRequestIsCurrent(requestId, account, symbol)) return;
+      setState(() {
+        detail = saved.workbench.data;
+        researchReplay = null;
+        selectedResearchSnapshot = saved.snapshotId;
+        researchNotice = 'حُفظت لقطة البحث في الخادم: ${saved.snapshotId}';
+      });
+      try {
+        final listing = await api.listResearchSnapshots(account, symbol);
+        if (!researchRequestIsCurrent(requestId, account, symbol)) return;
+        setState(() {
+          researchSnapshots = listing;
+          if (!listing.items.any((item) => item.snapshotId == saved.snapshotId)) {
+            selectedResearchSnapshot = null;
+          }
+        });
+      } catch (e) {
+        if (!researchRequestIsCurrent(requestId, account, symbol)) return;
+        setState(() {
+          selectedResearchSnapshot = null;
+          researchSnapshots = null;
+          error = 'حُفظت اللقطة، لكن تعذر تحديث القائمة. $e';
+        });
+      }
+    } catch (e) {
+      if (!researchRequestIsCurrent(requestId, account, symbol)) return;
+      setState(() => error = '$e — لم تُعد المحاولة تلقائيًا. حدّث القائمة للتحقق من الحفظ قبل إعادة الطلب.');
+    } finally {
+      if (researchRequestIsCurrent(requestId, account, symbol)) {
+        setState(() => loading = false);
+      }
+    }
+  }
+
+  Future<void> replayResearchSnapshot() async {
+    if (loading || accountId == null || selectedResearchSnapshot == null) return;
+    final account = accountId!, symbol = researchSymbol;
+    final snapshotId = selectedResearchSnapshot!;
+    final requestId = ++generation;
+    setState(() {
+      loading = true; error = null; researchReplay = null;
+      detail = {}; researchNotice = null;
+    });
+    try {
+      final replay = await api.replayResearchSnapshot(account, symbol, snapshotId);
+      if (!researchRequestIsCurrent(requestId, account, symbol) ||
+          selectedResearchSnapshot != snapshotId) return;
+      setState(() {
+        researchReplay = replay;
+        detail = replay.original.data;
+        researchNotice = 'تُعرض بيانات القرار الأصلية المحفوظة؛ لم تُعَد صياغة الأسباب بعد القرار.';
+      });
+    } catch (e) {
+      if (researchRequestIsCurrent(requestId, account, symbol)) {
+        setState(() => error = '$e');
+      }
+    } finally {
+      if (researchRequestIsCurrent(requestId, account, symbol)) {
+        setState(() => loading = false);
       }
     }
   }
@@ -971,7 +1050,7 @@ class _DashboardState extends State<Dashboard> {
       return [
         const Text('بحث الخادم • Shadow • بيانات اصطناعية',
           key: Key('backend-research-banner')),
-        const Text('نتائج للقراءة فقط من المحركات الكمية في الخادم. لا ترسل هذه الصفحة أوامر أو تعدّل المخاطر.'),
+        const Text('بحث اصطناعي مع حفظ لقطاته في الخادم. لا ترسل هذه الصفحة أوامر أو تعدّل المخاطر. الحفظ يحلل البيانات المتاحة لحظة الطلب.'),
         OutlinedButton.icon(key: const Key('backend-research-symbol'),
           onPressed: loading ? null : () async {
             final selectedAccount = accountId;
@@ -985,6 +1064,61 @@ class _DashboardState extends State<Dashboard> {
             setState(() => researchSymbol = symbol);
             await reload();
           }, icon: const Icon(Icons.search), label: Text('الرمز: $researchSymbol')),
+        Wrap(spacing: 8, runSpacing: 8, children: [
+          FilledButton.icon(key: const Key('backend-research-save'),
+            onPressed: loading || detail.isEmpty ? null : saveResearchSnapshot,
+            icon: const Icon(Icons.bookmark_add_outlined),
+            label: const Text('حفظ لقطة بحث جديدة')),
+          OutlinedButton.icon(key: const Key('backend-research-refresh'),
+            onPressed: loading ? null : reload,
+            icon: const Icon(Icons.refresh), label: const Text('تحديث البحث والقائمة')),
+        ]),
+        if (researchNotice != null) Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(researchNotice!, key: const Key('backend-research-notice'))),
+        if (researchSnapshots != null) ...[
+          if (researchSnapshots!.items.isEmpty) const Text('لا توجد لقطات محفوظة لهذا الحساب والرمز.'),
+          if (researchSnapshots!.items.isNotEmpty) ...[
+            DropdownButtonFormField<String>(
+              key: ValueKey('backend-research-snapshots-${selectedResearchSnapshot ?? "none"}'),
+              initialValue: researchSnapshots!.items.any((item) =>
+                item.snapshotId == selectedResearchSnapshot) ? selectedResearchSnapshot : null,
+              isExpanded: true,
+              decoration: const InputDecoration(labelText: 'لقطة محفوظة في الخادم'),
+              items: researchSnapshots!.items.map((item) => DropdownMenuItem(
+                value: item.snapshotId,
+                child: Text('${item.asOf.toIso8601String()} • ${item.snapshotId}',
+                  maxLines: 1, overflow: TextOverflow.ellipsis),
+              )).toList(),
+              onChanged: loading ? null : (value) => setState(() {
+                selectedResearchSnapshot = value;
+                researchReplay = null;
+                researchNotice = null;
+                detail = {};
+              }),
+            ),
+            OutlinedButton.icon(key: const Key('backend-research-replay'),
+              onPressed: loading || selectedResearchSnapshot == null ? null : replayResearchSnapshot,
+              icon: const Icon(Icons.history), label: const Text('إعادة عرض اللقطة الأصلية')),
+          ],
+          if (researchSnapshots!.truncated) const Text('تُعرض أحدث اللقطات فقط؛ توجد لقطات أقدم في الخادم.'),
+        ],
+        if (researchReplay != null) Card(child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('اللقطة: ${researchReplay!.snapshotId}'),
+            const Text('Counterfactual • نتيجة افتراضية ببيانات اصطناعية؛ ليست تنفيذًا أو دليل ربحية.'),
+            if (!researchReplay!.hasOutcome)
+              const Text('النتيجة غير متاحة: لا توجد ملاحظات لاحقة كافية حتى وقت الإعادة. لم تُختلق أسعار أو أرباح.',
+                key: Key('backend-replay-unavailable')),
+            if (researchReplay!.hasOutcome) ...[
+              Text('صافي افتراضي بعد التكاليف: ${format(researchReplay!.counterfactual['pnl'])}',
+                key: const Key('backend-replay-outcome')),
+              Text('الدخول الافتراضي: ${researchReplay!.counterfactual['entry_at']}'),
+              Text('الخروج الافتراضي: ${researchReplay!.counterfactual['exit_at']}'),
+              Text('العمولات: ${format(researchReplay!.counterfactual['commissions'])}'),
+            ],
+          ]))),
         if (detail.isNotEmpty) ...[
           Text('الحساب: ${detail['account_id']} • وقت البيانات: ${detail['as_of']}'),
           for (final entry in (detail['modules'] as Map).entries)
@@ -1002,7 +1136,7 @@ class _DashboardState extends State<Dashboard> {
             padding: const EdgeInsets.symmetric(vertical: 6), child: Text('$v'))),
         ],
         if (detail.isEmpty && !loading) const Text('لا نتائج موثوقة متاحة. راجع الخطأ أو الاتصال بالخادم.'),
-        const Text('حفظ لقطات البحث وإعادة السيناريو البديل متاحان عبر API؛ هذه الواجهة تعرض البحث دون كتابة.'),
+        const Text('اللقطات تخص الحساب والرمز المحددين وتبقى في قاعدة بيانات الخادم. عرض بحث Demo المحلي مستقل عن هذه البيانات.'),
       ];
     }
     if (page == 5) {
