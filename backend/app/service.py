@@ -9,7 +9,7 @@ from .adapters import MockBrokerAdapter, MOCK_SYMBOLS
 class Rejected(ValueError):
     pass
 
-DEFAULT_CONFIG = {'mode': 'paper', 'broker': 'mock', 'allocation_pct': 30, 'trade_risk_pct': 2, 'daily_loss_pct': 3, 'max_contracts': 5, 'strategies': ['breakout', 'pullback'], 'holding': 'intraday', 'risk_group': None, 'connection_id': None, 'group_allocation_pct': 30, 'group_daily_loss_pct': 3, 'automation_enabled': False, 'stop_loss_pct': 20, 'take_profit_pct': 30, 'auto_quantity': 1, 'auto_fill_chunk': 1, 'max_spread_pct': 10, 'elevated_risk_ack': None, 'max_positions': 20, 'max_contract_premium_cents': 1000000, 'global_allocation_pct': 30, 'global_daily_loss_pct': 3, 'scaling_enabled': False, 'scaling_max_additions': 2, 'scaling_quantity': 1, 'scaling_cooldown_seconds': 60, 'scaling_decreasing': False, 'trailing_stop_pct': 0, 'partial_profit_pct': 0, 'partial_exit_pct': 50, 'expiry_exit_days': 1, 'intraday_exit_hour_utc': 20, 'swing_max_days': 10, 'require_open_loss_marks': True, 'scenario_exit_enabled': False, 'commission_cents': 0, 'reversal_enabled': False}
+DEFAULT_CONFIG = {'mode': 'paper', 'broker': 'mock', 'allocation_pct': 30, 'trade_risk_pct': 2, 'daily_loss_pct': 3, 'max_contracts': 5, 'strategies': ['breakout', 'pullback'], 'holding': 'intraday', 'risk_group': None, 'connection_id': None, 'group_allocation_pct': 30, 'group_daily_loss_pct': 3, 'automation_enabled': False, 'stop_loss_pct': 20, 'take_profit_pct': 30, 'auto_quantity': 1, 'auto_fill_chunk': 1, 'max_spread_pct': 10, 'elevated_risk_ack': None, 'max_positions': 20, 'max_contract_premium_cents': 1000000, 'global_allocation_pct': 30, 'global_daily_loss_pct': 3, 'scaling_enabled': False, 'scaling_max_additions': 2, 'scaling_quantity': 1, 'scaling_cooldown_seconds': 60, 'scaling_decreasing': False, 'trailing_stop_pct': 0, 'partial_profit_pct': 0, 'partial_exit_pct': 50, 'expiry_exit_days': 1, 'intraday_exit_hour_utc': 20, 'swing_max_days': 10, 'require_open_loss_marks': True, 'scenario_exit_enabled': False, 'commission_cents': 0, 'reversal_enabled': False, 'session_policy': 'synthetic_24x7', 'session_exit_buffer_minutes': 15}
 ACTIVE = ('PENDING', 'PARTIAL')
 
 def integer(value, name, minimum=1, maximum=100000000):
@@ -47,6 +47,9 @@ def validate_config(config):
     for key, minimum, maximum in [('commission_cents',0,100000), ('max_positions',1,1000), ('max_contract_premium_cents',1,100000000), ('scaling_max_additions',0,100), ('scaling_quantity',1,100), ('scaling_cooldown_seconds',1,86400), ('trailing_stop_pct',0,95), ('partial_profit_pct',0,500), ('partial_exit_pct',1,99), ('expiry_exit_days',0,30), ('intraday_exit_hour_utc',0,23), ('swing_max_days',1,365)]:
         integer(config.get(key, DEFAULT_CONFIG[key]), key, minimum, maximum)
     integer(config.get('max_contracts'), 'max_contracts', 1, 100)
+    if config.get('session_policy', DEFAULT_CONFIG['session_policy']) not in ('synthetic_24x7', 'us_equity_options_2026_2027'):
+        raise Rejected('Unsupported session policy')
+    integer(config.get('session_exit_buffer_minutes', 15), 'session_exit_buffer_minutes', 1, 120)
     if config.get('holding') not in ('intraday', 'swing'):
         raise Rejected('Invalid holding mode')
     if not isinstance(config.get('strategies'), list) or not all(isinstance(item,str) and item in {'breakout','pullback'} for item in config['strategies']):
@@ -57,6 +60,31 @@ class TradingService:
         self.repo = repository
         self.now = now or (lambda: datetime.now(timezone.utc))
         self.today = today or (lambda: datetime.now(timezone.utc).date())
+    def market_session(self, config):
+        from .market_sessions import evaluate_session, unavailable_session
+        try:
+            return evaluate_session(self.now(), config['session_policy'],
+                                    config['session_exit_buffer_minutes']).as_dict()
+        except Exception:
+            # Calendar failure never fabricates executable hours or prevents
+            # independently justified owned close intents being journaled.
+            return unavailable_session(config['session_policy']).as_dict()
+
+    def entry_session_current(self, db, order, session):
+        if session['policy'] == 'synthetic_24x7':
+            return True
+        if not session['entry_allowed'] or not session['opens_at']:
+            return False
+        records = db.all("SELECT payload,digest FROM decision_snapshots WHERE account_id=? AND order_id=? AND action='ORDER_ACCEPTED'",
+                         (order['account_id'], order['id']))
+        try:
+            if len(records) != 1 or hashlib.sha256(records[0]['payload'].encode()).hexdigest() != records[0]['digest']:
+                return False
+            accepted_at = datetime.fromisoformat(json.loads(records[0]['payload'])['recorded_at'])
+            return datetime.fromisoformat(session['opens_at']) <= accepted_at <= self.now()
+        except (ValueError, TypeError, KeyError):
+            return False
+
     def snapshot_valid(self, account):
         try:
             age=(self.now()-datetime.fromisoformat(account['snapshot_at'])).total_seconds()
@@ -166,7 +194,8 @@ class TradingService:
                 risk_ready=False
             watches=db.all('SELECT symbol FROM watchlist WHERE account_id=? AND enabled=1 AND verified=1',(account_id,))
             market_ready=any(self.market_valid(db,account_id,w['symbol']) for w in watches)
-            return {'state_known':bool(account['state_known']),'snapshot_valid':valid,'stopped':bool(account['stopped']),'global_stopped':globally_stopped,'mode':account['config']['mode'],'broker':'mock','live_enabled':False,'source':'synthetic_mock','market_data_ready':market_ready,'risk_guard_ready':risk_ready,'new_entries_allowed':valid and market_ready and risk_ready and not account['stopped'] and not globally_stopped and account['config']['mode']=='paper' and account['config']['allocation_pct']>0 and account['config']['trade_risk_pct']>0,'emergency_policy':'owned_closes_only_after_trusted_reconciliation'}
+            session=self.market_session(account['config'])
+            return {'state_known':bool(account['state_known']),'snapshot_valid':valid,'stopped':bool(account['stopped']),'global_stopped':globally_stopped,'mode':account['config']['mode'],'broker':'mock','live_enabled':False,'source':'synthetic_mock','market_data_ready':market_ready,'risk_guard_ready':risk_ready,'session':session,'new_entries_allowed':session['entry_allowed'] and valid and market_ready and risk_ready and not account['stopped'] and not globally_stopped and account['config']['mode']=='paper' and account['config']['allocation_pct']>0 and account['config']['trade_risk_pct']>0,'emergency_policy':'owned_closes_only_after_trusted_reconciliation'}
 
     def _check_supervisor(self, db, account, cost=0):
         self._check_linked_risk(db,account,cost)
@@ -561,6 +590,9 @@ class TradingService:
                 return previous
             config = account['config']
             validate_config(config)
+            session = self.market_session(config)
+            if request['side'] == 'BUY' and not session['entry_allowed']:
+                raise Rejected('Market session blocks new entry: ' + session['status'])
             if config['mode'] != 'paper':
                 raise Rejected('Order execution disabled in shadow/analysis modes')
             if request['side']=='BUY' and (account['stopped'] or db.one('SELECT stopped FROM supervisor WHERE id=1')['stopped']):
@@ -609,7 +641,7 @@ class TradingService:
             order_id = str(uuid.uuid4())
             db.execute('INSERT INTO orders(id,account_id,request_key,fingerprint,symbol,right_kind,expiry,strike,side,quantity,limit_cents,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', (order_id,account_id,request['request_key'],fingerprint,symbol,request['right'],request['expiry'],strike,request['side'],quantity,price,'PENDING'))
             db.execute('INSERT INTO order_costs VALUES(?,?)',(order_id,config['commission_cents']))
-            self.decision(db, account_id, 'ORDER_ACCEPTED', {'request':request, 'config':config, 'automatic_authority':bool(getattr(self,'_automatic_origin',getattr(self,'_automation_authorized',False))), 'account_equity_cents':account['equity'], 'realized_pnl_cents':account['realized'], 'facts':getattr(self, '_decision_context', {'reason':'MANUAL_STRUCTURED_REQUEST','language_model_authority':False}), 'risk_rules':'v1_direction_owned_pending_cap_allocation_daily_trust'}, order_id, getattr(self, '_intent_id', None))
+            self.decision(db, account_id, 'ORDER_ACCEPTED', {'request':request, 'config':config, 'session':session, 'automatic_authority':bool(getattr(self,'_automatic_origin',getattr(self,'_automation_authorized',False))), 'account_equity_cents':account['equity'], 'realized_pnl_cents':account['realized'], 'facts':getattr(self, '_decision_context', {'reason':'MANUAL_STRUCTURED_REQUEST','language_model_authority':False}), 'risk_rules':'v1_direction_owned_pending_cap_allocation_daily_trust'}, order_id, getattr(self, '_intent_id', None))
             self.audit(db, account_id, 'MOCK_ORDER_ACCEPTED', {'order_id':order_id})
             return db.one('SELECT * FROM orders WHERE id=?', (order_id,))
     def fill(self, account_id, order_id, fill_id, quantity, price_cents):
@@ -640,6 +672,11 @@ class TradingService:
                     raise Rejected('Fill identifier collision')
                 return order
             validate_config(account['config'])
+            session = self.market_session(account['config'])
+            if not session['fill_allowed']:
+                raise Rejected('Market session blocks fill: ' + session['status'])
+            if order['side'] == 'BUY' and not self.entry_session_current(db, order, session):
+                raise Rejected('Market session or prior-session decision blocks entry fill')
             if account['config']['mode'] != 'paper':
                 raise Rejected('Fill simulation disabled outside paper/mock mode')
             if not self.snapshot_valid(account) or (order['side']=='BUY' and (account['stopped'] or db.one('SELECT stopped FROM supervisor WHERE id=1')['stopped'])):

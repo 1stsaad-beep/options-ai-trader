@@ -93,6 +93,8 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
     account = service.account(db, account_id)
     validate_config(account['config'])
     config = account['config']
+    session = service.market_session(config)
+    result['session'] = session
     if not config['automation_enabled']:
         raise Rejected('Automatic Mock execution is disabled for this account')
     if config['mode'] != 'paper' or config['broker'] != 'mock':
@@ -116,6 +118,11 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
         service.reconcile(account_id)
 
     guard()
+    if config['session_policy'] != 'synthetic_24x7':
+        for order in db.all("SELECT * FROM orders WHERE account_id=? AND side='BUY' AND status IN ('PENDING','PARTIAL')", (account_id,)):
+            if not service.entry_session_current(db, order, session):
+                service.cancel(account_id, order['id'])
+                result['actions'].append({'type': 'CANCEL', 'order_id': order['id'], 'reason': 'SESSION_ENTRY_WINDOW_ENDED'})
     result['expired_positions'] = service.expire(account_id)
     if result['expired_positions']:
         result['actions'].append({'type': 'EXPIRY_WRITEOFF', 'count': result['expired_positions'],
@@ -191,7 +198,7 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
     exit_symbols = set()
     # Opposite signals are an explicit opt-in exit-and-revalidate policy. The
     # lifecycle captures the original facts before cancelling any old entries.
-    if config['reversal_enabled'] and not account['stopped'] and not db.one('SELECT stopped FROM supervisor WHERE id=1')['stopped']:
+    if session['entry_allowed'] and config['reversal_enabled'] and not account['stopped'] and not db.one('SELECT stopped FROM supervisor WHERE id=1')['stopped']:
         for row in db.all('SELECT DISTINCT symbol,right_kind FROM positions WHERE account_id=?',(account_id,)):
             try:
                 analysis=AnalysisPipeline().analyze((feed or fixture_bars)(row['symbol'],now),now)
@@ -219,7 +226,12 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
             if policy:
                 db.execute('UPDATE position_policies SET high_bid=? WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?',(high,)+owned_key)
             trailing=bool(config['trailing_stop_pct'] and bid*100<=high*(100-config['trailing_stop_pct']))
-            intraday=config['holding']=='intraday' and now.hour>=config['intraday_exit_hour_utc']
+            if config['session_policy'] == 'synthetic_24x7':
+                intraday=config['holding']=='intraday' and now.hour>=config['intraday_exit_hour_utc']
+            else:
+                from .market_sessions import prior_session_position
+                carried=bool(policy and prior_session_position(datetime.fromisoformat(policy['opened_at']), now))
+                intraday=config['holding']=='intraday' and (session['exit_due'] or carried)
             swing=config['holding']=='swing' and policy is not None and (now-datetime.fromisoformat(policy['opened_at'])).days>=config['swing_max_days']
             near_expiry=(date.fromisoformat(position['expiry'])-now.date()).days<=config['expiry_exit_days']
             partial=bool(config['partial_profit_pct'] and policy and not policy['partial_taken'] and position['quantity']>=2 and premium*100>=position['cost']*(100+config['partial_profit_pct']))
@@ -302,13 +314,13 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
 
     # Durable reversals only advance after old fills/cancellations are settled.
     from .lifecycle import advance_reversal
-    for intent in db.all("SELECT * FROM lifecycle_intents WHERE account_id=? AND kind='REVERSAL' AND state NOT IN ('COMPLETE','EXPIRED','CANCELLED')",(account_id,)):
+    for intent in (db.all("SELECT * FROM lifecycle_intents WHERE account_id=? AND kind='REVERSAL' AND state NOT IN ('COMPLETE','EXPIRED','CANCELLED')",(account_id,)) if session['entry_allowed'] else []):
         try:
             advance_reversal(service,account_id,intent['id'],(feed or fixture_bars)(intent['symbol'],now),quotes(intent['symbol']))
         except Exception as exc:
             blocked(intent['symbol'],exc)
 
-    if config['scaling_enabled']:
+    if config['scaling_enabled'] and session['entry_allowed']:
         for position in db.all('SELECT * FROM positions WHERE account_id=?',(account_id,)):
             if position['symbol'] in exit_symbols:
                 continue
@@ -324,7 +336,7 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
     ranked = []
     analysis_facts = {}
     current = service.account(db, account_id)
-    if not current['stopped'] and not db.one('SELECT stopped FROM supervisor WHERE id=1')['stopped']:
+    if session['entry_allowed'] and not current['stopped'] and not db.one('SELECT stopped FROM supervisor WHERE id=1')['stopped']:
         for watch in db.all('SELECT * FROM watchlist WHERE account_id=? AND enabled=1 AND verified=1 ORDER BY symbol', (account_id,)):
             symbol = watch['symbol']
             if symbol in exit_symbols:

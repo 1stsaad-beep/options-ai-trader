@@ -544,7 +544,7 @@ class DemoEngine {
     final authorization = <String, dynamic>{
       'origin': entryOrigin,
       'strategy': ['automation', 'manual_reversal', 'automatic_reversal'].contains(entryOrigin)
-          ? evidence?['strategy'] : null,
+          ? (evidence == null ? null : evidence['strategy']) : null,
     };
     if (side == 'BUY') {
       _authorizeEntry(a, authorization);
