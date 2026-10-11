@@ -3,6 +3,7 @@
     "schema_version": 1,
     "mode": "SHADOW",
     "source": "synthetic_fixture",
+    "quote_model_version": "synthetic-option-fixture-v1",
     "account_id": "00000000-0000-0000-0000-000000000001",
     "symbol": "NVDA",
     "as_of": "2026-10-09T00:40:35+00:00",
@@ -279,6 +280,7 @@
       "schema_version": 1,
       "mode": "SHADOW",
       "source": "synthetic_fixture",
+      "quote_model_version": "synthetic-option-fixture-v1",
       "account_id": "00000000-0000-0000-0000-000000000001",
       "symbol": "NVDA",
       "as_of": "2026-10-09T00:40:35+00:00",
@@ -559,10 +561,27 @@
         "as_of": "2026-10-09T00:40:35+00:00",
         "decision_id": "8df716515ffde1396dff65b4822f23771cd5e600a3aaee93c606a71592f360e7",
         "decided_at": "2026-10-09T00:40:35+00:00",
-        "digest": "462615b1c0208d58ce4980332ab270991b11d7a513a244c4e63948e2f34e46c9"
+        "digest": "0e4d02a8b3ec04b6aeae0d36fc569369813b36f7fc7e96a55c451d4c1236ebd6"
       }
     ],
     "truncated": false
+  },
+  "observation": {
+    "schema_version": 1,
+    "mode": "SHADOW",
+    "source": "synthetic_fixture",
+    "account_id": "00000000-0000-0000-0000-000000000001",
+    "symbol": "NVDA",
+    "execution_authority": false,
+    "external_connections": false,
+    "profitability_evidence": false,
+    "snapshot_id": "00000000-0000-0000-0000-000000000004",
+    "quote_model_version": "synthetic-option-fixture-v1",
+    "contract_id": "SYNTHETIC:NVDA:CALL:108.00:2026-11-08T20:00:00+00:00",
+    "observed_at": "2026-10-09T00:41:00+00:00",
+    "captured_at": "2026-10-09T00:41:35+00:00",
+    "bid": 3.12802755351063,
+    "ask": 3.16802755351063
   },
   "replay": {
     "schema_version": 1,
@@ -837,6 +856,7 @@
       },
       "observed_at": "2026-10-09T00:40:00+00:00",
       "profitability_evidence": false,
+      "quote_model_version": "synthetic-option-fixture-v1",
       "schema_version": 1,
       "source": "synthetic_fixture",
       "symbol": "NVDA"

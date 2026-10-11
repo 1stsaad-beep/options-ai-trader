@@ -2,6 +2,7 @@
 /// no execution authority; unsupported versions and mismatched identities fail.
 class ResearchContract {
   static const int schemaVersion = 1;
+  static const String quoteModelVersion = 'synthetic-option-fixture-v1';
 
   static Map<String, dynamic> object(dynamic value) {
     if (value is! Map || value.keys.any((key) => key is! String)) {
@@ -69,6 +70,10 @@ class ResearchWorkbench {
 
   factory ResearchWorkbench.parse(dynamic value, String accountId, String symbol) {
     final data = ResearchContract.envelope(value, accountId, symbol);
+    if (data.containsKey('quote_model_version') &&
+        data['quote_model_version'] != ResearchContract.quoteModelVersion) {
+      throw const FormatException('Unsupported synthetic quote model');
+    }
     final asOf = ResearchContract.timestamp(data['as_of']);
     final observed = ResearchContract.timestamp(data['observed_at']);
     final contract = ResearchContract.object(data['contract']);
@@ -107,6 +112,35 @@ class ResearchSnapshot {
     final data = ResearchContract.envelope(value, accountId, symbol);
     return ResearchSnapshot._(ResearchContract.text(data['snapshot_id']),
       ResearchWorkbench.parse(data['workbench'], accountId, symbol));
+  }
+}
+
+class ResearchObservation {
+  final String snapshotId;
+  final String contractId;
+  final DateTime observedAt;
+  final DateTime capturedAt;
+  final double bid;
+  final double ask;
+  ResearchObservation._(this.snapshotId, this.contractId, this.observedAt,
+      this.capturedAt, this.bid, this.ask);
+
+  factory ResearchObservation.parse(dynamic value, String accountId,
+      String symbol, String snapshotId) {
+    final data = ResearchContract.envelope(value, accountId, symbol);
+    final observedAt = ResearchContract.timestamp(data['observed_at']);
+    final capturedAt = ResearchContract.timestamp(data['captured_at']);
+    final contractId = ResearchContract.text(data['contract_id']);
+    final bid = data['bid'], ask = data['ask'];
+    if (data['snapshot_id'] != snapshotId ||
+        data['quote_model_version'] != ResearchContract.quoteModelVersion ||
+        observedAt.isAfter(capturedAt) ||
+        bid is! num || ask is! num || !bid.isFinite || !ask.isFinite ||
+        bid < 0 || ask < 0 || bid > ask) {
+      throw const FormatException('Invalid persisted synthetic observation');
+    }
+    return ResearchObservation._(snapshotId, contractId, observedAt, capturedAt,
+      bid.toDouble(), ask.toDouble());
   }
 }
 

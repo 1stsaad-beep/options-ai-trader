@@ -343,6 +343,34 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  Future<void> captureResearchObservation() async {
+    if (loading || accountId == null || selectedResearchSnapshot == null) return;
+    final account = accountId!, symbol = researchSymbol;
+    final snapshotId = selectedResearchSnapshot!;
+    final requestId = ++generation;
+    setState(() {
+      loading = true; error = null; researchNotice = null;
+    });
+    try {
+      final observation = await api.captureResearchObservation(account, symbol, snapshotId);
+      if (!researchRequestIsCurrent(requestId, account, symbol) ||
+          selectedResearchSnapshot != snapshotId) { return; }
+      setState(() {
+        researchReplay = null;
+        researchNotice = 'حُفظت ملاحظة اصطناعية عند ${observation.observedAt.toIso8601String()}. '
+          'احفظ ملاحظة أخرى في دقيقة لاحقة ثم أعد عرض اللقطة. القرار الأصلي لم يتغير.';
+      });
+    } catch (e) {
+      if (researchRequestIsCurrent(requestId, account, symbol)) {
+        setState(() => error = '$e — لم تُعد المحاولة تلقائيًا. أعد عرض اللقطة للتحقق من النتيجة قبل أي طلب جديد.');
+      }
+    } finally {
+      if (researchRequestIsCurrent(requestId, account, symbol)) {
+        setState(() => loading = false);
+      }
+    }
+  }
+
   Future<bool> mutate(String method, String path, [Object? body]) async {
     setState(() {
       loading = true;
@@ -1100,6 +1128,11 @@ class _DashboardState extends State<Dashboard> {
             OutlinedButton.icon(key: const Key('backend-research-replay'),
               onPressed: loading || selectedResearchSnapshot == null ? null : replayResearchSnapshot,
               icon: const Icon(Icons.history), label: const Text('إعادة عرض اللقطة الأصلية')),
+            OutlinedButton.icon(key: const Key('backend-research-capture'),
+              onPressed: loading || selectedResearchSnapshot == null ? null : captureResearchObservation,
+              icon: const Icon(Icons.add_chart), label: const Text('حفظ ملاحظة اصطناعية لاحقة')),
+            const Text('النتيجة البديلة تستخدم الملاحظات الاصطناعية المحفوظة فقط. '
+              'احفظ ملاحظتين في دقيقتين مختلفتين بعد القرار؛ إعادة العرض لا تولّد أسعارًا تاريخية.'),
           ],
           if (researchSnapshots!.truncated) const Text('تُعرض أحدث اللقطات فقط؛ توجد لقطات أقدم في الخادم.'),
         ],
@@ -1107,9 +1140,9 @@ class _DashboardState extends State<Dashboard> {
           padding: const EdgeInsets.all(12),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('اللقطة: ${researchReplay!.snapshotId}'),
-            const Text('Counterfactual • نتيجة افتراضية ببيانات اصطناعية؛ ليست تنفيذًا أو دليل ربحية.'),
+            const Text('Counterfactual • نتيجة افتراضية بملاحظات اصطناعية محفوظة؛ ليست أسعار سوق أو تنفيذًا أو دليل ربحية.'),
             if (!researchReplay!.hasOutcome)
-              const Text('النتيجة غير متاحة: لا توجد ملاحظات لاحقة كافية حتى وقت الإعادة. لم تُختلق أسعار أو أرباح.',
+              const Text('النتيجة غير متاحة: لا توجد ملاحظات اصطناعية لاحقة محفوظة وكافية. لم تُختلق أسعار أو أرباح.',
                 key: Key('backend-replay-unavailable')),
             if (researchReplay!.hasOutcome) ...[
               Text('صافي افتراضي بعد التكاليف: ${format(researchReplay!.counterfactual['pnl'])}',

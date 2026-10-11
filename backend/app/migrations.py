@@ -98,7 +98,18 @@ def lifecycle_schema(db, postgres):
             db.execute(f"CREATE TRIGGER immutable_cost_v1_{action.lower()} BEFORE {action} ON order_costs BEGIN SELECT RAISE(ABORT, 'order costs are immutable'); END")
 
 
-MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema)]
+def research_observation_schema(db, postgres):
+    """Preserve decisions and append only observations actually captured later."""
+    db.execute('CREATE UNIQUE INDEX uq_decision_account_identity ON decision_snapshots(account_id,id)')
+    db.execute('CREATE TABLE research_observations (account_id TEXT NOT NULL, snapshot_id TEXT NOT NULL, observed_at TEXT NOT NULL, captured_at TEXT NOT NULL, payload TEXT NOT NULL, digest TEXT NOT NULL, PRIMARY KEY(snapshot_id,observed_at), FOREIGN KEY(account_id,snapshot_id) REFERENCES decision_snapshots(account_id,id))')
+    if postgres:
+        db.execute('CREATE TRIGGER immutable_research_observation BEFORE UPDATE OR DELETE ON research_observations FOR EACH ROW EXECUTE FUNCTION immutable_decision_v1()')
+    else:
+        for action in ('UPDATE', 'DELETE'):
+            db.execute(f"CREATE TRIGGER immutable_research_observation_{action.lower()} BEFORE {action} ON research_observations BEGIN SELECT RAISE(ABORT, 'research observations are immutable'); END")
+
+
+MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema)]
 
 
 def migrate(db, postgres):

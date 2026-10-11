@@ -34,6 +34,13 @@ Map<String, dynamic> researchSavedFixture({String account = 'a', String symbol =
   'snapshot_id': 'saved-$account', 'workbench': researchFixture(account: account, symbol: symbol),
 };
 
+Map<String, dynamic> researchObservationFixture({String account = 'a', String symbol = 'NVDA'}) => {
+  ...researchEnvelope(account: account, symbol: symbol), 'snapshot_id': 'saved-$account',
+  'observed_at': '2026-01-05T15:01:00Z', 'captured_at': '2026-01-05T15:01:30Z',
+  'quote_model_version': 'synthetic-option-fixture-v1',
+  'contract_id': 'contract-$symbol', 'bid': 3.1, 'ask': 3.15,
+};
+
 Map<String, dynamic> researchReplayFixture({String account = 'a', String symbol = 'NVDA',
     bool outcome = false}) => {
   ...researchEnvelope(account: account, symbol: symbol), 'snapshot_id': 'saved-$account',

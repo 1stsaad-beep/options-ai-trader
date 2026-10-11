@@ -26,6 +26,7 @@ EPOCH = datetime(2026, 1, 1, tzinfo=timezone.utc)
 QUALITY = ContractQualityPolicy(max_age_seconds=120)
 REPLAY_HOLDING_OBSERVATIONS = 1
 FIXED_RESEARCH_EXPIRY = datetime(2027, 12, 31, 20, tzinfo=timezone.utc)
+QUOTE_MODEL_VERSION = 'synthetic-option-fixture-v1'
 
 
 def _spot(symbol, stamp):
@@ -207,6 +208,7 @@ def _project(context, symbol, now):
                   contract.contract_id, reasons, evidence)
     decision = memory.to_state()['records'][0]
     return {'schema_version': 1, 'mode': 'SHADOW', 'source': 'synthetic_fixture',
+            'quote_model_version': QUOTE_MODEL_VERSION,
             'account_id': account['id'], 'symbol': symbol, 'as_of': now.isoformat(),
             'observed_at': contract.observed_at.isoformat(), 'contract': _json_contract(contract),
             'modules': modules, 'decision': decision, 'execution_authority': False,
@@ -287,10 +289,17 @@ def snapshot_workbench(service, account_id, symbol):
 
 
 def replay_workbench(service, account_id, symbol, snapshot_id):
+    now = service.now()
+    aware(now)
+    now = now.astimezone(timezone.utc)
     with service.repo.transaction() as db:
         service.account(db, account_id)
         row = db.one("SELECT * FROM decision_snapshots WHERE account_id=? AND id=? AND action='SHADOW_RESEARCH'",
                      (account_id, snapshot_id))
+        # Capture time as well as market time must have been available by replay.
+        observations = db.all('SELECT * FROM research_observations WHERE account_id=? AND snapshot_id=? '
+                              'AND captured_at<=? AND observed_at<=? ORDER BY observed_at LIMIT 2',
+                              (account_id, snapshot_id, now.isoformat(), now.isoformat()))
     if not row:
         raise Rejected('Unknown account research snapshot')
     try:
@@ -305,12 +314,7 @@ def replay_workbench(service, account_id, symbol, snapshot_id):
         evidence = json.loads(decision.evidence_json)
         if evidence['holding_observations'] != REPLAY_HOLDING_OBSERVATIONS:
             raise ValueError('Saved replay policy mismatch')
-        now = service.now()
-        aware(now)
-        first = decision.decided_at.replace(second=0, microsecond=0) + timedelta(minutes=1)
-        quotes = tuple(fixture_quote(contract.symbol, contract.right, contract.strike, stamp)
-                       for stamp in (first, first + timedelta(minutes=1))
-                       if stamp <= now and stamp < contract.expiry)
+        quotes = tuple(_observation(row, result, snapshot_id, now) for row in observations)
         replay = CounterfactualReplay().replay(decision, quotes, now,
                     holding_observations=REPLAY_HOLDING_OBSERVATIONS,
                     commission=contract.commission_per_contract, slippage=contract.slippage_per_share,
@@ -323,3 +327,71 @@ def replay_workbench(service, account_id, symbol, snapshot_id):
             'account_id': account_id, 'symbol': symbol, 'original_decision': result['decision'],
             'counterfactual': replay, 'execution_authority': False,
             'external_connections': False, 'profitability_evidence': False}
+
+
+def _observation(row, workbench, snapshot_id, as_of):
+    if sha256(row['payload'].encode()).hexdigest() != row['digest']:
+        raise ValueError('Observation digest mismatch')
+    value = json.loads(row['payload'])
+    for key, expected in {**_envelope(workbench['account_id'], workbench['symbol']),
+                          'snapshot_id': snapshot_id,
+                          'contract_id': workbench['contract']['contract_id'],
+                          'quote_model_version': workbench.get('quote_model_version')}.items():
+        if type(value.get(key)) is not type(expected) or value.get(key) != expected:
+            raise ValueError('Observation identity mismatch')
+    if value['quote_model_version'] != QUOTE_MODEL_VERSION:
+        raise ValueError('Unsupported captured quote model')
+    observed = datetime.fromisoformat(row['observed_at'])
+    captured = datetime.fromisoformat(row['captured_at'])
+    decided = datetime.fromisoformat(workbench['decision']['decided_at'])
+    if (value['observed_at'] != row['observed_at'] or value['captured_at'] != row['captured_at']
+            or not decided < observed <= captured <= as_of
+            or observed >= datetime.fromisoformat(workbench['contract']['expiry'])):
+        raise ValueError('Observation time mismatch')
+    return ResearchPoint(observed, value['bid'], value['ask'])
+
+
+def capture_workbench_observation(service, account_id, symbol, snapshot_id):
+    """Capture this minute's fixture quote prospectively; never fill missing past.
+
+    Empty-body POST accepts no prices or timestamps. Duplicate requests in one
+    minute return the same immutable observation without another audit event.
+    """
+    with service.repo.transaction() as db:
+        service.account(db, account_id)
+        row = db.one("SELECT * FROM decision_snapshots WHERE account_id=? AND id=? AND action='SHADOW_RESEARCH'",
+                     (account_id, snapshot_id))
+        if not row:
+            raise Rejected('Unknown account research snapshot')
+        try:
+            result, decision = _stored_workbench(row, account_id)
+            if result['symbol'] != symbol or result.get('quote_model_version') != QUOTE_MODEL_VERSION:
+                raise ValueError('Snapshot source version or symbol does not support new observations')
+            now = service.now()
+            aware(now)
+            now = now.astimezone(timezone.utc)
+            if result['contract']['contract_id'] != decision.contract_id or result['contract']['symbol'] != symbol:
+                raise ValueError('Saved contract identity mismatch')
+            observed = now.replace(second=0, microsecond=0)
+            if not decision.decided_at < observed < datetime.fromisoformat(result['contract']['expiry']):
+                raise ValueError('A later unexpired synthetic minute is required')
+            prior = db.one('SELECT * FROM research_observations WHERE account_id=? AND snapshot_id=? AND observed_at=?',
+                           (account_id, snapshot_id, observed.isoformat()))
+            if prior:
+                _observation(prior, result, snapshot_id, now)
+                return json.loads(prior['payload'])
+            contract = result['contract']
+            quote = fixture_quote(symbol, contract['right'], contract['strike'], observed)
+            payload = {**_envelope(account_id, symbol), 'snapshot_id': snapshot_id,
+                       'quote_model_version': QUOTE_MODEL_VERSION, 'contract_id': contract['contract_id'],
+                       'observed_at': observed.isoformat(), 'captured_at': now.isoformat(),
+                       'bid': quote.bid, 'ask': quote.ask}
+            encoded = json.dumps(payload, sort_keys=True, allow_nan=False)
+            db.execute('INSERT INTO research_observations VALUES(?,?,?,?,?,?)',
+                       (account_id, snapshot_id, observed.isoformat(), now.isoformat(), encoded,
+                        sha256(encoded.encode()).hexdigest()))
+            service.audit(db, account_id, 'RESEARCH_OBSERVATION', {'snapshot_id': snapshot_id,
+                          'symbol': symbol, 'observed_at': observed.isoformat(), 'source': 'synthetic_fixture'})
+            return payload
+        except (ValueError, TypeError, KeyError, OverflowError) as exc:
+            raise Rejected('Research observation rejected: ' + str(exc)) from exc

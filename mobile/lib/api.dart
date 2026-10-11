@@ -169,5 +169,17 @@ class TraderApi {
     return _researchResult(() => ResearchReplay.parse(value, accountId, symbol, snapshotId));
   }
 
+  /// Explicitly persists a later synthetic observation; never retries a write.
+  Future<ResearchObservation> captureResearchObservation(
+      String accountId, String symbol, String snapshotId) async {
+    if (snapshotId.trim().isEmpty) {
+      throw const ApiException('معرّف لقطة البحث غير صالح');
+    }
+    final value = await request('POST',
+      '${_researchPath(accountId, symbol)}/snapshots/${Uri.encodeComponent(snapshotId)}/observations',
+      <String, dynamic>{});
+    return _researchResult(() => ResearchObservation.parse(value, accountId, symbol, snapshotId));
+  }
+
   void close() => client.close();
 }

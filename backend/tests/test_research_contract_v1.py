@@ -16,7 +16,7 @@ import pytest
 from app.main import create_app
 from app.repository import Repository
 from app.research_workbench import (inspect_workbench, snapshot_workbench,
-                                   list_workbench_snapshots, replay_workbench)
+                                   list_workbench_snapshots, replay_workbench, capture_workbench_observation)
 from app.service import Rejected, TradingService
 
 FIXTURE = Path(__file__).parents[2] / 'mobile/test/fixtures/research_contract_v1.json'
@@ -37,9 +37,12 @@ def fixture_payload():
             current = inspect_workbench(service, account, 'NVDA')
             snapshot = snapshot_workbench(service, account, 'NVDA')
             listing = list_workbench_snapshots(service, account, 'NVDA')
-            clock[0] += timedelta(minutes=2)
+            clock[0] += timedelta(minutes=1)
+            observation = capture_workbench_observation(service, account, 'NVDA', snapshot['snapshot_id'])
+            clock[0] += timedelta(minutes=1)
+            capture_workbench_observation(service, account, 'NVDA', snapshot['snapshot_id'])
             replay = replay_workbench(service, account, 'NVDA', snapshot['snapshot_id'])
-            return dict(current=current, snapshot=snapshot, list=listing, replay=replay)
+            return dict(current=current, snapshot=snapshot, list=listing, observation=observation, replay=replay)
     finally:
         repo.close()
 

@@ -218,6 +218,10 @@ def create_app(repository=None, token=None):
     def research_replay(account_id: str,symbol: str,snapshot_id: str,s=Depends(service)):
         from .research_workbench import replay_workbench
         return replay_workbench(s,account_id,symbol,snapshot_id)
+    @app.post('/api/accounts/{account_id}/research/{symbol}/snapshots/{snapshot_id}/observations',dependencies=secured)
+    def research_observation(account_id: str,symbol: str,snapshot_id: str,body: AutomationRun,s=Depends(service)):
+        from .research_workbench import capture_workbench_observation
+        return capture_workbench_observation(s,account_id,symbol,snapshot_id)
     @app.get('/api/accounts/{account_id}/analysis/{symbol}',dependencies=secured)
     def analysis(account_id: str,symbol: str,s=Depends(service)):
         from .analysis_service import inspect_analysis

@@ -106,6 +106,49 @@ def run():
         with first.transaction() as db:
             assert db.one('SELECT COUNT(*) AS n FROM schema_migrations')['n'] >= 4
         checks.append('additive_migrations')
+        # Actual PostgreSQL persistence/locking for prospective research input.
+        from app.research_workbench import snapshot_workbench, capture_workbench_observation, replay_workbench
+        clock = [datetime(2026, 10, 9, 14, tzinfo=timezone.utc)]
+        research = [TradingService(repo, now=lambda: clock[0], today=lambda: clock[0].date())
+                    for repo in (first, second)]
+        journal_account = research[0].create_account(prefix + '-research')['id']
+        research[0].watch(journal_account, 'NVDA', True)
+        saved = snapshot_workbench(research[0], journal_account, 'NVDA')
+        key = saved['snapshot_id']
+        clock[0] += timedelta(minutes=1)
+        barrier = threading.Barrier(2)
+        def capture(index):
+            barrier.wait(timeout=10)
+            return capture_workbench_observation(research[index], journal_account, 'NVDA', key)
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            captured = list(pool.map(capture, range(2)))
+        assert captured[0] == captured[1]
+        with first.transaction() as db:
+            assert db.one('SELECT COUNT(*) AS n FROM research_observations WHERE snapshot_id=?', (key,))['n'] == 1
+        checks.append('concurrent_research_observation_has_one_immutable_receipt')
+        clock[0] += timedelta(minutes=1)
+        capture_workbench_observation(research[0], journal_account, 'NVDA', key)
+        replay = replay_workbench(research[1], journal_account, 'NVDA', key)
+        assert replay['counterfactual']['status'] == 'REPLAYED'
+        assert replay['original_workbench'] == saved['workbench']
+        checks.append('cross_connection_research_replay_uses_saved_observations')
+        for statement in ('UPDATE research_observations SET digest=digest WHERE snapshot_id=?',
+                          'DELETE FROM research_observations WHERE snapshot_id=?'):
+            try:
+                with first.transaction() as db:
+                    db.execute(statement, (key,))
+            except Exception as exc:
+                assert 'immutable' in str(exc)
+            else:
+                raise AssertionError('Research observation changed')
+        checks.append('research_observation_update_delete_guards')
+        try:
+            capture_workbench_observation(research[1], b, 'NVDA', key)
+        except Rejected:
+            pass
+        else:
+            raise AssertionError('Cross-account research observation accepted')
+        checks.append('research_observation_account_isolation')
         print(json.dumps({'status': 'passed', 'checks_passed': len(checks), 'checks_failed': 0,
                           'checks': checks, 'database': 'PostgreSQL', 'broker': 'none'}, indent=2))
     finally:

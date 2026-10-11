@@ -10,7 +10,7 @@ from app.main import create_app
 from app.repository import Repository
 from app.research import DecisionMemory, MomentumCandidate, StrategyTournament
 from app.research_workbench import (
-    _contract, fixture_quotes, inspect_workbench, replay_workbench, snapshot_workbench,
+    _contract, fixture_quotes, inspect_workbench, replay_workbench, snapshot_workbench, capture_workbench_observation,
 )
 from app.service import Rejected, TradingService
 
@@ -80,7 +80,10 @@ def test_snapshot_survives_restart_and_preserves_decision_reasons(world):
     pending = replay_workbench(service, first, 'NVDA', identifier)
     assert pending['counterfactual']['status'] == 'INSUFFICIENT_OBSERVED_OUTCOME'
     assert pending['counterfactual']['pnl'] is None
-    clock[0] += timedelta(minutes=2)
+    clock[0] += timedelta(minutes=1)
+    capture_workbench_observation(service, first, 'NVDA', identifier)
+    clock[0] += timedelta(minutes=1)
+    capture_workbench_observation(service, first, 'NVDA', identifier)
     restarted = TradingService(service.repo, now=lambda: clock[0], today=lambda: clock[0].date())
     service.watch(first, 'NVDA', False)  # Historical evidence remains readable after monitoring stops.
     replay = replay_workbench(restarted, first, 'NVDA', identifier)
@@ -106,9 +109,11 @@ def test_replay_does_not_use_future_quotes_or_reprice_original_costs(world):
     service, first, _, clock = world
     original = snapshot_workbench(service, first, 'NVDA')
     clock[0] = NOW.replace(second=0) + timedelta(minutes=1)
+    capture_workbench_observation(service, first, 'NVDA', original['snapshot_id'])
     result = replay_workbench(service, first, 'NVDA', original['snapshot_id'])
     assert result['counterfactual']['status'] == 'INSUFFICIENT_OBSERVED_OUTCOME'
     clock[0] += timedelta(minutes=1)
+    capture_workbench_observation(service, first, 'NVDA', original['snapshot_id'])
     first_replay = replay_workbench(service, first, 'NVDA', original['snapshot_id'])
     service.configure(first, {'commission_cents': 900})
     clock[0] += timedelta(days=300)

@@ -41,11 +41,11 @@ jobs:
         run: python scripts/smoke_http.py > http-smoke.json
       - name: Deterministic Mock lifecycle scenarios
         run: python scripts/demo_lifecycle.py > lifecycle-synthetic.json
-      - run: python scripts/postgres_check.py
+      - run: python scripts/postgres_check.py > postgres-basic.txt
         env:
           TEST_DATABASE_ALLOW_DISPOSABLE: "1"
           TEST_DATABASE_URL: postgresql://trader:ci_ephemeral_demo@localhost:5432/options_test
-      - run: python scripts/postgres_v1_check.py
+      - run: python scripts/postgres_v1_check.py > postgres-v1-results.json
         env:
           TEST_DATABASE_ALLOW_DISPOSABLE: "1"
           TEST_DATABASE_URL: postgresql://trader:ci_ephemeral_demo@localhost:5432/options_test
@@ -70,6 +70,8 @@ jobs:
             http-smoke.json
             lifecycle-synthetic.json
             postgres-backup-restore.json
+            postgres-basic.txt
+            postgres-v1-results.json
   compose-runtime:
     runs-on: ubuntu-latest
     timeout-minutes: 25

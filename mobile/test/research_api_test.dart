@@ -16,9 +16,12 @@ void main() {
     final current = ResearchWorkbench.parse(fixture['current'], account, symbol);
     final saved = ResearchSnapshot.parse(fixture['snapshot'], account, symbol);
     final listing = ResearchSnapshotList.parse(fixture['list'], account, symbol);
+    final observation = ResearchObservation.parse(fixture['observation'], account, symbol, saved.snapshotId);
     final replay = ResearchReplay.parse(fixture['replay'], account, symbol, saved.snapshotId);
     expect(current.decision['decision_id'], saved.workbench.decision['decision_id']);
     expect(listing.items.single.snapshotId, saved.snapshotId);
+    expect(observation.contractId, saved.workbench.decision['contract_id']);
+    expect(observation.bid, lessThanOrEqualTo(observation.ask));
     expect(replay.original.data, saved.workbench.data);
     expect(replay.hasOutcome, true);
   });
@@ -30,6 +33,7 @@ void main() {
       final path = request.url.path;
       final value = path.endsWith('/snapshot') ? researchSavedFixture() :
         path.endsWith('/snapshots') ? researchListFixture(saved: true) :
+        path.endsWith('/observations') ? researchObservationFixture() :
         path.endsWith('/replay') ? researchReplayFixture(outcome: true) : researchFixture();
       if (request.method == 'POST') expect(jsonDecode(request.body), isEmpty);
       return http.Response(jsonEncode(value), 200);
@@ -37,11 +41,13 @@ void main() {
     expect((await api.inspectResearch('a', 'NVDA')).symbol, 'NVDA');
     expect((await api.saveResearchSnapshot('a', 'NVDA')).snapshotId, 'saved-a');
     expect((await api.listResearchSnapshots('a', 'NVDA')).items.single.decisionId, 'decision-a');
+    expect((await api.captureResearchObservation('a', 'NVDA', 'saved-a')).snapshotId, 'saved-a');
     expect((await api.replayResearchSnapshot('a', 'NVDA', 'saved-a')).hasOutcome, true);
     expect(calls, [
       'GET /api/accounts/a/research/NVDA',
       'POST /api/accounts/a/research/NVDA/snapshot',
       'GET /api/accounts/a/research/NVDA/snapshots',
+      'POST /api/accounts/a/research/NVDA/snapshots/saved-a/observations',
       'GET /api/accounts/a/research/NVDA/snapshots/saved-a/replay',
     ]);
   });
@@ -58,6 +64,7 @@ void main() {
       {...researchFixture(), 'profitability_evidence': true},
       {...researchFixture(), 'as_of': '2026-01-05T15:00:30'},
       {...researchFixture(), 'observed_at': '2026-01-05T15:01:00Z'},
+      {...researchFixture(), 'quote_model_version': 'unrecognized-model'},
       {...researchFixture(), 'decision': {
         ...researchFixture()['decision'] as Map<String, dynamic>, 'account_id': 'b',
       }},
@@ -112,6 +119,35 @@ void main() {
     expect(attempts, 1);
   });
 
+  test('saved observation rejects scope, model or future timestamp mismatch', () async {
+    for (final data in [
+      researchObservationFixture(account: 'b'),
+      researchObservationFixture(symbol: 'AAPL'),
+      {...researchObservationFixture(), 'snapshot_id': 'different'},
+      {...researchObservationFixture(), 'quote_model_version': 'invented'},
+      {...researchObservationFixture(), 'observed_at': '2026-01-05T15:02:00Z'},
+      {...researchObservationFixture(), 'bid': -1},
+      {...researchObservationFixture(), 'ask': -1},
+      {...researchObservationFixture(), 'bid': 100},
+      {...researchObservationFixture(), 'ask': 'NaN'},
+    ]) {
+      final api = TraderApi(client: MockClient((_) async => http.Response(jsonEncode(data), 200)));
+      await expectLater(api.captureResearchObservation('a', 'NVDA', 'saved-a'),
+        throwsA(isA<ApiException>()));
+    }
+  });
+
+  test('observation response loss does not repeat capture', () async {
+    var attempts = 0;
+    final api = TraderApi(client: MockClient((_) async {
+      attempts++;
+      throw http.ClientException('response lost after capture');
+    }));
+    await expectLater(api.captureResearchObservation('a', 'NVDA', 'saved-a'),
+      throwsA(isA<ApiException>()));
+    expect(attempts, 1);
+  });
+
   test('invalid research identity is rejected before network access', () async {
     var attempts = 0;
     final api = TraderApi(client: MockClient((_) async {
@@ -121,6 +157,7 @@ void main() {
     await expectLater(api.inspectResearch('', 'NVDA'), throwsA(isA<ApiException>()));
     await expectLater(api.saveResearchSnapshot('a', '../NVDA'), throwsA(isA<ApiException>()));
     await expectLater(api.replayResearchSnapshot('a', 'NVDA', ''), throwsA(isA<ApiException>()));
+    await expectLater(api.captureResearchObservation('a', 'NVDA', ''), throwsA(isA<ApiException>()));
     expect(attempts, 0);
   });
 }

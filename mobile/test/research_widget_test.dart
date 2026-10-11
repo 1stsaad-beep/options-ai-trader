@@ -112,7 +112,7 @@ void main() {
     expect(calls.every((c) => c.startsWith('GET ')), true);
   });
 
-  testWidgets('server research explicitly saves, lists and replays original evidence', (t) async {
+  testWidgets('server research explicitly saves, captures and replays original evidence', (t) async {
     var saved = false;
     final calls = <String>[];
     final api = TraderApi(client: MockClient((request) async {
@@ -133,6 +133,9 @@ void main() {
       if (request.url.path.endsWith('/replay')) {
         return http.Response(jsonEncode(researchReplayFixture()), 200);
       }
+      if (request.url.path.endsWith('/observations')) {
+        return http.Response(jsonEncode(researchObservationFixture()), 200);
+      }
       return http.Response(jsonEncode(researchFixture()), 200);
     }));
     await t.pumpWidget(TraderApp(api: api));
@@ -145,6 +148,13 @@ void main() {
     expect(calls.where((call) => call.startsWith('POST')).toList(),
       ['POST /api/accounts/a/research/NVDA/snapshot']);
     expect(find.textContaining('حُفظت لقطة البحث'), findsOneWidget);
+    await t.ensureVisible(find.byKey(const Key('backend-research-capture')));
+    await t.tap(find.byKey(const Key('backend-research-capture')));
+    await t.pumpAndSettle();
+    expect(calls.where((call) => call.endsWith('/observations')).toList(),
+      ['POST /api/accounts/a/research/NVDA/snapshots/saved-a/observations']);
+    expect(find.textContaining('حُفظت ملاحظة اصطناعية'), findsOneWidget);
+    expect(find.byKey(const Key('backend-replay-outcome')), findsNothing);
     await t.ensureVisible(find.byKey(const Key('backend-research-replay')));
     await t.tap(find.byKey(const Key('backend-research-replay')));
     await t.pumpAndSettle();
