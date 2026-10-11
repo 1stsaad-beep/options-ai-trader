@@ -326,7 +326,7 @@ class _DashboardState extends State<Dashboard> {
     try {
       final replay = await api.replayResearchSnapshot(account, symbol, snapshotId);
       if (!researchRequestIsCurrent(requestId, account, symbol) ||
-          selectedResearchSnapshot != snapshotId) return;
+          selectedResearchSnapshot != snapshotId) { return; }
       setState(() {
         researchReplay = replay;
         detail = replay.original.data;

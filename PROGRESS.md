@@ -59,3 +59,9 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Mobile tests and builds require GitHub runners; no local Flutter execution is claimed. Recovery branch now triggers the existing Android/iOS gates. Build number raised to 12, without changing the preview app identity or adding keys.
 - List history is explicitly bounded; counterfactual results remain synthetic fixture outcomes, not actual option observations. All external execution remains locked. Full contract and limits: `docs/RESEARCH_CONTRACT_V1.md`.
 - Independent safety review reproduced partial-profit over-closing, optional-analysis blocking partial exits, and pending reversal fills after permissions changed. These are next-batch safety fixes; no acceptance completion is claimed while they remain.
+
+### Batch 1 CI correction
+
+- Batch 1 pushed and read back at `9eba22278054a771a44c4a0e1c8bff9dff29a8b1`.
+- Backend/Compose CI `38117173190` and security CI `38117173235` succeeded. Android CI `38117173242` stopped at Flutter analyze: one missing brace lint in the replay response guard (`main.dart:329`). Tests/build were not reached and are not counted as passed.
+- Added the required braces without changing behavior; this checkpoint reruns the mobile gate while the separate critical safety batch is being prepared. No source reset or history deletion.
