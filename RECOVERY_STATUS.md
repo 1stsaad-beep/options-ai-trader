@@ -83,3 +83,10 @@ Current code acceptance is at `b39b164f6869305b1e71586ef2d6978a7612fcf1`: 631 Py
 - Added backend-only optional US expiry protection; details in `docs/OPTION_EXPIRATION_POLICY_V1.md`. No live settlement, exercise or assignment is inferred. No external broker connection.
 - Local full acceptance: 850 Python passes, real HTTP/worker/restart smoke passed. PostgreSQL/Compose cloud acceptance for this checkpoint is pending publication.
 - Saved original-source reproduction and current results in `docs/evidence/expiry-20261011/`. No recovery of unavailable prior-session memory is claimed.
+
+## Latest continuation delivery — build 14, 2026-10-11
+
+- Safe source checkpoints: backend `381eec3cf2ed1454764d75ab51683dcf3634e453`; mobile/runtime `c6345ceeb5a94642385aa6eacaaaca322554f29d`. Both were pushed, read back and synchronized exactly locally before subsequent work.
+- Actual current acceptance: 850 Python;186 Flutter per platform;22 PostgreSQL V1;10 backup/restore;12 Compose; Android and unsigned iOS builds; security checks. Evidence under `docs/evidence/expiry-20261011/` and `docs/evidence/backup-20261011/`.
+- Android build 14 uses an ephemeral development signature; iOS Runner.app is unsigned for distribution. No physical device/install/upgrade or broker trial occurred.
+- No unsaved source from an inaccessible prior session is claimed. Existing branches/history/deliverables remain. All remaining gaps and the next recovery starting point are in `docs/ENGINEERING_RESUME_V1.md` and `FINAL_DELIVERY.md`.

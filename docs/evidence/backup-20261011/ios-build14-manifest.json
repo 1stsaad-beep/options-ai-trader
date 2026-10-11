@@ -1,0 +1,31 @@
+{
+  "source_commit": "c6345ceeb5a94642385aa6eacaaaca322554f29d",
+  "run_id": 38126818914,
+  "artifact_id": 11697188083,
+  "file": "options-ai-trader-rc2-build14-ios-unsigned.zip",
+  "sha256": "96a5c3589ee8b5ef6c82ef582dfcc86366fb940d9ee3df58a6772a45621c5e30",
+  "bytes": 7868879,
+  "zip_crc": "passed",
+  "bundle_id": "com.optionsaitrader.optionsAiTrader",
+  "version": "1.0.0",
+  "build": "14",
+  "minimum_os": "15.0",
+  "code_signature_present": false,
+  "flutter_tests": {
+    "success": 186,
+    "failure": 0,
+    "skipped": 0,
+    "done": [
+      {
+        "success": true,
+        "type": "done",
+        "time": 27215
+      }
+    ],
+    "error_events": 0
+  },
+  "embedded_signature_paths": [
+    "build/ios/iphoneos/Runner.app/Frameworks/App.framework/_CodeSignature/CodeResources",
+    "build/ios/iphoneos/Runner.app/Frameworks/Flutter.framework/_CodeSignature/CodeResources"
+  ]
+}

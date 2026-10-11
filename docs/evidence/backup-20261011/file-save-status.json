@@ -1,0 +1,8 @@
+{
+  "persistent_file_upload": "failed_before_transfer",
+  "reason": "required helper authentication unavailable",
+  "uploaded_files": 0,
+  "local_downloads_available": true,
+  "github_artifact_expiration": "2026-10-25",
+  "source_and_text_evidence": "committed to private Recovery branch"
+}

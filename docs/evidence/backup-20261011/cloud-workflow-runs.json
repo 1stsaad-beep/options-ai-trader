@@ -1,0 +1,32 @@
+[
+  {
+    "id": 38126818937,
+    "name": "Android V1.0 RC2 offline demo",
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "c6345ceeb5a94642385aa6eacaaaca322554f29d",
+    "html_url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126818937",
+    "created_at": "2026-10-11T09:00:28Z",
+    "updated_at": "2026-10-11T09:08:09Z"
+  },
+  {
+    "id": 38126818920,
+    "name": "Source and dependency security checks",
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "c6345ceeb5a94642385aa6eacaaaca322554f29d",
+    "html_url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126818920",
+    "created_at": "2026-10-11T09:00:28Z",
+    "updated_at": "2026-10-11T09:00:49Z"
+  },
+  {
+    "id": 38126818914,
+    "name": "iOS V1.0 RC2 unsigned review build",
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "c6345ceeb5a94642385aa6eacaaaca322554f29d",
+    "html_url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126818914",
+    "created_at": "2026-10-11T09:00:28Z",
+    "updated_at": "2026-10-11T09:04:05Z"
+  }
+]

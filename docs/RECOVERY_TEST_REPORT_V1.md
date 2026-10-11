@@ -1,65 +1,60 @@
-# تقرير الاختبارات الفعلية — Engineering RC2، 2026-10-11 UTC
+# تقرير الاختبارات الفعلية — Engineering RC2 build 14
 
-> أحدث دفعة للخادم: 850 Python ناجحًا محليًا وHTTP/worker/restart ناجح؛ قبل الإصلاح 22 فشلًا وبعده 22 نجاحًا لحالات الانتهاء. الأدلة في `evidence/expiry-20261011/`. نجحت بوابات PostgreSQL (22) وbackup/restore (10) وCompose (12) والأمان للمصدر `381eec3`؛ الأرقام والروابط أدناه سجل قبول build 13 السابق.
+تاريخ التحقق **2026-10-11 UTC**. هذا قبول للسيناريوهات المحددة في المحاكاة والبحث، وليس اكتمال V1.0 أو نجاح تكامل وسيط.
 
-**القبول يخص المحاكاة والبحث المحددين، وليس اكتمال V1.0 أو اتصالًا بوسيط.** الأدلة في `docs/evidence/engineering-20261011/`؛ الأدلة التاريخية باقية في `docs/evidence/recovery-20261011/` و`docs/evidence/rc2/`.
+## المصدر والأدلة
 
-## تتبع المصدر
+- بدء الاستئناف من رأس نظيف `3a72226143944dd8985f14d82cc14afc45acbb8f`.
+- الخادم المقبول: `381eec3cf2ed1454764d75ab51683dcf3634e453`.
+- الهاتف build 14: `c6345ceeb5a94642385aa6eacaaaca322554f29d`؛ لم يغير runtime الخادم.
+- أدلة الانتهاء والخادم: [expiry-20261011](evidence/expiry-20261011/). الهاتف: [backup-20261011](evidence/backup-20261011/).
+- سجل build 13 السابق (782 Python،171 Flutter،14 PostgreSQL) محفوظ في [engineering-20261011](evidence/engineering-20261011/) وتاريخ Git وPROGRESS. الأرقام التالية هي القبول الحالي؛ لا تُجمع المجموعات الجزئية أو منصتا Flutter لتضخيمه.
 
-- بدأت المهمة من `72abca1c637fbabf55ecf5d30dcb276c9798170c` على Recovery، لا main.
-- آخر تغيير runtime: `055f42c4aed2d1baaef199a4e38b6873ab1e63b2`.
-- مصدر بناء الهاتف: `67ddb6e7cf58cd59604ab7187a6864d527a69aac`؛ الفرق بعد 055f اختبار widget وسجله وPROGRESS فقط، دون runtime أو lockfile.
-- رأس تسليم التقارير اللاحق لا يعيد بناء التطبيق لأن ملفات التنفيذ لم تتغير.
-
-| البوابة | النتيجة الفعلية | الدليل |
+| البوابة | النتيجة الفعلية | ملف الدليل |
 |---|---|---|
-| Python كاملة محليًا | 782 ناجحًا، 0 فشل/خطأ/تجاوز | `python-evidence-full.xml` و`.txt` |
-| Python كاملة في CI | 782 ناجحًا، 0 فشل/خطأ/تجاوز | `cloud-backend-test-results.xml`، 10.733 ثانية |
-| عقد بحث Python/Dart | 34 ناجحًا في دفعة العقد | `research-contract.xml`؛ fixture خدمة حقيقي يقرأه Dart |
-| مخاطر التنفيذ والخروج المستهدفة | 164 ناجحًا بعد الإصلاح | `safety-after.junit.xml` |
-| التقويم والتنفيذ المستهدف | 120 ناجحًا | `session-execution.xml`، منها 70 حالة تقويم نقية |
-| البحث/الملاحظات/الترحيل المستهدف | 52 ناجحًا | `research-observations.xml` |
-| HTTP وعامل مستقل وإعادة خدمة | ناجح | `cloud-backend-http-smoke.json` و`http-evidence-gate.json` |
-| PostgreSQL أساسي | ناجح | `cloud-backend-postgres-basic.txt` |
-| PostgreSQL V1 | 14 فحصًا ناجحًا، صفر فاشل | `cloud-backend-postgres-v1-results.json` |
-| PostgreSQL backup/restore | 10 فحوص ناجحة | `cloud-backend-postgres-backup-restore.json` |
-| Docker Compose | 12 فحصًا ناجحًا، schema 1–5 | `cloud-compose-compose-smoke.json` |
-| Flutter macOS | 171 ناجحًا، صفر خطأ/تجاوز، final success=true | `flutter-ios-build13.jsonl` |
-| Flutter Linux / Android | 171 ناجحًا، صفر خطأ/تجاوز، final success=true | `flutter-android-build13.jsonl` |
-| Flutter Analyze | ناجح Linux وmacOS | خطوات تشغيلات الهاتف أدناه |
-| الأسرار والاعتماديات | نجحت البوابة؛ التفاصيل والحدود في تقرير الأمان | `build13-security-*.json` |
+| Python كاملة محليًا | 850 ناجحًا، صفر فشل/خطأ/تجاوز | `expiry-20261011/python-full.xml` و`.txt` |
+| Python كاملة في CI | 850 ناجحًا، صفر فشل/خطأ/تجاوز | `expiry-20261011/cloud-backend-test-results.xml` |
+| الانتهاء/التنفيذ المستهدف | 214 ناجحًا، قبل إضافة آخر حالتي تكامل | `expiry-20261011/expiry-targeted.xml` |
+| الانتهاء: المصدر الأصلي مقابل الحالي | 22 فشلًا قبل الإصلاح،22 نجاحًا بعده | `expiry-20261011/us-expiry-before.xml` و`us-expiry-after.xml` |
+| HTTP/worker/process restart | ناجح محليًا وعلى CI | `expiry-20261011/http-smoke.txt` و`cloud-backend-http-smoke.json` |
+| PostgreSQL أساسي | ناجح | `expiry-20261011/cloud-backend-postgres-basic.txt` |
+| PostgreSQL V1 | 22 فحصًا ناجحًا، صفر فاشل | `expiry-20261011/cloud-backend-postgres-v1-results.json` |
+| PostgreSQL backup/restore | 10 فحوص ناجحة | `expiry-20261011/cloud-backend-postgres-backup-restore.json` |
+| Docker Compose | 12 فحصًا ناجحًا، migrations 1–5 | `expiry-20261011/cloud-compose-compose-smoke.json` |
+| Flutter Linux | 186 ناجحًا، صفر فشل/خطأ/تجاوز، done.success=true | `backup-20261011/flutter-android-build14.jsonl` |
+| Flutter macOS | 186 ناجحًا، صفر فشل/خطأ/تجاوز، done.success=true | `backup-20261011/flutter-ios-build14.jsonl` |
+| Flutter analyze والبناء | ناجحة على المنصتين | تشغيلات Android/iOS أدناه |
+| الأسرار/الاعتماديات | بوابة ناجحة ضمن حدود الفحص | `backup-20261011/cloud-security-*` |
 
-المجموعات المستهدفة subsets من الكاملة ولا تُجمع لتضخيم الرقم؛ لا نجمع اختبار Flutter نفسه على نظامين. تحذير Starlette/httpx واحد معروف في Python، دون فشل. Docker/PostgreSQL/Flutter لم تُشغّل محليًا؛ الأدلة من GitHub Actions الفعلي.
+Python لديه تحذير Starlette/httpx واحد سابق. Flutter وPostgreSQL وDocker لم تُشغّل محليًا؛ النتائج أعلاه من GitHub Actions الفعلي. نسخة PostgreSQL harness التي جُربت على SQLite موسومة `postgresql_executed:false` ولا تستخدم كدليل PostgreSQL؛ التقرير السحابي المستقل يثبت تشغيله الفعلي.
 
-## الحالات الحرجة والفشل الذي أُصلح
+## ما تثبته الدفعتان الجديدتان
 
-`RC2_SAFETY_MATRIX.md` يربط دخول Call/Put الآلي، SL/TP/المتحرك/الجزئي والزمني، الإغلاق اليدوي والعكس في الاتجاهين بعد flat والمصالحة، منع التعارض والتكرار وبيع غير المملوك، التزامن والانقطاع والرسوم، العزل وتقادم البيانات/الانتهاء، فشل التحليل والمخاطر وLive المقفل وسببية البادئات بمعرفات اختبارات فعلية. فشل LLM لا يمنح إذنًا؛ لا LLM خارجي مستخدم للتنفيذ في هذه البيئة.
+- **46 حالة تقويم انتهاء نقية و22 حالة خدمة/تنفيذ:** Call/Put، DST، عطلة الجمعة والإغلاق المبكر، السماح بالتخفيض قبل cutoff، حفظ تكلفة وكمية المتبقي بعد تنفيذ جزئي، رسوم وإيصالات لا تتكرر بعد restart، عدم اختلاق تقييم من mark جديد، قفل العكس عند تعرض غير مسوى، missed tick، calendar unavailable، منع تبديل السياسة لتجاوز القفل، وإبقاء إغلاق المملوك الصحيح ممكنًا.
+- **15 حالة هاتف جديدة:** 12 محرك/مخزن و3 widget. نقل دفتر Demo كامل وإعادة فتحه مع الأصل المحفوظ، حسابات وصلاحيات مستقلة، JSON غير صالح/إصدار مستقبلي/حجم/خلط ملكية/حقول اعتماد، clipboard الصريح، معاينة وإلغاء وتأكيد، فشل حفظ قبل/بعد الكتابة، فشل rollback وقفل عدم اليقين، قراءة تالفة/مفقودة، تزامن ومعاينة قديمة.
+- إصلاح الحفظ العادي يغطي أيضًا كتابة ناجحة جزئيًا يعقبها استثناء؛ الذاكرة وحدها لا تُعد إثباتًا لعودة المخزن. الاختبارات تستخدم واجهة DemoStore؛ SharedPreferences الفعلي والتحمل أمام انقطاع الطاقة غير مثبتين.
+- اختبارات السلامة السابقة ما زالت ضمن المجموعة: BUY آلي وهمي، SL/TP/trailing/partial/time/swing، الخروج رغم فشل تحليل اختياري، العكس بعد flat والمصالحة في الاتجاهين، منع المتعاكس والمكرر وبيع غير المملوك، الحسابات والرسوم والتزامن والانقطاع وLive المقفل وسببية replay. [مصفوفة الحالات](RC2_SAFETY_MATRIX.md).
 
-- أُعيد إنتاج خلل الجني الجزئي وصلاحية الأوامر المعلقة: 19 فشلًا و3 نجاحات في مجموعة قبل الإصلاح، ثم 164 نجاحًا بعده. الاستئناف الآن يحافظ على كمية الخروج المقبولة، وتُعاد صلاحية الشراء الحالي عند التعبئة دون تكرار الإيصالات.
-- التحليل الاختياري لا يعطل مخارج حماية مبررة، لكنه لا يولد إشارة عند الفشل. إبطال سيناريو موثوق يمكن أن يطلب إغلاقًا كاملًا.
-- أول lint Flutter كشف قوسًا مطلوبًا؛ ثم اختبار drawer احتاج بدء/اكتمال الحركة؛ ثم Dart كشف conditional ملتبسًا. أُصلحت قبل نجاح بوابات دفعة الجلسات.
-- عند 055f فشل اختبار widget واحد على المنصتين لأن إشعار الالتقاط خارج نافذة ListView الكسولة. طلب POST نفسه نجح؛ حُفظ السجل ثم صُحح التمرير في 67ddb6e واجتازت خطوة الاختبار على المنصتين.
-- فشل fixtures التقويم الأول (mark ناقص واسم reason خاطئ) موثق ثم صُحح دون تخفيف فحوص runtime. لا نعد المحاولات الفاشلة نجاحًا.
+## المحاولات الفاشلة والتصحيحات
 
-## روابط تشغيلات القبول
+المصدر المحفوظ 3a722 فشل في 22 اختبار انتهاء جديدة قبل الإصلاح. أثناء التوافق الأول ظهر اختلاف في نص خطأ السنة غير المدعومة (1 فشل،147 نجاحًا)؛ أعيد ترتيب تشخيص Market session قبل تشخيص الانتهاء دون إلغاء أي قيد. القبول النهائي 850 ناجحًا.
 
-- [الخادم وPostgreSQL وCompose — 055f](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38118532583).
-- [Android وFlutter — 67ddb6e](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38118890108).
-- [iOS وFlutter — 67ddb6e](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38118890095).
-- [الأمان — 67ddb6e](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38118890093).
+المراجعة المستقلة للهاتف وجدت حالات المعاينة القديمة وعدم يقين rollback وفساد القراءة بعده، وكذلك خلل الحفظ العادي الذي كان يرجع الذاكرة فقط. صُححت قبل checkpoint c6345ce، واجتازت بوابتاه analyze والاختبارات والبناء من أول تشغيل لهذا المصدر. لا ادعاء بتشغيل Flutter محليًا. إخفاقات دفعات build 13 الأقدم وتفاصيل إصلاحها محفوظة في PROGRESS وأدلتها الأصلية.
 
-## حدود القبول
+## التشغيلات
 
-لا اختبار هاتف/محاكي تثبيت أو ترقية أو أداء فعلي؛ لا IBKR أو بيانات سوق أو ربحية OOS حقيقية؛ لا ممارسة/تخصيص واقعيين؛ لا تشغيل إنتاج طويل أو pentest. اختبارات decode/store وmigration وإعادة الخدمة تثبت الحالات المسماة فقط، لا ضمان ترقية تطبيق موقع بمفتاح مختلف. تعليمات الهاتف وIBKR في تقريريها المستقلين.
+- [الخادم/PostgreSQL/Compose 38126076027](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126076027).
+- [أمان الخادم 38126076071](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126076071).
+- [Android/Flutter 38126818937](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126818937).
+- [iOS/Flutter 38126818914](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126818914).
+- [أمان build 14 رقم 38126818920](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126818920).
 
-## ملحق بناء الهاتف المتحقق
+## ملفات البناء والتحقق
 
-Android run `38118890108` اكتمل بنجاح، artifact `11694930290`. APK معاينة 1.0.0 build 13، 154956640 بايت؛ SHA-256 `07bb0061172e0cd8de62a03b5e05faf9639d3541f56fdccd2430e5b5b6c700f3`. اجتاز CRC وطابق checksum من CI، وسجل `apksigner` يؤكد v2 وشهادة Debug مؤقتة. هوية المعاينة مستقلة؛ لا مفتاح ثابت متاح.
+APK 1.0.0 code 14، 154973056 بايت، SHA-256 `b567ae38c0e8df58a48b8799cd6dbb3fe746a8a9aa5ea3ff3d52333369dc2ef6`؛ طابق checksum CI، وCRC صحيح، وapksigner v2 ناجح بشهادة runner Debug مؤقتة. ليس مفتاحًا ثابتًا ولا دليل تثبيت جهاز.
 
-iOS run `38118890095` ناجح، artifact `11694368985`؛ فحص Info.plist يؤكد 1.0.0 build 13 وminimum iOS 15.0، ولا يوجد `_CodeSignature` للتطبيق. SHA-256 لأرشيف التنزيل `00533a0a6b17350ee52aeed53cbc05562afd41fcd67cc9b6e6d5015f3e6c92a4`. ليس IPA موقعًا أو TestFlight.
+أرشيف iOS SHA-256 `96a5c3589ee8b5ef6c82ef582dfcc86366fb940d9ee3df58a6772a45621c5e30`؛ CRC وInfo.plist تحققا، Runner.app 1.0.0 build 14، iOS 15.0. لا توقيع للتطبيق الرئيسي أو TestFlight؛ وجود CodeResources في frameworks المضمنة لا يمنح توقيع توزيع للتطبيق.
 
-ملفات `*-build13-verification.json` و`flutter-*-build13-summary.json` و`acceptance-runs.json` تحفظ الأعداد والبصمات وربط المصدر. لا تُحسب اختبارات جهاز من هذه النتائج.
+## الحدود
 
-## قبول حماية الانتهاء بعد الرفع
-
-المصدر `381eec3cf2ed1454764d75ab51683dcf3634e453`: [Mock safety checks](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126076027) و[Security](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126076071) نجحا. ملفات artifacts نُزلت وفُحص CRC وJUnit/JSON فعلًا: 850 Python بلا فشل/تجاوز، PostgreSQL V1 عدد22، backup/restore عدد10، Compose عدد12، وHTTP وعامل مستقل ناجحان. الأدلة `evidence/expiry-20261011/cloud-*`. هذا تحقق PostgreSQL فعلي مستقل عن dry-run SQLite المسمى بوضوح.
+لا اختبار هاتف/محاكي تثبيت أو ترقية أو أداء جهاز، ولا ضمان SharedPreferences/fsync. استيراد نسخة من حالة تخزين تالفة عند الفتح الأول غير مدعوم. لا IBKR/Paper أو سوق حقيقي أو ربحية OOS، ولا ممارسة/تخصيص/تسوية مؤهلة، ولا إنتاج طويل أو pentest. الأدلة لا تتجاوز هذه الحدود.

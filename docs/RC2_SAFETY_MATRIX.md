@@ -57,7 +57,7 @@
 
 ## تحديث Engineering في 2026-10-11
 
-الأقسام السابقة سجل تاريخي محفوظ لا يُحذف. المجموعة الكاملة الحالية **782 Python ناجحًا، صفر فشل/خطأ/تجاوز** محليًا وفي CI؛ تشمل المجموعة التاريخية وكل الإضافات أدناه. المرجع الحالي `RECOVERY_TEST_REPORT_V1.md` والأدلة `docs/evidence/engineering-20261011/`.
+الأقسام السابقة سجل تاريخي محفوظ لا يُحذف. المجموعة الكاملة عند قبول build 13 كانت **782 Python ناجحًا، صفر فشل/خطأ/تجاوز** محليًا وفي CI؛ تشمل المجموعة التاريخية وكل الإضافات أدناه. المرجع الحالي `RECOVERY_TEST_REPORT_V1.md` والأدلة `docs/evidence/engineering-20261011/`.
 
 | الإصلاح/الحالة | اختبار فعلي | النطاق |
 |---|---|---|
@@ -79,3 +79,7 @@
 - `test_us_expiry_protection.py`: 22 real SQLite service/automation cases. Saved-source baseline 22 failures; current 22 passes. Partial-close basis/fees and receipts survive cutoff/restart; no phantom flatness, opposite entry, post-cutoff fill, fake valuation, or session-policy downgrade.
 - Full local Python gate now 850 passes. PostgreSQL harness extended to 22 checks; actual cloud result must be read before claiming it passed.
 - Optional US policy only; default synthetic/mobile writeoff remains artificial. See `OPTION_EXPIRATION_POLICY_V1.md`; no exercise/assignment/settlement or broker connection.
+
+## قبول سحابي للاستئناف
+
+الخادم `381eec3` اجتاز فعليًا 850 Python و22 PostgreSQL و10 backup/restore و12 Compose؛ لا يُستنتج PostgreSQL من SQLite. دفعة الهاتف `c6345ce` تضيف 15 حالة استعادة/حفظ وواجهة، واجتازت 186 Flutter على Linux وmacOS وبناء Android وiOS؛ الأدلة النهائية في تقرير الاختبارات. لا اختبار هاتف فعلي أو ترقية أو اتصال وسيط.
