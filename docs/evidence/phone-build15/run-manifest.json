@@ -4,7 +4,22 @@
   "native_source_commit": "c5033ab2e108b18de1b873652d911b226b7770a8",
   "android": {
     "run": 38180059532,
-    "status": "building_after_tests_passed"
+    "status": "success",
+    "artifact_id": 11717805640,
+    "sha256": "ae1f4db787fe19aefaba3dd2382c9caf7e0a368503c66e53c84749b8bd31a3ee",
+    "artifact_zip_sha256": "dd5e1f075485b377df3bcfccd2e0c2f548a695c21e938b799336cc8ede10bfd5",
+    "bytes": 155006308,
+    "flutter_tests": 203,
+    "golden_comparisons": 6,
+    "version": "1.0.0",
+    "build": 15,
+    "min_sdk": 24,
+    "package": "com.optionsaitrader.options_ai_trader.v1previewrc2b15",
+    "label": "Options AI Trader Lab 15",
+    "signing": "ephemeral-runner-development-key",
+    "v2_signature_verified_in_ci": true,
+    "local_checksum_matches_ci": true,
+    "archive_crc_ok": true
   },
   "ios": {
     "run": 38180059417,
@@ -55,5 +70,7 @@
   ],
   "physical_build15_device_test": "not_run",
   "broker_connection": "none",
-  "live_enabled": false
+  "live_enabled": false,
+  "artifact_expires_at": "2026-10-25",
+  "additional_persistent_upload": "failed_before_transfer_auth_unavailable; no successful Library save claimed"
 }
