@@ -1,0 +1,72 @@
+Resolving dependencies...
+Downloading packages...
+  flutter_lints 4.0.0 (6.0.0 available)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.3 available)
+Got dependencies!
+6 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":2352,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":2,"time":4,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":7426}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":10,"line":null,"column":null,"url":null},"type":"group","time":7428}
+{"test":{"id":3,"name":"aggregated journal preserves original ticks and rejects missing groups","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":12,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":7429}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7448}
+{"test":{"id":4,"name":"continuous OHLC plateau confirms only rightmost turn after full delay","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":20,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":7449}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7460}
+{"test":{"id":5,"name":"baseline pictured monotonic prefix legitimately has no wave or harmonic","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":33,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":7460}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7474}
+{"test":{"id":6,"name":"controlled candles produce primary and alternate without fabricated labels","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":41,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":7475}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7487}
+{"test":{"id":7,"name":"Bat geometry has actual ratio PRZ containing D distinct from invalidation","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":55,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":7487}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7491}
+{"test":{"id":8,"name":"divergence has confirmed price and calculated RSI MACD endpoints","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":63,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":7491}
+{"testID":8,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7499}
+{"test":{"id":9,"name":"MACD warmup and histogram arithmetic preserve every historical prefix","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":76,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":7499}
+{"testID":9,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7510}
+{"test":{"id":10,"name":"same mutable engine follows new ticks but pinned replay never follows","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":109,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":7510}
+{"testID":10,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8689}
+{"test":{"id":11,"name":"fixture through detector journal toggles and painter preserves account bytes","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":122,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":8690}
+{"testID":11,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9608}
+{"test":{"id":12,"name":"fit viewport time aggregation and zoom remain usable at 360 pixels","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":147,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":9609}
+{"testID":12,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9776}
+{"suite":{"id":13,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"suite","time":9792}
+{"test":{"id":14,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart","suiteID":13,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":9792}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":14,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":11275}
+{"group":{"id":15,"suiteID":13,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":13,"line":null,"column":null,"url":null},"type":"group","time":11275}
+{"test":{"id":16,"name":"ABC and third wave remain competing bullish and bearish candidates","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":30,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11275}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11296}
+{"test":{"id":17,"name":"fifth and complete impulse enforce non-overlap and non-shortest third","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":45,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11296}
+{"testID":17,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11300}
+{"test":{"id":18,"name":"wave 2 cannot erase wave 1 and nonalternating geometry is rejected","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":57,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11300}
+{"testID":18,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11302}
+{"test":{"id":19,"name":"candidate validation rejects historical ordering and nonfinite prices","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":65,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11303}
+{"testID":19,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11309}
+{"test":{"id":20,"name":"nested 3 of 3 cannot be known before parent confirmation","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":75,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11311}
+{"testID":20,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11323}
+{"test":{"id":21,"name":"wave event is only visible after the confirming candle","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":93,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11324}
+{"testID":21,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11332}
+{"test":{"id":22,"name":"appended future candles never change old primary alternate or journal","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":105,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11333}
+{"testID":22,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11342}
+{"test":{"id":23,"name":"invalidation is append-only and cannot revive on price recovery","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":121,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11342}
+{"testID":23,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11351}
+{"test":{"id":24,"name":"source revisions shrinking and invalid candles fail without journal changes","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":136,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11352}
+{"testID":24,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11356}
+{"test":{"id":25,"name":"serializable journal restores with exact causal event evidence","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":150,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11357}
+{"testID":25,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11378}
+{"test":{"id":26,"name":"MTF excludes incomplete candles and preserves the completed prefix","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":160,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11378}
+{"testID":26,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11383}
+{"test":{"id":27,"name":"MTF pivot confirmation uses actual source ticks not compacted indices","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":176,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11383}
+{"testID":27,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11386}
+{"test":{"id":28,"name":"offline wave journal MTF and alternate controls render in RTL","suiteID":13,"groupIDs":[15],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":186,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":11387}
+{"testID":28,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12318}
+{"success":true,"type":"done","time":12331}

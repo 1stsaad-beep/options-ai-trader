@@ -1,0 +1,59 @@
+{
+  "branch": "recovery/v1.0-20261011",
+  "baseline": "615576768612c1c7cbd008632b325be05c57c774",
+  "native_source_commit": "c5033ab2e108b18de1b873652d911b226b7770a8",
+  "android": {
+    "run": 38180059532,
+    "status": "building_after_tests_passed"
+  },
+  "ios": {
+    "run": 38180059417,
+    "status": "success",
+    "artifact_id": 11716364660,
+    "sha256": "8e8ed878943b274cb2d5fc224eefd046284eb1e4babae1fa6779ec5aa45f065d",
+    "flutter_tests": 203,
+    "version": "1.0.0",
+    "build": "15",
+    "root_distribution_signature": false
+  },
+  "strict_chart": {
+    "run": 38180059538,
+    "status": "success",
+    "tests": 23,
+    "golden_comparisons": 6
+  },
+  "security": {
+    "run": 38180059442,
+    "status": "success",
+    "pattern_findings": 0,
+    "files_scanned": 531,
+    "history_commits": 41,
+    "history_blobs_scanned": 758,
+    "python_packages": 24,
+    "pub_packages": 43,
+    "known_advisories": 0
+  },
+  "backend": {
+    "run": 38179500360,
+    "source_commit": "448bef7e40a42cafcb1f252358971c47e369770a",
+    "status": "success",
+    "python_tests": 850,
+    "postgres_v1_checks": 22,
+    "backup_checks": 10,
+    "compose_checks": 12
+  },
+  "runtime_edited": [
+    "mobile chart analysis/view",
+    "isolated in-memory safety exercises",
+    "isolated preview build identity"
+  ],
+  "unchanged": [
+    "Demo execution engine",
+    "Demo persisted schema/key",
+    "user risk profiles",
+    "backend runtime"
+  ],
+  "physical_build15_device_test": "not_run",
+  "broker_connection": "none",
+  "live_enabled": false
+}

@@ -96,3 +96,6 @@ Current code acceptance is at `b39b164f6869305b1e71586ef2d6978a7612fcf1`: 631 Py
 - Recovered 50 relevant mobile/workflow/report files byte-for-byte through the authorized GitHub connector. The local checkout retains all 525 tracked blob entries; 475 are deliberately unmaterialized. Git API commits preserve the remote base tree and never delete these files.
 - Local Flutter/Dart and direct authenticated Git HTTPS are unavailable. Use GitHub Actions for real Flutter acceptance and guarded fast-forward GitHub writes; do not claim local test execution.
 - Current phone observations and inspected defects are recorded in `docs/PHONE_BUILD15_REPAIR.md`. Existing Build 14 remains the last accepted binary until a new gate passes.
+## Lab 15 native checkpoint
+
+The final native jobs build `c5033ab2e108b18de1b873652d911b226b7770a8`. Runtime, reviewed goldens and isolated safety exercises are saved. `docs/evidence/phone-build15/run-manifest.json` maps the actual runs and counts. iOS is built and inspected (unsigned); Android is pending assembly/identity/signature/checksum acceptance in run `38180059532`. Do not launch another feature or rebuild already passed iOS tests. Complete the artifact checks and final phone report; keep Build 14 and its private data untouched. The new Android identifier is `com.optionsaitrader.options_ai_trader.v1previewrc2b15`.
