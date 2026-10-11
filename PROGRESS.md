@@ -148,3 +148,9 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - A fresh persistent conversation-file upload attempt failed before transfer because helper authentication was unavailable. No successful upload is claimed. Local downloads and private GitHub artifacts (expire 2026-10-25) are available; source/reports/evidence remain in Git.
 - Updated delivery, test, safety, requirements, phone/backup/run guides and resume reports. This final batch is documentation/evidence only; mobile/backend runtime remains at the accepted commits above. No unnecessary rebuild or full retest.
 - V1.0 remains incomplete: settlement/exercise/assignment, full server/chart parity, long-term wave archive, stable signing and device upgrades, initial corrupt-store import, reliable production alerts, actual broker transport and real-market OOS evidence remain explicit gaps.
+# Phone repair checkpoint — baseline inspected
+
+- Recovered and verified the exact Build 14 Recovery head `615576768612c1c7cbd008632b325be05c57c774`; no unavailable prior-session edits are claimed. Preserved the full remote tree and history.
+- Inspected chart analysis, wave journal, painter, Demo engine, existing tests, build/signing and previous delivery reports. User phone findings are now recorded separately from CI evidence in `docs/PHONE_BUILD15_REPAIR.md`.
+- Identified missing MACD/divergence drawing, unlabeled/off-screen chart geometry, mutable-engine follow cursor issue, and strict plateau pivot suppression. Monotonic baseline data can legitimately have no wave/harmonic result.
+- Documentation-only checkpoint: exact recovered blob SHA verification and whitespace review; no runtime changes or new test counts. Next batch adds targeted regressions and bounded chart repairs. New preview must use a separate application identity and preserve Demo schema.

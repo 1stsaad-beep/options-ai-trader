@@ -90,3 +90,9 @@ Current code acceptance is at `b39b164f6869305b1e71586ef2d6978a7612fcf1`: 631 Py
 - Actual current acceptance: 850 Python;186 Flutter per platform;22 PostgreSQL V1;10 backup/restore;12 Compose; Android and unsigned iOS builds; security checks. Evidence under `docs/evidence/expiry-20261011/` and `docs/evidence/backup-20261011/`.
 - Android build 14 uses an ephemeral development signature; iOS Runner.app is unsigned for distribution. No physical device/install/upgrade or broker trial occurred.
 - No unsaved source from an inaccessible prior session is claimed. Existing branches/history/deliverables remain. All remaining gaps and the next recovery starting point are in `docs/ENGINEERING_RESUME_V1.md` and `FINAL_DELIVERY.md`.
+# Phone repair recovery — 2026-10-11
+
+- Verified remote Recovery head `615576768612c1c7cbd008632b325be05c57c774` before modifications. GitHub retains the full source/history. No newer local source survived workspace maintenance and no uncommitted work was available to recover.
+- Recovered 50 relevant mobile/workflow/report files byte-for-byte through the authorized GitHub connector. The local checkout retains all 525 tracked blob entries; 475 are deliberately unmaterialized. Git API commits preserve the remote base tree and never delete these files.
+- Local Flutter/Dart and direct authenticated Git HTTPS are unavailable. Use GitHub Actions for real Flutter acceptance and guarded fast-forward GitHub writes; do not claim local test execution.
+- Current phone observations and inspected defects are recorded in `docs/PHONE_BUILD15_REPAIR.md`. Existing Build 14 remains the last accepted binary until a new gate passes.
