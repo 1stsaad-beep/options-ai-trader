@@ -23,8 +23,8 @@ jobs:
       - name: Affected chart semantic regressions
         run: flutter test test/chart_phone_repair_test.dart test/wave_analysis_test.dart --machine > chart-tests.json
         working-directory: mobile
-      - name: Generate DRAFT golden images for inspection (not comparison acceptance)
-        run: flutter test --tags=golden --update-goldens --machine > golden-draft-tests.json
+      - name: Compare reviewed golden baselines (no regeneration)
+        run: flutter test --tags=golden --machine > golden-tests.json
         working-directory: mobile
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
@@ -32,6 +32,7 @@ jobs:
           name: chart-repair-evidence
           path: |
             mobile/chart-tests.json
-            mobile/golden-draft-tests.json
+            mobile/golden-tests.json
             mobile/test/goldens/*.png
+            mobile/test/failures/**
           retention-days: 14

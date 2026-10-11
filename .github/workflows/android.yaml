@@ -37,6 +37,9 @@ jobs:
         working-directory: mobile
       - run: flutter test --exclude-tags=golden --machine > flutter-tests.json
         working-directory: mobile
+      - name: Compare reviewed chart golden baselines
+        run: flutter test --tags=golden --machine > golden-tests.json
+        working-directory: mobile
       - name: Prepare private development key when available
         run: python mobile/scripts/prepare_ci_signing.py
         env:
@@ -85,4 +88,6 @@ jobs:
             build-provenance.txt
             flutter-build-version.txt
             mobile/flutter-tests.json
+            mobile/golden-tests.json
+            mobile/test/failures/**
           retention-days: 14
