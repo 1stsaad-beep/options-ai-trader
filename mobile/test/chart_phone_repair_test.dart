@@ -9,6 +9,14 @@ import 'package:options_ai_trader/demo/wave_analysis.dart';
 List<Object> geometry(ChartPivot p)=>[p.index,p.confirmedAt,p.price,p.high];
 
 void main() {
+  test('aggregated journal preserves original ticks and rejects missing groups',() {
+    final bars=ChartWaveAnalysis.aggregate(ChartFixtures.bars('impulse'),5);
+    final journal=ChartWaveJournal(factor:5)..append(bars);
+    expect(journal.latestTick,69);
+    expect(ChartWaveJournal.restore(journal.toJson()).toJson(),journal.toJson());
+    expect(()=>ChartWaveJournal(factor:5).append(bars.where((b)=>b.tick!=14).toList()),throwsFormatException);
+    expect(()=>ChartWaveJournal().append(bars),throwsFormatException);
+  });
   test('continuous OHLC plateau confirms only rightmost turn after full delay',() {
     final bars=ChartFixtures.bars('abc');
     final turns=DemoChartAnalysis.pivots(bars);

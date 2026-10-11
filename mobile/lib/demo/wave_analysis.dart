@@ -186,6 +186,10 @@ class ChartWaveView {
 /// history. Moving the replay cursor reads an old view; it never edits events.
 /// The JSON checkpoint is semantically checked by replay, not a signed audit log.
 class ChartWaveJournal {
+  final int factor;
+  ChartWaveJournal({this.factor=1}) {
+    if(factor<1)throw const FormatException('Invalid wave journal observation factor');
+  }
   final List<DemoCandle> _source = [];
   final List<ChartPivot> _mainPivots = [], _internalPivots = [];
   final List<ChartWaveEvent> _events = [];
@@ -197,7 +201,7 @@ class ChartWaveJournal {
   int? get latestTick => _source.isEmpty ? null : _source.last.tick;
 
   void append(List<DemoCandle> history) {
-    _validateBars(history);
+    _validateBars(history,factor:factor);
     if (history.length < _source.length) {
       throw const FormatException('Use view for replay; source history cannot shrink');
     }
@@ -269,7 +273,7 @@ class ChartWaveJournal {
     return ChartWaveView(asOf, List.unmodifiable(active), List.unmodifiable(visible));
   }
 
-  Map<String, dynamic> toJson() => {'version': 1,
+  Map<String, dynamic> toJson() => {'version': 1, 'factor':factor,
     'source': _source.map(_bar).toList(),
     'events': _events.map((e) => e.toJson()).toList()};
 
@@ -287,7 +291,7 @@ class ChartWaveJournal {
           (row[2] as num).toDouble(), (row[3] as num).toDouble(),
           (row[4] as num).toDouble(), (row[5] as num).toDouble());
       }).toList();
-      final journal = ChartWaveJournal()..append(bars);
+      final journal = ChartWaveJournal(factor:value['factor'] as int? ?? 1)..append(bars);
       if (jsonEncode(journal.toJson()['events']) != jsonEncode(value['events'])) {
         throw const FormatException('Wave journal disagrees with causal replay');
       }
@@ -300,10 +304,10 @@ class ChartWaveJournal {
 
 List<num> _bar(DemoCandle b) => [b.tick, b.open, b.high, b.low, b.close, b.volume];
 
-void _validateBars(List<DemoCandle> bars) {
+void _validateBars(List<DemoCandle> bars,{int factor=1}) {
   for (var i = 0; i < bars.length; i++) {
     final b = bars[i];
-    if (b.tick != i || ![b.open, b.high, b.low, b.close, b.volume]
+    if (b.tick != (i+1)*factor-1 || ![b.open, b.high, b.low, b.close, b.volume]
         .every((v) => v.isFinite) || b.low <= 0 || b.volume < 0 ||
         b.low > math.min(b.open, b.close) || b.high < math.max(b.open, b.close)) {
       throw const FormatException('Contiguous fixed-origin valid candles required');

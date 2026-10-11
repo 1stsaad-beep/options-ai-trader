@@ -45,7 +45,7 @@ class _DemoChartLabState extends State<DemoChartLab> {
   void didUpdateWidget(covariant DemoChartLab oldWidget) {
     super.didUpdateWidget(oldWidget);
     if(oldWidget.engine!=widget.engine || oldWidget.symbol!=widget.symbol) {
-      waveJournal=ChartWaveJournal();
+      waveJournal=ChartWaveJournal(factor:factor);
       if(fixture=='demo') {end=widget.initialEnd ?? widget.engine.tick;follow=widget.initialEnd==null;}
     }
   }
@@ -60,7 +60,7 @@ class _DemoChartLabState extends State<DemoChartLab> {
     final summary=DemoChartAnalysis.summary(bars), pivots=DemoChartAnalysis.pivots(bars);
     if(waveJournal.latestTick==null || bars.last.tick>=waveJournal.latestTick!) waveJournal.append(bars);
     final waves=waveJournal.view(bars.last.tick);
-    final frames=ChartWaveAnalysis.timeframes(bars);
+    final frames=ChartWaveAnalysis.timeframes(sourceBars);
     final patterns=lab==0?<ChartPattern>[
       if(waves.primary!=null) waves.primary!.drawing(),
       if(showAlternate && waves.alternate!=null) waves.alternate!.drawing(alternate:true),
@@ -99,7 +99,7 @@ class _DemoChartLabState extends State<DemoChartLab> {
       Wrap(spacing:8,crossAxisAlignment:WrapCrossAlignment.center,children:[
         const Text('تجميع الملاحظات:'),
         for(final f in [1,5,15]) ChoiceChip(key:Key('chart-factor-$f'),label:Text('$f×'),selected:factor==f,
-          onSelected:(_)=>setState((){factor=f;waveJournal=ChartWaveJournal();transform.value=Matrix4.identity();})),
+          onSelected:(_)=>setState((){factor=f;waveJournal=ChartWaveJournal(factor:f);transform.value=Matrix4.identity();})),
         IconButton(key:const Key('chart-zoom-in'),tooltip:'تكبير',icon:const Icon(Icons.zoom_in),
           onPressed:(){final scale=math.min(4.0,transform.value.getMaxScaleOnAxis()*1.5);
             transform.value=Matrix4.diagonal3Values(scale,scale,1);}),

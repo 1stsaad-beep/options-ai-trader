@@ -165,3 +165,7 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 
 - Targeted run `38178300373` stopped in analyze on two required brace-style findings in the new painter; compilation reported no type/syntax errors. Semantic and golden tests did not run and are not counted as passing.
 - Added explicit braces around both conditional drawing loops. No behavioral change. Re-run the same gate; packaging remains disabled for this checkpoint.
+### Chart gate correction 2
+
+- Run `38178458939`: analyze passed; **194 visible tests passed, one new timeframe widget test failed**. Raw evidence retained. The new 5× selector exposed the wave journal's original 1×-only fixed-origin validation.
+- Added an explicit journal observation factor, saved/restored with causal events, while retaining exact fixed-origin spacing and rejecting missing groups. MTF summaries still aggregate the original prefix once. Added a direct journal restore/gap regression; re-run required before chart acceptance.
