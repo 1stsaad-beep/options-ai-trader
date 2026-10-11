@@ -1,0 +1,655 @@
+{
+  "version": "1.0.0-rc.2",
+  "source": "synthetic_mock",
+  "live_enabled": false,
+  "purpose": "Controlled lifecycle/accounting checks; not profitability evidence",
+  "scenarios": [
+    {
+      "scenario": "take_profit",
+      "status": "passed",
+      "orders": [
+        {
+          "side": "BUY",
+          "quantity": 3,
+          "filled": 2,
+          "status": "CANCELLED"
+        },
+        {
+          "side": "SELL_TO_CLOSE",
+          "quantity": 2,
+          "filled": 2,
+          "status": "FILLED"
+        }
+      ],
+      "realized_pnl_cents": 7000,
+      "positions_remaining": 0,
+      "cycles": [
+        {
+          "account_id": "9b6b4185-a834-4dae-b044-81798575613e",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "ORDER",
+              "order_id": "d0c33e89-771c-4db9-884a-fb504103550a",
+              "side": "BUY",
+              "reason": "breakout"
+            },
+            {
+              "type": "FILL",
+              "order_id": "d0c33e89-771c-4db9-884a-fb504103550a",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "9b6b4185-a834-4dae-b044-81798575613e",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "d0c33e89-771c-4db9-884a-fb504103550a",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "9b6b4185-a834-4dae-b044-81798575613e",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "CANCEL",
+              "order_id": "d0c33e89-771c-4db9-884a-fb504103550a",
+              "reason": "TAKE_PROFIT"
+            },
+            {
+              "type": "ORDER",
+              "order_id": "7dece4a8-2795-446f-9a8c-b9e78a98f92b",
+              "side": "SELL_TO_CLOSE",
+              "reason": "TAKE_PROFIT"
+            },
+            {
+              "type": "FILL",
+              "order_id": "7dece4a8-2795-446f-9a8c-b9e78a98f92b",
+              "quantity": 1,
+              "price_cents": 140
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "9b6b4185-a834-4dae-b044-81798575613e",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "7dece4a8-2795-446f-9a8c-b9e78a98f92b",
+              "quantity": 1,
+              "price_cents": 140
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "stop_loss",
+      "status": "passed",
+      "orders": [
+        {
+          "side": "BUY",
+          "quantity": 3,
+          "filled": 2,
+          "status": "CANCELLED"
+        },
+        {
+          "side": "SELL_TO_CLOSE",
+          "quantity": 2,
+          "filled": 2,
+          "status": "FILLED"
+        }
+      ],
+      "realized_pnl_cents": -7000,
+      "positions_remaining": 0,
+      "cycles": [
+        {
+          "account_id": "1883a229-4364-4332-88c4-c8f1e9c46202",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "ORDER",
+              "order_id": "9fc90699-e8f0-4375-aba8-8a48da3e7abc",
+              "side": "BUY",
+              "reason": "breakout"
+            },
+            {
+              "type": "FILL",
+              "order_id": "9fc90699-e8f0-4375-aba8-8a48da3e7abc",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "1883a229-4364-4332-88c4-c8f1e9c46202",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "9fc90699-e8f0-4375-aba8-8a48da3e7abc",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "1883a229-4364-4332-88c4-c8f1e9c46202",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "CANCEL",
+              "order_id": "9fc90699-e8f0-4375-aba8-8a48da3e7abc",
+              "reason": "STOP_LOSS"
+            },
+            {
+              "type": "ORDER",
+              "order_id": "9b0ed450-bcf2-4602-9c07-34438174c753",
+              "side": "SELL_TO_CLOSE",
+              "reason": "STOP_LOSS"
+            },
+            {
+              "type": "FILL",
+              "order_id": "9b0ed450-bcf2-4602-9c07-34438174c753",
+              "quantity": 1,
+              "price_cents": 70
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "1883a229-4364-4332-88c4-c8f1e9c46202",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "9b0ed450-bcf2-4602-9c07-34438174c753",
+              "quantity": 1,
+              "price_cents": 70
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "expiry",
+      "status": "passed",
+      "orders": [
+        {
+          "side": "BUY",
+          "quantity": 3,
+          "filled": 2,
+          "status": "EXPIRED"
+        }
+      ],
+      "realized_pnl_cents": -21000,
+      "positions_remaining": 0,
+      "cycles": [
+        {
+          "account_id": "3d3da4e5-9c2d-4760-9f34-6bc683cb4003",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "ORDER",
+              "order_id": "eb26308b-7685-49e3-ab30-7ab1a76c0395",
+              "side": "BUY",
+              "reason": "breakout"
+            },
+            {
+              "type": "FILL",
+              "order_id": "eb26308b-7685-49e3-ab30-7ab1a76c0395",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "3d3da4e5-9c2d-4760-9f34-6bc683cb4003",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "eb26308b-7685-49e3-ab30-7ab1a76c0395",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "3d3da4e5-9c2d-4760-9f34-6bc683cb4003",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 0,
+          "expired_positions": 1,
+          "actions": [
+            {
+              "type": "EXPIRY_WRITEOFF",
+              "count": 1,
+              "policy": "synthetic_premium_lost_no_exercise"
+            }
+          ],
+          "blocked_reasons": [
+            "NVDA: Market observation unavailable or stale; explicit mock refresh required"
+          ],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-30",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "disconnect",
+      "status": "passed",
+      "orders": [
+        {
+          "side": "BUY",
+          "quantity": 3,
+          "filled": 2,
+          "status": "CANCELLED"
+        },
+        {
+          "side": "SELL_TO_CLOSE",
+          "quantity": 2,
+          "filled": 2,
+          "status": "FILLED"
+        }
+      ],
+      "realized_pnl_cents": -7000,
+      "positions_remaining": 0,
+      "cycles": [
+        {
+          "account_id": "b9fdbc9d-ef73-4571-8929-569ff4f81730",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "ORDER",
+              "order_id": "798306ab-22f1-4f78-9ca4-0bef7e8e33ec",
+              "side": "BUY",
+              "reason": "breakout"
+            },
+            {
+              "type": "FILL",
+              "order_id": "798306ab-22f1-4f78-9ca4-0bef7e8e33ec",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "b9fdbc9d-ef73-4571-8929-569ff4f81730",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 0,
+          "expired_positions": 0,
+          "actions": [],
+          "blocked_reasons": [
+            "Account snapshot untrusted or stale; explicit reconciliation required"
+          ],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "b9fdbc9d-ef73-4571-8929-569ff4f81730",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "798306ab-22f1-4f78-9ca4-0bef7e8e33ec",
+              "quantity": 1,
+              "price_cents": 105
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "b9fdbc9d-ef73-4571-8929-569ff4f81730",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 1,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "CANCEL",
+              "order_id": "798306ab-22f1-4f78-9ca4-0bef7e8e33ec",
+              "reason": "STOP_LOSS"
+            },
+            {
+              "type": "ORDER",
+              "order_id": "289cb089-4732-4d57-b1e5-c27c6b92f9ac",
+              "side": "SELL_TO_CLOSE",
+              "reason": "STOP_LOSS"
+            },
+            {
+              "type": "FILL",
+              "order_id": "289cb089-4732-4d57-b1e5-c27c6b92f9ac",
+              "quantity": 1,
+              "price_cents": 70
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        },
+        {
+          "account_id": "b9fdbc9d-ef73-4571-8929-569ff4f81730",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "orders_submitted": 0,
+          "fills_applied": 1,
+          "expired_positions": 0,
+          "actions": [
+            {
+              "type": "FILL",
+              "order_id": "289cb089-4732-4d57-b1e5-c27c6b92f9ac",
+              "quantity": 1,
+              "price_cents": 70
+            }
+          ],
+          "blocked_reasons": [],
+          "session": {
+            "policy": "synthetic_24x7",
+            "status": "SYNTHETIC_24X7",
+            "session_date": "2026-10-12",
+            "entry_allowed": true,
+            "fill_allowed": true,
+            "exit_due": false,
+            "opens_at": null,
+            "closes_at": null,
+            "exit_at": null,
+            "calendar_version": "synthetic-24x7-v1",
+            "verified_on": null,
+            "source_urls": [],
+            "reason": "Explicit synthetic fixture clock; no exchange-session claim"
+          }
+        }
+      ]
+    }
+  ]
+}

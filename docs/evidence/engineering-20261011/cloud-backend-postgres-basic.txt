@@ -1,0 +1,1 @@
+PostgreSQL integration checks passed: migrations, native FK constraints, isolation, duplicate, partial, disconnect, stop, cancel, owned close, cross-account denial

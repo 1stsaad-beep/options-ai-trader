@@ -67,3 +67,12 @@ Complete the remaining demonstrable local analysis/chart/replay integrations, st
 Exact RC2 files and remote commit identities were restored through the authorized GitHub connection and preserved history bundles; reachable Git objects passed fsck. Recovery and each implementation batch were published and read back. The initial absence of a local checkout did not imply loss of the newer RC2 branch.
 
 Current code acceptance is at `b39b164f6869305b1e71586ef2d6978a7612fcf1`: 631 Python tests and full backend/HTTP/PostgreSQL/Compose CI passed. Mobile source remains unchanged at the verified RC2 build (142 Flutter cases per platform). Current delivery, remaining requirements and artifact limits are in FINAL_DELIVERY.md. The earlier report sections remain historical statements about earlier workspaces.
+
+## Engineering mission — 2026-10-11 UTC
+
+- استؤنف الفرع المطلوب `recovery/v1.0-20261011` من رأس محلي/بعيد نظيف ومتطابق `72abca1c637fbabf55ecf5d30dcb276c9798170c`. لم توجد تغييرات مشروع غير محفوظة في بداية هذه المهمة، لذلك لم يُنشأ commit فارغ أو يُعاد مشروع جديد. تاريخ الاستعادة السابق باقٍ.
+- حُفظت دفعات عقد البحث، إصلاح مخاطر التنفيذ والخروج الجزئي، جلسات US، وملاحظات البحث وسلامة سجل الموجات على GitHub مع تحقق SHA بعد كل دفعة. تفاصيل SHAs في `ENGINEERING_RESUME_V1.md` و`PROGRESS.md`.
+- أحدث مصدر runtime هو `055f42c4aed2d1baaef199a4e38b6873ab1e63b2`. يتبعه `67ddb6e7cf58cd59604ab7187a6864d527a69aac` بتصحيح اختبار واجهة فقط؛ منه ملفات build 13. رأس التقارير النهائي يليهما وتظهر هويته من Git.
+- Python الحالي 782 ناجحًا محليًا وعلى CI، وPostgreSQL/Compose/backup ناجحة بأدلتها. نتائج الهاتف وartifact hashes وروابطها موثقة في `FINAL_DELIVERY.md` و`RECOVERY_TEST_REPORT_V1.md` عند التسليم.
+- لم تُفترض إمكانية استعادة تغييرات من جلسة منتهية. Flutter/macOS/Docker/PostgreSQL نفذت عبر GitHub Actions وليس محليًا. لا اختبار هاتف فعلي ولا IBKR ولو Paper أو Live.
+- لا force push أو حذف فروع/ملفات/تاريخ أو reset --hard أو clean. أي بيانات سابقة خارج المصدر والأدلة المحفوظة تبقى غير مستعادة/غير مثبتة.

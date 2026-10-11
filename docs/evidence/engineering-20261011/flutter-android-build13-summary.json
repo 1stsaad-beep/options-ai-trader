@@ -1,0 +1,15 @@
+{
+  "source_commit": "67ddb6e7cf58cd59604ab7187a6864d527a69aac",
+  "platform": "Linux",
+  "passed": 171,
+  "skipped": 0,
+  "failed_or_error": 0,
+  "error_events": 0,
+  "final_success": true,
+  "evidence": "flutter-android-build13.jsonl",
+  "not_run": [
+    "physical_device",
+    "emulator_install",
+    "application_upgrade"
+  ]
+}

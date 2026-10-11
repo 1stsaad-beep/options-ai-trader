@@ -93,8 +93,19 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Wave snapshots now verify persisted digest, scope, schema/source version, complete retained source hashes and audit linkage before restoring the tracker. Missing/corrupt history refuses reset. Added 13 tests, including real restart and preservation of nonempty wave-event history while new bars append.
 - Full local Python gate **782 passed**, zero failed/skipped (one existing Starlette warning). Real HTTP/worker/journal restart smoke passed. Flutter tests/build require CI; build number 13 distinguishes the new observation UI. No signing secret or external trading connection was added.
 - Remaining: local offline Demo Counterfactual and unified five-lab server analysis are partial; actual market OOS evidence, real expiry/exercise, stable signing/device upgrade and broker transport remain unproven.
-# بوابة تسليم الدفعة الرابعة — تصحيح اختبار واجهة 2026-10-11
+## بوابة تسليم الدفعة الرابعة — تصحيح اختبار واجهة 2026-10-11
 
 - المصدر `055f42c4aed2d1baaef199a4e38b6873ab1e63b2`: نجحت بوابة الخادم (Python/PostgreSQL/Compose) والأمان. فشل اختبار Flutter واحد على المنصتين عند البحث عن إشعار الحفظ الواقع خارج نافذة ListView الكسولة بعد التمرير لزر الالتقاط؛ طلب الالتقاط نفسه نجح.
 - حُفظ سجل الفشل في `docs/evidence/engineering-20261011/flutter-observation-first-failure.jsonl`. صار الاختبار يعيد التمرير إلى الإشعار قبل فحص نصه، مع إبقاء فحص طلب POST الوحيد وغياب P&L المختلق كما هو.
 - لا تغيير في منطق التطبيق أو الخادم. إعادة Flutter/Analyze والبناء في CI مطلوبة قبل قبول build 13؛ Flutter غير متاح محليًا. فحص diff ناجح.
+
+## Engineering final acceptance and delivery checkpoint
+
+- Widget correction published and read back at `67ddb6e7cf58cd59604ab7187a6864d527a69aac`. Android `38118890108`, iOS `38118890095`, and security `38118890093` all completed successfully. Runtime remains identical to `055f42c`, whose backend/Compose `38118532583` passed.
+- Actual artifact parsing: **782 Python** local/cloud; **171 Flutter** on Linux and macOS each; zero final failures/errors/skips. Analyze passed on both platforms. PostgreSQL V1 **14** checks plus basic integration; backup/restore **10**; Compose **12**, migrations 1–5. No physical-device/emulator-install or upgrade test was run.
+- Downloaded build 13 APK and unsigned iOS archive; CRC checked, APK hash matched CI, apksigner v2 proof retained, iOS plist/version/signature absence inspected. Android SHA-256 `07bb0061172e0cd8de62a03b5e05faf9639d3541f56fdccd2430e5b5b6c700f3`; iOS archive `00533a0a6b17350ee52aeed53cbc05562afd41fcd67cc9b6e6d5015f3e6c92a4`.
+- Current security CI: zero pattern findings in 423 tracked files / 28 commits / 570 historical blobs; 24 Python dependencies and 43 Pub packages without known advisories at the check. Limits retained in the report.
+- Fresh synthetic accounting and nine-fold walk-forward evidence saved; results do not prove real-market profitability. Counterfactual requires actually saved synthetic observations.
+- Updated all delivery/recovery/test/security/backtest/requirements reports and added phone acceptance, IBKR readiness and engineering resume guides. Independent read-only safety review corrected manual Mock close freshness wording. Local links and diff checks passed. No new runtime edits in this documentation/evidence batch; no unnecessary rebuild or full retest.
+- Additional persistent conversation-file upload failed before upload because helper authentication was unavailable. GitHub private artifacts (14-day retention) and local downloadable files remain available; no permanent file-service save is claimed. No private key or external account connection was introduced.
+- Source and reports are saved on Recovery; completeness remains explicitly unclaimed. Resume from the actual remote head and the ordered gaps in `RECOVERY_REQUIREMENTS_V1.md`.

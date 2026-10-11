@@ -1,0 +1,15 @@
+{
+  "sha256": "00533a0a6b17350ee52aeed53cbc05562afd41fcd67cc9b6e6d5015f3e6c92a4",
+  "size_bytes": 7849272,
+  "plist": {
+    "CFBundleIdentifier": "com.optionsaitrader.optionsAiTrader",
+    "CFBundleShortVersionString": "1.0.0",
+    "CFBundleVersion": "13",
+    "MinimumOSVersion": "15.0"
+  },
+  "crc_ok": true,
+  "app_signature_directory_present": false,
+  "source_commit": "67ddb6e7cf58cd59604ab7187a6864d527a69aac",
+  "run_id": 38118890095,
+  "artifact_id": 11694368985
+}

@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "checks_passed": 14,
+  "checks_failed": 0,
+  "checks": [
+    "concurrent_opposite_direction_admission_serialized",
+    "concurrent_duplicate_has_one_receipt",
+    "owned_plus_pending_contract_cap",
+    "same_symbol_opposite_in_independent_account_allowed",
+    "emergency_preserves_owned_close",
+    "cross_account_fill_denied",
+    "owned_close_reaches_flat",
+    "decision_update_and_delete_guards",
+    "snapshot_rollback_and_cross_connection_visibility",
+    "additive_migrations",
+    "concurrent_research_observation_has_one_immutable_receipt",
+    "cross_connection_research_replay_uses_saved_observations",
+    "research_observation_update_delete_guards",
+    "research_observation_account_isolation"
+  ],
+  "database": "PostgreSQL",
+  "broker": "none"
+}

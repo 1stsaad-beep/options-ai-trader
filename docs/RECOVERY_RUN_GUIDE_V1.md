@@ -60,3 +60,23 @@ python -m app.worker --execute-mock --interval 30
 5. النواقص الوظيفية مرتبة في `RECOVERY_REQUIREMENTS_V1.md`. لا تبدأ من main/V0.5 ولا تعِد تنفيذ ميزات RC2 المحفوظة.
 
 لم يتوفر اعتماد Git HTTPS مباشر في جلسة الاستعادة؛ نُشرت Commits عبر Git Data API بأب سابق وشجرة مطابقة وتحديث مرجع غير قسري، ثم تحققت المطابقة محليًا. المصدر وتاريخ Git محفوظان في المستودع؛ عدم توفر المصادقة المحلية لا يعني إنشاء مشروع جديد.
+
+## تحديث التشغيل — Engineering build 13
+
+ملف التسليم الحالي build 13 في `FINAL_DELIVERY.md`؛ تعليمات فحص الجهاز والترقية في `PHONE_ACCEPTANCE_GUIDE_V1.md`. لا تفترض توافق توقيع معاينتين من runner مختلف. لا واجهة تصدير/استيراد Demo كاملة حاليًا، لذلك احتفظ بالتطبيق القديم واستعمل بيئة اختبار منفصلة عند تعارض التوقيع.
+
+قاعدة البيانات أصبحت migration **5** بإضافة جدول ملاحظات البحث وقيود immutability. خذ نسخة احتياطية قبل ترقية قاعدة مستخدمة؛ اختُبرت إضافة migration من v4 وPostgreSQL backup/restore إلى قاعدة جديدة. لا تُشغّل سكربتات الاختبار disposable على بيانات مستخدمة.
+
+مسار مختبر البحث المتصل (كل مسارات `/api` تتطلب Bearer، ولا تستعمل وسيطًا):
+
+- `GET /api/accounts/{account}/research/{symbol}`: بحث اصطناعي Shadow.
+- `POST /api/accounts/{account}/research/{symbol}/snapshot` بجسم `{}`: حفظ أصل القرار.
+- `GET /api/accounts/{account}/research/{symbol}/snapshots`: قائمة محدودة مع `truncated`.
+- `POST /api/accounts/{account}/research/{symbol}/snapshots/{id}/observations` بجسم `{}`: حفظ الملاحظة الاصطناعية الحالية فقط.
+- `GET /api/accounts/{account}/research/{symbol}/snapshots/{id}/replay`: يعرض الأصل ويحسب outcome فقط من ملاحظتين لاحقتين محفوظتين.
+
+احفظ ملاحظتين في دقيقتين مختلفتين بعد القرار. مرور الوقت أو إعادة GET وحده لا يملأ النقص. النتيجة ليست أسعار سوق. اللقطات القديمة بلا quote model version تبقى للعرض ولا نختلق إصدارًا لها. واجهة الهاتف تعرض الأزرار بالعربية وتمنع إعادة POST تلقائيًا بعد فقد الرد.
+
+إعداد الحساب الافتراضي `session_policy=synthetic_24x7`. يمكن عبر إعدادات مخاطر API اختيار `us_equity_options_2026_2027` مع `session_exit_buffer_minutes` من 1 إلى 120 (15 افتراضيًا). اقرأ `MARKET_SESSION_POLICY_V1.md` قبل تفعيله: عطلات/إغلاق مبكر وDST للخادم فقط، وخارج السنوات المدعومة يفشل الإذن. لا يجعل هذا الخيار العقد أو سياسة الانتهاء واقعية.
+
+للاستئناف الهندسي التفصيلي اقرأ `ENGINEERING_RESUME_V1.md`؛ لا تعِد تنفيذ الأعمال المحفوظة أو تستبدل الأدلة التاريخية بنتائج متخيلة.
