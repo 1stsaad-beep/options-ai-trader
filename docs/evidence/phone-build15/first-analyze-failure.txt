@@ -1,0 +1,5 @@
+2026-10-11T21:55:55.9298190Z Analyzing mobile...
+2026-10-11T21:55:55.9306424Z    info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/demo/chart_painter.dart:88:18 • curly_braces_in_flow_control_structures
+2026-10-11T21:55:55.9325810Z    info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/demo/chart_painter.dart:156:40 • curly_braces_in_flow_control_structures
+2026-10-11T21:55:55.9360495Z 2 issues found. (ran in 7.6s)
+2026-10-11T21:55:55.9454564Z ##[error]Process completed with exit code 1.

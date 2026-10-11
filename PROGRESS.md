@@ -161,3 +161,7 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Chart now follows a mutable engine only in follow mode; historical decision replay remains pinned. Added visible empty states, primary/alternate labels, fitted 360-pixel canvas, shared observation axis, completed 1/5/15-observation aggregation, zoom/reset, separate RSI/MACD scales and divergence connectors.
 - Authored nine semantic/data/widget regressions and six light/dark canvas golden cases. No local Flutter SDK: actual execution is pending the targeted CI workflow. Initial goldens are DRAFT images for inspection, not accepted comparisons. Android/iOS packaging is skipped for `[chart-check]` checkpoints; existing non-golden Flutter tests still run in the targeted job.
 - No Demo storage schema, account risk, execution engine, broker, market data feed or existing signing key was changed. `git diff --check` passes. Publish this bounded checkpoint, inspect CI, repair failures, then commit reviewed golden baselines before further features.
+### Chart gate correction 1
+
+- Targeted run `38178300373` stopped in analyze on two required brace-style findings in the new painter; compilation reported no type/syntax errors. Semantic and golden tests did not run and are not counted as passing.
+- Added explicit braces around both conditional drawing loops. No behavioral change. Re-run the same gate; packaging remains disabled for this checkpoint.

@@ -85,10 +85,10 @@ class DemoCandlePainter extends CustomPainter {
       }
       level((summary['support'] as num).toDouble(),'S',colors.primary);
       level((summary['resistance'] as num).toDouble(),'R',colors.primary);
-      if(lab==1) for(final ratio in [.382,.618]) {
+      if(lab==1) { for(final ratio in [.382,.618]) {
         level(summary['resistance']-(summary['resistance']-summary['support'])*ratio,
           'Fib $ratio',colors.tertiary);
-      }
+      } }
       for(final p in patterns) {
         final color=p.alternate?Colors.lightBlue:Colors.orange;
         final path=Path();var started=false;
@@ -153,7 +153,7 @@ class DemoCandlePainter extends CustomPainter {
         if(macd.signal.every((v)=>v==null))text('Signal warmup: 34 closes',macdRect.topLeft,colors.onSurface);
       }
     }
-    if(overlays && (lab==3 || lab==4)) for(final d in divergences) {
+    if(overlays && (lab==3 || lab==4)) { for(final d in divergences) {
       if(!indices.containsKey(d.first.index)||!indices.containsKey(d.second.index))continue;
       final a=Offset(x(d.first.index),y(d.first.price)),b=Offset(x(d.second.index),y(d.second.price));
       line(a,b,Colors.pinkAccent,2);text('${d.indicator} DIV',b+const Offset(-40,-14),Colors.pinkAccent);
@@ -161,7 +161,7 @@ class DemoCandlePainter extends CustomPainter {
         final sy=d.indicator=='RSI'?ry:my;
         line(Offset(a.dx,sy(d.firstValue)),Offset(b.dx,sy(d.secondValue)),Colors.pinkAccent,2);
       }
-    }
+    } }
   }
 
   @override
