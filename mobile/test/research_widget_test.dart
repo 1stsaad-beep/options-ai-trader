@@ -153,6 +153,9 @@ void main() {
     await t.pumpAndSettle();
     expect(calls.where((call) => call.endsWith('/observations')).toList(),
       ['POST /api/accounts/a/research/NVDA/snapshots/saved-a/observations']);
+    // The notice is above the capture button in a lazily built ListView.
+    // Rebuild that viewport before asserting its text on small test screens.
+    await t.scrollUntilVisible(find.byKey(const Key('backend-research-notice')), -100);
     expect(find.textContaining('حُفظت ملاحظة اصطناعية'), findsOneWidget);
     expect(find.byKey(const Key('backend-replay-outcome')), findsNothing);
     await t.ensureVisible(find.byKey(const Key('backend-research-replay')));

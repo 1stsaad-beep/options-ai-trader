@@ -93,3 +93,8 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Wave snapshots now verify persisted digest, scope, schema/source version, complete retained source hashes and audit linkage before restoring the tracker. Missing/corrupt history refuses reset. Added 13 tests, including real restart and preservation of nonempty wave-event history while new bars append.
 - Full local Python gate **782 passed**, zero failed/skipped (one existing Starlette warning). Real HTTP/worker/journal restart smoke passed. Flutter tests/build require CI; build number 13 distinguishes the new observation UI. No signing secret or external trading connection was added.
 - Remaining: local offline Demo Counterfactual and unified five-lab server analysis are partial; actual market OOS evidence, real expiry/exercise, stable signing/device upgrade and broker transport remain unproven.
+# بوابة تسليم الدفعة الرابعة — تصحيح اختبار واجهة 2026-10-11
+
+- المصدر `055f42c4aed2d1baaef199a4e38b6873ab1e63b2`: نجحت بوابة الخادم (Python/PostgreSQL/Compose) والأمان. فشل اختبار Flutter واحد على المنصتين عند البحث عن إشعار الحفظ الواقع خارج نافذة ListView الكسولة بعد التمرير لزر الالتقاط؛ طلب الالتقاط نفسه نجح.
+- حُفظ سجل الفشل في `docs/evidence/engineering-20261011/flutter-observation-first-failure.jsonl`. صار الاختبار يعيد التمرير إلى الإشعار قبل فحص نصه، مع إبقاء فحص طلب POST الوحيد وغياب P&L المختلق كما هو.
+- لا تغيير في منطق التطبيق أو الخادم. إعادة Flutter/Analyze والبناء في CI مطلوبة قبل قبول build 13؛ Flutter غير متاح محليًا. فحص diff ناجح.
