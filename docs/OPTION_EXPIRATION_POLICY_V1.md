@@ -99,3 +99,12 @@ delivery, settlement reconciliation, or manual review-resolution API is
 claimed. Retained unresolved exposure intentionally requires future explicit,
 auditable resolution; users must not edit the ledger or downgrade policy to
 erase it. IBKR transport remains disabled and was never contacted.
+
+## Cloud acceptance after publication
+
+At source `381eec3cf2ed1454764d75ab51683dcf3634e453`, run
+[38126076027](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126076027)
+passed: 850 Python, 22 real PostgreSQL V1 checks, 10 backup/restore and 12 Compose
+checks. Security run
+[38126076071](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126076071)
+also passed. Raw downloaded evidence is versioned with the local results.

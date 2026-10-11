@@ -1,6 +1,6 @@
 # تقرير الاختبارات الفعلية — Engineering RC2، 2026-10-11 UTC
 
-> أحدث دفعة للخادم: 850 Python ناجحًا محليًا وHTTP/worker/restart ناجح؛ قبل الإصلاح 22 فشلًا وبعده 22 نجاحًا لحالات الانتهاء. الأدلة في `evidence/expiry-20261011/`. بوابات PostgreSQL/Compose والأمان الجديدة لم تُقبل بعد؛ الأرقام والروابط أدناه سجل قبول build 13 السابق.
+> أحدث دفعة للخادم: 850 Python ناجحًا محليًا وHTTP/worker/restart ناجح؛ قبل الإصلاح 22 فشلًا وبعده 22 نجاحًا لحالات الانتهاء. الأدلة في `evidence/expiry-20261011/`. نجحت بوابات PostgreSQL (22) وbackup/restore (10) وCompose (12) والأمان للمصدر `381eec3`؛ الأرقام والروابط أدناه سجل قبول build 13 السابق.
 
 **القبول يخص المحاكاة والبحث المحددين، وليس اكتمال V1.0 أو اتصالًا بوسيط.** الأدلة في `docs/evidence/engineering-20261011/`؛ الأدلة التاريخية باقية في `docs/evidence/recovery-20261011/` و`docs/evidence/rc2/`.
 
@@ -59,3 +59,7 @@ Android run `38118890108` اكتمل بنجاح، artifact `11694930290`. APK م
 iOS run `38118890095` ناجح، artifact `11694368985`؛ فحص Info.plist يؤكد 1.0.0 build 13 وminimum iOS 15.0، ولا يوجد `_CodeSignature` للتطبيق. SHA-256 لأرشيف التنزيل `00533a0a6b17350ee52aeed53cbc05562afd41fcd67cc9b6e6d5015f3e6c92a4`. ليس IPA موقعًا أو TestFlight.
 
 ملفات `*-build13-verification.json` و`flutter-*-build13-summary.json` و`acceptance-runs.json` تحفظ الأعداد والبصمات وربط المصدر. لا تُحسب اختبارات جهاز من هذه النتائج.
+
+## قبول حماية الانتهاء بعد الرفع
+
+المصدر `381eec3cf2ed1454764d75ab51683dcf3634e453`: [Mock safety checks](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126076027) و[Security](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38126076071) نجحا. ملفات artifacts نُزلت وفُحص CRC وJUnit/JSON فعلًا: 850 Python بلا فشل/تجاوز، PostgreSQL V1 عدد22، backup/restore عدد10، Compose عدد12، وHTTP وعامل مستقل ناجحان. الأدلة `evidence/expiry-20261011/cloud-*`. هذا تحقق PostgreSQL فعلي مستقل عن dry-run SQLite المسمى بوضوح.

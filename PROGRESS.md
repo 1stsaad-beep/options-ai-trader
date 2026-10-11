@@ -120,3 +120,20 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Expanded actual PostgreSQL acceptance harness from 14 to **22 checks** with two connections and concurrent review. Script dry run used SQLite only and is labeled accordingly; PostgreSQL/Compose and security CI remain pending publication.
 - Official OCC/OIC/IBKR public documentation reviewed; modeled close-only protection does not implement real exercise, assignment, adjusted contracts or settlement. No IBKR/Paper connection, financial order, paid service, Live enablement, key or secret.
 - This is a backend-only batch. No needless Android/iOS rebuild; build 13 does not gain local US-policy parity. Do not begin another feature batch before this checkpoint is pushed and its remote SHA verified.
+
+### Continuation batch 1: cloud acceptance verified
+
+- Pushed/read back and synchronized exact local/remote commit `381eec3cf2ed1454764d75ab51683dcf3634e453` before any next feature work.
+- Backend/Compose run **38126076027** and security run **38126076071** succeeded. Downloaded artifact CRC and raw JUnit/JSON verify **850 Python**, **22 actual PostgreSQL V1**, **10 backup/restore**, **12 Compose** checks, plus real HTTP/worker/restart. Zero final failure/skip.
+- Raw cloud evidence and source/run mapping saved in `docs/evidence/expiry-20261011/`. Security patterns: zero findings; existing dependency audits show no known advisories for 24 Python dependencies and 43 Pub packages at run time.
+- Next bounded batch is phone-only manual Demo backup/restore; no backend or external broker feature is being added.
+
+## Continuation batch 2: manual mobile Demo portability — awaiting cloud gate
+
+- Previous expiry checkpoint `381eec3cf2ed1454764d75ab51683dcf3634e453` is saved and all backend/Compose/security gates passed before this independent phone batch.
+- Added explicit clipboard JSON export, strict bounded/versioned import, immutable preview counts, and confirmation before replacing all local Demo accounts. Original order decisions/receipts remain intact. Current imported connection/trust/entry/automation permissions are reset conservatively; owned closes can execute only after local reconciliation and existing gates.
+- Import serializes with saves, refuses stale target state, verifies persisted bytes before switching memory, and verifies rollback after save failure. Unverifiable rollback blocks ordinary writes/play while preserving export and explicit reload; missing/corrupt recovery reads preserve original memory.
+- Read-only safety review found the same write-then-throw defect in ordinary `change()` saves. Applied the same verified persistence/rollback and uncertainty latch there, with two dedicated fault-injection regressions.
+- Added **12 engine/store and 3 widget tests**, including actual Demo ledger roundtrip/reopen, pending permissions, invalid/future/cross-account/credential payloads, size limit, cancellation/clipboard/confirmation, storage failure and overlap. These are **authored, not locally executed**: Flutter is unavailable. Static diff check passed; CI analyze/tests/build must pass before acceptance. No Python runtime change, so no redundant backend/mobile-history retest is claimed.
+- Build number is 14 in pubspec and both mobile workflows. Existing key provisioning remains unchanged; stable signing/device upgrades are still not available. Clipboard portability is manual, not a file writer/cloud sync or proof of physical-device durability. Initial corrupt-store recovery import remains a documented gap.
+- Full instructions/limits: `docs/DEMO_BACKUP_V1.md`. Publish this tested-backend/pending-mobile checkpoint, then inspect CI and fix failures before delivery; do not start another feature.

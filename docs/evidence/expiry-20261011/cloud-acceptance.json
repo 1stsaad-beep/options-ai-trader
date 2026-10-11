@@ -1,0 +1,25 @@
+{
+  "source_commit": "381eec3cf2ed1454764d75ab51683dcf3634e453",
+  "branch": "recovery/v1.0-20261011",
+  "verified_at": "2026-10-11",
+  "backend_run": 38126076027,
+  "security_run": 38126076071,
+  "backend_conclusion": "success",
+  "compose_conclusion": "success",
+  "security_conclusion": "success",
+  "python_passed": 850,
+  "python_failed": 0,
+  "python_skipped": 0,
+  "postgres_v1_passed": 22,
+  "postgres_backup_passed": 10,
+  "compose_checks_passed": 12,
+  "secret_scan": {
+    "finding_count": 0,
+    "files_scanned": 470,
+    "history_commits": 30,
+    "history_blobs_scanned": 638
+  },
+  "mobile_source_changed": false,
+  "broker_connections": 0,
+  "live_enabled": false
+}

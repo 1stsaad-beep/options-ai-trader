@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'engine.dart';
 import 'store.dart';
+import 'backup.dart';
 import 'chart_lab.dart';
 import 'research_lab.dart';
 
@@ -111,6 +113,64 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
     _ => '$value',
   };
   Future<void> act(void Function(DemoEngine) op) => controller.change(op);
+
+  void backupMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> exportBackup() async {
+    try {
+      final text = controller.exportBackup();
+      await Clipboard.setData(ClipboardData(text: text));
+      backupMessage('نُسخت بيانات Demo إلى الحافظة. الصق JSON في مكان تحفظه بنفسك؛ لم يُنشأ ملف تلقائيًا.');
+    } catch (e) { backupMessage('تعذر تصدير النسخة: $e'); }
+  }
+
+  Future<void> importBackup() async {
+    if (!controller.ready || controller.busy || controller.storageUncertain) return;
+    controller.pause();
+    final expectedCurrent = engine.encode();
+    final text = await showDialog<String>(context: context,
+      builder: (_) => const _DemoBackupInputDialog());
+    if (text == null || !mounted) return;
+    try {
+      final preview = DemoBackup.inspect(text);
+      final confirmed = await showDialog<bool>(context: context, builder: (dialog) => AlertDialog(
+        title: const Text('معاينة استبدال بيانات Demo'),
+        content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('الحسابات: ${preview.accountCount} • الأوامر: ${preview.orderCount}\n'
+              'المراكز: ${preview.positionCount} • الصفقات المغلقة: ${preview.tradeCount}',
+              key: const Key('demo-backup-preview-counts')),
+            Text(preview.accountNames.take(10).join('، ')),
+            const SizedBox(height: 12),
+            const Text('سيُستبدل جميع حسابات Demo على الجهاز؛ لا دمج. '
+              'تبقى القرارات والتعبئات الأصلية محفوظة، وتتوقف الأتمتة والتعزيز والانعكاس. '
+              'راجع الأوامر المعلقة ثم صالح كل حساب واستأنفه صراحة قبل أي دخول جديد. '
+              'أوامر الإغلاق المملوك قد تستكمل بعد المصالحة عند تشغيل المحاكاة. '
+              'التحقق من البنية والدفتر لا يثبت أصالة مصدر النسخة.'),
+          ])),
+        actions: [
+          TextButton(key: const Key('demo-backup-cancel'),
+            onPressed: () => Navigator.pop(dialog, false), child: const Text('احتفظ بالبيانات الحالية')),
+          FilledButton(key: const Key('demo-backup-confirm'),
+            onPressed: () => Navigator.pop(dialog, true), child: const Text('استبدال كل حسابات Demo')),
+        ],
+      ));
+      if (confirmed != true || !mounted) return;
+      final imported = await controller.importBackup(preview, expectedCurrent: expectedCurrent);
+      if (!mounted) return;
+      if (imported) {
+        setState(() {
+          selected = engine.accounts.isEmpty ? null : engine.accounts.first['id'];
+          replay = null;
+          page = 0;
+        });
+        backupMessage('استُعيدت بيانات Demo والأتمتة معطلة. راجع الأوامر قبل المصالحة، واستأنف الحساب صراحة لأي دخول جديد.');
+      }
+    } catch (e) { backupMessage('رُفضت النسخة؛ لم تتغير بياناتك. $e'); }
+  }
 
   Future<Map<String, String>?> form(
     String title,
@@ -314,6 +374,21 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
       title: Text(pages[page]),
       actions: [
         PopupMenuButton<String>(
+          key: const Key('demo-backup-menu'),
+          tooltip: 'نسخة Demo يدوية',
+          enabled: controller.ready && !controller.busy,
+          icon: const Icon(Icons.import_export),
+          onSelected: (action) {
+            if (action == 'export') { exportBackup(); }
+            if (action == 'import') { importBackup(); }
+          },
+          itemBuilder: (_) => [
+            const PopupMenuItem(value: 'export', child: Text('نسخ نسخة Demo إلى الحافظة')),
+            PopupMenuItem(value: 'import', enabled: !controller.storageUncertain,
+              child: const Text('استيراد نسخة Demo من JSON')),
+          ],
+        ),
+        PopupMenuButton<String>(
           tooltip: 'مظهر التطبيق',
           icon: const Icon(Icons.brightness_6_outlined),
           onSelected: (s) => act((e) => e.theme = s),
@@ -417,6 +492,10 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
                 ),
               ),
             ),
+          if (controller.storageUncertain)
+            TextButton(key: const Key('demo-backup-reload-storage'),
+              onPressed: controller.busy ? null : controller.load,
+              child: const Text('إعادة قراءة التخزين بعد تصدير النسخة الحالية')),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(16),
@@ -895,6 +974,60 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
       ),
     ];
   }
+}
+
+class _DemoBackupInputDialog extends StatefulWidget {
+  const _DemoBackupInputDialog();
+  @override
+  State<_DemoBackupInputDialog> createState() => _DemoBackupInputDialogState();
+}
+
+class _DemoBackupInputDialogState extends State<_DemoBackupInputDialog> {
+  final input = TextEditingController();
+  String? error;
+  bool reading = false;
+
+  @override
+  void dispose() { input.dispose(); super.dispose(); }
+
+  Future<void> paste() async {
+    setState(() { reading = true; error = null; });
+    try {
+      final data = await Clipboard.getData(Clipboard.kTextPlain);
+      if (!mounted) return;
+      final text = data?.text;
+      if (text == null || text.isEmpty || text.length > DemoBackup.maxBytes) {
+        setState(() => error = 'الحافظة فارغة أو النسخة أكبر من الحد المسموح');
+      } else {
+        input.text = text;
+      }
+    } catch (_) {
+      if (mounted) setState(() => error = 'تعذر قراءة الحافظة؛ يمكنك لصق JSON يدويًا');
+    } finally {
+      if (mounted) setState(() => reading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: const Text('استيراد نسخة Demo يدوية'),
+    content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
+      const Text('الصق JSON الذي صدّرته من Demo فقط، بحد أقصى 2 MiB. '
+        'لا تدخل عنوان خادم أو كلمة مرور أو رمز وصول. لن تتغير البيانات قبل المعاينة والتأكيد.'),
+      TextField(key: const Key('demo-backup-input'), controller: input,
+        maxLines: 5, textDirection: TextDirection.ltr,
+        decoration: const InputDecoration(labelText: 'JSON النسخة المحلية')),
+      OutlinedButton(key: const Key('demo-backup-paste'), onPressed: reading ? null : paste,
+        child: const Text('لصق من الحافظة')),
+      if (error != null) Text(error!),
+    ])),
+    actions: [
+      TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+      FilledButton(key: const Key('demo-backup-preview'),
+        onPressed: reading ? null : () => Navigator.pop(context, input.text),
+        child: const Text('معاينة النسخة')),
+    ],
+  );
 }
 
 class EquityPainter extends CustomPainter {
