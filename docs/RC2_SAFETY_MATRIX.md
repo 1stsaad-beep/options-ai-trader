@@ -72,3 +72,10 @@
 | تاريخ موجي غير معاد رسمه عند restart/append | `test_wave_snapshot_integrity.py` | 13 حالة؛ digest/source/scope/audit، تاريخ أحداث غير فارغ محفوظ |
 
 تطور فحص الخروج اليومي: ما زالت ساعة UTC في السياسة الاصطناعية الافتراضية وDemo، وأضيفت سياسة US اختيارية للخادم فقط. انتهاء العقود ما زال مبسطًا؛ تمرير اختباره لا يثبت ممارسة/تخصيصًا حقيقيًا. لا اتصال وسيط ولا اختبار جهاز.
+
+## Continuation expiry acceptance — 2026-10-11
+
+- `test_option_expiration_policy.py`: 46 pure timing cases (DST, early close, holiday Friday, unknown calendar).
+- `test_us_expiry_protection.py`: 22 real SQLite service/automation cases. Saved-source baseline 22 failures; current 22 passes. Partial-close basis/fees and receipts survive cutoff/restart; no phantom flatness, opposite entry, post-cutoff fill, fake valuation, or session-policy downgrade.
+- Full local Python gate now 850 passes. PostgreSQL harness extended to 22 checks; actual cloud result must be read before claiming it passed.
+- Optional US policy only; default synthetic/mobile writeoff remains artificial. See `OPTION_EXPIRATION_POLICY_V1.md`; no exercise/assignment/settlement or broker connection.

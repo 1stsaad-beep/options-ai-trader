@@ -127,6 +127,7 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
     if result['expired_positions']:
         result['actions'].append({'type': 'EXPIRY_WRITEOFF', 'count': result['expired_positions'],
                                   'policy': 'synthetic_premium_lost_no_exercise'})
+    result['expiration_reviews'] = service.expiration_reviews(db, account)
     cache = {}
 
     def quotes(symbol):
@@ -149,6 +150,9 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
                 raise Rejected('Future or stale option quote snapshot')
             _cents(q.bid)
             _cents(q.ask)
+            # A fresh synthetic timestamp cannot value an unresolved expiry.
+            if service.option_expiration(config, q.expiry)['review_required']:
+                continue
             service.record_option_mark(db,account_id,q.symbol,q.right,q.expiry.isoformat(),_cents(q.strike),_cents(q.bid),_cents(q.ask),q.timestamp)
         cache[symbol] = values
         return values
@@ -213,6 +217,10 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
                 blocked(row['symbol'],exc)
     for position in db.all('SELECT * FROM positions WHERE account_id=? ORDER BY symbol', (account_id,)):
         try:
+            expiration = service.option_expiration(config, position['expiry'])
+            if expiration['status'] == 'EXPIRY_REVIEW_REQUIRED':
+                exit_symbols.add(position['symbol'])
+                raise Rejected('Unresolved option expiration retains inventory; no synthetic exit fill')
             q = quote_for(position)
             premium = _cents(q.bid)*100*position['quantity']
             loss = premium*100 <= position['cost']*(100-config['stop_loss_pct'])
@@ -233,7 +241,8 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
                 carried=bool(policy and prior_session_position(datetime.fromisoformat(policy['opened_at']), now))
                 intraday=config['holding']=='intraday' and (session['exit_due'] or carried)
             swing=config['holding']=='swing' and policy is not None and (now-datetime.fromisoformat(policy['opened_at'])).days>=config['swing_max_days']
-            near_expiry=(date.fromisoformat(position['expiry'])-now.date()).days<=config['expiry_exit_days']
+            expiry_days = expiration['days_to_last_trade']
+            near_expiry=expiry_days is not None and expiry_days<=config['expiry_exit_days']
             partial=bool(config['partial_profit_pct'] and policy and not policy['partial_taken'] and position['quantity']>=2 and premium*100>=position['cost']*(100+config['partial_profit_pct']))
             invalidated=False
             # Protective exits and accepted close receipts have priority over

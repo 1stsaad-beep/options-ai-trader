@@ -149,6 +149,107 @@ def run():
         else:
             raise AssertionError('Cross-account research observation accepted')
         checks.append('research_observation_account_isolation')
+
+        # Reuse both real database connections with an explicit, independent
+        # expiry clock. These are synthetic contracts, never broker receipts.
+        expiry_clock = [datetime(2026, 10, 8, 14, tzinfo=timezone.utc)]
+        expiring = [TradingService(repo, now=lambda: expiry_clock[0],
+                                   today=lambda: expiry_clock[0].date())
+                    for repo in (first, second)]
+        expiry_account = expiring[0].create_account(prefix + '-expiry', 3_000_000)['id']
+        expiring[0].watch(expiry_account, 'NVDA', True)
+        expiring[0].configure(expiry_account, {
+            'session_policy': 'us_equity_options_2026_2027', 'commission_cents': 65})
+        expiry_request = dict(request_key=prefix + '-expiry-entry', symbol='NVDA',
+            right='CALL', side='BUY', expiry='2026-10-09', strike_cents=10000,
+            quantity=2, limit_cents=105)
+        entry = expiring[0].submit(expiry_account, expiry_request)
+        expiring[0].fill(expiry_account, entry['id'], prefix + '-expiry-owned', 2, 105)
+
+        def expiry_refresh(stamp):
+            expiry_clock[0] = datetime.fromisoformat(stamp)
+            expiring[0].reconcile(expiry_account)
+            expiring[0].mock_market_data(expiry_account, 'NVDA')
+            with first.transaction() as db:
+                expiring[0].record_option_mark(db, expiry_account, 'NVDA', 'CALL',
+                    '2026-10-09', 10000, 100, 105, expiry_clock[0])
+
+        expiry_refresh('2026-10-09T19:59:59+00:00')
+        close_request = expiry_request | {'request_key': prefix + '-expiry-close',
+                                         'side': 'SELL_TO_CLOSE', 'limit_cents': 100}
+        expiry_close = expiring[0].submit(expiry_account, close_request)
+        receipt = prefix + '-expiry-partial-close'
+        expiring[0].fill(expiry_account, expiry_close['id'], receipt, 1, 100)
+        remainder = expiring[0].rows(expiry_account, 'positions')
+        assert len(remainder) == 1 and remainder[0]['quantity'] == 1
+        assert remainder[0]['cost'] == 10565
+        with first.transaction() as db:
+            original_policy = db.one('SELECT * FROM position_policies WHERE account_id=?', (expiry_account,))
+        assert expiring[0].performance(expiry_account)['realized_pnl_cents'] == -630
+        checks.append('us_final_session_owned_partial_close_and_fees')
+
+        expiry_clock[0] = datetime(2026, 10, 9, 20, tzinfo=timezone.utc)
+        expiry_barrier = threading.Barrier(2)
+        def review_expiry(index):
+            expiry_barrier.wait(timeout=10)
+            return expiring[index].expire(expiry_account)
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            reviewed = list(pool.map(review_expiry, range(2)))
+        assert reviewed == [0, 0]
+        with first.transaction() as db:
+            assert db.one("SELECT COUNT(*) AS n FROM audit WHERE account_id=? AND event='MOCK_EXPIRY_REVIEW_REQUIRED'",
+                          (expiry_account,))['n'] == 1
+            assert db.one("SELECT COUNT(*) AS n FROM audit WHERE account_id=? AND event='MOCK_EXPIRY_WRITEOFF'",
+                          (expiry_account,))['n'] == 0
+        checks.append('concurrent_us_expiry_review_has_one_event_without_writeoff')
+        assert expiring[1].rows(expiry_account, 'positions') == remainder
+        with second.transaction() as db:
+            assert db.one('SELECT * FROM position_policies WHERE account_id=?', (expiry_account,)) == original_policy
+        assert expiring[1].reconcile(expiry_account)['resubmitted'] == 0
+        checks.append('us_expiry_preserves_inventory_basis_policy_and_reconciled_ledger')
+        assert expiring[1].fill(expiry_account, expiry_close['id'], receipt, 1, 100)['filled'] == 1
+        assert expiring[1].submit(expiry_account, close_request)['id'] == expiry_close['id']
+        checks.append('us_expiry_preserves_lost_reply_order_and_partial_fill_receipts')
+        try:
+            expiring[1].fill(expiry_account, expiry_close['id'], prefix + '-expiry-late', 1, 100)
+        except Rejected:
+            pass
+        else:
+            raise AssertionError('Expired residual received a phantom fill')
+        checks.append('us_expiry_blocks_new_close_fill_at_cutoff')
+
+        # The next session and a freshly timestamped synthetic mark do not
+        # establish settlement, release exposure, or authorize a new direction.
+        expiry_refresh('2026-10-12T14:00:00+00:00')
+        value = expiring[1].performance(expiry_account)
+        assert value['realized_pnl_cents'] == -630 and value['open_premium_cents'] == 10565
+        assert value['valuation_complete'] is False and value['unrealized_pnl_cents'] is None
+        assert value['net_liquidation_cents'] is None
+        status = expiring[1].status(expiry_account)
+        assert len(status['expiration_reviews']) == 1 and not status['new_entries_allowed']
+        checks.append('us_expiry_fresh_mark_cannot_fabricate_pnl_or_complete_valuation')
+        try:
+            expiring[1].configure(expiry_account, {'session_policy': 'synthetic_24x7'})
+        except Rejected:
+            pass
+        else:
+            raise AssertionError('Session policy change bypassed unresolved expiry')
+        checks.append('us_expiry_policy_downgrade_blocked_with_owned_exposure')
+        for direction in ('CALL', 'PUT'):
+            try:
+                expiring[1].submit(expiry_account, expiry_request | {
+                    'request_key': prefix + '-after-expiry-' + direction,
+                    'right': direction, 'expiry': '2026-10-23', 'quantity': 1})
+            except Rejected:
+                pass
+            else:
+                raise AssertionError('Reconciliation released unresolved expiry risk')
+        assert expiring[1].rows(expiry_account, 'positions') == remainder
+        assert expiring[1].expire(expiry_account) == 0
+        with second.transaction() as db:
+            assert db.one("SELECT COUNT(*) AS n FROM audit WHERE account_id=? AND event='MOCK_EXPIRY_REVIEW_REQUIRED'",
+                          (expiry_account,))['n'] == 1
+        checks.append('us_expiry_reconciled_same_and_opposite_new_entries_stay_blocked')
         print(json.dumps({'status': 'passed', 'checks_passed': len(checks), 'checks_failed': 0,
                           'checks': checks, 'database': 'PostgreSQL', 'broker': 'none'}, indent=2))
     finally:

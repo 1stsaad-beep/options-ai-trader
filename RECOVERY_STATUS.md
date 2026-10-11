@@ -76,3 +76,10 @@ Current code acceptance is at `b39b164f6869305b1e71586ef2d6978a7612fcf1`: 631 Py
 - Python الحالي 782 ناجحًا محليًا وعلى CI، وPostgreSQL/Compose/backup ناجحة بأدلتها. نتائج الهاتف وartifact hashes وروابطها موثقة في `FINAL_DELIVERY.md` و`RECOVERY_TEST_REPORT_V1.md` عند التسليم.
 - لم تُفترض إمكانية استعادة تغييرات من جلسة منتهية. Flutter/macOS/Docker/PostgreSQL نفذت عبر GitHub Actions وليس محليًا. لا اختبار هاتف فعلي ولا IBKR ولو Paper أو Live.
 - لا force push أو حذف فروع/ملفات/تاريخ أو reset --hard أو clean. أي بيانات سابقة خارج المصدر والأدلة المحفوظة تبقى غير مستعادة/غير مثبتة.
+
+## Continuation: close-only expiration checkpoint — 2026-10-11
+
+- Verified clean local/remote Recovery head `3a72226143944dd8985f14d82cc14afc45acbb8f`; no unsaved source needed an additional recovery commit. Existing history and mobile build 13 remain preserved.
+- Added backend-only optional US expiry protection; details in `docs/OPTION_EXPIRATION_POLICY_V1.md`. No live settlement, exercise or assignment is inferred. No external broker connection.
+- Local full acceptance: 850 Python passes, real HTTP/worker/restart smoke passed. PostgreSQL/Compose cloud acceptance for this checkpoint is pending publication.
+- Saved original-source reproduction and current results in `docs/evidence/expiry-20261011/`. No recovery of unavailable prior-session memory is claimed.

@@ -102,13 +102,12 @@ opens, extended sessions, product-specific trading hours, broker order handling,
 settlement calendars, live time synchronization, or mobile Demo calendar parity.
 It does not establish eligibility of a real options contract.
 
-The existing synthetic expiry lifecycle is unchanged: same-day contracts are
-rejected, including owned reductions, and `expiry <= UTC date` uses the existing
-premium-loss write-off. That is not exchange expiry behavior, exercise, physical
-delivery, assignment, broker liquidation, or an actual market fill. A realistic
-expiry/exercise/assignment lifecycle requires its own implementation and
-acceptance tests before any broker trial. This policy must not be advertised as
-completing that requirement.
+The default synthetic expiry lifecycle is unchanged. The optional US policy now
+uses [close-only expiration protection](OPTION_EXPIRATION_POLICY_V1.md): owned
+reductions remain possible until the modeled final close, and unresolved
+post-cutoff exposure is retained without a writeoff or fictitious settlement.
+Real contract qualification, exercise, delivery and assignment remain
+unimplemented. Neither policy establishes readiness for a broker trial.
 
 The default mobile local Demo remains explicitly synthetic. No IBKR Paper or
 Live connection, external order, paid service, or deployment is enabled here.

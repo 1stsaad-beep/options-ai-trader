@@ -1,0 +1,641 @@
+Baseline: saved commit 3a722261; isolated git archive; only final 22-case regression test copied.
+FFFFFFFFFFFFFFFFFFFFFF                                                   [100%]
+=================================== FAILURES ===================================
+_ test_final_session_allows_owned_reduction_and_blocks_new_buy[CALL-regular_dst] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa7aab0>
+name = 'regular_dst', seed = '2026-10-08T14:00:00+00:00', expiry = '2026-10-09'
+cutoff = '2026-10-09T20:00:00+00:00', right = 'CALL'
+
+    @pytest.mark.parametrize('name,seed,expiry,cutoff', CASES, ids=[row[0] for row in CASES])
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_final_session_allows_owned_reduction_and_blocks_new_buy(world, name, seed, expiry, cutoff, right):
+        w = world
+        position = own(w, seed, expiry, right)
+        close_time = datetime.fromisoformat(cutoff)
+        at(w, close_time-timedelta(hours=1))
+        mark(w, position)
+>       assert w.service.expire(w.account) == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = expire('5589a6cd-df50-47dc-9e35-4ac82fc3b5ff')
+E        +    where expire = <app.service.TradingService object at 0x7fb36aa7ce90>.expire
+E        +      where <app.service.TradingService object at 0x7fb36aa7ce90> = <test_rc2_safety.DurableWorld object at 0x7fb36aa7aab0>.service
+E        +    and   '5589a6cd-df50-47dc-9e35-4ac82fc3b5ff' = <test_rc2_safety.DurableWorld object at 0x7fb36aa7aab0>.account
+
+backend/tests/test_us_expiry_protection.py:74: AssertionError
+_ test_final_session_allows_owned_reduction_and_blocks_new_buy[CALL-regular_standard] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa7e3f0>
+name = 'regular_standard', seed = '2026-11-05T15:00:00+00:00'
+expiry = '2026-11-06', cutoff = '2026-11-06T21:00:00+00:00', right = 'CALL'
+
+    @pytest.mark.parametrize('name,seed,expiry,cutoff', CASES, ids=[row[0] for row in CASES])
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_final_session_allows_owned_reduction_and_blocks_new_buy(world, name, seed, expiry, cutoff, right):
+        w = world
+        position = own(w, seed, expiry, right)
+        close_time = datetime.fromisoformat(cutoff)
+        at(w, close_time-timedelta(hours=1))
+        mark(w, position)
+>       assert w.service.expire(w.account) == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = expire('ff00bafe-46a1-460e-b3c8-421d454061d6')
+E        +    where expire = <app.service.TradingService object at 0x7fb36aa79df0>.expire
+E        +      where <app.service.TradingService object at 0x7fb36aa79df0> = <test_rc2_safety.DurableWorld object at 0x7fb36aa7e3f0>.service
+E        +    and   'ff00bafe-46a1-460e-b3c8-421d454061d6' = <test_rc2_safety.DurableWorld object at 0x7fb36aa7e3f0>.account
+
+backend/tests/test_us_expiry_protection.py:74: AssertionError
+_ test_final_session_allows_owned_reduction_and_blocks_new_buy[CALL-early_close] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa7e240>
+name = 'early_close', seed = '2026-11-25T15:00:00+00:00', expiry = '2026-11-27'
+cutoff = '2026-11-27T18:00:00+00:00', right = 'CALL'
+
+    @pytest.mark.parametrize('name,seed,expiry,cutoff', CASES, ids=[row[0] for row in CASES])
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_final_session_allows_owned_reduction_and_blocks_new_buy(world, name, seed, expiry, cutoff, right):
+        w = world
+        position = own(w, seed, expiry, right)
+        close_time = datetime.fromisoformat(cutoff)
+        at(w, close_time-timedelta(hours=1))
+        mark(w, position)
+>       assert w.service.expire(w.account) == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = expire('890e7e1d-4fb5-47b2-b23e-fcf97269bcda')
+E        +    where expire = <app.service.TradingService object at 0x7fb36aa7d370>.expire
+E        +      where <app.service.TradingService object at 0x7fb36aa7d370> = <test_rc2_safety.DurableWorld object at 0x7fb36aa7e240>.service
+E        +    and   '890e7e1d-4fb5-47b2-b23e-fcf97269bcda' = <test_rc2_safety.DurableWorld object at 0x7fb36aa7e240>.account
+
+backend/tests/test_us_expiry_protection.py:74: AssertionError
+_ test_final_session_allows_owned_reduction_and_blocks_new_buy[CALL-holiday_expiry] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa7e450>
+name = 'holiday_expiry', seed = '2026-04-01T14:00:00+00:00'
+expiry = '2026-04-03', cutoff = '2026-04-02T20:00:00+00:00', right = 'CALL'
+
+    @pytest.mark.parametrize('name,seed,expiry,cutoff', CASES, ids=[row[0] for row in CASES])
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_final_session_allows_owned_reduction_and_blocks_new_buy(world, name, seed, expiry, cutoff, right):
+        w = world
+        position = own(w, seed, expiry, right)
+        close_time = datetime.fromisoformat(cutoff)
+        at(w, close_time-timedelta(hours=1))
+        mark(w, position)
+        assert w.service.expire(w.account) == 0
+        assert w.service.rows(w.account, 'positions') == [position]
+>       with pytest.raises(Rejected):
+             ^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_us_expiry_protection.py:76: Failed
+_ test_final_session_allows_owned_reduction_and_blocks_new_buy[CALL-holiday_early_close] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa7d0a0>
+name = 'holiday_early_close', seed = '2026-12-23T15:00:00+00:00'
+expiry = '2026-12-25', cutoff = '2026-12-24T18:00:00+00:00', right = 'CALL'
+
+    @pytest.mark.parametrize('name,seed,expiry,cutoff', CASES, ids=[row[0] for row in CASES])
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_final_session_allows_owned_reduction_and_blocks_new_buy(world, name, seed, expiry, cutoff, right):
+        w = world
+        position = own(w, seed, expiry, right)
+        close_time = datetime.fromisoformat(cutoff)
+        at(w, close_time-timedelta(hours=1))
+        mark(w, position)
+        assert w.service.expire(w.account) == 0
+        assert w.service.rows(w.account, 'positions') == [position]
+>       with pytest.raises(Rejected):
+             ^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_us_expiry_protection.py:76: Failed
+_ test_final_session_allows_owned_reduction_and_blocks_new_buy[PUT-regular_dst] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa76750>
+name = 'regular_dst', seed = '2026-10-08T14:00:00+00:00', expiry = '2026-10-09'
+cutoff = '2026-10-09T20:00:00+00:00', right = 'PUT'
+
+    @pytest.mark.parametrize('name,seed,expiry,cutoff', CASES, ids=[row[0] for row in CASES])
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_final_session_allows_owned_reduction_and_blocks_new_buy(world, name, seed, expiry, cutoff, right):
+        w = world
+        position = own(w, seed, expiry, right)
+        close_time = datetime.fromisoformat(cutoff)
+        at(w, close_time-timedelta(hours=1))
+        mark(w, position)
+>       assert w.service.expire(w.account) == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = expire('4f151f3b-e9fc-4cfc-880c-0c276c573d48')
+E        +    where expire = <app.service.TradingService object at 0x7fb36aa778f0>.expire
+E        +      where <app.service.TradingService object at 0x7fb36aa778f0> = <test_rc2_safety.DurableWorld object at 0x7fb36aa76750>.service
+E        +    and   '4f151f3b-e9fc-4cfc-880c-0c276c573d48' = <test_rc2_safety.DurableWorld object at 0x7fb36aa76750>.account
+
+backend/tests/test_us_expiry_protection.py:74: AssertionError
+_ test_final_session_allows_owned_reduction_and_blocks_new_buy[PUT-regular_standard] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa77170>
+name = 'regular_standard', seed = '2026-11-05T15:00:00+00:00'
+expiry = '2026-11-06', cutoff = '2026-11-06T21:00:00+00:00', right = 'PUT'
+
+    @pytest.mark.parametrize('name,seed,expiry,cutoff', CASES, ids=[row[0] for row in CASES])
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_final_session_allows_owned_reduction_and_blocks_new_buy(world, name, seed, expiry, cutoff, right):
+        w = world
+        position = own(w, seed, expiry, right)
+        close_time = datetime.fromisoformat(cutoff)
+        at(w, close_time-timedelta(hours=1))
+        mark(w, position)
+>       assert w.service.expire(w.account) == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = expire('646bf267-a884-444a-bb34-1cec54c8ac3b')
+E        +    where expire = <app.service.TradingService object at 0x7fb36aa771d0>.expire
+E        +      where <app.service.TradingService object at 0x7fb36aa771d0> = <test_rc2_safety.DurableWorld object at 0x7fb36aa77170>.service
+E        +    and   '646bf267-a884-444a-bb34-1cec54c8ac3b' = <test_rc2_safety.DurableWorld object at 0x7fb36aa77170>.account
+
+backend/tests/test_us_expiry_protection.py:74: AssertionError
+_ test_final_session_allows_owned_reduction_and_blocks_new_buy[PUT-early_close] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa77d70>
+name = 'early_close', seed = '2026-11-25T15:00:00+00:00', expiry = '2026-11-27'
+cutoff = '2026-11-27T18:00:00+00:00', right = 'PUT'
+
+    @pytest.mark.parametrize('name,seed,expiry,cutoff', CASES, ids=[row[0] for row in CASES])
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_final_session_allows_owned_reduction_and_blocks_new_buy(world, name, seed, expiry, cutoff, right):
+        w = world
+        position = own(w, seed, expiry, right)
+        close_time = datetime.fromisoformat(cutoff)
+        at(w, close_time-timedelta(hours=1))
+        mark(w, position)
+>       assert w.service.expire(w.account) == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = expire('4fee5d37-137c-42fc-8042-f3ff5e00dae3')
+E        +    where expire = <app.service.TradingService object at 0x7fb36aa760f0>.expire
+E        +      where <app.service.TradingService object at 0x7fb36aa760f0> = <test_rc2_safety.DurableWorld object at 0x7fb36aa77d70>.service
+E        +    and   '4fee5d37-137c-42fc-8042-f3ff5e00dae3' = <test_rc2_safety.DurableWorld object at 0x7fb36aa77d70>.account
+
+backend/tests/test_us_expiry_protection.py:74: AssertionError
+_ test_final_session_allows_owned_reduction_and_blocks_new_buy[PUT-holiday_expiry] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa80da0>
+name = 'holiday_expiry', seed = '2026-04-01T14:00:00+00:00'
+expiry = '2026-04-03', cutoff = '2026-04-02T20:00:00+00:00', right = 'PUT'
+
+    @pytest.mark.parametrize('name,seed,expiry,cutoff', CASES, ids=[row[0] for row in CASES])
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_final_session_allows_owned_reduction_and_blocks_new_buy(world, name, seed, expiry, cutoff, right):
+        w = world
+        position = own(w, seed, expiry, right)
+        close_time = datetime.fromisoformat(cutoff)
+        at(w, close_time-timedelta(hours=1))
+        mark(w, position)
+        assert w.service.expire(w.account) == 0
+        assert w.service.rows(w.account, 'positions') == [position]
+>       with pytest.raises(Rejected):
+             ^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_us_expiry_protection.py:76: Failed
+_ test_final_session_allows_owned_reduction_and_blocks_new_buy[PUT-holiday_early_close] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa82d50>
+name = 'holiday_early_close', seed = '2026-12-23T15:00:00+00:00'
+expiry = '2026-12-25', cutoff = '2026-12-24T18:00:00+00:00', right = 'PUT'
+
+    @pytest.mark.parametrize('name,seed,expiry,cutoff', CASES, ids=[row[0] for row in CASES])
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_final_session_allows_owned_reduction_and_blocks_new_buy(world, name, seed, expiry, cutoff, right):
+        w = world
+        position = own(w, seed, expiry, right)
+        close_time = datetime.fromisoformat(cutoff)
+        at(w, close_time-timedelta(hours=1))
+        mark(w, position)
+        assert w.service.expire(w.account) == 0
+        assert w.service.rows(w.account, 'positions') == [position]
+>       with pytest.raises(Rejected):
+             ^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_us_expiry_protection.py:76: Failed
+_ test_partial_close_cutoff_retains_cost_and_replays_receipt_after_restart[CALL] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa81df0>, right = 'CALL'
+
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_partial_close_cutoff_retains_cost_and_replays_receipt_after_restart(world, right):
+        w = world
+        position = own(w, CASES[0][1], CASES[0][2], right, 2)
+        at(w, '2026-10-09T19:59:59+00:00')
+>       order = w.service.submit(w.account, close_request(w, position))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend/tests/test_us_expiry_protection.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/app/service.py:541: in submit
+    return self._submit(account_id,request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.service.TradingService object at 0x7fb36aa83d70>
+account_id = '91d48561-6b6d-4ef0-a43e-4550248dc7f1'
+request = {'request_key': 'expiry-close', 'symbol': 'NVDA', 'right': 'CALL', 'expiry': '2026-10-09', ...}
+
+    def _submit(self, account_id, request):
+        required = {'request_key','symbol','right','expiry','strike_cents','side','quantity','limit_cents'}
+        if not isinstance(request,dict) or set(request) != required:
+            raise Rejected('Exact single-leg option order fields required')
+        if not isinstance(request['request_key'], str) or not 1 <= len(request['request_key']) <= 100:
+            raise Rejected('Idempotency key required')
+        if request['request_key'].startswith(('auto-e:', 'auto-x:', 'v1-r:', 'v1-s:')) and not getattr(self, '_automation_authorized', False):
+            raise Rejected('Automatic order identifiers are reserved for the quantitative Mock worker')
+        fingerprint = hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
+        with self.repo.transaction() as db:
+            self.account(db, account_id)
+            previous = db.one('SELECT * FROM orders WHERE account_id=? AND request_key=?', (account_id,request['request_key']))
+            if previous:
+                if previous['fingerprint'] != fingerprint:
+                    raise Rejected('Idempotency key reused with different payload')
+                return previous
+        symbol = request['symbol']
+        if not isinstance(symbol, str) or not re.fullmatch(r'[A-Z][A-Z0-9.]{0,9}', symbol):
+            raise Rejected('Invalid symbol')
+        if request['right'] not in ('CALL','PUT') or request['side'] not in ('BUY','SELL_TO_CLOSE'):
+            raise Rejected('Only long calls/puts and owned closing sells are supported')
+        try:
+            expiry = date.fromisoformat(request['expiry'])
+        except (TypeError, ValueError):
+            raise Rejected('Expiry must be ISO date')
+        if expiry <= self.today():
+>           raise Rejected('Expired or same-day contracts are disabled')
+E           app.service.Rejected: Expired or same-day contracts are disabled
+
+backend/app/service.py:577: Rejected
+_ test_partial_close_cutoff_retains_cost_and_replays_receipt_after_restart[PUT] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa83ad0>, right = 'PUT'
+
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_partial_close_cutoff_retains_cost_and_replays_receipt_after_restart(world, right):
+        w = world
+        position = own(w, CASES[0][1], CASES[0][2], right, 2)
+        at(w, '2026-10-09T19:59:59+00:00')
+>       order = w.service.submit(w.account, close_request(w, position))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend/tests/test_us_expiry_protection.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/app/service.py:541: in submit
+    return self._submit(account_id,request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.service.TradingService object at 0x7fb36aa815e0>
+account_id = '893d0e4f-380c-4eea-bd0a-71e7d74653cd'
+request = {'request_key': 'expiry-close', 'symbol': 'NVDA', 'right': 'PUT', 'expiry': '2026-10-09', ...}
+
+    def _submit(self, account_id, request):
+        required = {'request_key','symbol','right','expiry','strike_cents','side','quantity','limit_cents'}
+        if not isinstance(request,dict) or set(request) != required:
+            raise Rejected('Exact single-leg option order fields required')
+        if not isinstance(request['request_key'], str) or not 1 <= len(request['request_key']) <= 100:
+            raise Rejected('Idempotency key required')
+        if request['request_key'].startswith(('auto-e:', 'auto-x:', 'v1-r:', 'v1-s:')) and not getattr(self, '_automation_authorized', False):
+            raise Rejected('Automatic order identifiers are reserved for the quantitative Mock worker')
+        fingerprint = hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
+        with self.repo.transaction() as db:
+            self.account(db, account_id)
+            previous = db.one('SELECT * FROM orders WHERE account_id=? AND request_key=?', (account_id,request['request_key']))
+            if previous:
+                if previous['fingerprint'] != fingerprint:
+                    raise Rejected('Idempotency key reused with different payload')
+                return previous
+        symbol = request['symbol']
+        if not isinstance(symbol, str) or not re.fullmatch(r'[A-Z][A-Z0-9.]{0,9}', symbol):
+            raise Rejected('Invalid symbol')
+        if request['right'] not in ('CALL','PUT') or request['side'] not in ('BUY','SELL_TO_CLOSE'):
+            raise Rejected('Only long calls/puts and owned closing sells are supported')
+        try:
+            expiry = date.fromisoformat(request['expiry'])
+        except (TypeError, ValueError):
+            raise Rejected('Expiry must be ISO date')
+        if expiry <= self.today():
+>           raise Rejected('Expired or same-day contracts are disabled')
+E           app.service.Rejected: Expired or same-day contracts are disabled
+
+backend/app/service.py:577: Rejected
+_____ test_global_expire_retains_us_exposure_and_preserves_legacy_writeoff _____
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa837a0>
+
+    def test_global_expire_retains_us_exposure_and_preserves_legacy_writeoff(world):
+        w = world
+        position = own(w, CASES[0][1], CASES[0][2])
+        other = w.service.create_account('legacy-24x7', 3_000_000)['id']
+        w.service.watch(other, 'NVDA', True)
+        legacy = w.service.submit(other, w.request(key='legacy-entry', expiry=position['expiry']))
+        w.service.fill(other, legacy['id'], 'legacy-owned', 1, 105)
+        at(w, '2026-10-09T20:00:00+00:00')
+        w.service.reconcile(other)
+>       assert w.service.expire() == 1
+E       assert 2 == 1
+E        +  where 2 = expire()
+E        +    where expire = <app.service.TradingService object at 0x7fb36aa80b00>.expire
+E        +      where <app.service.TradingService object at 0x7fb36aa80b00> = <test_rc2_safety.DurableWorld object at 0x7fb36aa837a0>.service
+
+backend/tests/test_us_expiry_protection.py:137: AssertionError
+_______ test_expiry_never_infers_flatness_for_waiting_reversal[CALL-PUT] _______
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa83aa0>, right = 'CALL'
+target = 'PUT'
+
+    @pytest.mark.parametrize('right,target', [('CALL', 'PUT'), ('PUT', 'CALL')])
+    def test_expiry_never_infers_flatness_for_waiting_reversal(world, right, target):
+        w = world
+        position = own(w, CASES[0][1], CASES[0][2], right, 2)
+        at(w, '2026-10-09T19:59:30+00:00')
+        mark(w, position)
+        quotes = fixture_quotes('NVDA', w.time, [position])
+>       intent = request_reversal(w.service, w.account, 'expiry-reversal', 'NVDA', target, w.bars(target), quotes)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend/tests/test_us_expiry_protection.py:154: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/app/lifecycle.py:121: in request_reversal
+    order=bound.submit(account_id,dict(request_key='v1-r:'+_key(identifier,*key),symbol=symbol,right=position['right_kind'],expiry=position['expiry'],strike_cents=position['strike'],side='SELL_TO_CLOSE',quantity=available,limit_cents=round(q.bid*100)))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/service.py:541: in submit
+    return self._submit(account_id,request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.service.TradingService object at 0x7fb36aa7e780>
+account_id = 'aa738718-c251-4998-8496-0c03484b0939'
+request = {'request_key': 'v1-r:852286c73f2ddfcd64d6a8d9dae5d22138bf4ee546ebf364bc08b29443afeb62', 'symbol': 'NVDA', 'right': 'CALL', 'expiry': '2026-10-09', ...}
+
+    def _submit(self, account_id, request):
+        required = {'request_key','symbol','right','expiry','strike_cents','side','quantity','limit_cents'}
+        if not isinstance(request,dict) or set(request) != required:
+            raise Rejected('Exact single-leg option order fields required')
+        if not isinstance(request['request_key'], str) or not 1 <= len(request['request_key']) <= 100:
+            raise Rejected('Idempotency key required')
+        if request['request_key'].startswith(('auto-e:', 'auto-x:', 'v1-r:', 'v1-s:')) and not getattr(self, '_automation_authorized', False):
+            raise Rejected('Automatic order identifiers are reserved for the quantitative Mock worker')
+        fingerprint = hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
+        with self.repo.transaction() as db:
+            self.account(db, account_id)
+            previous = db.one('SELECT * FROM orders WHERE account_id=? AND request_key=?', (account_id,request['request_key']))
+            if previous:
+                if previous['fingerprint'] != fingerprint:
+                    raise Rejected('Idempotency key reused with different payload')
+                return previous
+        symbol = request['symbol']
+        if not isinstance(symbol, str) or not re.fullmatch(r'[A-Z][A-Z0-9.]{0,9}', symbol):
+            raise Rejected('Invalid symbol')
+        if request['right'] not in ('CALL','PUT') or request['side'] not in ('BUY','SELL_TO_CLOSE'):
+            raise Rejected('Only long calls/puts and owned closing sells are supported')
+        try:
+            expiry = date.fromisoformat(request['expiry'])
+        except (TypeError, ValueError):
+            raise Rejected('Expiry must be ISO date')
+        if expiry <= self.today():
+>           raise Rejected('Expired or same-day contracts are disabled')
+E           app.service.Rejected: Expired or same-day contracts are disabled
+
+backend/app/service.py:577: Rejected
+_______ test_expiry_never_infers_flatness_for_waiting_reversal[PUT-CALL] _______
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa77b00>, right = 'PUT'
+target = 'CALL'
+
+    @pytest.mark.parametrize('right,target', [('CALL', 'PUT'), ('PUT', 'CALL')])
+    def test_expiry_never_infers_flatness_for_waiting_reversal(world, right, target):
+        w = world
+        position = own(w, CASES[0][1], CASES[0][2], right, 2)
+        at(w, '2026-10-09T19:59:30+00:00')
+        mark(w, position)
+        quotes = fixture_quotes('NVDA', w.time, [position])
+>       intent = request_reversal(w.service, w.account, 'expiry-reversal', 'NVDA', target, w.bars(target), quotes)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend/tests/test_us_expiry_protection.py:154: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+backend/app/lifecycle.py:121: in request_reversal
+    order=bound.submit(account_id,dict(request_key='v1-r:'+_key(identifier,*key),symbol=symbol,right=position['right_kind'],expiry=position['expiry'],strike_cents=position['strike'],side='SELL_TO_CLOSE',quantity=available,limit_cents=round(q.bid*100)))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/service.py:541: in submit
+    return self._submit(account_id,request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.service.TradingService object at 0x7fb36aa87da0>
+account_id = '10ea976b-0a52-477e-85f9-5e534aca531e'
+request = {'request_key': 'v1-r:513100970f6134a314b48cc3591d7d69d3342dfdc5f5650b766d8be08158f0d4', 'symbol': 'NVDA', 'right': 'PUT', 'expiry': '2026-10-09', ...}
+
+    def _submit(self, account_id, request):
+        required = {'request_key','symbol','right','expiry','strike_cents','side','quantity','limit_cents'}
+        if not isinstance(request,dict) or set(request) != required:
+            raise Rejected('Exact single-leg option order fields required')
+        if not isinstance(request['request_key'], str) or not 1 <= len(request['request_key']) <= 100:
+            raise Rejected('Idempotency key required')
+        if request['request_key'].startswith(('auto-e:', 'auto-x:', 'v1-r:', 'v1-s:')) and not getattr(self, '_automation_authorized', False):
+            raise Rejected('Automatic order identifiers are reserved for the quantitative Mock worker')
+        fingerprint = hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
+        with self.repo.transaction() as db:
+            self.account(db, account_id)
+            previous = db.one('SELECT * FROM orders WHERE account_id=? AND request_key=?', (account_id,request['request_key']))
+            if previous:
+                if previous['fingerprint'] != fingerprint:
+                    raise Rejected('Idempotency key reused with different payload')
+                return previous
+        symbol = request['symbol']
+        if not isinstance(symbol, str) or not re.fullmatch(r'[A-Z][A-Z0-9.]{0,9}', symbol):
+            raise Rejected('Invalid symbol')
+        if request['right'] not in ('CALL','PUT') or request['side'] not in ('BUY','SELL_TO_CLOSE'):
+            raise Rejected('Only long calls/puts and owned closing sells are supported')
+        try:
+            expiry = date.fromisoformat(request['expiry'])
+        except (TypeError, ValueError):
+            raise Rejected('Expiry must be ISO date')
+        if expiry <= self.today():
+>           raise Rejected('Expired or same-day contracts are disabled')
+E           app.service.Rejected: Expired or same-day contracts are disabled
+
+backend/app/service.py:577: Rejected
+__ test_policy_change_cannot_reinterpret_outstanding_expiry_authority[owned] ___
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa81280>, state = 'owned'
+
+    @pytest.mark.parametrize('state', ['owned', 'pending', 'active_intent'])
+    def test_policy_change_cannot_reinterpret_outstanding_expiry_authority(world, state):
+        w = world
+        at(w, CASES[0][1])
+        if state == 'pending':
+            w.service.submit(w.account, w.request())
+        else:
+            w.own()
+            if state == 'active_intent':
+                intent = request_reversal(w.service, w.account, 'flat-locked', 'NVDA', 'PUT', w.bars('PUT'), w.quotes())
+                close_id = json.loads(intent['payload'])['close_order_ids'][0]
+                w.service.fill(w.account, close_id, 'old-direction-flat', 1, 100)
+                assert not w.service.rows(w.account, 'positions')
+                assert all(order['status'] == 'FILLED' for order in w.service.rows(w.account, 'orders'))
+>       with pytest.raises(Rejected):
+             ^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_us_expiry_protection.py:181: Failed
+_ test_policy_change_cannot_reinterpret_outstanding_expiry_authority[pending] __
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa771d0>
+state = 'pending'
+
+    @pytest.mark.parametrize('state', ['owned', 'pending', 'active_intent'])
+    def test_policy_change_cannot_reinterpret_outstanding_expiry_authority(world, state):
+        w = world
+        at(w, CASES[0][1])
+        if state == 'pending':
+            w.service.submit(w.account, w.request())
+        else:
+            w.own()
+            if state == 'active_intent':
+                intent = request_reversal(w.service, w.account, 'flat-locked', 'NVDA', 'PUT', w.bars('PUT'), w.quotes())
+                close_id = json.loads(intent['payload'])['close_order_ids'][0]
+                w.service.fill(w.account, close_id, 'old-direction-flat', 1, 100)
+                assert not w.service.rows(w.account, 'positions')
+                assert all(order['status'] == 'FILLED' for order in w.service.rows(w.account, 'orders'))
+>       with pytest.raises(Rejected):
+             ^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_us_expiry_protection.py:181: Failed
+_ test_policy_change_cannot_reinterpret_outstanding_expiry_authority[active_intent] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa7d700>
+state = 'active_intent'
+
+    @pytest.mark.parametrize('state', ['owned', 'pending', 'active_intent'])
+    def test_policy_change_cannot_reinterpret_outstanding_expiry_authority(world, state):
+        w = world
+        at(w, CASES[0][1])
+        if state == 'pending':
+            w.service.submit(w.account, w.request())
+        else:
+            w.own()
+            if state == 'active_intent':
+                intent = request_reversal(w.service, w.account, 'flat-locked', 'NVDA', 'PUT', w.bars('PUT'), w.quotes())
+                close_id = json.loads(intent['payload'])['close_order_ids'][0]
+                w.service.fill(w.account, close_id, 'old-direction-flat', 1, 100)
+                assert not w.service.rows(w.account, 'positions')
+                assert all(order['status'] == 'FILLED' for order in w.service.rows(w.account, 'orders'))
+>       with pytest.raises(Rejected):
+             ^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_us_expiry_protection.py:181: Failed
+_____ test_calendar_failure_does_not_erase_owned_expiry_or_authorize_fill ______
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa7d250>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb36aa84da0>
+
+    def test_calendar_failure_does_not_erase_owned_expiry_or_authorize_fill(world, monkeypatch):
+        w = world
+        position = own(w, CASES[0][1], CASES[0][2])
+        order = w.service.submit(w.account, close_request(w, position))
+        at(w, '2026-10-09T15:00:00+00:00')
+        def unavailable(*args, **kwargs):
+            raise RuntimeError('calendar unavailable')
+        monkeypatch.setattr('app.market_sessions.evaluate_session', unavailable)
+>       assert w.service.expire(w.account) == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = expire('30a5ec8b-5517-4708-9775-bfb08e33169d')
+E        +    where expire = <app.service.TradingService object at 0x7fb36aa7cec0>.expire
+E        +      where <app.service.TradingService object at 0x7fb36aa7cec0> = <test_rc2_safety.DurableWorld object at 0x7fb36aa7d250>.service
+E        +    and   '30a5ec8b-5517-4708-9775-bfb08e33169d' = <test_rc2_safety.DurableWorld object at 0x7fb36aa7d250>.account
+
+backend/tests/test_us_expiry_protection.py:195: AssertionError
+_ test_automation_protects_holiday_expiry_on_last_session_despite_optional_outage _
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36abd33b0>
+
+    def test_automation_protects_holiday_expiry_on_last_session_despite_optional_outage(world):
+        w = world
+        position = own(w, CASES[3][1], CASES[3][2])
+        at(w, '2026-04-02T14:00:00+00:00')
+        w.service.configure(w.account, {'automation_enabled': True, 'scenario_exit_enabled': True,
+            'holding': 'swing', 'expiry_exit_days': 0, 'strategies': []})
+        def unavailable(symbol, now):
+            raise RuntimeError('optional analysis unavailable')
+        result = run_account(w.service, w.account, feed=unavailable,
+            quote_feed=lambda symbol, now: [replace(q, bid=1.0, ask=1.03)
+                for q in fixture_quotes(symbol, now, [position])])
+>       assert result['fills_applied'] == 1
+E       assert 0 == 1
+
+backend/tests/test_us_expiry_protection.py:213: AssertionError
+_ test_missed_expire_tick_blocks_global_new_risk_but_allows_other_owned_close __
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36abd1250>
+
+    def test_missed_expire_tick_blocks_global_new_risk_but_allows_other_owned_close(world):
+        w = world
+        expired = own(w, CASES[0][1], CASES[0][2])
+        w.service.watch(w.account, 'AAPL', True)
+        request = w.request(key='valid-aapl', symbol='AAPL', strike_cents=20000)
+        order = w.service.submit(w.account, request)
+        w.service.fill(w.account, order['id'], 'valid-aapl-owned', 1, 105)
+        valid = next(p for p in w.service.rows(w.account, 'positions') if p['symbol'] == 'AAPL')
+        at(w, '2026-10-12T14:00:00+00:00')
+        w.service.mock_market_data(w.account, 'AAPL')
+        mark(w, expired, bid=150)
+        mark(w, valid)
+        # No expire()/worker tick ran. Safety derives uncertainty from retained
+        # contracts rather than relying on a previously written review event.
+        assert not review_events(w)
+>       assert len(w.service.status(w.account)['expiration_reviews']) == 1
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'expiration_reviews'
+
+backend/tests/test_us_expiry_protection.py:234: KeyError
+_ test_expired_fixture_quote_cannot_refresh_mark_or_create_opposite_inventory __
+
+world = <test_rc2_safety.DurableWorld object at 0x7fb36aa85ca0>
+
+    def test_expired_fixture_quote_cannot_refresh_mark_or_create_opposite_inventory(world):
+        w = world
+        position = own(w, CASES[0][1], CASES[0][2])
+        with w.repo.transaction() as db:
+            original_mark = db.one('SELECT * FROM option_marks WHERE account_id=? AND expiry=?',
+                                   (w.account, position['expiry']))
+        at(w, '2026-10-12T14:00:00+00:00')
+        w.service.configure(w.account, {'automation_enabled': True, 'reversal_enabled': True})
+        result = run_account(w.service, w.account, feed=lambda symbol, now: w.bars('PUT'),
+            quote_feed=lambda symbol, now: [replace(q, bid=1.5, ask=1.53)
+                for q in fixture_quotes(symbol, now, [position])])
+>       assert result['fills_applied'] == result['orders_submitted'] == 0
+E       assert 1 == 0
+
+backend/tests/test_us_expiry_protection.py:257: AssertionError
+=========================== short test summary info ============================
+FAILED backend/tests/test_us_expiry_protection.py::test_final_session_allows_owned_reduction_and_blocks_new_buy[CALL-regular_dst]
+FAILED backend/tests/test_us_expiry_protection.py::test_final_session_allows_owned_reduction_and_blocks_new_buy[CALL-regular_standard]
+FAILED backend/tests/test_us_expiry_protection.py::test_final_session_allows_owned_reduction_and_blocks_new_buy[CALL-early_close]
+FAILED backend/tests/test_us_expiry_protection.py::test_final_session_allows_owned_reduction_and_blocks_new_buy[CALL-holiday_expiry]
+FAILED backend/tests/test_us_expiry_protection.py::test_final_session_allows_owned_reduction_and_blocks_new_buy[CALL-holiday_early_close]
+FAILED backend/tests/test_us_expiry_protection.py::test_final_session_allows_owned_reduction_and_blocks_new_buy[PUT-regular_dst]
+FAILED backend/tests/test_us_expiry_protection.py::test_final_session_allows_owned_reduction_and_blocks_new_buy[PUT-regular_standard]
+FAILED backend/tests/test_us_expiry_protection.py::test_final_session_allows_owned_reduction_and_blocks_new_buy[PUT-early_close]
+FAILED backend/tests/test_us_expiry_protection.py::test_final_session_allows_owned_reduction_and_blocks_new_buy[PUT-holiday_expiry]
+FAILED backend/tests/test_us_expiry_protection.py::test_final_session_allows_owned_reduction_and_blocks_new_buy[PUT-holiday_early_close]
+FAILED backend/tests/test_us_expiry_protection.py::test_partial_close_cutoff_retains_cost_and_replays_receipt_after_restart[CALL]
+FAILED backend/tests/test_us_expiry_protection.py::test_partial_close_cutoff_retains_cost_and_replays_receipt_after_restart[PUT]
+FAILED backend/tests/test_us_expiry_protection.py::test_global_expire_retains_us_exposure_and_preserves_legacy_writeoff
+FAILED backend/tests/test_us_expiry_protection.py::test_expiry_never_infers_flatness_for_waiting_reversal[CALL-PUT]
+FAILED backend/tests/test_us_expiry_protection.py::test_expiry_never_infers_flatness_for_waiting_reversal[PUT-CALL]
+FAILED backend/tests/test_us_expiry_protection.py::test_policy_change_cannot_reinterpret_outstanding_expiry_authority[owned]
+FAILED backend/tests/test_us_expiry_protection.py::test_policy_change_cannot_reinterpret_outstanding_expiry_authority[pending]
+FAILED backend/tests/test_us_expiry_protection.py::test_policy_change_cannot_reinterpret_outstanding_expiry_authority[active_intent]
+FAILED backend/tests/test_us_expiry_protection.py::test_calendar_failure_does_not_erase_owned_expiry_or_authorize_fill
+FAILED backend/tests/test_us_expiry_protection.py::test_automation_protects_holiday_expiry_on_last_session_despite_optional_outage
+FAILED backend/tests/test_us_expiry_protection.py::test_missed_expire_tick_blocks_global_new_risk_but_allows_other_owned_close
+FAILED backend/tests/test_us_expiry_protection.py::test_expired_fixture_quote_cannot_refresh_mark_or_create_opposite_inventory
+22 failed in 0.48s

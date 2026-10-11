@@ -70,6 +70,29 @@ class TradingService:
             # independently justified owned close intents being journaled.
             return unavailable_session(config['session_policy']).as_dict()
 
+    def option_expiration(self, config, expiry):
+        """Contract timing only; never a settlement, exercise, or fill receipt."""
+        expiry = date.fromisoformat(expiry) if isinstance(expiry, str) else expiry
+        if config['session_policy'] == 'synthetic_24x7':
+            active = expiry > self.today()
+            return {'status': 'LEGACY_SYNTHETIC', 'nominal_expiry': expiry.isoformat(),
+                    'entry_allowed': active, 'close_intent_allowed': active,
+                    'close_fill_allowed': active, 'review_required': False,
+                    'days_to_last_trade': (expiry-self.today()).days,
+                    'policy_version': 'synthetic_premium_lost_no_exercise'}
+        from .option_expiration import evaluate_expiration
+        return evaluate_expiration(expiry, self.now())
+
+    def expiration_reviews(self, db, account):
+        if account['config']['session_policy'] == 'synthetic_24x7':
+            return []
+        reviews = []
+        for position in db.all('SELECT * FROM positions WHERE account_id=?', (account['id'],)):
+            timing = self.option_expiration(account['config'], position['expiry'])
+            if timing['review_required']:
+                reviews.append(position | {'expiration': timing})
+        return reviews
+
     def entry_session_current(self, db, order, session):
         if session['policy'] == 'synthetic_24x7':
             return True
@@ -130,6 +153,12 @@ class TradingService:
             if changes.get('elevated_risk_ack') is True:
                 config['elevated_risk_ack'] = risk_acknowledgement(config)
             validate_config(config)
+            if config['session_policy'] != account['config']['session_policy']:
+                outstanding = db.one('SELECT account_id FROM positions WHERE account_id=?', (account_id,))
+                outstanding = outstanding or db.one("SELECT id FROM orders WHERE account_id=? AND status IN ('PENDING','PARTIAL')", (account_id,))
+                outstanding = outstanding or db.one("SELECT id FROM lifecycle_intents WHERE account_id=? AND state NOT IN ('COMPLETE','EXPIRED','CANCELLED')", (account_id,))
+                if outstanding:
+                    raise Rejected('Session policy cannot change while inventory, orders or lifecycle intents remain unresolved')
             db.execute('UPDATE accounts SET config=? WHERE id=?', (json.dumps(config), account_id))
             self.audit(db, account_id, 'CONFIG_CHANGED', changes)
             return self.account(db, account_id)
@@ -195,7 +224,7 @@ class TradingService:
             watches=db.all('SELECT symbol FROM watchlist WHERE account_id=? AND enabled=1 AND verified=1',(account_id,))
             market_ready=any(self.market_valid(db,account_id,w['symbol']) for w in watches)
             session=self.market_session(account['config'])
-            return {'state_known':bool(account['state_known']),'snapshot_valid':valid,'stopped':bool(account['stopped']),'global_stopped':globally_stopped,'mode':account['config']['mode'],'broker':'mock','live_enabled':False,'source':'synthetic_mock','market_data_ready':market_ready,'risk_guard_ready':risk_ready,'session':session,'new_entries_allowed':session['entry_allowed'] and valid and market_ready and risk_ready and not account['stopped'] and not globally_stopped and account['config']['mode']=='paper' and account['config']['allocation_pct']>0 and account['config']['trade_risk_pct']>0,'emergency_policy':'owned_closes_only_after_trusted_reconciliation'}
+            return {'state_known':bool(account['state_known']),'snapshot_valid':valid,'stopped':bool(account['stopped']),'global_stopped':globally_stopped,'mode':account['config']['mode'],'broker':'mock','live_enabled':False,'source':'synthetic_mock','market_data_ready':market_ready,'risk_guard_ready':risk_ready,'session':session,'expiration_reviews':self.expiration_reviews(db,account),'new_entries_allowed':session['entry_allowed'] and valid and market_ready and risk_ready and not account['stopped'] and not globally_stopped and account['config']['mode']=='paper' and account['config']['allocation_pct']>0 and account['config']['trade_risk_pct']>0,'emergency_policy':'owned_closes_only_after_trusted_reconciliation'}
 
     def _check_supervisor(self, db, account, cost=0):
         self._check_linked_risk(db,account,cost)
@@ -526,6 +555,8 @@ class TradingService:
         return sum((o['quantity']-o['filled'])*self._fee(db,o['id']) for o in closes)+(position['quantity']-reserved)*account['config']['commission_cents']
 
     def _open_loss(self, db, account):
+        if self.expiration_reviews(db, account):
+            raise Rejected('Unresolved option expiration; open-loss valuation unavailable')
         loss=0
         for p in db.all('SELECT * FROM positions WHERE account_id=?',(account['id'],)):
             if not self.market_valid(db,account['id'],p['symbol']):
@@ -573,8 +604,6 @@ class TradingService:
             expiry = date.fromisoformat(request['expiry'])
         except (TypeError, ValueError):
             raise Rejected('Expiry must be ISO date')
-        if expiry <= self.today():
-            raise Rejected('Expired or same-day contracts are disabled')
         quantity = integer(request['quantity'], 'quantity', 1, 100)
         price = integer(request['limit_cents'], 'limit_cents', 1, 1000000)
         strike = integer(request['strike_cents'], 'strike_cents')
@@ -590,9 +619,12 @@ class TradingService:
                 return previous
             config = account['config']
             validate_config(config)
+            expiration = self.option_expiration(config, expiry)
             session = self.market_session(config)
             if request['side'] == 'BUY' and not session['entry_allowed']:
                 raise Rejected('Market session blocks new entry: ' + session['status'])
+            if not expiration['entry_allowed' if request['side'] == 'BUY' else 'close_intent_allowed']:
+                raise Rejected('Expiration policy blocks order: expired or same-day entry disabled')
             if config['mode'] != 'paper':
                 raise Rejected('Order execution disabled in shadow/analysis modes')
             if request['side']=='BUY' and (account['stopped'] or db.one('SELECT stopped FROM supervisor WHERE id=1')['stopped']):
@@ -641,7 +673,7 @@ class TradingService:
             order_id = str(uuid.uuid4())
             db.execute('INSERT INTO orders(id,account_id,request_key,fingerprint,symbol,right_kind,expiry,strike,side,quantity,limit_cents,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', (order_id,account_id,request['request_key'],fingerprint,symbol,request['right'],request['expiry'],strike,request['side'],quantity,price,'PENDING'))
             db.execute('INSERT INTO order_costs VALUES(?,?)',(order_id,config['commission_cents']))
-            self.decision(db, account_id, 'ORDER_ACCEPTED', {'request':request, 'config':config, 'session':session, 'automatic_authority':bool(getattr(self,'_automatic_origin',getattr(self,'_automation_authorized',False))), 'account_equity_cents':account['equity'], 'realized_pnl_cents':account['realized'], 'facts':getattr(self, '_decision_context', {'reason':'MANUAL_STRUCTURED_REQUEST','language_model_authority':False}), 'risk_rules':'v1_direction_owned_pending_cap_allocation_daily_trust'}, order_id, getattr(self, '_intent_id', None))
+            self.decision(db, account_id, 'ORDER_ACCEPTED', {'request':request, 'config':config, 'session':session, 'expiration':expiration, 'automatic_authority':bool(getattr(self,'_automatic_origin',getattr(self,'_automation_authorized',False))), 'account_equity_cents':account['equity'], 'realized_pnl_cents':account['realized'], 'facts':getattr(self, '_decision_context', {'reason':'MANUAL_STRUCTURED_REQUEST','language_model_authority':False}), 'risk_rules':'v1_direction_owned_pending_cap_allocation_daily_trust'}, order_id, getattr(self, '_intent_id', None))
             self.audit(db, account_id, 'MOCK_ORDER_ACCEPTED', {'order_id':order_id})
             return db.one('SELECT * FROM orders WHERE id=?', (order_id,))
     def fill(self, account_id, order_id, fill_id, quantity, price_cents):
@@ -672,6 +704,9 @@ class TradingService:
                     raise Rejected('Fill identifier collision')
                 return order
             validate_config(account['config'])
+            expiration = self.option_expiration(account['config'], order['expiry'])
+            if not expiration['entry_allowed' if order['side'] == 'BUY' else 'close_fill_allowed']:
+                raise Rejected('Expiration policy blocks fill: expired, final-day entry or unverified calendar')
             session = self.market_session(account['config'])
             if not session['fill_allowed']:
                 raise Rejected('Market session blocks fill: ' + session['status'])
@@ -710,8 +745,6 @@ class TradingService:
                 self._check_supervisor(db,account)
             if order['status'] not in ACTIVE or quantity > order['quantity']-order['filled']:
                 raise Rejected('Invalid fill state or excessive quantity')
-            if date.fromisoformat(order['expiry']) <= self.today():
-                raise Rejected('Cannot fill expired contract')
             if (order['side']=='BUY' and price_cents > order['limit_cents']) or (order['side']=='SELL_TO_CLOSE' and price_cents < order['limit_cents']):
                 raise Rejected('Fill violates limit')
             key = (account_id, order['symbol'], order['right_kind'], order['expiry'], order['strike'])
@@ -799,28 +832,70 @@ class TradingService:
             raise
 
     def _expire(self, account_id=None):
+        """Legacy fixture writeoffs or US close-only review; never inferred exercise."""
+        written_off = 0
         with self.repo.transaction() as db:
-            if account_id is not None and not self.snapshot_valid(self.account(db,account_id)):
+            if account_id is not None and not self.snapshot_valid(self.account(db, account_id)):
                 raise Rejected('Account state unknown; expiry requires trusted reconciliation')
-            suffix = ' AND account_id=?' if account_id is not None else ''
-            params = (self.today().isoformat(),account_id) if account_id is not None else (self.today().isoformat(),)
-            expired = db.all('SELECT * FROM positions WHERE expiry<=?'+suffix, params)
-            for account_id in sorted({p['account_id'] for p in expired}):
-                if not self.snapshot_valid(self.account(db,account_id)):
-                    raise Rejected('Account state unknown; expiry requires trusted reconciliation')
-                self._validate_ledger(db,account_id)
-            for position in expired:
-                account_id = position['account_id']
-                # Conservative synthetic settlement: premium lost; assignment/exercise unsupported.
-                db.execute('UPDATE accounts SET realized=realized-? WHERE id=?', (position['cost'],account_id))
-                db.execute('INSERT INTO daily_pnl VALUES(?,?,?) ON CONFLICT(account_id,day) DO UPDATE SET pnl=daily_pnl.pnl+excluded.pnl', (account_id,self.today().isoformat(),-position['cost']))
-                self.audit(db, account_id, 'MOCK_EXPIRY_WRITEOFF', position|{'settlement_day':self.today().isoformat()})
-            db.execute('DELETE FROM positions WHERE expiry<=?'+suffix, params)
-            db.execute('DELETE FROM position_policies WHERE expiry<=?'+suffix, params)
-            db.execute("UPDATE orders SET status='EXPIRED' WHERE expiry<=? AND status IN ('PENDING','PARTIAL')"+suffix, params)
-            if expired:
+            ids = [account_id] if account_id is not None else [r['id'] for r in db.all('SELECT id FROM accounts ORDER BY id')]
+            for current_id in ids:
+                account = self.account(db, current_id)
+                positions = db.all('SELECT * FROM positions WHERE account_id=?', (current_id,))
+                if account['config']['session_policy'] == 'synthetic_24x7':
+                    expired = [p for p in positions if p['expiry'] <= self.today().isoformat()]
+                    if expired:
+                        if not self.snapshot_valid(account):
+                            raise Rejected('Account state unknown; expiry requires trusted reconciliation')
+                        self._validate_ledger(db, current_id)
+                    for position in expired:
+                        # Historical explicitly synthetic policy; do not reinterpret old receipts.
+                        db.execute('UPDATE accounts SET realized=realized-? WHERE id=?', (position['cost'], current_id))
+                        db.execute('INSERT INTO daily_pnl VALUES(?,?,?) ON CONFLICT(account_id,day) DO UPDATE SET pnl=daily_pnl.pnl+excluded.pnl', (current_id, self.today().isoformat(), -position['cost']))
+                        self.audit(db, current_id, 'MOCK_EXPIRY_WRITEOFF', position | {'settlement_day': self.today().isoformat()})
+                    db.execute('DELETE FROM positions WHERE account_id=? AND expiry<=?', (current_id, self.today().isoformat()))
+                    db.execute('DELETE FROM position_policies WHERE account_id=? AND expiry<=?', (current_id, self.today().isoformat()))
+                    db.execute("UPDATE orders SET status='EXPIRED' WHERE account_id=? AND expiry<=? AND status IN ('PENDING','PARTIAL')", (current_id, self.today().isoformat()))
+                    written_off += len(expired)
+                    continue
+
+                reviews = self.expiration_reviews(db, account)
+                pending = db.all("SELECT * FROM orders WHERE account_id=? AND status IN ('PENDING','PARTIAL')", (current_id,))
+                changes = []
+                for order in pending:
+                    timing = self.option_expiration(account['config'], order['expiry'])
+                    if timing['status'] == 'EXPIRY_REVIEW_REQUIRED':
+                        changes.append((order, 'EXPIRED', timing))
+                    elif order['side'] == 'BUY' and not timing['entry_allowed']:
+                        changes.append((order, 'CANCELLED', timing))
+                if reviews or changes:
+                    if not self.snapshot_valid(account):
+                        raise Rejected('Account state unknown; expiry review requires trusted reconciliation')
+                    self._validate_ledger(db, current_id)
+                previous = set()
+                for row in db.all("SELECT detail FROM audit WHERE account_id=? AND event='MOCK_EXPIRY_REVIEW_REQUIRED'", (current_id,)):
+                    try:
+                        previous.add(json.loads(row['detail'])['review_key'])
+                    except (ValueError, TypeError, KeyError):
+                        raise Rejected('Malformed expiry review audit ledger') from None
+                for review in reviews:
+                    identity = {k: review[k] for k in ('symbol', 'right_kind', 'expiry', 'strike')}
+                    key = (current_id, review['symbol'], review['right_kind'], review['expiry'], review['strike'])
+                    policy = db.one('SELECT generation FROM position_policies WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?', key)
+                    identity.update(generation=policy['generation'] if policy else None,
+                                    status=review['expiration']['status'], cutoff_at=review['expiration'].get('cutoff_at'))
+                    review_key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
+                    if review_key not in previous:
+                        self.audit(db, current_id, 'MOCK_EXPIRY_REVIEW_REQUIRED', review | {
+                            'review_key': review_key, 'settlement_created': False,
+                            'reason': 'Retained inventory and basis; exercise, delivery and settlement are unresolved'})
+                        previous.add(review_key)
+                for order, status, timing in changes:
+                    db.execute('UPDATE orders SET status=? WHERE id=?', (status, order['id']))
+                    self.audit(db, current_id, 'MOCK_EXPIRY_ORDER_BLOCKED', {
+                        'order_id': order['id'], 'status': status, 'expiration': timing})
+            if written_off:
                 self._cancel_unsafe_pending_buys(db)
-        return len(expired)
+        return written_off
     def performance(self, account_id):
         with self.repo.transaction() as db:
             account = self.account(db, account_id)
@@ -828,7 +903,7 @@ class TradingService:
             premium=sum(p['cost'] for p in positions)
             cash=account['equity']+account['realized']-premium
             unrealized=0
-            complete=self.snapshot_valid(account)
+            complete=self.snapshot_valid(account) and not self.expiration_reviews(db, account)
             for position in positions:
                 key=(account_id,position['symbol'],position['right_kind'],position['expiry'],position['strike'])
                 mark=db.one('SELECT * FROM option_marks WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?',key)
