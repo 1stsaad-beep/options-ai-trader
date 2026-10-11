@@ -29,6 +29,7 @@ def _service(service, db, intent_id=None):
     bound=copy(service)
     bound.repo=_Bound(db)
     bound._automation_authorized=True
+    bound._automatic_origin=bool(getattr(service,'_automatic_origin',getattr(service,'_automation_authorized',False)))
     bound._intent_id=intent_id
     return bound
 
@@ -137,6 +138,7 @@ def advance_reversal(service, account_id, intent_id, bars, quotes):
         if payload.get('automatic') and not account['config']['reversal_enabled']:
             raise Rejected('Automatic reversal disabled after intent creation')
         bound=_service(service,db,intent_id)
+        bound._automatic_origin=payload['automatic']
         if intent['order_id']:
             order=db.one('SELECT * FROM orders WHERE account_id=? AND id=?',(account_id,intent['order_id']))
             if order['status']=='FILLED':

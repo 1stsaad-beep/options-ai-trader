@@ -1,0 +1,485 @@
+FFFFFFFF..FFFFFFFFFF.F                                                   [100%]
+=================================== FAILURES ===================================
+______ test_partial_profit_preserves_intended_remainder[same_price-CALL] _______
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe75077f50>, right = 'CALL'
+resume = 'same_price'
+
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    @pytest.mark.parametrize('resume', ['same_price', 'reprice', 'restart'])
+    def test_partial_profit_preserves_intended_remainder(world, right, resume):
+        world.own(right, quantity=4)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'partial_profit_pct': 10, 'partial_exit_pct': 50, 'take_profit_pct': 500})
+        first = cycle(world, right)
+        assert first['fills_applied'] == 1
+        assert world.service.rows(world.account, 'positions')[0]['quantity'] == 3
+        assert cycle(world, right, advance=False)['fills_applied'] == 0
+        if resume == 'restart':
+            world.reopen()
+        bid = 1.1 if resume == 'reprice' else 1.2
+        cycle(world, right, bid)
+        cycle(world, right, bid)
+        positions = world.service.rows(world.account, 'positions')
+>       assert len(positions) == 1 and positions[0]['quantity'] == 2
+E       assert (0 == 1)
+E        +  where 0 = len([])
+
+backend/tests/test_recovery_exit_policy.py:45: AssertionError
+_______ test_partial_profit_preserves_intended_remainder[same_price-PUT] _______
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe750758b0>, right = 'PUT'
+resume = 'same_price'
+
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    @pytest.mark.parametrize('resume', ['same_price', 'reprice', 'restart'])
+    def test_partial_profit_preserves_intended_remainder(world, right, resume):
+        world.own(right, quantity=4)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'partial_profit_pct': 10, 'partial_exit_pct': 50, 'take_profit_pct': 500})
+        first = cycle(world, right)
+        assert first['fills_applied'] == 1
+        assert world.service.rows(world.account, 'positions')[0]['quantity'] == 3
+        assert cycle(world, right, advance=False)['fills_applied'] == 0
+        if resume == 'restart':
+            world.reopen()
+        bid = 1.1 if resume == 'reprice' else 1.2
+        cycle(world, right, bid)
+        cycle(world, right, bid)
+        positions = world.service.rows(world.account, 'positions')
+>       assert len(positions) == 1 and positions[0]['quantity'] == 2
+E       assert (0 == 1)
+E        +  where 0 = len([])
+
+backend/tests/test_recovery_exit_policy.py:45: AssertionError
+________ test_partial_profit_preserves_intended_remainder[reprice-CALL] ________
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507ac30>, right = 'CALL'
+resume = 'reprice'
+
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    @pytest.mark.parametrize('resume', ['same_price', 'reprice', 'restart'])
+    def test_partial_profit_preserves_intended_remainder(world, right, resume):
+        world.own(right, quantity=4)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'partial_profit_pct': 10, 'partial_exit_pct': 50, 'take_profit_pct': 500})
+        first = cycle(world, right)
+        assert first['fills_applied'] == 1
+        assert world.service.rows(world.account, 'positions')[0]['quantity'] == 3
+        assert cycle(world, right, advance=False)['fills_applied'] == 0
+        if resume == 'restart':
+            world.reopen()
+        bid = 1.1 if resume == 'reprice' else 1.2
+        cycle(world, right, bid)
+        cycle(world, right, bid)
+        positions = world.service.rows(world.account, 'positions')
+>       assert len(positions) == 1 and positions[0]['quantity'] == 2
+E       AssertionError: assert (1 == 1 and 1 == 2)
+E        +  where 1 = len([{'account_id': '3d6f9bbf-2d2b-4f1b-a268-fb93ce8fdd29', 'symbol': 'NVDA', 'right_kind': 'CALL', 'expiry': '2026-10-23', ...}])
+
+backend/tests/test_recovery_exit_policy.py:45: AssertionError
+________ test_partial_profit_preserves_intended_remainder[reprice-PUT] _________
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507aa80>, right = 'PUT'
+resume = 'reprice'
+
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    @pytest.mark.parametrize('resume', ['same_price', 'reprice', 'restart'])
+    def test_partial_profit_preserves_intended_remainder(world, right, resume):
+        world.own(right, quantity=4)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'partial_profit_pct': 10, 'partial_exit_pct': 50, 'take_profit_pct': 500})
+        first = cycle(world, right)
+        assert first['fills_applied'] == 1
+        assert world.service.rows(world.account, 'positions')[0]['quantity'] == 3
+        assert cycle(world, right, advance=False)['fills_applied'] == 0
+        if resume == 'restart':
+            world.reopen()
+        bid = 1.1 if resume == 'reprice' else 1.2
+        cycle(world, right, bid)
+        cycle(world, right, bid)
+        positions = world.service.rows(world.account, 'positions')
+>       assert len(positions) == 1 and positions[0]['quantity'] == 2
+E       AssertionError: assert (1 == 1 and 1 == 2)
+E        +  where 1 = len([{'account_id': '69526916-db83-48bd-b466-ec1242f84a6a', 'symbol': 'NVDA', 'right_kind': 'PUT', 'expiry': '2026-10-23', ...}])
+
+backend/tests/test_recovery_exit_policy.py:45: AssertionError
+________ test_partial_profit_preserves_intended_remainder[restart-CALL] ________
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507b3e0>, right = 'CALL'
+resume = 'restart'
+
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    @pytest.mark.parametrize('resume', ['same_price', 'reprice', 'restart'])
+    def test_partial_profit_preserves_intended_remainder(world, right, resume):
+        world.own(right, quantity=4)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'partial_profit_pct': 10, 'partial_exit_pct': 50, 'take_profit_pct': 500})
+        first = cycle(world, right)
+        assert first['fills_applied'] == 1
+        assert world.service.rows(world.account, 'positions')[0]['quantity'] == 3
+        assert cycle(world, right, advance=False)['fills_applied'] == 0
+        if resume == 'restart':
+            world.reopen()
+        bid = 1.1 if resume == 'reprice' else 1.2
+        cycle(world, right, bid)
+        cycle(world, right, bid)
+        positions = world.service.rows(world.account, 'positions')
+>       assert len(positions) == 1 and positions[0]['quantity'] == 2
+E       assert (0 == 1)
+E        +  where 0 = len([])
+
+backend/tests/test_recovery_exit_policy.py:45: AssertionError
+________ test_partial_profit_preserves_intended_remainder[restart-PUT] _________
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507c0b0>, right = 'PUT'
+resume = 'restart'
+
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    @pytest.mark.parametrize('resume', ['same_price', 'reprice', 'restart'])
+    def test_partial_profit_preserves_intended_remainder(world, right, resume):
+        world.own(right, quantity=4)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'partial_profit_pct': 10, 'partial_exit_pct': 50, 'take_profit_pct': 500})
+        first = cycle(world, right)
+        assert first['fills_applied'] == 1
+        assert world.service.rows(world.account, 'positions')[0]['quantity'] == 3
+        assert cycle(world, right, advance=False)['fills_applied'] == 0
+        if resume == 'restart':
+            world.reopen()
+        bid = 1.1 if resume == 'reprice' else 1.2
+        cycle(world, right, bid)
+        cycle(world, right, bid)
+        positions = world.service.rows(world.account, 'positions')
+>       assert len(positions) == 1 and positions[0]['quantity'] == 2
+E       assert (0 == 1)
+E        +  where 0 = len([])
+
+backend/tests/test_recovery_exit_policy.py:45: AssertionError
+_ test_partial_profit_survives_scenario_outage_but_real_invalidation_takes_priority[CALL] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507df70>, right = 'CALL'
+
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_partial_profit_survives_scenario_outage_but_real_invalidation_takes_priority(world, right):
+        world.own(right, quantity=4)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'partial_profit_pct': 10, 'take_profit_pct': 500, 'scenario_exit_enabled': True})
+        def unavailable(symbol, now):
+            raise RuntimeError('optional scenario analysis unavailable')
+        result = cycle(world, right, feed=unavailable)
+>       assert any(action.get('reason') == 'PARTIAL_PROFIT' for action in result['actions'])
+E       assert False
+E        +  where False = any(<generator object test_partial_profit_survives_scenario_outage_but_real_invalidation_takes_priority.<locals>.<genexpr> at 0x7efe7506af60>)
+
+backend/tests/test_recovery_exit_policy.py:60: AssertionError
+_ test_partial_profit_survives_scenario_outage_but_real_invalidation_takes_priority[PUT] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507ff20>, right = 'PUT'
+
+    @pytest.mark.parametrize('right', ['CALL', 'PUT'])
+    def test_partial_profit_survives_scenario_outage_but_real_invalidation_takes_priority(world, right):
+        world.own(right, quantity=4)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'partial_profit_pct': 10, 'take_profit_pct': 500, 'scenario_exit_enabled': True})
+        def unavailable(symbol, now):
+            raise RuntimeError('optional scenario analysis unavailable')
+        result = cycle(world, right, feed=unavailable)
+>       assert any(action.get('reason') == 'PARTIAL_PROFIT' for action in result['actions'])
+E       assert False
+E        +  where False = any(<generator object test_partial_profit_survives_scenario_outage_but_real_invalidation_takes_priority.<locals>.<genexpr> at 0x7efe74f4b6b0>)
+
+backend/tests/test_recovery_exit_policy.py:60: AssertionError
+_ test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[False-disabled0-CALL-PUT] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507caa0>
+old_right = 'CALL', new_right = 'PUT', disabled = {'reversal_enabled': False}
+partial = False
+
+    @pytest.mark.parametrize('old_right,new_right', [('CALL', 'PUT'), ('PUT', 'CALL')])
+    @pytest.mark.parametrize('disabled', [{'reversal_enabled': False}, {'strategies': []}])
+    @pytest.mark.parametrize('partial', [False, True])
+    def test_disabled_policy_blocks_reversal_fill_and_preserves_receipts(world, old_right, new_right, disabled, partial):
+        world.own(old_right)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'reversal_enabled': True, 'auto_quantity': 2})
+        cycle(world, new_right)
+        target = next(o for o in world.service.rows(world.account, 'orders')
+                      if o['side'] == 'BUY' and o['right_kind'] == new_right)
+        assert target['status'] == 'PENDING'
+        if partial:
+            cycle(world, new_right)
+            with world.repo.transaction() as db:
+                receipt = db.one('SELECT * FROM fills WHERE order_id=?', (target['id'],))
+        world.service.configure(world.account, disabled)
+        before = world.service.rows(world.account, 'positions')
+>       with pytest.raises(Rejected, match='disabled'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:43: Failed
+_ test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[False-disabled0-PUT-CALL] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507dc70>
+old_right = 'PUT', new_right = 'CALL', disabled = {'reversal_enabled': False}
+partial = False
+
+    @pytest.mark.parametrize('old_right,new_right', [('CALL', 'PUT'), ('PUT', 'CALL')])
+    @pytest.mark.parametrize('disabled', [{'reversal_enabled': False}, {'strategies': []}])
+    @pytest.mark.parametrize('partial', [False, True])
+    def test_disabled_policy_blocks_reversal_fill_and_preserves_receipts(world, old_right, new_right, disabled, partial):
+        world.own(old_right)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'reversal_enabled': True, 'auto_quantity': 2})
+        cycle(world, new_right)
+        target = next(o for o in world.service.rows(world.account, 'orders')
+                      if o['side'] == 'BUY' and o['right_kind'] == new_right)
+        assert target['status'] == 'PENDING'
+        if partial:
+            cycle(world, new_right)
+            with world.repo.transaction() as db:
+                receipt = db.one('SELECT * FROM fills WHERE order_id=?', (target['id'],))
+        world.service.configure(world.account, disabled)
+        before = world.service.rows(world.account, 'positions')
+>       with pytest.raises(Rejected, match='disabled'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:43: Failed
+_ test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[False-disabled1-CALL-PUT] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507fda0>
+old_right = 'CALL', new_right = 'PUT', disabled = {'strategies': []}
+partial = False
+
+    @pytest.mark.parametrize('old_right,new_right', [('CALL', 'PUT'), ('PUT', 'CALL')])
+    @pytest.mark.parametrize('disabled', [{'reversal_enabled': False}, {'strategies': []}])
+    @pytest.mark.parametrize('partial', [False, True])
+    def test_disabled_policy_blocks_reversal_fill_and_preserves_receipts(world, old_right, new_right, disabled, partial):
+        world.own(old_right)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'reversal_enabled': True, 'auto_quantity': 2})
+        cycle(world, new_right)
+        target = next(o for o in world.service.rows(world.account, 'orders')
+                      if o['side'] == 'BUY' and o['right_kind'] == new_right)
+        assert target['status'] == 'PENDING'
+        if partial:
+            cycle(world, new_right)
+            with world.repo.transaction() as db:
+                receipt = db.one('SELECT * FROM fills WHERE order_id=?', (target['id'],))
+        world.service.configure(world.account, disabled)
+        before = world.service.rows(world.account, 'positions')
+>       with pytest.raises(Rejected, match='disabled'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:43: Failed
+_ test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[False-disabled1-PUT-CALL] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507d730>
+old_right = 'PUT', new_right = 'CALL', disabled = {'strategies': []}
+partial = False
+
+    @pytest.mark.parametrize('old_right,new_right', [('CALL', 'PUT'), ('PUT', 'CALL')])
+    @pytest.mark.parametrize('disabled', [{'reversal_enabled': False}, {'strategies': []}])
+    @pytest.mark.parametrize('partial', [False, True])
+    def test_disabled_policy_blocks_reversal_fill_and_preserves_receipts(world, old_right, new_right, disabled, partial):
+        world.own(old_right)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'reversal_enabled': True, 'auto_quantity': 2})
+        cycle(world, new_right)
+        target = next(o for o in world.service.rows(world.account, 'orders')
+                      if o['side'] == 'BUY' and o['right_kind'] == new_right)
+        assert target['status'] == 'PENDING'
+        if partial:
+            cycle(world, new_right)
+            with world.repo.transaction() as db:
+                receipt = db.one('SELECT * FROM fills WHERE order_id=?', (target['id'],))
+        world.service.configure(world.account, disabled)
+        before = world.service.rows(world.account, 'positions')
+>       with pytest.raises(Rejected, match='disabled'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:43: Failed
+_ test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[True-disabled0-CALL-PUT] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507d130>
+old_right = 'CALL', new_right = 'PUT', disabled = {'reversal_enabled': False}
+partial = True
+
+    @pytest.mark.parametrize('old_right,new_right', [('CALL', 'PUT'), ('PUT', 'CALL')])
+    @pytest.mark.parametrize('disabled', [{'reversal_enabled': False}, {'strategies': []}])
+    @pytest.mark.parametrize('partial', [False, True])
+    def test_disabled_policy_blocks_reversal_fill_and_preserves_receipts(world, old_right, new_right, disabled, partial):
+        world.own(old_right)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'reversal_enabled': True, 'auto_quantity': 2})
+        cycle(world, new_right)
+        target = next(o for o in world.service.rows(world.account, 'orders')
+                      if o['side'] == 'BUY' and o['right_kind'] == new_right)
+        assert target['status'] == 'PENDING'
+        if partial:
+            cycle(world, new_right)
+            with world.repo.transaction() as db:
+                receipt = db.one('SELECT * FROM fills WHERE order_id=?', (target['id'],))
+        world.service.configure(world.account, disabled)
+        before = world.service.rows(world.account, 'positions')
+>       with pytest.raises(Rejected, match='disabled'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:43: Failed
+_ test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[True-disabled0-PUT-CALL] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507d190>
+old_right = 'PUT', new_right = 'CALL', disabled = {'reversal_enabled': False}
+partial = True
+
+    @pytest.mark.parametrize('old_right,new_right', [('CALL', 'PUT'), ('PUT', 'CALL')])
+    @pytest.mark.parametrize('disabled', [{'reversal_enabled': False}, {'strategies': []}])
+    @pytest.mark.parametrize('partial', [False, True])
+    def test_disabled_policy_blocks_reversal_fill_and_preserves_receipts(world, old_right, new_right, disabled, partial):
+        world.own(old_right)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'reversal_enabled': True, 'auto_quantity': 2})
+        cycle(world, new_right)
+        target = next(o for o in world.service.rows(world.account, 'orders')
+                      if o['side'] == 'BUY' and o['right_kind'] == new_right)
+        assert target['status'] == 'PENDING'
+        if partial:
+            cycle(world, new_right)
+            with world.repo.transaction() as db:
+                receipt = db.one('SELECT * FROM fills WHERE order_id=?', (target['id'],))
+        world.service.configure(world.account, disabled)
+        before = world.service.rows(world.account, 'positions')
+>       with pytest.raises(Rejected, match='disabled'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:43: Failed
+_ test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[True-disabled1-CALL-PUT] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe7507aa20>
+old_right = 'CALL', new_right = 'PUT', disabled = {'strategies': []}
+partial = True
+
+    @pytest.mark.parametrize('old_right,new_right', [('CALL', 'PUT'), ('PUT', 'CALL')])
+    @pytest.mark.parametrize('disabled', [{'reversal_enabled': False}, {'strategies': []}])
+    @pytest.mark.parametrize('partial', [False, True])
+    def test_disabled_policy_blocks_reversal_fill_and_preserves_receipts(world, old_right, new_right, disabled, partial):
+        world.own(old_right)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'reversal_enabled': True, 'auto_quantity': 2})
+        cycle(world, new_right)
+        target = next(o for o in world.service.rows(world.account, 'orders')
+                      if o['side'] == 'BUY' and o['right_kind'] == new_right)
+        assert target['status'] == 'PENDING'
+        if partial:
+            cycle(world, new_right)
+            with world.repo.transaction() as db:
+                receipt = db.one('SELECT * FROM fills WHERE order_id=?', (target['id'],))
+        world.service.configure(world.account, disabled)
+        before = world.service.rows(world.account, 'positions')
+>       with pytest.raises(Rejected, match='disabled'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:43: Failed
+_ test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[True-disabled1-PUT-CALL] _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe75080d40>
+old_right = 'PUT', new_right = 'CALL', disabled = {'strategies': []}
+partial = True
+
+    @pytest.mark.parametrize('old_right,new_right', [('CALL', 'PUT'), ('PUT', 'CALL')])
+    @pytest.mark.parametrize('disabled', [{'reversal_enabled': False}, {'strategies': []}])
+    @pytest.mark.parametrize('partial', [False, True])
+    def test_disabled_policy_blocks_reversal_fill_and_preserves_receipts(world, old_right, new_right, disabled, partial):
+        world.own(old_right)
+        world.service.configure(world.account, {'automation_enabled': True,
+            'reversal_enabled': True, 'auto_quantity': 2})
+        cycle(world, new_right)
+        target = next(o for o in world.service.rows(world.account, 'orders')
+                      if o['side'] == 'BUY' and o['right_kind'] == new_right)
+        assert target['status'] == 'PENDING'
+        if partial:
+            cycle(world, new_right)
+            with world.repo.transaction() as db:
+                receipt = db.one('SELECT * FROM fills WHERE order_id=?', (target['id'],))
+        world.service.configure(world.account, disabled)
+        before = world.service.rows(world.account, 'positions')
+>       with pytest.raises(Rejected, match='disabled'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:43: Failed
+_ test_disabled_strategy_blocks_ordinary_automatic_remainder_not_manual_account _
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe75083260>
+
+    def test_disabled_strategy_blocks_ordinary_automatic_remainder_not_manual_account(world):
+        world.service.configure(world.account, {'automation_enabled': True, 'auto_quantity': 2})
+        cycle(world, 'CALL')
+        order = world.service.rows(world.account, 'orders')[0]
+        assert order['filled'] == 1
+        other = world.service.create_account('independent-manual', 3_000_000)['id']
+        world.service.watch(other, 'NVDA', True)
+        manual = world.service.submit(other, world.request(key='manual', right='PUT'))
+        world.service.configure(world.account, {'strategies': []})
+>       with pytest.raises(Rejected, match='disabled'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:64: Failed
+______ test_disabled_strategy_blocks_scaling_but_owned_close_still_works _______
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe75083bc0>
+
+    def test_disabled_strategy_blocks_scaling_but_owned_close_still_works(world):
+        from dataclasses import replace
+        world.own()
+        world.service.configure(world.account, {'scaling_enabled': True})
+        quotes = [replace(q, bid=1.4, ask=1.45) for q in world.quotes()]
+        intent = request_scaling(world.service, world.account, 'scale', 'NVDA', 'CALL', world.bars('CALL'), quotes)
+        world.service.configure(world.account, {'strategies': []})
+>       with pytest.raises(Rejected, match='disabled'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:77: Failed
+__ test_legacy_automatic_order_without_strategy_evidence_cannot_add_inventory __
+
+world = <test_rc2_safety.DurableWorld object at 0x7efe75081730>
+
+    def test_legacy_automatic_order_without_strategy_evidence_cannot_add_inventory(world):
+        from copy import copy
+        internal = copy(world.service)
+        internal._automation_authorized = True
+        order = internal.submit(world.account, world.request(key='auto-e:legacy-missing-evidence'))
+>       with pytest.raises(Rejected, match='authorization evidence'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Rejected
+
+backend/tests/test_recovery_entry_permissions.py:99: Failed
+=========================== short test summary info ============================
+FAILED backend/tests/test_recovery_exit_policy.py::test_partial_profit_preserves_intended_remainder[same_price-CALL]
+FAILED backend/tests/test_recovery_exit_policy.py::test_partial_profit_preserves_intended_remainder[same_price-PUT]
+FAILED backend/tests/test_recovery_exit_policy.py::test_partial_profit_preserves_intended_remainder[reprice-CALL]
+FAILED backend/tests/test_recovery_exit_policy.py::test_partial_profit_preserves_intended_remainder[reprice-PUT]
+FAILED backend/tests/test_recovery_exit_policy.py::test_partial_profit_preserves_intended_remainder[restart-CALL]
+FAILED backend/tests/test_recovery_exit_policy.py::test_partial_profit_preserves_intended_remainder[restart-PUT]
+FAILED backend/tests/test_recovery_exit_policy.py::test_partial_profit_survives_scenario_outage_but_real_invalidation_takes_priority[CALL]
+FAILED backend/tests/test_recovery_exit_policy.py::test_partial_profit_survives_scenario_outage_but_real_invalidation_takes_priority[PUT]
+FAILED backend/tests/test_recovery_entry_permissions.py::test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[False-disabled0-CALL-PUT]
+FAILED backend/tests/test_recovery_entry_permissions.py::test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[False-disabled0-PUT-CALL]
+FAILED backend/tests/test_recovery_entry_permissions.py::test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[False-disabled1-CALL-PUT]
+FAILED backend/tests/test_recovery_entry_permissions.py::test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[False-disabled1-PUT-CALL]
+FAILED backend/tests/test_recovery_entry_permissions.py::test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[True-disabled0-CALL-PUT]
+FAILED backend/tests/test_recovery_entry_permissions.py::test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[True-disabled0-PUT-CALL]
+FAILED backend/tests/test_recovery_entry_permissions.py::test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[True-disabled1-CALL-PUT]
+FAILED backend/tests/test_recovery_entry_permissions.py::test_disabled_policy_blocks_reversal_fill_and_preserves_receipts[True-disabled1-PUT-CALL]
+FAILED backend/tests/test_recovery_entry_permissions.py::test_disabled_strategy_blocks_ordinary_automatic_remainder_not_manual_account
+FAILED backend/tests/test_recovery_entry_permissions.py::test_disabled_strategy_blocks_scaling_but_owned_close_still_works
+FAILED backend/tests/test_recovery_entry_permissions.py::test_legacy_automatic_order_without_strategy_evidence_cannot_add_inventory
+19 failed, 3 passed in 0.35s

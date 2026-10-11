@@ -494,6 +494,7 @@ class DemoEngine {
     int? limit,
     String reason = 'يدوي',
     DemoRow? evidence,
+    String entryOrigin = 'manual',
     bool loseResponse = false,
   }) {
     final a = account(id), r = risk(a);
@@ -540,7 +541,13 @@ class DemoEngine {
       price is int && price > 0 && price <= 1000000,
       'حد السعر غير صالح',
     );
+    final authorization = <String, dynamic>{
+      'origin': entryOrigin,
+      'strategy': ['automation', 'manual_reversal', 'automatic_reversal'].contains(entryOrigin)
+          ? evidence?['strategy'] : null,
+    };
     if (side == 'BUY') {
+      _authorizeEntry(a, authorization);
       _directionLock(a, c);
       _require(
         a['watch'][c['symbol']] == true,
@@ -586,6 +593,7 @@ class DemoEngine {
         'contract': contract(c['symbol'], c['right'], expiry: c['expiry'], strike: c['strike']),
         'side': side, 'quantity': quantity, 'limit': price,
         'risk': jsonDecode(jsonEncode(r)), 'evidence': evidence,
+        if (side == 'BUY') 'entry_authorization': authorization,
         'quote': q, 'known': a['known'], 'connected': a['connected'],
         'analysis_label': 'قرار محلي كمي/يدوي؛ لا تفسير لاحق من AI',
       }),
@@ -643,6 +651,7 @@ class DemoEngine {
     final qty = math.min(remaining, r['fill_chunk'] as int);
     final fee = qty * o['commission'] as int;
     if (o['side'] == 'BUY') {
+      _authorizeEntry(a, _savedEntryAuthorization(a, o));
       _directionLock(a, o, existing: o);
       if (o['reason'] == 'تعزيز مركز رابح') {
         final owned = rows(a, 'positions').where((p) => contractKey(p) == contractKey(o));
@@ -864,7 +873,7 @@ class DemoEngine {
         }
         if (reason == null) {
           if (r['scaling_enabled'] == true) {
-            try { scale(a['id'], p); } on DemoRejected { /* hard gates remain authoritative */ }
+            try { scale(a['id'], p, automatic: true); } on DemoRejected { /* hard gates remain authoritative */ }
           }
           continue;
         }
@@ -924,7 +933,7 @@ class DemoEngine {
         final opposite = rows(a, 'positions').any((p) => p['symbol'] == signal['symbol'] && p['right'] != signal['right']);
         if (opposite && r['reversal_enabled'] == true) {
           try {
-            requestReversal(a['id'], signal['symbol'], signal['right'], 'auto-reverse-${a['id']}-${signal['symbol']}-$day');
+            requestReversal(a['id'], signal['symbol'], signal['right'], 'auto-reverse-${a['id']}-${signal['symbol']}-$day', automatic: true);
           } on DemoRejected catch (e) { log(a, 'رفض انعكاس', e.message); }
           continue;
         }
@@ -939,6 +948,7 @@ class DemoEngine {
             key,
             reason: signal['strategy'],
             evidence: signal,
+            entryOrigin: 'automation',
           );
         } on DemoRejected catch (e) {
           log(a, 'رفض فرصة', '${signal['symbol']}: ${e.message}');
@@ -962,6 +972,67 @@ class DemoEngine {
     return true;
   }
 
+  /// Permission at decision time is evidence, not a perpetual fill permission.
+  /// Manual actions retain their explicit authority when automation is off.
+  void _authorizeEntry(DemoRow a, DemoRow authorization) {
+    final origin = authorization['origin'], strategy = authorization['strategy'];
+    const origins = ['manual', 'automation', 'manual_reversal',
+      'automatic_reversal', 'manual_scaling', 'automatic_scaling'];
+    _require(origins.contains(origin), 'مصدر إذن الدخول غير موثوق');
+    final quantitative = ['automation', 'manual_reversal', 'automatic_reversal'].contains(origin);
+    _require(quantitative ? ['breakout', 'pullback'].contains(strategy) : strategy == null,
+      'استراتيجية القرار الأصلي غير صالحة');
+    final r = risk(a);
+    if (quantitative) {
+      _require((r['strategies'] as List).contains(strategy), 'استراتيجية الدخول الأصلية معطلة');
+    }
+    if (['automation', 'automatic_reversal', 'automatic_scaling'].contains(origin)) {
+      _require(r['automation'] == true, 'الأتمتة معطلة؛ لا تنفيذ لدخول آلي معلق');
+    }
+    if (origin == 'automatic_reversal') {
+      _require(r['reversal_enabled'] == true, 'الانعكاس الآلي معطل');
+    }
+  }
+
+  bool _automaticReversal(DemoRow reversal) {
+    if (reversal.containsKey('automatic')) {
+      _require(reversal['automatic'] is bool, 'مصدر الانعكاس غير صالح');
+      return reversal['automatic'] as bool;
+    }
+    // Compatibility only: RC2 recorded automatic provenance in its key.
+    return (reversal['request_key'] as String).startsWith('auto-reverse-');
+  }
+
+  DemoRow _savedEntryAuthorization(DemoRow a, DemoRow order) {
+    final text = order['decision_json'];
+    final snapshot = text == null ? null : jsonDecode(text as String) as DemoRow;
+    if (snapshot != null && snapshot.containsKey('entry_authorization')) {
+      final authorization = snapshot['entry_authorization'];
+      _require(authorization is Map<String, dynamic>, 'إذن الدخول المحفوظ غير صالح');
+      return authorization as DemoRow;
+    }
+    // Read legacy immutable evidence without rewriting any saved decision.
+    final reason = snapshot?['reason'] ?? order['reason'];
+    final evidence = snapshot?['evidence'];
+    if (reason == 'انعكاس بعد إغلاق ومصالحة') {
+      final reversals = rows(a, 'reversals').where((v) => v['entry_order'] == order['id']);
+      _require(reversals.length == 1 && evidence is Map, 'مصدر دخول الانعكاس غير محسوم');
+      return {'origin': _automaticReversal(reversals.single) ? 'automatic_reversal' : 'manual_reversal',
+        'strategy': (evidence as Map)['strategy']};
+    }
+    if (['breakout', 'pullback'].contains(reason)) {
+      return {'origin': 'automation', 'strategy': evidence is Map ? evidence['strategy'] : reason};
+    }
+    if (reason == 'تعزيز مركز رابح') {
+      // Older snapshots cannot distinguish manual scaling while auto was on.
+      // Conservatively require that recorded automatic permission to remain on.
+      final savedRisk = snapshot?['risk'];
+      final automatic = savedRisk is Map && savedRisk['automation'] == true;
+      return {'origin': automatic ? 'automatic_scaling' : 'manual_scaling', 'strategy': null};
+    }
+    return {'origin': 'manual', 'strategy': null};
+  }
+
   void _directionLock(DemoRow a, DemoRow c, {DemoRow? existing}) {
     final conflict = rows(a, 'positions').any((p) =>
       p['symbol'] == c['symbol'] && p['right'] != c['right'] && p['quantity'] > 0) ||
@@ -972,7 +1043,7 @@ class DemoEngine {
 
   /// Profitable additions reserve their number and cooldown at acceptance, even
   /// when the response is lost. The persisted order key prevents a retry duplicate.
-  DemoRow scale(String id, DemoRow c, {bool loseResponse = false}) {
+  DemoRow scale(String id, DemoRow c, {bool loseResponse = false, bool automatic = false}) {
     final a = account(id), r = risk(a);
     _trusted(a);
     _require(r['scaling_enabled'] == true, 'التعزيز معطل');
@@ -992,6 +1063,7 @@ class DemoEngine {
       'التعزيز يتجاوز مخاطرة المركز الإجمالية');
     final key = 'scale-$id-${contractKey(p)}-${p['entry_tick']}-${p['scale_count']}';
     final o = submit(id, p, 'BUY', qty, key, reason: 'تعزيز مركز رابح',
+      entryOrigin: automatic ? 'automatic_scaling' : 'manual_scaling',
       evidence: {'profit_at_decision': q['bid'] * p['quantity'] * 100 - p['cost'],
         'addition_number': p['scale_count'] + 1, 'cooldown_ticks': r['scaling_cooldown']});
     p['scale_count'] += 1;
@@ -1003,7 +1075,8 @@ class DemoEngine {
     return o;
   }
 
-  DemoRow requestReversal(String id, String symbol, String right, String requestKey) {
+  DemoRow requestReversal(String id, String symbol, String right, String requestKey,
+      {bool automatic = false}) {
     final a = account(id);
     _require(requestKey.isNotEmpty && requestKey.length <= 120, 'مفتاح انعكاس غير صالح');
     final previous = rows(a, 'reversals').where((v) => v['request_key'] == requestKey);
@@ -1018,6 +1091,8 @@ class DemoEngine {
     final signals = opportunities(id).where((s) => s['symbol'] == symbol &&
       s['right'] == right && _entryEligible(a, s));
     _require(signals.isNotEmpty, 'لا إشارة كمية صالحة للانعكاس');
+    _authorizeEntry(a, {'origin': automatic ? 'automatic_reversal' : 'manual_reversal',
+      'strategy': signals.first['strategy']});
     _require(!rows(a, 'reversals').any((v) => v['symbol'] == symbol &&
       !['COMPLETED', 'EXPIRED', 'BLOCKED'].contains(v['state'])), 'انعكاس آخر غير محسوم');
     _require(rows(a, 'positions').any((p) => p['symbol'] == symbol && p['right'] != right),
@@ -1025,6 +1100,7 @@ class DemoEngine {
     final v = <String, dynamic>{'request_key': requestKey, 'account_id': id,
       'symbol': symbol, 'right': right, 'state': 'CLOSING', 'created_tick': tick,
       'expires_tick': tick + 12, 'signal_json': jsonEncode(signals.first),
+      'automatic': automatic,
       'close_orders': <String>[], 'entry_order': null};
     rows(a, 'reversals').add(v);
     for (final o in rows(a, 'orders')) {
@@ -1055,6 +1131,13 @@ class DemoEngine {
         final o = order(a['id'], v['entry_order']);
         if (o['status'] == 'FILLED') v['state'] = 'COMPLETED';
         if (o['status'] == 'CANCELLED') v['state'] = 'BLOCKED';
+        if (active.contains(o['status'])) {
+          try { _authorizeEntry(a, _savedEntryAuthorization(a, o)); }
+          on DemoRejected catch (e) {
+            o['status'] = 'CANCELLED'; v['state'] = 'BLOCKED';
+            log(a, 'انعكاس مرفوض', e.message);
+          }
+        }
         continue;
       }
       if (tick > v['expires_tick']) { v['state'] = 'EXPIRED'; continue; }
@@ -1065,12 +1148,16 @@ class DemoEngine {
       }
       try {
         _trusted(a);
+        final originalSignal = jsonDecode(v['signal_json'] as String) as DemoRow;
+        _authorizeEntry(a, {'origin': _automaticReversal(v) ? 'automatic_reversal' : 'manual_reversal',
+          'strategy': originalSignal['strategy']});
         reconcile(a['id']);
         final signals = opportunities(a['id']).where((s) => s['symbol'] == v['symbol'] &&
           s['right'] == v['right'] && _entryEligible(a, s));
         if (signals.isEmpty) { v['state'] = 'BLOCKED'; continue; }
         final o = submit(a['id'], contract(v['symbol'], v['right']), 'BUY', risk(a)['quantity'],
-          'reverse-entry-${v['request_key']}', reason: 'انعكاس بعد إغلاق ومصالحة', evidence: signals.first);
+          'reverse-entry-${v['request_key']}', reason: 'انعكاس بعد إغلاق ومصالحة', evidence: signals.first,
+          entryOrigin: _automaticReversal(v) ? 'automatic_reversal' : 'manual_reversal');
         v['entry_order'] = o['id']; v['state'] = 'ENTERING';
       } on DemoRejected catch (e) {
         v['state'] = 'BLOCKED'; log(a, 'انعكاس مرفوض', e.message);
@@ -1319,6 +1406,7 @@ class DemoEngine {
           v['created_tick'] is int && v['created_tick'] <= tick &&
           v['expires_tick'] is int && v['expires_tick'] > v['created_tick'] &&
           v['signal_json'] is String && v['close_orders'] is List &&
+          (!v.containsKey('automatic') || v['automatic'] is bool) &&
           (v['close_orders'] as List).every((oid) => rows(a, 'orders').any((o) => o['id'] == oid && o['side'] == 'SELL_TO_CLOSE' && o['symbol'] == v['symbol'] && o['right'] != v['right'])) &&
           (v['entry_order'] == null || rows(a, 'orders').any((o) => o['id'] == v['entry_order'] && o['side'] == 'BUY' && o['symbol'] == v['symbol'] && o['right'] == v['right'])),
           'سجل الانعكاس غير صالح أو يخلط الحسابات');

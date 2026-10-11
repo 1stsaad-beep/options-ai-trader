@@ -203,10 +203,13 @@ void main() {
     await t.tap(find.byKey(const Key('backend-research-save')));
     await t.pump();
     await t.tap(find.byIcon(Icons.menu));
+    // Start the drawer animation before advancing its clock. The pending
+    // response keeps a progress indicator active, so pumpAndSettle is unsafe.
+    await t.pump();
     await t.pump(const Duration(milliseconds: 400));
-    final home = find.text('الرئيسية').last;
+    final home = find.descendant(of: find.byType(Drawer), matching: find.text('الرئيسية'));
     await t.ensureVisible(home);
-    await t.tap(home);
+    await t.tap(home.hitTestable());
     await t.pumpAndSettle();
     await t.tap(find.byType(DropdownButtonFormField<String>));
     await t.pumpAndSettle();

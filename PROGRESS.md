@@ -65,3 +65,13 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Batch 1 pushed and read back at `9eba22278054a771a44c4a0e1c8bff9dff29a8b1`.
 - Backend/Compose CI `38117173190` and security CI `38117173235` succeeded. Android CI `38117173242` stopped at Flutter analyze: one missing brace lint in the replay response guard (`main.dart:329`). Tests/build were not reached and are not counted as passed.
 - Added the required braces without changing behavior; this checkpoint reruns the mobile gate while the separate critical safety batch is being prepared. No source reset or history deletion.
+
+## Engineering mission batch 2: partial exits and current fill authority
+
+- Previous CI correction pushed and verified at `6897522becda2db00b1cf6bd58c5867babb5617b`.
+- Real SQLite regressions reproduced 19 failures / 3 passes before the safety fix. Partial-profit resumption now preserves the accepted close quantity, including partial execution, repricing and restart; a new validated full-exit trigger can still close the rest.
+- A failed optional scenario feed cannot veto a justified partial reduction. A valid scenario invalidation retains full-close priority. New quantitative BUY fills verify original immutable decision evidence and currently enabled strategy/automation/reversal permissions. Automatic/manual origin is recorded explicitly; ambiguous legacy scaling is conservative. Recorded fill receipts and owned closing sells remain supported.
+- Added 31 Python regressions; targeted gate **164 passed**. Full local Python acceptance **669 passed**, zero failures/skips; one existing Starlette deprecation warning. Raw before/after and acceptance evidence retained in `docs/evidence/engineering-20261011`.
+- Real local HTTP+worker smoke passed, now including research snapshot/list/original replay across an actual server process restart, authentication and cross-account rejection. No external broker connections or orders.
+- Mobile Demo received corresponding current-permission checks for pending/partial automated entry and reversal, preserving explicit manual behavior. Added 17 Dart regression cases; these are authored, not locally executed (Flutter absent).
+- CI at `6897522` passed analyze, but one newly added widget race test missed the drawer while its animation had not started. The saved failure log is retained; test navigation now starts/finishes the animation and checks hit testing before switching accounts. Mobile tests/build must pass on this checkpoint before acceptance.

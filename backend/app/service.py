@@ -369,6 +369,79 @@ class TradingService:
         if len(keys) > account['config']['max_positions']:
             raise Rejected('Maximum open positions exceeded')
 
+    def _check_quantitative_fill_policy(self, db, account, order):
+        """Current permissions for a new quantitative BUY fill, from saved facts.
+
+        This never reinterprets manual orders or already recorded fill receipts.
+        Older automated orders lacking sufficient evidence remain cancellable,
+        but cannot acquire new inventory by inventing their original strategy.
+        """
+        prefix, separator, _ = order['request_key'].partition(':')
+        if not separator or prefix not in ('auto-e', 'v1-r', 'v1-s'):
+            return
+        records = db.all("SELECT * FROM decision_snapshots WHERE account_id=? AND order_id=? AND action='ORDER_ACCEPTED'",
+                         (account['id'], order['id']))
+        automatic_reversal = False
+        try:
+            if len(records) != 1:
+                raise ValueError('Unique accepted decision required')
+            record = records[0]
+            if hashlib.sha256(record['payload'].encode()).hexdigest() != record['digest']:
+                raise ValueError('Accepted decision digest mismatch')
+            accepted = json.loads(record['payload'])
+            automatic_authority = accepted.get('automatic_authority')
+            if 'automatic_authority' in accepted and type(automatic_authority) is not bool:
+                raise ValueError('Explicit execution authority required')
+            request = accepted['request']
+            if (accepted['source'] != 'synthetic_mock'
+                    or hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest() != order['fingerprint']):
+                raise ValueError('Accepted decision order mismatch')
+            facts = accepted['facts']
+            if prefix == 'auto-e':
+                if facts['strategy_source'] != 'completed_bar_quantitative_worker':
+                    raise ValueError('Unknown strategy authority')
+                signal = facts.get('facts', {}).get('signal')
+                strategy = signal['strategy'] if signal is not None else facts['reason']
+                if signal is not None and signal['right'] != order['right_kind']:
+                    raise ValueError('Accepted signal direction mismatch')
+            else:
+                kind = 'REVERSAL' if prefix == 'v1-r' else 'SCALING'
+                intent = db.one('SELECT * FROM lifecycle_intents WHERE account_id=? AND id=? AND order_id=? AND kind=?',
+                                (account['id'], record['intent_id'], order['id'], kind))
+                if not intent or intent['symbol'] != order['symbol']:
+                    raise ValueError('Accepted lifecycle identity mismatch')
+                payload = json.loads(intent['payload'])
+                if kind == 'REVERSAL':
+                    if (facts['reason'] != 'REVALIDATED_REVERSAL_ENTRY'
+                            or payload['target_right'] != order['right_kind']
+                            or type(payload['automatic']) is not bool):
+                        raise ValueError('Accepted reversal authority mismatch')
+                    automatic_reversal = payload['automatic']
+                    signal = facts['signal']
+                else:
+                    if facts['reason'] != 'PROFITABLE_POSITION_SCALING':
+                        raise ValueError('Accepted scaling authority mismatch')
+                    signal = facts['facts']
+                if signal['right'] != order['right_kind'] or signal['symbol'] != order['symbol']:
+                    raise ValueError('Accepted lifecycle signal identity mismatch')
+                strategy = signal['strategy']
+            if prefix == 'v1-s' and automatic_authority is None:
+                # Legacy scaling receipts did not distinguish caller origin.
+                # A formerly enabled worker cannot be assumed to be manual.
+                automatic_authority = accepted['config']['automation_enabled']
+                if type(automatic_authority) is not bool:
+                    raise ValueError('Legacy execution authority unavailable')
+            if strategy not in ('breakout', 'pullback'):
+                raise ValueError('Unknown quantitative strategy')
+        except (ValueError, TypeError, KeyError, AttributeError):
+            raise Rejected('Quantitative entry authorization evidence unavailable or invalid; cancel the remaining order') from None
+        if strategy not in account['config']['strategies']:
+            raise Rejected('Quantitative entry strategy disabled before fill')
+        if automatic_reversal and not account['config']['reversal_enabled']:
+            raise Rejected('Automatic reversal disabled before fill')
+        if (prefix == 'auto-e' or automatic_reversal or automatic_authority) and not account['config']['automation_enabled']:
+            raise Rejected('Automatic entry execution disabled before fill')
+
     def _check_scale_fill(self, db, account, order):
         if not account['config']['scaling_enabled']:
             raise Rejected('Scaling disabled before fill')
@@ -536,7 +609,7 @@ class TradingService:
             order_id = str(uuid.uuid4())
             db.execute('INSERT INTO orders(id,account_id,request_key,fingerprint,symbol,right_kind,expiry,strike,side,quantity,limit_cents,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', (order_id,account_id,request['request_key'],fingerprint,symbol,request['right'],request['expiry'],strike,request['side'],quantity,price,'PENDING'))
             db.execute('INSERT INTO order_costs VALUES(?,?)',(order_id,config['commission_cents']))
-            self.decision(db, account_id, 'ORDER_ACCEPTED', {'request':request, 'config':config, 'account_equity_cents':account['equity'], 'realized_pnl_cents':account['realized'], 'facts':getattr(self, '_decision_context', {'reason':'MANUAL_STRUCTURED_REQUEST','language_model_authority':False}), 'risk_rules':'v1_direction_owned_pending_cap_allocation_daily_trust'}, order_id, getattr(self, '_intent_id', None))
+            self.decision(db, account_id, 'ORDER_ACCEPTED', {'request':request, 'config':config, 'automatic_authority':bool(getattr(self,'_automatic_origin',getattr(self,'_automation_authorized',False))), 'account_equity_cents':account['equity'], 'realized_pnl_cents':account['realized'], 'facts':getattr(self, '_decision_context', {'reason':'MANUAL_STRUCTURED_REQUEST','language_model_authority':False}), 'risk_rules':'v1_direction_owned_pending_cap_allocation_daily_trust'}, order_id, getattr(self, '_intent_id', None))
             self.audit(db, account_id, 'MOCK_ORDER_ACCEPTED', {'order_id':order_id})
             return db.one('SELECT * FROM orders WHERE id=?', (order_id,))
     def fill(self, account_id, order_id, fill_id, quantity, price_cents):
@@ -576,6 +649,7 @@ class TradingService:
                 config=account['config']
                 validate_config(config)
                 self._direction_and_quantity(db, account, order['symbol'], order['right_kind'])
+                self._check_quantitative_fill_policy(db, account, order)
                 scaling=db.one("SELECT id FROM lifecycle_intents WHERE account_id=? AND order_id=? AND kind='SCALING'",(account_id,order_id))
                 if scaling:
                     self._check_scale_fill(db,account,order)

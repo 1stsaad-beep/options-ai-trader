@@ -230,8 +230,18 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
             # Quote/account/ledger checks and fill admission still run below.
             protective_exit = loss or profit or trailing or intraday or swing or near_expiry or bool(automatic_closes)
             if config['scenario_exit_enabled'] and not protective_exit:
-                current_analysis=AnalysisPipeline().analyze((feed or fixture_bars)(position['symbol'],now),now)
-                invalidated=any(s.right!=position['right_kind'] and s.strategy in config['strategies'] for s in current_analysis.signals)
+                try:
+                    current_analysis=AnalysisPipeline().analyze((feed or fixture_bars)(position['symbol'],now),now)
+                    invalidated=any(s.right!=position['right_kind'] and s.strategy in config['strategies'] for s in current_analysis.signals)
+                except Exception:
+                    if not partial:
+                        raise
+                    # A valid opposing scenario still has full-exit priority,
+                    # but optional research cannot veto a price-justified reduction.
+                    reason = 'Optional scenario analysis unavailable; validated partial exit retained'
+                    result['blocked_reasons'].append(f"{position['symbol']}: {reason}")
+                    service.audit(db, account_id, 'OPTIONAL_SCENARIO_UNAVAILABLE',
+                                  {'symbol': position['symbol'], 'reason': reason})
             if not (loss or profit or trailing or intraday or swing or near_expiry or partial or invalidated or automatic_closes):
                 continue
             exit_symbols.add(position['symbol'])
@@ -242,10 +252,12 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
                 guard()
                 service.cancel(account_id, order['id'])
                 result['actions'].append({'type': 'CANCEL', 'order_id': order['id'], 'reason': reason})
+            repriced_remainder = 0
             for order in automatic_closes:
                 if _cents(q.bid) < order['limit_cents']:
                     guard()
                     service.cancel(account_id, order['id'])
+                    repriced_remainder += order['quantity']-order['filled']
                     result['actions'].append({'type': 'CANCEL', 'order_id': order['id'], 'reason': 'REPRICE_OWNED_CLOSE'})
                 else:
                     fill(order, q)
@@ -254,6 +266,10 @@ def _cycle(service, db, account_id, now, feed, quote_feed, result):
                 continue
             reserved = sum(o['quantity']-o['filled'] for o in db.all("SELECT * FROM orders WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=? AND side='SELL_TO_CLOSE' AND status IN ('PENDING','PARTIAL')", owned_key))
             available = current['quantity']-reserved
+            if reason == 'RESUME_CLOSE':
+                # Resuming a receipt preserves its accepted quantity. Finishing
+                # a partial-profit receipt does not authorize closing its runner.
+                available = min(available, repriced_remainder)
             if available <= 0:
                 continue
             generation = db.one("SELECT COALESCE(MAX(f.sequence),0) AS n FROM fills f JOIN orders o ON o.id=f.order_id WHERE o.account_id=? AND o.symbol=? AND o.right_kind=? AND o.expiry=? AND o.strike=? AND o.side='BUY'", owned_key)['n']

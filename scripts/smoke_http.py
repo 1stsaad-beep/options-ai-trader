@@ -130,6 +130,36 @@ with tempfile.TemporaryDirectory(prefix='mock-smoke-', dir=root) as temp:
             assert closed['status']=='FILLED'
             assert call('GET',base+'/positions')==[]
             assert call('GET','/api/accounts/'+b+'/positions')==[]
+            # Real HTTP journal contract + process restart. Research does not
+            # repair account trust or create orders, even under emergency stop.
+            research_path = base + '/research/NVDA'
+            snapshot = call('POST', research_path + '/snapshot', {})
+            snapshot_id = snapshot['snapshot_id']
+            listing = call('GET', research_path + '/snapshots')
+            assert listing['items'][0]['snapshot_id'] == snapshot_id
+            replay_path = research_path + '/snapshots/' + snapshot_id + '/replay'
+            research_replay = call('GET', replay_path)
+            assert research_replay['original_workbench'] == snapshot['workbench']
+            assert research_replay['execution_authority'] is False
+            call('GET', '/api/accounts/' + b + '/research/NVDA/snapshots/' + snapshot_id + '/replay', expected=409)
+            process.terminate()
+            process.wait(timeout=5)
+            process = subprocess.Popen([sys.executable, '-m', 'uvicorn', 'app.main:app',
+                '--host', '127.0.0.1', '--port', str(port)], cwd=root/'backend', env=env,
+                stdout=log, stderr=log)
+            deadline = time.monotonic() + 15
+            while True:
+                try:
+                    call('GET', '/health', auth=False)
+                    break
+                except OSError:
+                    if process.poll() is not None or time.monotonic() > deadline:
+                        raise RuntimeError('Restart failed: ' + Path(temp, 'server.log').read_text())
+                    time.sleep(.1)
+            assert call('GET', base + '/status')['snapshot_valid'] is False
+            assert call('GET', replay_path)['original_workbench'] == snapshot['workbench']
+            assert call('GET', research_path + '/snapshots')['items'] == listing['items']
+            assert call('GET', base + '/positions') == []
             result={'http_server':'passed','authentication':'passed','account_isolation':'passed',
                 'idempotency':'passed','partial_fill_duplicate':'passed','disconnect_reconcile':'passed',
                 'independent_shadow_worker':'passed','emergency_stop':'passed',
@@ -137,6 +167,8 @@ with tempfile.TemporaryDirectory(prefix='mock-smoke-', dir=root) as temp:
                 'safe_emergency_owned_close':'passed','version':'1.0.0-rc.2',
                 'automatic_mock_partial_entry_stop_loss_close':'passed',
                 'automatic_daily_entry_replay':'passed',
+                'research_snapshot_list_original_replay_http':'passed',
+                'research_journal_process_restart':'passed',
                 'live_orders_sent':0,'data_source':'synthetic','database':'SQLite'}
             print(json.dumps(result,indent=2))
         finally:
