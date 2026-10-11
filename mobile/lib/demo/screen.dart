@@ -5,6 +5,7 @@ import 'store.dart';
 import 'backup.dart';
 import 'chart_lab.dart';
 import 'research_lab.dart';
+import 'safety_exercises_screen.dart';
 
 class DemoScreen extends StatefulWidget {
   final DemoStore? store;
@@ -816,6 +817,10 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
           ),
         const Divider(),
         const Text('مختبر أعطال محلي — لا يقطع اتصالًا حقيقيًا'),
+        OutlinedButton(key:const Key('demo-isolated-tests'),
+          onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(
+            builder:(_)=>const DemoSafetyExercisesScreen())),
+          child:const Text('اختبارات حماية معزولة — لا تغيّر حساباتي')),
         button(
           'محاكاة انقطاع الحساب',
           () => act((e) => e.disconnect(id)),

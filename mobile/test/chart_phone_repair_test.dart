@@ -134,6 +134,13 @@ void main() {
     expect(painter(t).divergences,isNotEmpty);
     expect(painter(t).macdValues!.histogram.whereType<double>(),isNotEmpty);
     expect(painter(t).layerLabels,containsAll(['RSI 14 (rolling)','MACD 12/26','Signal 9','Histogram']));
+    await t.ensureVisible(find.widgetWithText(FilterChip,'الرسومات'));
+    await t.tap(find.widgetWithText(FilterChip,'الرسومات'));await t.pump();
+    expect(painter(t).overlays,isFalse);
+    expect(painter(t).layerLabels.where((s)=>s.contains('صاعد عادي')),isEmpty);
+    await t.tap(find.widgetWithText(FilterChip,'المؤشرات'));await t.pump();
+    expect(painter(t).indicators,isFalse);
+    expect(painter(t).layerLabels, isNot(contains('MACD 12/26')));
     expect(e.encode(),before);expect(t.takeException(),isNull);
   });
 

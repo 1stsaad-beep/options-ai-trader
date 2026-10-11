@@ -17,9 +17,10 @@ class DemoCandlePainter extends CustomPainter {
   final List<double?> rsiValues;
   final ChartMacd? macdValues;
   final List<ChartDivergence> divergences;
+  final String? fontFamily;
   DemoCandlePainter(this.bars,this.summary,this.patterns,this.markers,this.colors,
     this.lab,this.overlays,this.indicators,this.rsiValues,
-    {this.macdValues,this.divergences=const []});
+    {this.macdValues,this.divergences=const [],this.fontFamily});
 
   List<String> get layerLabels => [
     'Candles ${bars.length}', 'Observation axis',
@@ -54,7 +55,7 @@ class DemoCandlePainter extends CustomPainter {
     double x(int tick)=>plot.left+(indices[tick]!+.5)*dx;
     double y(double price)=>plot.top+(high-price)/(high-low)*plot.height;
     void text(String value,Offset at,Color color,{double fontSize=10}) {
-      final p=TextPainter(text:TextSpan(text:value,style:TextStyle(color:color,fontSize:fontSize)),
+      final p=TextPainter(text:TextSpan(text:value,style:TextStyle(color:color,fontSize:fontSize,fontFamily:fontFamily)),
         textDirection:TextDirection.ltr)..layout(maxWidth:math.max(1,size.width-6));
       p.paint(canvas,Offset(at.dx.clamp(2,math.max(2,size.width-p.width-2)).toDouble(),
         at.dy.clamp(1,math.max(1,size.height-p.height-1)).toDouble()));

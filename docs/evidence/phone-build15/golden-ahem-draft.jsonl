@@ -1,0 +1,102 @@
+Resolving dependencies...
+Downloading packages...
+  flutter_lints 4.0.0 (6.0.0 available)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.3 available)
+Got dependencies!
+6 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":2659,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"count":15,"time":11,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1960}
+{"suite":{"id":2,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"suite","time":1977}
+{"test":{"id":3,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart","suiteID":2,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1978}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":3,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2513}
+{"suite":{"id":4,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"suite","time":2525}
+{"test":{"id":5,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart","suiteID":4,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2525}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":5,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3084}
+{"suite":{"id":6,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"suite","time":3094}
+{"test":{"id":7,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart","suiteID":6,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3095}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":7,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3544}
+{"suite":{"id":8,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart"},"type":"suite","time":3554}
+{"test":{"id":9,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart","suiteID":8,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3555}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":9,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4073}
+{"suite":{"id":10,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"suite","time":4084}
+{"test":{"id":11,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart","suiteID":10,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":4084}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":11,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4589}
+{"suite":{"id":12,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_layers_golden_test.dart"},"type":"suite","time":4599}
+{"test":{"id":13,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_layers_golden_test.dart","suiteID":12,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":4599}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":13,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":5087}
+{"group":{"id":14,"suiteID":12,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":5089}
+{"test":{"id":15,"name":"abc dark canvas golden","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":13,"root_column":7,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_layers_golden_test.dart"},"type":"testStart","time":5089}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5446}
+{"test":{"id":16,"name":"bat dark canvas golden","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":13,"root_column":7,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_layers_golden_test.dart"},"type":"testStart","time":5447}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5493}
+{"test":{"id":17,"name":"divergence dark canvas golden","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":13,"root_column":7,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_layers_golden_test.dart"},"type":"testStart","time":5494}
+{"testID":17,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5523}
+{"test":{"id":18,"name":"abc light canvas golden","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":13,"root_column":7,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_layers_golden_test.dart"},"type":"testStart","time":5524}
+{"testID":18,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5556}
+{"test":{"id":19,"name":"bat light canvas golden","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":13,"root_column":7,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_layers_golden_test.dart"},"type":"testStart","time":5557}
+{"testID":19,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5589}
+{"test":{"id":20,"name":"divergence light canvas golden","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":13,"root_column":7,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_layers_golden_test.dart"},"type":"testStart","time":5590}
+{"testID":20,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5616}
+{"suite":{"id":21,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"suite","time":5629}
+{"test":{"id":22,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart","suiteID":21,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":5629}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":22,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":6131}
+{"suite":{"id":23,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"suite","time":6142}
+{"test":{"id":24,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart","suiteID":23,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":6142}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":24,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":6581}
+{"suite":{"id":25,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"suite","time":6591}
+{"test":{"id":26,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart","suiteID":25,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":6591}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":26,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":7127}
+{"suite":{"id":27,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"suite","time":7139}
+{"test":{"id":28,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart","suiteID":27,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":7139}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":28,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":7592}
+{"suite":{"id":29,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"suite","time":7604}
+{"test":{"id":30,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart","suiteID":29,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":7604}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":30,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":8071}
+{"suite":{"id":31,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_widget_test.dart"},"type":"suite","time":8083}
+{"test":{"id":32,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_widget_test.dart","suiteID":31,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":8084}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":32,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":8597}
+{"suite":{"id":33,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_widget_test.dart"},"type":"suite","time":8609}
+{"test":{"id":34,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_widget_test.dart","suiteID":33,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":8609}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":34,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":9117}
+{"suite":{"id":35,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"suite","time":9129}
+{"test":{"id":36,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart","suiteID":35,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":9129}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":36,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":9662}
+{"success":true,"type":"done","time":9677}

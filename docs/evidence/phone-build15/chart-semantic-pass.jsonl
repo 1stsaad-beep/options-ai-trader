@@ -1,0 +1,490 @@
+Resolving dependencies...
+Downloading packages...
+  flutter_lints 4.0.0 (6.0.0 available)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.3 available)
+Got dependencies!
+6 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":2456,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"count":14,"time":11,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":8909}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":9,"line":null,"column":null,"url":null},"type":"group","time":8911}
+{"test":{"id":3,"name":"Dart accepts the exact Python-generated versioned endpoint fixture","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":12,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"testStart","time":8912}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8954}
+{"test":{"id":4,"name":"versioned research endpoint lifecycle is account-scoped and explicit","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":29,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"testStart","time":8954}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8984}
+{"test":{"id":5,"name":"research rejects unsupported versions, scope, authority and future evidence","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":55,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"testStart","time":8984}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9003}
+{"test":{"id":6,"name":"snapshot list rejects foreign rows and duplicate identifiers","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":78,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"testStart","time":9003}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9008}
+{"test":{"id":7,"name":"replay rejects identity, decision substitution, fabricated or future outcomes","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":90,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"testStart","time":9008}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9018}
+{"test":{"id":8,"name":"snapshot mutation is never retried after lost response","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":112,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"testStart","time":9018}
+{"testID":8,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9021}
+{"test":{"id":9,"name":"saved observation rejects scope, model or future timestamp mismatch","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":122,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"testStart","time":9022}
+{"testID":9,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9032}
+{"test":{"id":10,"name":"observation response loss does not repeat capture","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":140,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"testStart","time":9033}
+{"testID":10,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9036}
+{"test":{"id":11,"name":"invalid research identity is rejected before network access","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":151,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_api_test.dart"},"type":"testStart","time":9036}
+{"testID":11,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9039}
+{"suite":{"id":12,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"suite","time":9055}
+{"test":{"id":13,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart","suiteID":12,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":9055}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":13,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":9876}
+{"group":{"id":14,"suiteID":12,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":10,"line":null,"column":null,"url":null},"type":"group","time":9876}
+{"test":{"id":15,"name":"aggregated journal preserves original ticks and rejects missing groups","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":12,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":9876}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9906}
+{"test":{"id":16,"name":"continuous OHLC plateau confirms only rightmost turn after full delay","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":20,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":9907}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9922}
+{"test":{"id":17,"name":"baseline pictured monotonic prefix legitimately has no wave or harmonic","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":33,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":9923}
+{"testID":17,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9930}
+{"test":{"id":18,"name":"controlled candles produce primary and alternate without fabricated labels","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":41,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":9930}
+{"testID":18,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9945}
+{"test":{"id":19,"name":"Bat geometry has actual ratio PRZ containing D distinct from invalidation","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":55,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":9945}
+{"testID":19,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9950}
+{"test":{"id":20,"name":"divergence has confirmed price and calculated RSI MACD endpoints","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":63,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":9950}
+{"testID":20,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9959}
+{"test":{"id":21,"name":"MACD warmup and histogram arithmetic preserve every historical prefix","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":76,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":9959}
+{"testID":21,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9974}
+{"test":{"id":22,"name":"same mutable engine follows new ticks but pinned replay never follows","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":109,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":9974}
+{"testID":22,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11415}
+{"test":{"id":23,"name":"fixture through detector journal toggles and painter preserves account bytes","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":122,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":11415}
+{"testID":23,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12291}
+{"test":{"id":24,"name":"fit viewport time aggregation and zoom remain usable at 360 pixels","suiteID":12,"groupIDs":[14],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":140,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/chart_phone_repair_test.dart"},"type":"testStart","time":12291}
+{"testID":24,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12494}
+{"suite":{"id":25,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"suite","time":12513}
+{"test":{"id":26,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart","suiteID":25,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":12513}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":26,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":14250}
+{"group":{"id":27,"suiteID":25,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":13,"line":null,"column":null,"url":null},"type":"group","time":14251}
+{"test":{"id":28,"name":"SQLite enabled=1 displays an active watchlist switch","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":11,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":14251}
+{"testID":28,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":15813}
+{"test":{"id":29,"name":"Arabic RTL paper dashboard and all ten destinations render","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":41,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":15814}
+{"testID":29,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":16077}
+{"test":{"id":30,"name":"appearance menu supports explicit light and system modes","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":85,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":16077}
+{"testID":30,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":16422}
+{"test":{"id":31,"name":"watchlist supports more than default three symbols and account-scoped mutations","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":103,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":16423}
+{"testID":31,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":16801}
+{"test":{"id":32,"name":"home aggregates only server-provided realized account performance","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":157,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":16801}
+{"testID":32,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":16896}
+{"test":{"id":33,"name":"missing performance does not become a fabricated zero","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":192,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":16898}
+{"testID":33,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":16988}
+{"test":{"id":34,"name":"duplicate account identifiers fail closed before selector rendering","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":207,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":16989}
+{"testID":34,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":17057}
+{"test":{"id":35,"name":"disconnected server displays failure instead of synthetic metrics","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":222,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":17057}
+{"testID":35,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":17126}
+{"test":{"id":36,"name":"automation is disabled by default and cycle button is locked","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":239,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":17126}
+{"testID":36,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":17463}
+{"test":{"id":37,"name":"automation toggle changes only the selected account","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":262,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":17463}
+{"testID":37,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":17844}
+{"test":{"id":38,"name":"exit and quantity configuration stays with the selected account","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":280,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":17845}
+{"testID":38,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":18502}
+{"test":{"id":39,"name":"automation quantity above account maximum is rejected before request","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":316,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":18503}
+{"testID":39,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":19047}
+{"test":{"id":40,"name":"one manual cycle uses the selected account and renders only its server report","suiteID":25,"groupIDs":[27],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":336,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/widget_test.dart"},"type":"testStart","time":19048}
+{"testID":40,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":19720}
+{"suite":{"id":41,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"suite","time":19751}
+{"test":{"id":42,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart","suiteID":41,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":19751}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":42,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":20712}
+{"group":{"id":43,"suiteID":41,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":17,"line":null,"column":null,"url":null},"type":"group","time":20712}
+{"test":{"id":44,"name":"CALL pending automatic entry stops when automation is disabled","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":45,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20713}
+{"testID":44,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20786}
+{"test":{"id":45,"name":"CALL pending partial entry rechecks original strategy after restart","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":56,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20786}
+{"testID":45,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20822}
+{"test":{"id":46,"name":"CALL reversal close completes but automation blocks new entry","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":75,"column":7,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20822}
+{"testID":46,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20847}
+{"test":{"id":47,"name":"CALL partial reversal rechecks automation before next fill","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":85,"column":7,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20847}
+{"testID":47,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20883}
+{"test":{"id":48,"name":"CALL reversal close completes but reversal_enabled blocks new entry","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":75,"column":7,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20883}
+{"testID":48,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20892}
+{"test":{"id":49,"name":"CALL partial reversal rechecks reversal_enabled before next fill","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":85,"column":7,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20892}
+{"testID":49,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20914}
+{"test":{"id":50,"name":"PUT pending automatic entry stops when automation is disabled","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":45,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20914}
+{"testID":50,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20918}
+{"test":{"id":51,"name":"PUT pending partial entry rechecks original strategy after restart","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":56,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20918}
+{"testID":51,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20924}
+{"test":{"id":52,"name":"PUT reversal close completes but automation blocks new entry","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":75,"column":7,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20925}
+{"testID":52,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20930}
+{"test":{"id":53,"name":"PUT partial reversal rechecks automation before next fill","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":85,"column":7,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20930}
+{"testID":53,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20941}
+{"test":{"id":54,"name":"PUT reversal close completes but reversal_enabled blocks new entry","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":75,"column":7,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20942}
+{"testID":54,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20949}
+{"test":{"id":55,"name":"PUT partial reversal rechecks reversal_enabled before next fill","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":85,"column":7,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20949}
+{"testID":55,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20959}
+{"test":{"id":56,"name":"explicit manual entry and reversal remain available without automation opt-in","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":103,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20959}
+{"testID":56,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20968}
+{"test":{"id":57,"name":"filled receipt and duplicate submission remain idempotent after disable","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":117,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20969}
+{"testID":57,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20978}
+{"test":{"id":58,"name":"legacy automatic decision is gated without rewriting saved evidence","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":130,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20978}
+{"testID":58,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20983}
+{"test":{"id":59,"name":"legacy automatic reversal provenance blocks entry after disable","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":145,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20983}
+{"testID":59,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":20996}
+{"test":{"id":60,"name":"new automatic admission is rejected when automation is disabled","suiteID":41,"groupIDs":[43],"metadata":{"skip":false,"skipReason":null},"line":164,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_entry_permissions_test.dart"},"type":"testStart","time":20996}
+{"testID":60,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":21001}
+{"suite":{"id":61,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart"},"type":"suite","time":21013}
+{"test":{"id":62,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart","suiteID":61,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":21013}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":62,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":21541}
+{"group":{"id":63,"suiteID":61,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":7,"line":null,"column":null,"url":null},"type":"group","time":21542}
+{"test":{"id":64,"name":"offline research controls render with no HTTP or ledger mutation","suiteID":61,"groupIDs":[63],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":35,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart"},"type":"testStart","time":21542}
+{"testID":64,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":22734}
+{"test":{"id":65,"name":"offline research visibly blocks trust when market data is lost","suiteID":61,"groupIDs":[63],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":55,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart"},"type":"testStart","time":22735}
+{"testID":65,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":22835}
+{"test":{"id":66,"name":"backend research makes only GET and rejects wrong account result","suiteID":61,"groupIDs":[63],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":64,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart"},"type":"testStart","time":22835}
+{"testID":66,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":23598}
+{"test":{"id":67,"name":"backend research displays verified synthetic Shadow response only","suiteID":61,"groupIDs":[63],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":86,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart"},"type":"testStart","time":23599}
+{"testID":67,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":24046}
+{"test":{"id":68,"name":"server research explicitly saves, captures and replays original evidence","suiteID":61,"groupIDs":[63],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":115,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart"},"type":"testStart","time":24047}
+{"testID":68,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":24519}
+{"test":{"id":69,"name":"snapshot response loss is visible and does not retry the write","suiteID":61,"groupIDs":[63],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":171,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart"},"type":"testStart","time":24520}
+{"testID":69,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":24776}
+{"test":{"id":70,"name":"late snapshot response cannot replace another account research","suiteID":61,"groupIDs":[63],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":198,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_widget_test.dart"},"type":"testStart","time":24777}
+{"testID":70,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":25353}
+{"suite":{"id":71,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"suite","time":25373}
+{"test":{"id":72,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart","suiteID":71,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":25373}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":72,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":25881}
+{"group":{"id":73,"suiteID":71,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":27,"line":null,"column":null,"url":null},"type":"group","time":25882}
+{"test":{"id":74,"name":"cancelled stop exit can be replaced with a new bounded close","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":43,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":25882}
+{"testID":74,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":25949}
+{"test":{"id":75,"name":"partially filled cancelled exit closes only the remaining ownership","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":64,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":25949}
+{"testID":75,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":25981}
+{"test":{"id":76,"name":"unknown account never replaces or duplicates a pending automatic exit","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":85,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":25981}
+{"testID":76,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":25998}
+{"test":{"id":77,"name":"session end overrides a staged take profit with full owned quantity","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":104,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":25998}
+{"testID":77,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26009}
+{"test":{"id":78,"name":"zero-fill cancellation does not consume staged profit entitlement","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":118,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26009}
+{"testID":78,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26018}
+{"test":{"id":79,"name":"saved V1 ledger rejects overstated filled quantity","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":147,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26019}
+{"testID":79,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26026}
+{"test":{"id":80,"name":"saved V1 ledger rejects missing filled receipt","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":147,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26026}
+{"testID":80,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26032}
+{"test":{"id":81,"name":"saved V1 ledger rejects wrong receipt fee","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":147,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26033}
+{"testID":81,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26039}
+{"test":{"id":82,"name":"saved V1 ledger rejects future receipt","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":147,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26039}
+{"testID":82,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26044}
+{"test":{"id":83,"name":"saved V1 ledger rejects non-object receipt","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":147,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26044}
+{"testID":83,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26048}
+{"test":{"id":84,"name":"saved V1 ledger rejects non-integer price","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":147,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26049}
+{"testID":84,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26055}
+{"test":{"id":85,"name":"saved position rejects malformed decision JSON and inconsistent high","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":154,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26055}
+{"testID":85,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26064}
+{"test":{"id":86,"name":"trade replay rejects malformed exit snapshot before opening UI","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":164,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26065}
+{"testID":86,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26073}
+{"test":{"id":87,"name":"trade and position cannot claim another account decision snapshot","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":172,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26073}
+{"testID":87,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26087}
+{"test":{"id":88,"name":"new saved risk rejects invalid trailing_pct","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26088}
+{"testID":88,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26090}
+{"test":{"id":89,"name":"new saved risk rejects invalid partial_take_pct","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26091}
+{"testID":89,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26093}
+{"test":{"id":90,"name":"new saved risk rejects invalid swing_max_ticks","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26093}
+{"testID":90,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26095}
+{"test":{"id":91,"name":"new saved risk rejects invalid expiry_guard_days","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26095}
+{"testID":91,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26097}
+{"test":{"id":92,"name":"new saved risk rejects invalid scaling_max","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26098}
+{"testID":92,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26100}
+{"test":{"id":93,"name":"new saved risk rejects invalid scaling_quantity","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26100}
+{"testID":93,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26102}
+{"test":{"id":94,"name":"new saved risk rejects invalid scaling_cooldown","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26102}
+{"testID":94,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26105}
+{"test":{"id":95,"name":"new saved risk rejects invalid scaling_enabled","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26105}
+{"testID":95,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26108}
+{"test":{"id":96,"name":"new saved risk rejects invalid reversal_enabled","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26109}
+{"testID":96,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26114}
+{"test":{"id":97,"name":"new saved risk rejects invalid exposure_pct","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26114}
+{"testID":97,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26117}
+{"test":{"id":98,"name":"new saved risk rejects invalid trade_pct","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":199,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26117}
+{"testID":98,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26119}
+{"test":{"id":99,"name":"corrupted snapshot is retained on disk and cannot start local timer","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":204,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26119}
+{"testID":99,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26126}
+{"test":{"id":100,"name":"all chart prefixes retain confirmed pivots and indicators without future observations","suiteID":71,"groupIDs":[73],"metadata":{"skip":false,"skipReason":null},"line":221,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_adversarial_v1_test.dart"},"type":"testStart","time":26126}
+{"testID":100,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26181}
+{"suite":{"id":101,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"suite","time":26192}
+{"test":{"id":102,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart","suiteID":101,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":26193}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":102,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":26965}
+{"group":{"id":103,"suiteID":101,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":13,"line":null,"column":null,"url":null},"type":"group","time":26965}
+{"test":{"id":104,"name":"ABC and third wave remain competing bullish and bearish candidates","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":30,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":26965}
+{"testID":104,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26992}
+{"test":{"id":105,"name":"fifth and complete impulse enforce non-overlap and non-shortest third","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":45,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":26993}
+{"testID":105,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26998}
+{"test":{"id":106,"name":"wave 2 cannot erase wave 1 and nonalternating geometry is rejected","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":57,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":26998}
+{"testID":106,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27001}
+{"test":{"id":107,"name":"candidate validation rejects historical ordering and nonfinite prices","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":65,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":27001}
+{"testID":107,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27009}
+{"test":{"id":108,"name":"nested 3 of 3 cannot be known before parent confirmation","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":75,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":27009}
+{"testID":108,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27024}
+{"test":{"id":109,"name":"wave event is only visible after the confirming candle","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":93,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":27024}
+{"testID":109,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27041}
+{"test":{"id":110,"name":"appended future candles never change old primary alternate or journal","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":105,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":27042}
+{"testID":110,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27054}
+{"test":{"id":111,"name":"invalidation is append-only and cannot revive on price recovery","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":121,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":27054}
+{"testID":111,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27065}
+{"test":{"id":112,"name":"source revisions shrinking and invalid candles fail without journal changes","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":136,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":27066}
+{"testID":112,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27072}
+{"test":{"id":113,"name":"serializable journal restores with exact causal event evidence","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":150,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":27072}
+{"testID":113,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27100}
+{"test":{"id":114,"name":"MTF excludes incomplete candles and preserves the completed prefix","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":160,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":27101}
+{"testID":114,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27107}
+{"test":{"id":115,"name":"MTF pivot confirmation uses actual source ticks not compacted indices","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":176,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":27108}
+{"testID":115,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27111}
+{"test":{"id":116,"name":"offline wave journal MTF and alternate controls render in RTL","suiteID":101,"groupIDs":[103],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":186,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/wave_analysis_test.dart"},"type":"testStart","time":27112}
+{"testID":116,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28365}
+{"suite":{"id":117,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"suite","time":28381}
+{"test":{"id":118,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart","suiteID":117,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":28382}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":118,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":28834}
+{"group":{"id":119,"suiteID":117,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":11,"line":null,"column":null,"url":null},"type":"group","time":28834}
+{"test":{"id":120,"name":"redirect responses are rejected without forwarding authorization","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":9,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28834}
+{"testID":120,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28868}
+{"test":{"id":121,"name":"account path and bearer header are explicit","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":29,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28868}
+{"testID":121,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28874}
+{"test":{"id":122,"name":"remote plaintext connection is rejected before sending","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":50,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28874}
+{"testID":122,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28876}
+{"test":{"id":123,"name":"server rejection and malformed payload are surfaced","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":62,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28877}
+{"testID":123,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28882}
+{"test":{"id":124,"name":"malformed list and non-object rows fail closed","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":80,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28882}
+{"testID":124,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28887}
+{"test":{"id":125,"name":"URL query and credentials are rejected before transport","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":91,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28887}
+{"testID":125,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28891}
+{"test":{"id":126,"name":"transport failure does not retry mutation","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":111,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28891}
+{"testID":126,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28900}
+{"test":{"id":127,"name":"mock cycle posts an empty body to the explicit account only","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":125,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28900}
+{"testID":127,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28905}
+{"test":{"id":128,"name":"mock cycle rejects a result for another account or data source","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":146,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28906}
+{"testID":128,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28911}
+{"test":{"id":129,"name":"mock cycle transport failure is sent once without automatic retry","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":163,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28911}
+{"testID":129,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28914}
+{"test":{"id":130,"name":"empty account cannot start a mock cycle","suiteID":117,"groupIDs":[119],"metadata":{"skip":false,"skipReason":null},"line":177,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":28914}
+{"testID":130,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28917}
+{"suite":{"id":131,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"suite","time":28927}
+{"test":{"id":132,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart","suiteID":131,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":28927}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":132,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":29472}
+{"group":{"id":133,"suiteID":131,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":35,"line":null,"column":null,"url":null},"type":"group","time":29472}
+{"test":{"id":134,"name":"default local accounts are independent with explicit synthetic source","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":29,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29473}
+{"testID":134,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29501}
+{"test":{"id":135,"name":"watchlist supports more than three symbols and rejects unknown","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":48,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29502}
+{"testID":135,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29513}
+{"test":{"id":136,"name":"partial fill next tick only, repeat fill and cancellation conserve cash","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":57,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29514}
+{"testID":136,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29533}
+{"test":{"id":137,"name":"full close includes spread both commissions and slippage","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":77,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29534}
+{"testID":137,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29547}
+{"test":{"id":138,"name":"idempotency survives persistence and uncertain accepted response","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":88,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29548}
+{"testID":138,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29560}
+{"test":{"id":139,"name":"different contents cannot reuse idempotency key","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":108,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29560}
+{"testID":139,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29564}
+{"test":{"id":140,"name":"cross account fill cancel and unowned close are denied","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":113,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29564}
+{"testID":140,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29573}
+{"test":{"id":141,"name":"same request key in distinct accounts never mixes orders","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":122,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29574}
+{"testID":141,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29582}
+{"test":{"id":142,"name":"pending closes reserve ownership and partial close cannot oversell","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":129,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29582}
+{"testID":142,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29598}
+{"test":{"id":143,"name":"live cannot be enabled in local Demo","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":146,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29598}
+{"testID":143,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29602}
+{"test":{"id":144,"name":"paper cannot be enabled in local Demo","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":146,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29602}
+{"testID":144,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29605}
+{"test":{"id":145,"name":"ibkr cannot be enabled in local Demo","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":146,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29605}
+{"testID":145,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29607}
+{"test":{"id":146,"name":"observe mode cannot open but permits owned emergency close","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":151,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29607}
+{"testID":146,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29612}
+{"test":{"id":147,"name":"no naked shorts, multi leg or invalid contracts","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":160,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29612}
+{"testID":147,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29616}
+{"test":{"id":148,"name":"trade and exposure limits include pending reservations and costs","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":172,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29616}
+{"testID":148,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29620}
+{"test":{"id":149,"name":"limits are rechecked on fill after configuration changes","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":180,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29620}
+{"testID":149,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29625}
+{"test":{"id":150,"name":"max contracts includes filled and pending per account","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":188,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29625}
+{"testID":150,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29631}
+{"test":{"id":151,"name":"daily loss blocks new entries while close remains allowed","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":196,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29631}
+{"testID":151,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29700}
+{"test":{"id":152,"name":"global exposure honors strictest member limit and uncertain accounts","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":217,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29700}
+{"testID":152,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29707}
+{"test":{"id":153,"name":"outage stops fills and new entries then reconciliation permits recovery","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":230,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29707}
+{"testID":153,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29714}
+{"test":{"id":154,"name":"market data outage never fabricates a fill or opportunity","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":244,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29714}
+{"testID":154,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29720}
+{"test":{"id":155,"name":"emergency cancels entry remainder but permits owned close","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":256,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29720}
+{"testID":155,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29729}
+{"test":{"id":156,"name":"automatic drop exit with partial fills and entry disabled","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":271,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29730}
+{"testID":156,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29740}
+{"test":{"id":157,"name":"automatic rally exit with partial fills and entry disabled","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":271,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29740}
+{"testID":157,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29749}
+{"test":{"id":158,"name":"automatic quantitative opportunity executes only next observation","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":286,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29749}
+{"testID":158,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29763}
+{"test":{"id":159,"name":"intraday synthetic session exit is generated and filled","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":297,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29763}
+{"testID":159,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29770}
+{"test":{"id":160,"name":"expiry writes off owned cost and cancels pending closes without exercise","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":307,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29770}
+{"testID":160,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29781}
+{"test":{"id":161,"name":"historical replay is deterministic isolated with costs and equity curve","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":322,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":29781}
+{"testID":161,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30139}
+{"test":{"id":162,"name":"future replay observations cannot alter prior opportunity","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":339,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":30139}
+{"testID":162,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30143}
+{"test":{"id":163,"name":"seeded faults preserve ledger and never mix account cash","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":344,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":30143}
+{"testID":163,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30526}
+{"test":{"id":164,"name":"tampered account IDs cash status sequence modes and contracts fail closed","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":363,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":30527}
+{"testID":164,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30534}
+{"test":{"id":165,"name":"serialized local store restores multi accounts settings watchlists and trades","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":384,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":30534}
+{"testID":165,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30544}
+{"test":{"id":166,"name":"accepted unknown order is persisted even when response is lost","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":406,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":30544}
+{"testID":166,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30547}
+{"test":{"id":167,"name":"corrupt saved data is not erased or silently replaced","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":421,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":30547}
+{"testID":167,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30550}
+{"test":{"id":168,"name":"failed persistence rolls back and stops local timer","suiteID":131,"groupIDs":[133],"metadata":{"skip":false,"skipReason":null},"line":429,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_engine_test.dart"},"type":"testStart","time":30550}
+{"testID":168,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30556}
+{"suite":{"id":169,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"suite","time":30569}
+{"test":{"id":170,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart","suiteID":169,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":30569}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":170,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":31268}
+{"group":{"id":171,"suiteID":169,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":11,"line":null,"column":null,"url":null},"type":"group","time":31268}
+{"test":{"id":172,"name":"local workbench is read only and has no execution authority","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":10,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31269}
+{"testID":172,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31312}
+{"test":{"id":173,"name":"future observations cannot alter earlier research evidence","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":19,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31312}
+{"testID":173,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31316}
+{"test":{"id":174,"name":"walk forward folds only use prior training and observed outcomes","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":26,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31316}
+{"testID":174,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31320}
+{"test":{"id":175,"name":"insufficient observations produce no tournament result","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":38,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31320}
+{"testID":175,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31323}
+{"test":{"id":176,"name":"invalid research data fails instead of emitting NaN","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":43,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31323}
+{"testID":176,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31327}
+{"test":{"id":177,"name":"Option Twin includes spread both slippage sides and commission","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":51,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31327}
+{"testID":177,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31330}
+{"test":{"id":178,"name":"Option Twin Call and Put delta move in opposite direction","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":59,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31330}
+{"testID":178,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31333}
+{"test":{"id":179,"name":"market loss and unknown account force zero trust without throwing","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":67,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31333}
+{"testID":179,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31339}
+{"test":{"id":180,"name":"research account isolation includes pending premium only for selected account","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":77,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31339}
+{"testID":180,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31357}
+{"test":{"id":181,"name":"saved decision replay cannot invent an option path or cross account","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":89,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31357}
+{"testID":181,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31366}
+{"test":{"id":182,"name":"undefined correlation is not a fabricated zero risk result","suiteID":169,"groupIDs":[171],"metadata":{"skip":false,"skipReason":null},"line":102,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/research_analysis_test.dart"},"type":"testStart","time":31366}
+{"testID":182,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31369}
+{"suite":{"id":183,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"suite","time":31380}
+{"test":{"id":184,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart","suiteID":183,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":31380}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":184,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":31867}
+{"group":{"id":185,"suiteID":183,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":12,"line":null,"column":null,"url":null},"type":"group","time":31867}
+{"test":{"id":186,"name":"manual backup roundtrip preserves ledger evidence and pauses imported permissions","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":61,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":31867}
+{"testID":186,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":31992}
+{"test":{"id":187,"name":"imported automatic order cannot fill after reconcile until permissions are re-enabled","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":99,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":31993}
+{"testID":187,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32006}
+{"test":{"id":188,"name":"future schema, invalid ledger, cross-account ownership and credentials are rejected","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":118,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":32006}
+{"testID":188,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32073}
+{"test":{"id":189,"name":"UTF-8 size bound applies before parsing and export excludes backend fields","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":154,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":32073}
+{"testID":189,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32110}
+{"test":{"id":190,"name":"failed save leaves existing memory and persisted data intact","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":164,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":32110}
+{"testID":190,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32129}
+{"test":{"id":191,"name":"write then throw restores previous persistent bytes before returning failure","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":177,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":32130}
+{"testID":191,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32145}
+{"test":{"id":192,"name":"unverifiable rollback locks mutations while preserving export until explicit reload","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":190,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":32146}
+{"testID":192,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32170}
+{"test":{"id":193,"name":"overlapping load, changes and playback cannot race an import save","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":215,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":32170}
+{"testID":193,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32186}
+{"test":{"id":194,"name":"target state changed after preview cannot be silently replaced","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":235,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":32186}
+{"testID":194,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32204}
+{"test":{"id":195,"name":"missing or corrupt disk on uncertain reload keeps original memory exportable","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":251,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":32204}
+{"testID":195,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32240}
+{"test":{"id":196,"name":"ordinary change restores memory and disk when save writes then throws","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":272,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":32240}
+{"testID":196,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32245}
+{"test":{"id":197,"name":"ordinary change rollback failure latches writes and preserves original export","suiteID":183,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":288,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_test.dart"},"type":"testStart","time":32245}
+{"testID":197,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32250}
+{"suite":{"id":198,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_widget_test.dart"},"type":"suite","time":32265}
+{"test":{"id":199,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_widget_test.dart","suiteID":198,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":32265}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":199,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":32785}
+{"group":{"id":200,"suiteID":198,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":32785}
+{"test":{"id":201,"name":"offline default all ten pages RTL synthetic dark and no HTTP","suiteID":198,"groupIDs":[200],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":53,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_widget_test.dart"},"type":"testStart","time":32785}
+{"testID":201,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":36821}
+{"test":{"id":202,"name":"local account creation survives reopening and watchlist add pause remove","suiteID":198,"groupIDs":[200],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":99,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_widget_test.dart"},"type":"testStart","time":36821}
+{"testID":202,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":37821}
+{"test":{"id":203,"name":"appearance changes persist across restart and supports system","suiteID":198,"groupIDs":[200],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":132,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_widget_test.dart"},"type":"testStart","time":37822}
+{"testID":203,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":38338}
+{"test":{"id":204,"name":"automation changes only chosen local account","suiteID":198,"groupIDs":[200],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":159,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_widget_test.dart"},"type":"testStart","time":38339}
+{"testID":204,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":38867}
+{"test":{"id":205,"name":"local timer pauses when app backgrounds","suiteID":198,"groupIDs":[200],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":177,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_widget_test.dart"},"type":"testStart","time":38868}
+{"testID":205,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":39022}
+{"test":{"id":206,"name":"corrupt storage shows error and retains original data","suiteID":198,"groupIDs":[200],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":192,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_widget_test.dart"},"type":"testStart","time":39023}
+{"testID":206,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":39067}
+{"suite":{"id":207,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_widget_test.dart"},"type":"suite","time":39089}
+{"test":{"id":208,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_widget_test.dart","suiteID":207,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":39089}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":208,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":39818}
+{"group":{"id":209,"suiteID":207,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":39818}
+{"test":{"id":210,"name":"explicit export copies complete Demo JSON without changing persisted data","suiteID":207,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":40,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_widget_test.dart"},"type":"testStart","time":39819}
+{"testID":210,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":41288}
+{"test":{"id":211,"name":"clipboard import previews counts, preserves cancel, then replaces only after confirmation","suiteID":207,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":57,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_widget_test.dart"},"type":"testStart","time":41288}
+{"testID":211,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":42080}
+{"test":{"id":212,"name":"invalid import never reaches replacement confirmation","suiteID":207,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":98,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_backup_widget_test.dart"},"type":"testStart","time":42080}
+{"testID":212,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":42362}
+{"suite":{"id":213,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"suite","time":42383}
+{"test":{"id":214,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart","suiteID":213,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":42383}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":214,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":42935}
+{"group":{"id":215,"suiteID":213,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":22,"line":null,"column":null,"url":null},"type":"group","time":42936}
+{"test":{"id":216,"name":"first install creates four independent fixtures without a count cap","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":17,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":42936}
+{"testID":216,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":42976}
+{"test":{"id":217,"name":"allocation 0 prevents entry; elevated risk needs explicit acknowledgement","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":24,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":42976}
+{"testID":217,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":42994}
+{"test":{"id":218,"name":"opposing lock covers unresolved orders and ownership across strikes","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":33,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":42994}
+{"testID":218,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43010}
+{"test":{"id":219,"name":"direction lock rechecked at fill after ledger restores","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":41,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43010}
+{"testID":219,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43020}
+{"test":{"id":220,"name":"full reversal waits for partial closes, disconnect and reconciliation","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":48,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43020}
+{"testID":220,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43069}
+{"test":{"id":221,"name":"opt in automation starts reversal from a fresh quantitative signal","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":65,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43069}
+{"testID":221,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43088}
+{"test":{"id":222,"name":"cancelled reversal close never opens opposite direction","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":71,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43088}
+{"testID":222,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43101}
+{"test":{"id":223,"name":"emergency after reversal close blocks opposite entry","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":78,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43101}
+{"testID":223,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43108}
+{"test":{"id":224,"name":"trailing exit uses historical high and next observation execution","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":83,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43108}
+{"testID":224,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43116}
+{"test":{"id":225,"name":"staged profit never sells more than owned and later stop closes rest","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":89,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43116}
+{"testID":225,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43132}
+{"test":{"id":226,"name":"Swing time limit and expiry guard submit exits","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":96,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43132}
+{"testID":226,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43144}
+{"test":{"id":227,"name":"market outage retains owned position and never fabricates trailing fill","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":102,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43144}
+{"testID":227,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43154}
+{"test":{"id":228,"name":"scaling default off and loss positions cannot be scaled","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":108,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43154}
+{"testID":228,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43160}
+{"test":{"id":229,"name":"lost scaling response persists reservation and cannot double add","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":113,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43160}
+{"testID":229,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43170}
+{"test":{"id":230,"name":"scale fill rechecks aggregate position premium after risk decreases","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":124,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43170}
+{"testID":230,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43177}
+{"test":{"id":231,"name":"pending scale never fills after profit disappears or scaling is disabled","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":130,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43177}
+{"testID":231,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43185}
+{"test":{"id":232,"name":"decision snapshot is fixed before later configuration and exit","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":137,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43185}
+{"testID":232,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43193}
+{"test":{"id":233,"name":"V0.5 schema migration preserves balances and marks absent decisions","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":148,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43193}
+{"testID":233,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43199}
+{"test":{"id":234,"name":"chart and signal replay refuse future observations","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":159,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43199}
+{"testID":234,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43213}
+{"test":{"id":235,"name":"confirmed pivots are append-only and never visible before confirmation","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":165,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43213}
+{"testID":235,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43216}
+{"test":{"id":236,"name":"indicator outputs and harmonic geometry are deterministic","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":172,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43216}
+{"testID":236,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":43223}
+{"test":{"id":237,"name":"five chart labs and causal cursor render on narrow RTL phone","suiteID":213,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":182,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/demo_v1_test.dart"},"type":"testStart","time":43223}
+{"testID":237,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":44748}
+{"success":true,"type":"done","time":44768}
