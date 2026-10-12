@@ -1,3 +1,21 @@
+# Options AI Trader — RC2 Lab 17: Alpaca Basic data-only
+
+التحقق **2026-10-12**. **V1.0 غير مكتمل**؛ هذه دفعة موصل بيانات وشاشة مراقبة مستقلة. مصدر البناء `55b4940cc6cbd237a1ea93478bef768c9c0380db` على `recovery/v1.0-20261011`؛ رأس التقارير اللاحق مذكور في سجل Git ورسالة التسليم.
+
+- [Android APK Lab 17](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38225336664/artifacts/11736307683)، هوية `.v1previewrc2b17`، توقيع تطوير مؤقت، API 24+. SHA-256: `1c88d97a88714bdd81fcd8b284fd20a06f4a81b03dc5ae5a6b092f367acee071`. نُزّل الملف وطابقت البصمة CI وفحص CRC/هوية الحزمة. لا تحذف Build 14/15/16 أو بياناتها.
+- [iOS 1.0.0/17 غير موقع](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38225336649/artifacts/11736427025)، بناء macOS ناجح، ليس IPA/TestFlight. SHA-256 للأرشيف `332e874e7877641b5845f494af233d88d4a09a7e37b64e14ab7b34028d688ec6`.
+- **920 Python، 242 Flutter لكل منصة، 6 Golden صارمة، 22 PostgreSQL، 10 backup/restore، 12 Compose**: نجاح فعلي، صفر failures/skips في مجموعات القبول. اختبارات Alpaca السبعون فرعية ضمن 920 وليست أعدادًا إضافية.
+- مسار Market Data فقط: IEX أسعار وOHLCV وتاريخ؛ خيارات indicative مع Greeks اختيارية وتاريخ متأخر. Cache وحدود REST وإعادة محاولة محدودة ومنع تكرار الطلبات. مصادقة الخادم وحساباته وقوائمها محفوظة؛ لا تغيير في Demo engine/store/risk أو التطبيق الآخر.
+- **لم نتصل بحساب Alpaca أو نقرأ مفاتيحه**. وضع Real Market Data + Virtual Trading موجود، لكن خيارات Basic **للمراقبة والتحليل فقط**؛ التعبئات مرفوضة ولا أسعار أو Greeks مخترعة. الاتصال الحقيقي يحتاج موافقة منفصلة؛ لا OPRA فوري مفترض، ولا Paper/Live/IBKR أو أوامر مالية خارجية.
+
+[التقرير والمصفوفة والنواقص](docs/ALPACA_BUILD17_DELIVERY.md) · [Basic وطريقة الاتصال الآمن](docs/ALPACA_DATA_V1.md) · [تثبيت واختبار الهاتف](docs/PHONE_BUILD17_INSTALL_AR.md) · [الأدلة](docs/evidence/alpaca-20261012/artifact-manifest.json).
+
+الهاتف الفعلي والاتصال الحقيقي وBacktesting خيارات خارج العينة لم تُنفذ. التوقيع الثابت والتنفيذ الوهمي بأسعار خيارات فعلية مؤهلة وبقية فجوات V1.0 ما زالت غير مكتملة. Artifacts Android/iOS تنتهي **2026-10-26**؛ المصدر والأدلة النصية محفوظة في GitHub.
+
+---
+
+## سجل التسليم السابق — Lab 16 وما قبله
+
 # Options AI Trader — RC2 Lab 16: تسليم استرداد Demo
 
 التحقق **2026-10-12 UTC**. **V1.0 غير مكتمل**؛ هذه دفعة محاكاة محفوظة ومختبرة. الفرع `recovery/v1.0-20261011`، مصدر البناء **`b38b03daab15c70f9a076b1def27b55eae4347b2`**. Commits التقارير اللاحقة لا تغير ملفات البناء؛ رأس الفرع الفعلي موثق في رسالة التسليم وسجل Git.

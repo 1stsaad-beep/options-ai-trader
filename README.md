@@ -1,3 +1,5 @@
+> أحدث تسليم: [RC2 Lab 17 / Alpaca Basic data-only](docs/ALPACA_BUILD17_DELIVERY.md). اتصال الحساب غير مفعّل، وخيارات Basic للمراقبة فقط. [دليل الاتصال الآمن](docs/ALPACA_DATA_V1.md).
+
 # Options AI Trader — V1.0 RC2 Recovery (محاكاة وبحث)
 
 التسليم الحالي ونقطة الاستئناف: [FINAL_DELIVERY.md](FINAL_DELIVERY.md). الإصدار **غير مكتمل لجميع متطلبات V1.0**؛ راجع [مصفوفة المتطلبات والنواقص](docs/RECOVERY_REQUIREMENTS_V1.md)، [الاختبارات](docs/RECOVERY_TEST_REPORT_V1.md)، [الأمان](docs/RECOVERY_SECURITY_REPORT_V1.md)، [Backtesting](docs/RECOVERY_BACKTEST_REPORT_V1.md)، و[التشغيل](docs/RECOVERY_RUN_GUIDE_V1.md). تقارير RC1 وV0.x أدناه محفوظة كتاريخ ولا تمثل نتائج التسليم الحالي.

@@ -1,0 +1,88 @@
+Resolving dependencies...
+Downloading packages...
+  flutter_lints 4.0.0 (6.0.0 available)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.3 available)
+Got dependencies!
+6 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":2462,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":2,"time":6,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":9314}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":20,"line":null,"column":null,"url":null},"type":"group","time":9316}
+{"test":{"id":3,"name":"Python provider contract parses snapshot without inventing fields","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":17,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9317}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9356}
+{"test":{"id":4,"name":"Python provider contract parses bars without inventing fields","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":17,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9357}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9361}
+{"test":{"id":5,"name":"Python provider contract parses chain without inventing fields","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":17,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9361}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9366}
+{"test":{"id":6,"name":"status from Python keeps Basic analysis-only","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":27,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9366}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9369}
+{"test":{"id":7,"name":"rejects mismatched identity/source/authority {account_id: account-two}","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":37,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9370}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9374}
+{"test":{"id":8,"name":"rejects mismatched identity/source/authority {mode: demo_synthetic}","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":37,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9374}
+{"testID":8,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9376}
+{"test":{"id":9,"name":"rejects mismatched identity/source/authority {provider: mock}","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":37,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9376}
+{"testID":9,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9379}
+{"test":{"id":10,"name":"rejects mismatched identity/source/authority {feed: opra}","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":37,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9379}
+{"testID":10,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9382}
+{"test":{"id":11,"name":"rejects mismatched identity/source/authority {virtual_fills_enabled: true}","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":37,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9382}
+{"testID":11,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9384}
+{"test":{"id":12,"name":"rejects mismatched identity/source/authority {external_orders_enabled: true}","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":37,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9385}
+{"testID":12,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9387}
+{"test":{"id":13,"name":"rejects mismatched identity/source/authority {schema_version: 2}","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":37,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9387}
+{"testID":13,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9389}
+{"test":{"id":14,"name":"rejects mismatched identity/source/authority {point_in_time_backtest_verified: true}","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":37,"column":5,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9389}
+{"testID":14,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9392}
+{"test":{"id":15,"name":"rejects malformed OHLCV and nullable price remains unknown","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":42,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9392}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9395}
+{"test":{"id":16,"name":"non-finite prices and missing timezone rejected","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":50,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9395}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9398}
+{"test":{"id":17,"name":"modified options cannot masquerade as actual OPRA","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":58,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9398}
+{"testID":17,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9400}
+{"test":{"id":18,"name":"disabled connection only reads own backend status; no prices or orders","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":71,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":9401}
+{"testID":18,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":10303}
+{"test":{"id":19,"name":"explicit GET displays real-data provenance and indicative Greeks absence","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":89,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":10304}
+{"testID":19,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":10674}
+{"test":{"id":20,"name":"history request includes explicit UTC cutoff and renders real-data candle layer at 360px","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":110,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":10675}
+{"testID":20,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":10837}
+{"test":{"id":21,"name":"late response cannot cross account change","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":130,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":10837}
+{"testID":21,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11125}
+{"test":{"id":22,"name":"fetch error clears stale result and never falls back to Demo","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":153,"root_column":3,"root_url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/market_data_test.dart"},"type":"testStart","time":11125}
+{"testID":22,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11320}
+{"suite":{"id":23,"platform":"vm","path":"/home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"suite","time":11365}
+{"test":{"id":24,"name":"loading /home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart","suiteID":23,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":11365}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":24,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":12077}
+{"group":{"id":25,"suiteID":23,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":11,"line":null,"column":null,"url":null},"type":"group","time":12077}
+{"test":{"id":26,"name":"redirect responses are rejected without forwarding authorization","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":9,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12078}
+{"testID":26,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12112}
+{"test":{"id":27,"name":"account path and bearer header are explicit","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":29,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12113}
+{"testID":27,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12120}
+{"test":{"id":28,"name":"remote plaintext connection is rejected before sending","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":50,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12120}
+{"testID":28,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12124}
+{"test":{"id":29,"name":"server rejection and malformed payload are surfaced","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":62,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12124}
+{"testID":29,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12130}
+{"test":{"id":30,"name":"malformed list and non-object rows fail closed","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":80,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12131}
+{"testID":30,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12137}
+{"test":{"id":31,"name":"URL query and credentials are rejected before transport","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":91,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12137}
+{"testID":31,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12141}
+{"test":{"id":32,"name":"transport failure does not retry mutation","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":111,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12141}
+{"testID":32,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12148}
+{"test":{"id":33,"name":"mock cycle posts an empty body to the explicit account only","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":125,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12148}
+{"testID":33,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12152}
+{"test":{"id":34,"name":"mock cycle rejects a result for another account or data source","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":146,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12153}
+{"testID":34,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12158}
+{"test":{"id":35,"name":"mock cycle transport failure is sent once without automatic retry","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":163,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12159}
+{"testID":35,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12162}
+{"test":{"id":36,"name":"empty account cannot start a mock cycle","suiteID":23,"groupIDs":[25],"metadata":{"skip":false,"skipReason":null},"line":177,"column":3,"url":"file:///home/runner/work/options-ai-trader/options-ai-trader/mobile/test/api_test.dart"},"type":"testStart","time":12163}
+{"testID":36,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12165}
+{"success":true,"type":"done","time":12177}

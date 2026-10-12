@@ -13,7 +13,7 @@
 | OPRA فوري | ليس افتراضًا في Basic | غير مفعّل؛ لا شراء أو ترقية آلية |
 | الحدود | 200 طلب تاريخي/دقيقة؛ بث الأسهم 30 رمزًا، الخيارات 200 عرض | REST فقط، ميزانية افتراضية 30 طلبًا/دقيقة، لا اتصال بث |
 
-المصادر الرسمية: [الاشتراكات والمصادقة](https://docs.alpaca.markets/us/docs/about-market-data-api)، [IEX/SIP والتاريخ](https://docs.alpaca.markets/us/docs/market-data-faq)، [طبيعة بيانات الخيارات](https://docs.alpaca.markets/us/docs/historical-option-data)، [Stock bars](https://docs.alpaca.markets/us/reference/stockbars)، [Option bars](https://docs.alpaca.markets/us/reference/optionbars)، [Option chain](https://docs.alpaca.markets/us/reference/optionchain).
+المصادر الرسمية: [الاشتراكات والمصادقة](https://docs.alpaca.markets/us/docs/about-market-data-api)، [IEX/SIP والتاريخ](https://docs.alpaca.markets/us/docs/market-data-faq)، [طبيعة بيانات الخيارات](https://docs.alpaca.markets/us/docs/historical-option-data)، [Latest quotes](https://docs.alpaca.markets/us/reference/stocklatestquotes-1)، [Latest trades](https://docs.alpaca.markets/us/reference/stocklatesttrades-1)، [Stock bars](https://docs.alpaca.markets/us/reference/stockbars)، [Option bars](https://docs.alpaca.markets/us/reference/optionbars)، [Option chain](https://docs.alpaca.markets/us/reference/optionchain).
 
 الاشتراك لا يُعامل هنا كتصريح لإعادة نشر أو بيع البيانات. تعرض كل نتيجة أن الاستخدام خاضع لاتفاقيات Alpaca والبورصات؛ التطبيق لا يمنح حق إعادة توزيع. راجع [الإفصاحات والاتفاقيات الرسمية](https://alpaca.markets/disclosures) الخاصة بحسابك قبل أي مشاركة أو استخدام تجاري. حقوق العرض الفعلية للحساب لم تُتحقق بجلسة مصادقة.
 

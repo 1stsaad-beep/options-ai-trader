@@ -1,0 +1,5 @@
+commit=55b4940cc6cbd237a1ea93478bef768c9c0380db
+signing=ephemeral-runner-development-key
+application_id=com.optionsaitrader.options_ai_trader.v1previewrc2b17
+version_code=17
+installation=separate-from-build14-build15-build16

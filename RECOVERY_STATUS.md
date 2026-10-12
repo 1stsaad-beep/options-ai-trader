@@ -136,3 +136,9 @@ Verified `2260e5baa7ec7c4cd3579bff07dec277a399dd9a` clean and equal to the remot
 - No earlier local checkout or uncommitted source was available. No unsaved work from an ended session is claimed recovered. No deletions, reset, force push, or other project access.
 - Build 16 delivery and V1 requirements/test/security/safety reports reviewed; their previous test results remain historical, not rerun results.
 - New scope: isolated Alpaca Market Data REST adapter, disabled pending separate connection approval. Basic IEX stock data and indicative options will retain provenance; indicative options cannot authorize fills. No trading host, API, Paper, IBKR, credentials discovery, or changes to the other app.
+
+## Alpaca delivery checkpoint — 2026-10-12
+
+- All code batches published/read back: 9b72e0c (recovery), e7f179a5 (adapter), a4fde3de (API), b5cad48e (mobile), 7dc4f00b (lint/guide), 03dc0d1f (viewport test), 55b4940c (Lab 17 native identity). No prior user edits were available locally to recover.
+- Native source `55b4940cc6cbd237a1ea93478bef768c9c0380db` passed full Flutter/build gates and security. Backend source/runtime unchanged since successful 920/22/10/12 acceptance. Original engine/store/risk/dependency locks unchanged; no other project or account keys inspected.
+- Resume with FINAL_DELIVERY.md, docs/ALPACA_BUILD17_DELIVERY.md and docs/ALPACA_DATA_V1.md. External connection remains pending separate approval; Basic option execution is analysis-only. Do not claim completion of remaining V1.0 requirements.
