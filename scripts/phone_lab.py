@@ -89,25 +89,27 @@ def inspect(values, env):
     project=values['PHONE_LAB_PROJECT']
     ids=command(['docker','ps','--all','--filter','label=com.docker.compose.project='+project,
                  '--quiet'],env,15).split()
-    if len(ids)!=3:
-        raise LabFailure('THREE_OWNED_SERVICES_REQUIRED')
+    if len(ids)!=4:
+        raise LabFailure('FOUR_OWNED_SERVICES_REQUIRED')
     containers=json.loads(command(['docker','inspect',*ids],env,15))
     services=set()
     networks=set()
+    service_networks={}
     for item in containers:
         config=item['Config']; labels=config['Labels']; service=labels['com.docker.compose.service']
-        if labels['com.docker.compose.project']!=project or service not in {'postgres','api','market-runtime'}:
+        if labels['com.docker.compose.project']!=project or service not in {'postgres','api','market-runtime','gateway'}:
             raise LabFailure('FOREIGN_SERVICE_REFUSED')
         services.add(service)
         if item['State']['Status']!='running' or item['State'].get('Health',{}).get('Status')!='healthy':
             raise LabFailure('SERVICE_NOT_HEALTHY')
         ports=item['NetworkSettings']['Ports'] or {}
         published=[(port,p) for port,bindings in ports.items() for p in (bindings or [])]
-        expected=[('8000/tcp',{'HostIp':'127.0.0.1','HostPort':'18019'})] if service=='api' else []
+        expected=[('8080/tcp',{'HostIp':'127.0.0.1','HostPort':'18019'})] if service=='gateway' else []
         if published!=expected:
             raise LabFailure('UNEXPECTED_PUBLISHED_PORT')
-        networks.update(item['NetworkSettings']['Networks'])
-        if service!='postgres':
+        service_networks[service]=set(item['NetworkSettings']['Networks'])
+        networks.update(service_networks[service])
+        if service in {'api','market-runtime'}:
             variables=dict(s.split('=',1) for s in config['Env'])
             required={'OAT_PHONE_LAB':'isolated_mock_only','BROKER_PROVIDER':'mock',
                       'TRADING_MODE':'paper','ENABLE_LIVE':'false','OAT_ALPACA_DATA_APPROVAL':''}
@@ -115,13 +117,19 @@ def inspect(values, env):
                 raise LabFailure('SAFE_MODE_REQUIRED')
             if config.get('User')!='trader' or not item['HostConfig']['ReadonlyRootfs']:
                 raise LabFailure('HARDENING_REQUIRED')
-    if len(services)!=3 or len(networks)!=1:
+        if service=='gateway' and (config.get('User')!='10001:10001' or not item['HostConfig']['ReadonlyRootfs']):
+            raise LabFailure('GATEWAY_HARDENING_REQUIRED')
+    if len(services)!=4 or len(networks)!=2:
         raise LabFailure('ISOLATED_NETWORK_REQUIRED')
-    network=json.loads(command(['docker','network','inspect',*networks],env,15))[0]
-    if not network['Internal'] or network['Labels']['com.docker.compose.project']!=project:
+    descriptions=json.loads(command(['docker','network','inspect',*networks],env,15))
+    internal={n['Name'] for n in descriptions if n['Internal']}
+    if len(internal)!=1 or any(n['Labels']['com.docker.compose.project']!=project for n in descriptions):
         raise LabFailure('EGRESS_ISOLATION_REQUIRED')
-    return ['three_healthy_owned_services','postgres_not_published','loopback_only_api',
-            'internal_network_no_provider_egress','mock_live_locked','nonroot_readonly_api_runtime']
+    if (any(service_networks[s]!=internal for s in ['api','market-runtime','postgres'])
+            or service_networks['gateway']!=networks):
+        raise LabFailure('PROVIDER_SERVICES_MUST_BE_INTERNAL_ONLY')
+    return ['four_healthy_owned_services','postgres_not_published','loopback_only_gateway',
+            'internal_network_no_provider_egress','mock_live_locked','nonroot_readonly_api_runtime_gateway']
 
 
 def request(token, method, path, body=None, authenticated=True):

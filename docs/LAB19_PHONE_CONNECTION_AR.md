@@ -12,7 +12,7 @@
 
 ## نطاق Mock والعزل
 
-ملف `infra/compose.phone-lab.yaml` مستقل؛ لا تدمجه مع Compose قديم. يشغّل PostgreSQL16 وAPI ومحرك Market Runtime الحقيقي مع `DisabledMarketData`. ينشئ قاعدة `options_phone_lab` وحجمًا جديدًا تحت مشروع عشوائي `oat-phone-*`. شبكة داخلية تمنع خروج API والعامل إلى المزود؛ PostgreSQL دون منفذ معلن، وAPI متاح على loopback فقط في المنفذ18019. لا يوجد عامل تداول Demo أو مفاتيح وسيط أو استيراد لبيانات قديمة.
+ملف `infra/compose.phone-lab.yaml` مستقل؛ لا تدمجه مع Compose قديم. يشغّل PostgreSQL16 وAPI ومحرك Market Runtime الحقيقي وبوابة Caddy محلية، مع `DisabledMarketData`. ينشئ قاعدة `options_phone_lab` وحجمًا جديدًا تحت مشروع عشوائي `oat-phone-*`. شبكة داخلية تمنع خروج API والعامل إلى المزود؛ PostgreSQL دون منفذ معلن، ولا ينشر API منفذًا مباشرةً. بوابة Caddy وحدها تصل شبكة الدخول بالشبكة الداخلية وتعلن loopback فقط في المنفذ18019؛ توجّه الطلبات إلى API ثابت ولا تقرأ رمزًا من ملف. لا يوجد عامل تداول Demo أو مفاتيح وسيط أو استيراد لبيانات قديمة.
 
 ينشأ حسابان: **Phone Lab A — Mock** و**Phone Lab B — Mock**. تحليل الأول مفعّل والثاني معطّل لتجربة العزل. تظهر أحداث `CONFIG_CHANGED` و`PHONE_LAB_READY`، وحالة العامل وتوقيتها من العملية الفعلية. **الحالة DISABLED مع نبض حديث هي النتيجة الصحيحة مع تعطيل المزود**؛ لا أسعار أو تحليلات سوق مصطنعة توصف بأنها حقيقية. اسم صيغة العقد التاريخي `alpaca_basic_data_only` ليس دليل اتصال. كل صلاحيات التنفيذ false.
 
@@ -20,7 +20,7 @@
 
 ## التشغيل على الكمبيوتر
 
-المتطلبات: Git وPython3.11+ ومحرك Docker محلي مع Composev2 وcloudflared من مصدره الرسمي. الأوامر التالية لـLinux/macOS أوWSL على Windows مع تكامل Docker محلي. لا تستخدم Docker عن بُعد أو كمبيوتر عامًا. إذا كان المتاح هو الهاتف فقط، يلزم كمبيوتر موجود أو بيئة Linux أخرى مناسبة؛ هذه الجلسة لا تستضيف المنظومة.
+المتطلبات: Git وPython3.11+ ومحرك Docker محلي حديث(28 أو أحدث) مع Composev2 وcloudflared من مصدره الرسمي. الأوامر التالية لـLinux/macOS أوWSL على Windows مع تكامل Docker محلي. لا تستخدم Docker عن بُعد أو كمبيوتر عامًا. إذا كان المتاح هو الهاتف فقط، يلزم كمبيوتر موجود أو بيئة Linux أخرى مناسبة؛ هذه الجلسة لا تستضيف المنظومة.
 
 افتح نسخة جديدة كي لا تمس نسخة عمل قديمة. استخدم مصادقتك المعتادة مع GitHub دون لصق رموزها هنا:
 
@@ -93,7 +93,7 @@ python3 scripts/phone_lab.py stop --directory "$HOME/oat-phone-lab-20261012"
 ## البدائل
 
 - كمبيوتر موجود والنفق المؤقت أعلاه: HTTPS موثوق دون شراء استضافة؛ وهو المسار المُجهّز هنا.
-- USB مع `adb reverse tcp:18019 tcp:18019` وعنوان `http://127.0.0.1:18019`: تشخيص محلي بلا نفق، **وليس قبول HTTPS**. لا يختبر مراقبة Android التي تشترط HTTPS. يتطلب ADB وUSB debugging على كمبيوترك وهاتفك.
+- USB مع `adb reverse tcp:18019 tcp:18019` وعنوان `http://127.0.0.1:18019`: تشخيص محلي بلا نفق، **وليس قبول HTTPS**. لا يختبر مراقبة Android التي تشترط HTTPS. يتطلب ADB وUSB debugging على كمبيوترك وهاتفك. قد تمنع سياسة HTTP في APK هذا المسار؛ نجاحه في المتصفح لا يثبت نجاح APK، لذا يبقى HTTPS هو المسار المعتمد.
 - جهاز Linux تملكه مع عنوان موثوق موجود: ممكن لاحقًا بعد ضبط الوصول والنسخ، دون ضرورة شراء خادم. شهادة Caddy الداخلية على localhost ليست موثوقة تلقائيًا لدى APK؛ لن نعطل التحقق من TLS لحل المشكلة.
 
 المراجع الرسمية: [عناوين محاكي Android](https://developer.android.com/studio/run/emulator-networking-address)، [Quick Tunnels وحدودها](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)، [تنزيل cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/).

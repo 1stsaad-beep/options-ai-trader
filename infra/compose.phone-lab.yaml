@@ -29,7 +29,6 @@ services:
       ENABLE_LIVE: 'false'
       OAT_MARKET_RUNTIME_ROLE: api_cache_only
       OAT_ALPACA_DATA_APPROVAL: ''
-    ports: ['127.0.0.1:18019:8000']
     networks: [isolated]
     depends_on:
       postgres:
@@ -66,7 +65,30 @@ services:
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
     restart: 'no'
+  gateway:
+    image: caddy:2-alpine
+    user: '10001:10001'
+    ports: ['127.0.0.1:18019:8080']
+    networks: [isolated, ingress]
+    volumes:
+      - ./Caddyfile.phone-lab:/etc/caddy/Caddyfile:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, 'http://127.0.0.1:8080/phone-lab']
+      interval: 3s
+      timeout: 5s
+      retries: 30
+    read_only: true
+    tmpfs: ['/tmp:size=16m,mode=1777', '/config:size=1m,mode=1777', '/data:size=1m,mode=1777']
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    restart: 'no'
+
 networks:
+  ingress:
+    driver: bridge
   isolated:
     internal: true
 volumes:

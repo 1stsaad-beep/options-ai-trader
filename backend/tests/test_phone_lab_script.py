@@ -112,3 +112,38 @@ def test_safe_diagnostic_identifies_failure_without_raw_output(tmp_path,monkeypa
     result=json.loads(capsys.readouterr().out)
     assert result['stage']=='container_isolation'
     assert result['code']=='UNEXPECTED_PUBLISHED_PORT'
+
+
+def container_fixture(project):
+    result=[]
+    for service in ['postgres','api','market-runtime','gateway']:
+        internal=project+'_isolated';ingress=project+'_ingress'
+        values=['OAT_PHONE_LAB=isolated_mock_only','BROKER_PROVIDER=mock','TRADING_MODE=paper',
+                'ENABLE_LIVE=false','OAT_ALPACA_DATA_APPROVAL=']
+        result.append({'Config':{'Labels':{'com.docker.compose.project':project,'com.docker.compose.service':service},
+                      'User':'10001:10001' if service=='gateway' else 'trader','Env':values},
+                      'State':{'Status':'running','Health':{'Status':'healthy'}},
+                      'HostConfig':{'ReadonlyRootfs':True},
+                      'NetworkSettings':{'Networks':{n:{} for n in ([internal,ingress] if service=='gateway' else [internal])},
+                        'Ports':{'8080/tcp':[{'HostIp':'127.0.0.1','HostPort':'18019'}]} if service=='gateway' else {}}})
+    return result
+
+
+@pytest.mark.parametrize('mutation',[None,'api_egress','public_gateway','db_port','untrusted_network','root_gateway'])
+def test_gateway_preserves_database_and_runtime_egress_isolation(monkeypatch,mutation):
+    project='oat-phone-'+'a'*24;containers=container_fixture(project)
+    networks=[{'Name':project+'_'+name,'Internal':name=='isolated','Labels':{'com.docker.compose.project':project}}
+              for name in ['isolated','ingress']]
+    if mutation=='api_egress':containers[1]['NetworkSettings']['Networks'][project+'_ingress']={}
+    if mutation=='public_gateway':containers[3]['NetworkSettings']['Ports']['8080/tcp'][0]['HostIp']='0.0.0.0'
+    if mutation=='db_port':containers[0]['NetworkSettings']['Ports']={'5432/tcp':[{'HostIp':'127.0.0.1','HostPort':'5432'}]}
+    if mutation=='untrusted_network':networks[0]['Labels']['com.docker.compose.project']='existing-demo'
+    if mutation=='root_gateway':containers[3]['Config']['User']='root'
+    def command(args,*_):
+        if args[1]=='ps':return 'one two three four'
+        return json.dumps(networks if args[1]=='network' else containers)
+    monkeypatch.setattr(lab,'command',command)
+    if mutation:
+        with pytest.raises(lab.LabFailure):lab.inspect({'PHONE_LAB_PROJECT':project},{})
+    else:
+        assert 'internal_network_no_provider_egress' in lab.inspect({'PHONE_LAB_PROJECT':project},{})

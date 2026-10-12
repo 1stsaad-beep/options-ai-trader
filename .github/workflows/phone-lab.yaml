@@ -1,7 +1,7 @@
 name: Lab19 isolated phone server acceptance
 on:
   push:
-    paths: ['backend/app/phone_lab.py', 'backend/tests/test_phone_lab*.py', 'scripts/phone_lab.py', 'infra/compose.phone-lab.yaml', '.github/workflows/phone-lab.yaml']
+    paths: ['backend/app/phone_lab.py', 'backend/tests/test_phone_lab*.py', 'scripts/phone_lab.py', 'infra/compose.phone-lab.yaml', 'infra/Caddyfile.phone-lab', '.github/workflows/phone-lab.yaml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -16,7 +16,7 @@ jobs:
           python-version: '3.12'
       - name: Create private isolated fixture outside checkout without displaying secrets
         run: python scripts/phone_lab.py init --directory "$RUNNER_TEMP/oat-phone-private" > phone-lab-init.json
-      - name: Build and run actual PostgreSQL API and disabled-provider runtime
+      - name: Build and run actual PostgreSQL API disabled-provider runtime and loopback gateway
         run: python scripts/phone_lab.py start --directory "$RUNNER_TEMP/oat-phone-private" > phone-lab-start.json
       - name: Exercise authentication account controls and event isolation
         run: python scripts/phone_lab.py exercise --directory "$RUNNER_TEMP/oat-phone-private" > phone-lab-exercise.json

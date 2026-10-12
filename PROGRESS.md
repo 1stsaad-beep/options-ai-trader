@@ -1,5 +1,11 @@
 # Progress — recovery/v1.0-20261011
 
+## Phone-lab loopback gateway correction
+
+- Diagnostic source de02613 / actual Compose38290320266 identified `container_isolation / UNEXPECTED_PUBLISHED_PORT`: an internal-only bridge did not publish the API binding. All three services had reached healthy state; no authentication/market connection was attempted by the failing checker. Failed artifact SHA98918f60a26c177bc81b04c4f9368f5225cc778e63b565d7be6108a148893ea1 retained.
+- Add a fourth, unprivileged Caddy gateway on ingress+internal networks, publishing loopback18019. API/PostgreSQL/runtime stay exclusively on the internal network, with no published ports or provider egress. Inspection now asserts this topology rather than weakening the isolation gate. Static reverse proxy only, no API token mounted, no access logging.
+- Actual Docker acceptance must pass before delivery. Existing Lab19 APK unchanged; physical HTTPS/phone test remains pending on the user's computer.
+
 ## Phone-lab redacted diagnostics checkpoint
 
 - Sourcef28b4cc passed the complete Backend job in CI38289937552 and security38289937634. Dedicated actual Compose38289937851 failed during start; raw redacted result retained (ZIP SHA11367f812765fa04456a2e804a508d0fca439c7d290faf90f4b9610a937396fd). The broad generic failure hid whether creation, isolation inspection or HTTP verification failed. No public URL/phone acceptance claimed.
