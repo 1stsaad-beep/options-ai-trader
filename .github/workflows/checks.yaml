@@ -55,12 +55,18 @@ jobs:
           TEST_DATABASE_ALLOW_DISPOSABLE: "1"
           TEST_DATABASE_URL: postgresql://trader:ci_ephemeral_demo@localhost:5432/options_test
       - name: Select matching PostgreSQL 16 backup client
+        # Runtime acceptance also shares this disposable server, never a user account.
         run: |
           if [ ! -x /usr/lib/postgresql/16/bin/pg_dump ]; then
             sudo apt-get update
             sudo apt-get install -y postgresql-client-16
           fi
           echo /usr/lib/postgresql/16/bin >> "$GITHUB_PATH"
+      - name: Independent market runtime across PostgreSQL connections
+        run: python scripts/market_runtime_check.py > market-runtime-postgres.json
+        env:
+          TEST_DATABASE_ALLOW_DISPOSABLE: "1"
+          TEST_DATABASE_URL: postgresql://trader:ci_ephemeral_demo@localhost:5432/options_test
       - name: Restore a verified backup to a new disposable database
         run: python scripts/postgres_backup_check.py > postgres-backup-restore.json
         env:
@@ -78,6 +84,7 @@ jobs:
             postgres-basic.txt
             postgres-v1-results.json
             market-data-journal-postgres.json
+            market-runtime-postgres.json
   compose-runtime:
     runs-on: ubuntu-latest
     timeout-minutes: 25

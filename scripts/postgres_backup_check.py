@@ -89,6 +89,19 @@ def run():
             with patch.object(journal, 'utc_now', lambda: journal_time):
                 saved_market = journal.capture(service, accounts[0], {
                     'kind': 'stock_snapshot', 'symbol': 'AAPL', 'request_key': 'backup-journal'}, provider)
+            from app import market_runtime as runtime
+            runtime_config = runtime.configure(service, accounts[0], expected_version=0, enabled=True,
+                                               strategies={'breakout': True, 'pullback': False})
+            runtime_event = runtime.events(service, accounts[0])['items'][0]
+            runtime.acknowledge(service, accounts[0], runtime_event['id'])
+            with repository.transaction() as db:
+                db.execute('INSERT INTO market_runtime_latest VALUES(?,?,?,?,?)',
+                    (accounts[0], 'AAPL', 'stock_snapshot', saved_market['id'], 'FRESH_IEX_TRADE'))
+                coordinator = runtime.coordinator_in(db)
+                coordinator.update(auth_blocked=True, requests=[journal.utc(journal_time)],
+                                   retry_at=journal.utc(journal_time+timedelta(seconds=180)))
+                runtime.save_coordinator(db, coordinator)
+            saved_runtime_events = runtime.events(service, accounts[0])
             with tempfile.TemporaryDirectory(prefix="oat-postgres-roundtrip-") as temporary:
                 archive = Path(temporary) / "ledger.dump"
                 metadata = snapshots.backup(fixture, archive)
@@ -152,6 +165,22 @@ def run():
                         else:
                             raise AssertionError('Restored market journal immutable guard missing')
                     checks.append('restored_market_journal_update_delete_guards')
+                    assert runtime.events(recovered, accounts[0]) == saved_runtime_events
+                    with recovered_repository.transaction() as db:
+                        config = runtime.config_in(db, accounts[0])
+                        assert config['version'] == runtime_config['version']
+                        assert config['enabled'] is True
+                        assert runtime.coordinator_in(db) == coordinator
+                        assert db.one('SELECT observation_id FROM market_runtime_latest WHERE account_id=?', (accounts[0],))['observation_id'] == saved_market['id']
+                    checks.append('runtime_config_inbox_ack_cache_link_budget_backoff_restored')
+                    try:
+                        with recovered_repository.transaction() as db:
+                            db.execute('UPDATE market_runtime_events SET payload=payload WHERE id=?', (runtime_event['id'],))
+                    except psycopg.Error as error:
+                        assert 'immutable' in str(error)
+                    else:
+                        raise AssertionError('Restored runtime event guard missing')
+                    checks.append('restored_runtime_event_immutable_guard')
                     assert all(not row["state_known"] for row in recovered.list_accounts())
                     for account in accounts:
                         assert recovered.reconcile(account)["resubmitted"] == 0

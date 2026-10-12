@@ -309,3 +309,18 @@ def test_api_auth_strict_controls_account_scope_no_upstream_reads(setup):
         assert client.post(f'/api/accounts/{b}/market-runtime/events/{event["id"]}/ack', headers=HEADERS).status_code == 404
         assert client.get(prefix + '/events?limit=101', headers=HEADERS).status_code == 422
     assert not wire.calls
+
+
+def test_disposable_multi_connection_acceptance_harness(tmp_path, monkeypatch):
+    from pathlib import Path
+    from test_operations_v1 import module
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[2] / 'scripts'))
+    harness = module('market_runtime_check')
+    url = 'sqlite:///' + str(tmp_path/'harness.db')
+    repos = [Repository(url, invalidate_accounts=False) for _ in range(2)]
+    try:
+        checks = harness.check(repos)
+        assert len(checks) == 8
+    finally:
+        for repo in repos:
+            repo.close()

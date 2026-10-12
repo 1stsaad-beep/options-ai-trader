@@ -1,5 +1,13 @@
 # Progress — recovery/v1.0-20261011
 
+## Independent market runtime batch 3 — storage acceptance
+
+- Process checkpoint published/read back at `6593eedf8532a0fba09e54159359ea5fddf867d7`. Its backend/new Compose run `38268036959` and security `38268037086` succeeded. New container checks run with the provider disabled, not a real Alpaca account.
+- Added eight disposable two-connection PostgreSQL runtime scenarios and CI artifact: exclusive lease/shared-symbol fetch, unchanged Demo ledger, native immutable guards and composite account FK, notification acknowledgement, takeover, persisted throttling and recovery without fictional exits.
+- Extended actual PostgreSQL backup/restore acceptance to preserve independent config, notification payload/hash/ack, cached original-observation links, request budget/auth/backoff and restored immutable event triggers. No production database targeted.
+- Local equivalent two-SQLite-connection harness passed; targeted runtime/process/operations/Compose **82 passed**, backup-tool **53 passed** (overlapping totals, not additive). Full local final gate **995 passed**, zero failures/errors/skips; existing Starlette warning only. An initial targeted command named a nonexistent backup test file, ran zero tests, and was corrected before these results.
+- Actual new PostgreSQL/restore checks await this commit's CI. No claim of external provider acceptance or 24/7 independent-host operation. No mobile changes or redundant native rebuild.
+
 ## Independent market runtime batch 2 — process and Compose
 
 - Batch 1 published/read back at `ea7f9e4cd26f2c4c5a52753753bd6254e6263aef`. GitHub backend/Compose `38267289325` and security `38267289373` succeeded on that source.
