@@ -1,8 +1,10 @@
-# تحديث Lab19 — الأرشفة المجدولة ومراقبة Android، 2026-10-12
+# تسليم Lab19 — الأرشفة المجدولة ومراقبة Android، 2026-10-12
 
-دفعة الأرشفة مقبولة1027Python/22+6+8PostgreSQL/16restore/17Compose. الهاتف:61Flutter مستهدفة و30Java/analyze ناجحة؛ تجهيز APK Lab19 المنفصل يُرسل إلى بوابة البناء الكامل. **البناء والتوقيع والبصمة قيد التحقق**؛ لا تنزيل جديد معتمد حتى إيصال التقرير.
+مصدر APK/iOS المقبول **1daeb53667b8cd22442b8b76118165a4b10a2427**؛ commit التقارير اللاحق لا يغيره. نجح Android272Flutter +6Golden و30Java/analyze وAPK فعلي موقع للتطوير، وiOS272Flutter وبناءmacOS غير موقع للتوزيع. الخادم1027Python،22+6+8PostgreSQL،16restore،17Compose ناجحة. نُزلت الآثار وفُحصت CRC والبصمات والهوية والتوقيع والـmanifest.
 
-[التسليم والحدود](docs/ARCHIVE_BACKGROUND_LAB19_DELIVERY.md) · [الاستئناف](docs/RESUME_20261012_BACKGROUND.md) · [تثبيت يحافظ على النسخ السابقة](docs/ANDROID_LAB19_INSTALL_AR.md). مراقبة الخلفية جلسة اختيارية30دقيقة، لا تشغيل محرك Python في الهاتف أو عمل وهو مطفأ. لا اتصال مزود أو أوامر مالية. التقارير أدناه سجل تاريخي لإصدارات سابقة.
+[APK Lab19](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38285393031/artifacts/11763357536) داخلZIP، متاح حتى2026-10-26. SHA-256 `5da8bc4dfaa6f3c683a9edcb8cacc650b415d4931d01a65cd1c6be83f90146bb`. الحزمة `.v1previewrc2b19` مستقلة؛ لا تحذف النسخ القديمة أوClearData. تعذر الحفظ الدائم الإضافي للمرفق بسبب المصادقة قبل النقل.
+
+[التسليم والنواقص](docs/ARCHIVE_BACKGROUND_LAB19_DELIVERY.md) · [الاستئناف](docs/RESUME_20261012_BACKGROUND.md) · [التثبيت الآمن](docs/ANDROID_LAB19_INSTALL_AR.md). التالي قبول هاتف فعلي ثمLinux/نسخ خارجية/مراقبة وفق الجدول. الخلفية مراقبة اختيارية حتى30دقيقة، لا تشغيل محركPython في الهاتف أوعمل عند إطفائه أوضمان24/7. لا اتصالAlpaca/IBKR أوأوامر/Live/شراء، ولا مساس بDemo أوالتطبيق الآخر. لم تُستعد ملفات جلسة سابقة غير مرفوعة. التقارير أدناه سجل تاريخي.
 
 ---
 

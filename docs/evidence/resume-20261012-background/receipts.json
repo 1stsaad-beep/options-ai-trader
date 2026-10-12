@@ -1,0 +1,104 @@
+{
+  "resumed_from": "143fef6def4457cf145d903f14e345752b92a12b",
+  "branch": "recovery/v1.0-20261011",
+  "backend": {
+    "source": "14f854da7dc62573d0ecda177d5a00d20fc47fd1",
+    "run": 38282705999,
+    "python": 1027,
+    "postgres": [
+      22,
+      6,
+      8
+    ],
+    "restore": 16,
+    "compose": 17,
+    "artifacts": [
+      {
+        "id": 11762295568,
+        "sha256": "cebdcb22eb520f397be5432f3e5a03941b20053238963917eb448e08ef04190a"
+      },
+      {
+        "id": 11761404670,
+        "sha256": "a204de29d017abef91f77fc2437d71e0a47f92f4a073afdb571cc0c326f18af6"
+      }
+    ]
+  },
+  "targeted": {
+    "source": "6f8b518b4be2024c9f613432436f28bcc23017b1",
+    "run": 38284973647,
+    "flutter": 61,
+    "native_java_checks": 30,
+    "artifact": {
+      "id": 11762453026,
+      "sha256": "6d803d73a8e534f67bc2b58a8ce1991cc6e7e533cd4279226ee7c0b26fd7eb7a"
+    }
+  },
+  "native": {
+    "source": "1daeb53667b8cd22442b8b76118165a4b10a2427",
+    "android_run": 38285393031,
+    "ios_run": 38285393005,
+    "security_run": 38285393018,
+    "status": "verified_success",
+    "ios": {
+      "verified": true,
+      "artifact_id": 11762869340,
+      "zip_sha256": "bb1536e8b37ae9948f701619b31c50df43df3e58dfab4be4ae7a15ba77ef124a",
+      "flutter_tests": 272,
+      "version": "1.0.0/19",
+      "distribution_signed": false
+    },
+    "security": {
+      "run": 38285393018,
+      "artifact_id": 11763311005,
+      "sha256": "78566dc8e45d4fe227a0ed90994c8a1cd956ddb80dd7812f028ffbf2477b1de0",
+      "findings": 0,
+      "text_files": 730,
+      "history_commits": 81,
+      "history_blobs": 1125,
+      "python_dependencies": 24,
+      "pub_dependencies": 43
+    },
+    "android": {
+      "verified": true,
+      "artifact_id": 11763357536,
+      "zip_bytes": 74337336,
+      "zip_sha256": "67074f6dc718e04c0bad2fa732aaa033f1b9796051ec61e823623ef432f6c208",
+      "artifact_expires_at": "2026-10-26T17:44:46Z",
+      "apk_name": "options-ai-trader-rc2-build19-preview.apk",
+      "apk_bytes": 155091096,
+      "apk_sha256": "5da8bc4dfaa6f3c683a9edcb8cacc650b415d4931d01a65cd1c6be83f90146bb",
+      "certificate_sha256": "e749c3831996d7dd8d530c29d9acd1d9b840af0dc70b040fdbc9ba8cca78195d",
+      "signing": "ephemeral-runner-development-key",
+      "package": "com.optionsaitrader.options_ai_trader.v1previewrc2b19",
+      "version_code": 19,
+      "flutter_tests": 272,
+      "golden_tests": 6,
+      "native_java_checks": 30,
+      "compiled_service_exported": false,
+      "compiled_service_stop_with_task": true,
+      "compiled_foreground_service_type": "dataSync",
+      "boot_permission": false,
+      "wake_lock_permission": false,
+      "native_channel_and_service_in_dex": true,
+      "apk_crc_verified": true,
+      "attachment_save": "failed_before_transfer_auth_unavailable"
+    }
+  },
+  "safety": {
+    "external_broker_connection": false,
+    "external_orders": false,
+    "live": false,
+    "other_app_access": false,
+    "paid_service": false,
+    "physical_phone_test": false,
+    "independent_host_soak": false
+  },
+  "limitations": [
+    "No physical-device acceptance",
+    "No external broker connection or orders",
+    "No continuous independent host soak",
+    "No off-host encrypted backup activation",
+    "No 24/7 or powered-off phone operation claim",
+    "No recovery claim for unpushed files from a previous session"
+  ]
+}

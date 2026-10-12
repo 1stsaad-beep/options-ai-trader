@@ -1,0 +1,145 @@
+{
+  "schema": 1,
+  "branch": "recovery/v1.0-20261011",
+  "backend_source": "14f854da7dc62573d0ecda177d5a00d20fc47fd1",
+  "native_source": "1daeb53667b8cd22442b8b76118165a4b10a2427",
+  "receipts": "receipts.json",
+  "files": {
+    "android/apk-manifest.txt": {
+      "bytes": 7113,
+      "sha256": "149a28dd847d32debf3e978ee66e825db73da969e9cd0ddb18286d55dab89304"
+    },
+    "android/apk-package.txt": {
+      "bytes": 6394,
+      "sha256": "bda7c8f68e8b266a15919f98a079221b34f1dabab5750017d5290c004dff05ec"
+    },
+    "android/apk-signature.txt": {
+      "bytes": 1026,
+      "sha256": "a17c2e58b5dd01320ddfff1bff068544e9ee370d1aae90c29950396090700efe"
+    },
+    "android/apk.sha256": {
+      "bytes": 108,
+      "sha256": "d8ab6f523405d0c0def7b15b139a90208e2e0ee3649dfe35449cc4db28af4b3a"
+    },
+    "android/build-provenance.txt": {
+      "bytes": 241,
+      "sha256": "295085fa9b1c9026bae6688a04070424841d243e127f020b89bb2da2a8252aeb"
+    },
+    "android/flutter-build-version.txt": {
+      "bytes": 317,
+      "sha256": "4996a9a0ef46ebbc93176875ad386317fec42d189367f2357793c6b09aeea9b8"
+    },
+    "android/flutter-tests.json": {
+      "bytes": 135504,
+      "sha256": "36f0ed9f88cc4af06de3ecfe30d32bc128f1ee26c79d101b1be07dc9f1a63c86"
+    },
+    "android/golden-tests.json": {
+      "bytes": 16162,
+      "sha256": "6430e6860e548db61c07d276e2008de55fb9462ad5d9a1c315ee2f259a7346af"
+    },
+    "archive-cycle.xml": {
+      "bytes": 19865,
+      "sha256": "d54f0d5f160576a0002b0a42d1eb35fa990b5abec03485cf64775ef12cc719b4"
+    },
+    "backend/http-smoke.json": {
+      "bytes": 706,
+      "sha256": "6d4f4bf404ddcb84de8affcc4fe33827c430340942b7dc689199d73e0c2cd979"
+    },
+    "backend/lifecycle-synthetic.json": {
+      "bytes": 21101,
+      "sha256": "a14517adf6b7a15762a825d4cec3adf00e2e3aaf2142e2cc63f9c692f053be1f"
+    },
+    "backend/market-data-journal-postgres.json": {
+      "bytes": 474,
+      "sha256": "2f845116e5610995ecb05afc4663c56be356ca015e275bea4054130704560154"
+    },
+    "backend/market-runtime-postgres.json": {
+      "bytes": 649,
+      "sha256": "8ca64df70a14b3f32b6c56e9a7c8f2549a7586184c9fe187f6326a36d37e7fd2"
+    },
+    "backend/postgres-backup-restore.json": {
+      "bytes": 1187,
+      "sha256": "d95f240aaf684a331a8a13b218ae6cb03e9f52eb28999f5f2bb1aacc72af4b8e"
+    },
+    "backend/postgres-basic.txt": {
+      "bytes": 164,
+      "sha256": "86917cdafbd785be2cc3039b265866ec5a3a4f5442631c83de8f4bb40cfb58c9"
+    },
+    "backend/postgres-v1-results.json": {
+      "bytes": 1303,
+      "sha256": "b8934d0b27544e07ca2b70745a2683c84a202443103740a5ac0557ed83248182"
+    },
+    "backend/test-results.xml": {
+      "bytes": 142245,
+      "sha256": "8b0f94ed331817b505c6eec8090defbe6a8001111bf7414e03b109e0e1067686"
+    },
+    "compose/compose-smoke.json": {
+      "bytes": 1138,
+      "sha256": "b89613629e04aa166cd97d67464c364da6020995c308b37bd6c71c4d0cb5818b"
+    },
+    "ios/Info.plist": {
+      "bytes": 1938,
+      "sha256": "bc6e72194fb7c0b14412dc0dabff1f40460755b88c395c65dffda77f5cf4f9fb"
+    },
+    "ios/flutter-tests.json": {
+      "bytes": 135701,
+      "sha256": "19b4511a1ecf5bc3921b5b885ac3c77a2feefe1b05e04183e6d3090468aaf03c"
+    },
+    "ios/identity.json": {
+      "bytes": 164,
+      "sha256": "c46fcf0f6a0861e72e94e5bbf254190ca15ca04e836f2579c7b0cf31c53f8057"
+    },
+    "mobile-fixture-correction/market-data-tests.json": {
+      "bytes": 30968,
+      "sha256": "0a8e13e9b0d053316d86ab09687fe74bb5cc89627a5be4a423f94cece82cdc12"
+    },
+    "mobile-targeted/market-data-tests.json": {
+      "bytes": 30931,
+      "sha256": "702516f3e40e5d630020632cfb326b33146b602ce97dff586073fcbbceb00a53"
+    },
+    "preflight/account-picker-lint.txt": {
+      "bytes": 219,
+      "sha256": "a1ac25d26a0a08cb55876c00d65ff07d5aaa2b91d0374bd1b53c8a82cb340c3e"
+    },
+    "preflight/incomplete-workspace-collection.xml": {
+      "bytes": 849,
+      "sha256": "77800c1ebdee44a8f5345e898f00cff91ff484460b365bff99258cd5157a6a4a"
+    },
+    "preflight/mobile/market-data-tests.json": {
+      "bytes": 46265,
+      "sha256": "5d3b5762df8a44c8e055415dd00ddf341a016ec6e05e71fe9beda1ea8f564ec8"
+    },
+    "preflight/picker-state/market-data-tests.json": {
+      "bytes": 32879,
+      "sha256": "a07849ee1b27892e655de1451fd6b5383bbdb32496468c8894cd755d08cc46c4"
+    },
+    "receipts.json": {
+      "bytes": 3357,
+      "sha256": "0e2bcce50f03ea5a64414340512a1b8fce99da496d6ce64d6aafc110051caccd"
+    },
+    "security-archive/dart-dependency-audit.json": {
+      "bytes": 4886,
+      "sha256": "c9ab00b94346b647f57808ae6695be0496037f57c195998bb4e2685839f6d754"
+    },
+    "security-archive/dependency-audit.json": {
+      "bytes": 1392,
+      "sha256": "1a484e5b2896c3c1c6dda9da516a72784f80dc13449a69cde8922cff592b1903"
+    },
+    "security-archive/secret-scan.json": {
+      "bytes": 11656,
+      "sha256": "a1642dc6880dbfb8b28d986d9c5c7b9c86956977fddbf68490a2c81c1caa3e00"
+    },
+    "security-lab19/dart-dependency-audit.json": {
+      "bytes": 4886,
+      "sha256": "1b5331208829dccc8aa19c8a9de5aeb07a2a4edd944f86f1a4e45f1fd307783e"
+    },
+    "security-lab19/dependency-audit.json": {
+      "bytes": 1392,
+      "sha256": "1a484e5b2896c3c1c6dda9da516a72784f80dc13449a69cde8922cff592b1903"
+    },
+    "security-lab19/secret-scan.json": {
+      "bytes": 11656,
+      "sha256": "8812bb97f222d1b459e5c412ef491f5593bf85c21da5c2f7cd910db11ce66c5c"
+    }
+  }
+}

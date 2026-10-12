@@ -1,5 +1,13 @@
 # Progress — recovery/v1.0-20261011
 
+## Lab19 delivered — verified artifacts and resumption checkpoint
+
+- Resumed actual remote HEAD143fef6def4457cf145d903f14e345752b92a12b. Native source **1daeb53667b8cd22442b8b76118165a4b10a2427**: Android38285393031 **success**,272 Flutter +6 Golden,30 Java policy checks, analyze and actual signed APK. Artifact11763357536 ZIP CRC/API SHA and APK CRC/SHA verified. Packagev1previewrc2b19/code19; development v2 signature; compiled service private/dataSync/stopWithTask, no boot/wake-lock permission. APK SHA-256 `5da8bc4dfaa6f3c683a9edcb8cacc650b415d4931d01a65cd1c6be83f90146bb`.
+- iOS38285393005 **success**:272 Flutter, actual unsigned macOS release build1.0.0/19; artifact11762869340 digest/CRC/actual plist verified. No IPA/TestFlight/device claim. Security38285393018:730 text files/81commits/1125historical blobs,0 patterns;24 Python/43 Pub dependencies without known advisories at query time.
+- Backend accepted source14f854d unchanged:1027 Python,22+6+8 PostgreSQL,16restore,17Compose. Raw Android/iOS/failed preflight evidence retained; receipts.json and manifest.json bind sources, runs and hashes. Final delivery commit is reports/evidence only; no need to repeat accepted builds.
+- APK permanent attachment attempt failed before transfer because authentication was unavailable. GitHub artifact remains available until2026-10-26; actual APK verified locally. No upload success claim.
+- Next: Lab19 physical-device acceptance with provider disabled, then existing Linux host/off-host encrypted backup/monitoring/soak, then separately approved provider-data connection. No broker connection/order, Live, paid service, Demo or other-app access; no 24/7 claim. Previous unpushed files were unavailable and not claimed recovered. Earlier entries below are chronological checkpoints superseded by this accepted state.
+
 ## Lab19 native build gate
 
 - Corrected source `6f8b518b4be2024c9f613432436f28bcc23017b1` passed targeted CI38284973647: analyze,30 native Java policy checks and **61 Flutter tests**, zero failures/skips. Downloaded artifact11762453026; ZIP CRC and API SHA-256 verified before parsing results. Rejected-stop picker-state regression now passes with the controlled value.
