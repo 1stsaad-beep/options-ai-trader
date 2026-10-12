@@ -1,5 +1,13 @@
 # Progress — recovery/v1.0-20261011
 
+## Resumption 2026-10-12 — archive automation batch
+
+- Verified actual Recovery HEAD `143fef6def4457cf145d903f14e345752b92a12b`, six remote branches and recent commits. Empty new workspace had no recoverable prior checkout/unsaved edits. Reconstructed the exact original commit/tree and verified 274 original text-file Git hashes; unmaterialized historical evidence/binaries remain in the base tree, not deleted. Git status was clean before source work. Personal Context was unavailable; GitHub reports are authoritative.
+- Read PROGRESS, autonomous runtime/acceptance, Lab18 archive/mobile delivery and resume/test guides. Lab18 already accepted segmentation, restore, account controls, events and UI. Independently checked Android run38276748045 success. No duplicate reconstruction of those features.
+- Added explicit-account Linux archive cycles with private files, exclusive local lock, free-space reserve checks, post-export verification and completion receipt only after every export succeeds. Prior copies/original rows retained; no pruning, provider transport or Demo state invalidation. Optional systemd examples are not installed/enabled.
+- Local affected regression gate: **140 passed**, zero failures/errors/skips. Includes13 new cycle/CLI cases, original-byte restoration, concurrent-lock rejection, partial/disk/verification failure and unchanged Demo accounts. An earlier broadened command stopped at collection because a original backup script had not yet finished downloading; preserved the failure and reran after exact restoration. Existing Starlette deprecation warning only.
+- Flutter/native source unchanged in this batch. CI PostgreSQL/Compose remains pending on publication. Next: opt-in bounded Android foreground monitoring, offline/native/Flutter gates, isolated Lab19 build and final receipt. No broker connection, orders, Live, paid hosting, other-app access or keys.
+
 ## Archive and phone — final accepted engineering delivery
 
 - Resumed after interrupted APK download from matching clean local/remote head `5c2f5ef090d126731f5ca2c5921b09cd0af69982`. No missing source or uncommitted app edits inferred. Continued receipt verification only; no successful tests/builds rerun.

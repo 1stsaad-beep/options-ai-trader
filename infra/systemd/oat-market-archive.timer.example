@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily verified market archive example (not enabled automatically)
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 UTC
+Persistent=false
+Unit=oat-market-archive.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,19 @@
+[Unit]
+Description=Explicit account market archive (no deletion or provider calls)
+
+[Service]
+Type=oneshot
+User=oat
+Group=oat
+WorkingDirectory=/srv/options-ai-trader
+EnvironmentFile=/srv/oat-secrets/archive.env
+# Replace ACCOUNT_UUID explicitly. Repeat --account-id for each approved account.
+ExecStart=/srv/options-ai-trader/.venv/bin/python scripts/market_archive_cycle.py /srv/oat-market-backups --account-id ACCOUNT_UUID --reserve-mib 512
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/oat-market-backups
+# PostgreSQL is recommended. For SQLite, explicitly permit its private DB directory too.
+TimeoutStartSec=1h

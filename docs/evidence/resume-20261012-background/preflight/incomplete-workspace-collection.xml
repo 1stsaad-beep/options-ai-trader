@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.543" timestamp="2026-10-12T20:09:43.569299+03:00" hostname="4daa437f09f3"><testcase classname="" name="tests.test_postgres_backup_restore" time="0.000"><error message="collection failure">backend/tests/test_postgres_backup_restore.py:20: in &lt;module&gt;
+    spec.loader.exec_module(snapshots)
+&lt;frozen importlib._bootstrap_external&gt;:995: in exec_module
+    ???
+&lt;frozen importlib._bootstrap_external&gt;:1132: in get_code
+    ???
+&lt;frozen importlib._bootstrap_external&gt;:1190: in get_data
+    ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/53212d4cde44/options-ai-trader/scripts/postgres_backup_restore.py'</error></testcase></testsuite></testsuites>
