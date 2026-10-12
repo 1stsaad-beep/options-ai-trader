@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="8" skipped="0" tests="60" time="1.101" timestamp="2026-10-12T21:13:13.563781+03:00" hostname="4daa437f09f3"><testcase classname="tests.test_phone_lab" name="test_startup_rejects_nonisolated_or_provider_configuration[OAT_PHONE_LAB-]" time="0.001" /><testcase classname="tests.test_phone_lab" name="test_startup_rejects_nonisolated_or_provider_configuration[ENABLE_LIVE-true]" time="0.001" /><testcase classname="tests.test_phone_lab" name="test_startup_rejects_nonisolated_or_provider_configuration[BROKER_PROVIDER-alpaca]" time="0.000" /><testcase classname="tests.test_phone_lab" name="test_startup_rejects_nonisolated_or_provider_configuration[DATABASE_URL-sqlite:///old-demo.db]" time="0.000" /><testcase classname="tests.test_phone_lab" name="test_startup_rejects_nonisolated_or_provider_configuration[DATABASE_URL-postgresql://phone_lab:fixture@existing-host/options_phone_lab]" time="0.000" /><testcase classname="tests.test_phone_lab" name="test_startup_rejects_nonisolated_or_provider_configuration[DATABASE_URL-postgresql://phone_lab:fixture@postgres/other_database]" time="0.000" /><testcase classname="tests.test_phone_lab" name="test_startup_rejects_nonisolated_or_provider_configuration[OAT_ALPACA_DATA_APPROVAL-read_only_approved]" time="0.000" /><testcase classname="tests.test_phone_lab" name="test_startup_rejects_nonisolated_or_provider_configuration[APCA_API_KEY_ID-do-not-read]" time="0.000" /><testcase classname="tests.test_phone_lab" name="test_startup_rejects_nonisolated_or_provider_configuration[IBKR_HOST-do-not-connect]" time="0.000" /><testcase classname="tests.test_phone_lab" name="test_real_runtime_contract_controls_events_and_no_orders" time="0.063" /><testcase classname="tests.test_phone_lab" name="test_existing_unrelated_accounts_are_refused_without_changes" time="0.004" /><testcase classname="tests.test_phone_lab_script" name="test_initialization_private_outside_git_no_secret_output" time="0.001"><failure message="AssertionError: assert 1 == 0&#10; +  where 1 = &lt;function main at 0x7f7d561ad080&gt;(['init', '--directory', '/workspace/scratch/53212d4cde44/phone-lab-test-amfsje_w/private'])&#10; +    where &lt;function main at 0x7f7d561ad080&gt; = lab.main">tmp_path = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-amfsje_w')
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x7f7d55f2e180&gt;
+
+    def test_initialization_private_outside_git_no_secret_output(tmp_path,capsys):
+        directory=tmp_path/'private'
+&gt;       assert lab.main(['init','--directory',str(directory)])==0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = &lt;function main at 0x7f7d561ad080&gt;(['init', '--directory', '/workspace/scratch/53212d4cde44/phone-lab-test-amfsje_w/private'])
+E        +    where &lt;function main at 0x7f7d561ad080&gt; = lab.main
+
+backend/tests/test_phone_lab_script.py:27: AssertionError</failure></testcase><testcase classname="tests.test_phone_lab_script" name="test_refuse_git_secret_directory_including_symlink_parent" time="0.001" /><testcase classname="tests.test_phone_lab_script" name="test_tampered_private_config_refused[public_directory]" time="0.001"><failure message="phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT">tmp_path = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-twaznum3')
+kind = 'public_directory'
+
+    @pytest.mark.parametrize('kind',['public_directory','public_file','symlink','wrong_project','extra_value'])
+    def test_tampered_private_config_refused(tmp_path,kind):
+&gt;       p=tmp_path/'private';lab.init(p)
+                             ^^^^^^^^^^^
+
+backend/tests/test_phone_lab_script.py:51:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+directory = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-twaznum3/private')
+
+    def init(directory):
+        if os.name != 'posix':
+            raise LabFailure('USE_LINUX_MACOS_OR_WSL_FOR_PRIVATE_FILES')
+        directory = directory.expanduser().resolve()
+        if any((p / '.git').exists() for p in [directory, *directory.parents]):
+&gt;           raise LabFailure('SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT')
+E           phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT
+
+scripts/phone_lab.py:42: LabFailure</failure></testcase><testcase classname="tests.test_phone_lab_script" name="test_tampered_private_config_refused[public_file]" time="0.001"><failure message="phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT">tmp_path = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-tzazzt61')
+kind = 'public_file'
+
+    @pytest.mark.parametrize('kind',['public_directory','public_file','symlink','wrong_project','extra_value'])
+    def test_tampered_private_config_refused(tmp_path,kind):
+&gt;       p=tmp_path/'private';lab.init(p)
+                             ^^^^^^^^^^^
+
+backend/tests/test_phone_lab_script.py:51:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+directory = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-tzazzt61/private')
+
+    def init(directory):
+        if os.name != 'posix':
+            raise LabFailure('USE_LINUX_MACOS_OR_WSL_FOR_PRIVATE_FILES')
+        directory = directory.expanduser().resolve()
+        if any((p / '.git').exists() for p in [directory, *directory.parents]):
+&gt;           raise LabFailure('SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT')
+E           phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT
+
+scripts/phone_lab.py:42: LabFailure</failure></testcase><testcase classname="tests.test_phone_lab_script" name="test_tampered_private_config_refused[symlink]" time="0.000"><failure message="phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT">tmp_path = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-c7l20pb2')
+kind = 'symlink'
+
+    @pytest.mark.parametrize('kind',['public_directory','public_file','symlink','wrong_project','extra_value'])
+    def test_tampered_private_config_refused(tmp_path,kind):
+&gt;       p=tmp_path/'private';lab.init(p)
+                             ^^^^^^^^^^^
+
+backend/tests/test_phone_lab_script.py:51:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+directory = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-c7l20pb2/private')
+
+    def init(directory):
+        if os.name != 'posix':
+            raise LabFailure('USE_LINUX_MACOS_OR_WSL_FOR_PRIVATE_FILES')
+        directory = directory.expanduser().resolve()
+        if any((p / '.git').exists() for p in [directory, *directory.parents]):
+&gt;           raise LabFailure('SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT')
+E           phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT
+
+scripts/phone_lab.py:42: LabFailure</failure></testcase><testcase classname="tests.test_phone_lab_script" name="test_tampered_private_config_refused[wrong_project]" time="0.001"><failure message="phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT">tmp_path = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-5vfu6_n0')
+kind = 'wrong_project'
+
+    @pytest.mark.parametrize('kind',['public_directory','public_file','symlink','wrong_project','extra_value'])
+    def test_tampered_private_config_refused(tmp_path,kind):
+&gt;       p=tmp_path/'private';lab.init(p)
+                             ^^^^^^^^^^^
+
+backend/tests/test_phone_lab_script.py:51:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+directory = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-5vfu6_n0/private')
+
+    def init(directory):
+        if os.name != 'posix':
+            raise LabFailure('USE_LINUX_MACOS_OR_WSL_FOR_PRIVATE_FILES')
+        directory = directory.expanduser().resolve()
+        if any((p / '.git').exists() for p in [directory, *directory.parents]):
+&gt;           raise LabFailure('SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT')
+E           phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT
+
+scripts/phone_lab.py:42: LabFailure</failure></testcase><testcase classname="tests.test_phone_lab_script" name="test_tampered_private_config_refused[extra_value]" time="0.001"><failure message="phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT">tmp_path = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-78dlc2td')
+kind = 'extra_value'
+
+    @pytest.mark.parametrize('kind',['public_directory','public_file','symlink','wrong_project','extra_value'])
+    def test_tampered_private_config_refused(tmp_path,kind):
+&gt;       p=tmp_path/'private';lab.init(p)
+                             ^^^^^^^^^^^
+
+backend/tests/test_phone_lab_script.py:51:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+directory = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-78dlc2td/private')
+
+    def init(directory):
+        if os.name != 'posix':
+            raise LabFailure('USE_LINUX_MACOS_OR_WSL_FOR_PRIVATE_FILES')
+        directory = directory.expanduser().resolve()
+        if any((p / '.git').exists() for p in [directory, *directory.parents]):
+&gt;           raise LabFailure('SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT')
+E           phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT
+
+scripts/phone_lab.py:42: LabFailure</failure></testcase><testcase classname="tests.test_phone_lab_script" name="test_composer_does_not_inherit_credentials_or_other_project" time="0.001"><failure message="phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7d55f2e150&gt;
+tmp_path = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-vwxbdmll')
+
+    def test_composer_does_not_inherit_credentials_or_other_project(monkeypatch,tmp_path):
+        for k in ['OAT_ALPACA_DATA_APPROVAL','APCA_API_KEY_ID','IBKR_HOST','OPTIONS_API_TOKEN',
+                  'POSTGRES_PASSWORD','COMPOSE_FILE','COMPOSE_PROJECT_NAME','DATABASE_URL','PHONE_LAB_API_TOKEN']:
+            monkeypatch.setenv(k,'must-not-inherit')
+        environment=lab.safe_env()
+        assert 'must-not-inherit' not in environment.values()
+&gt;       p=tmp_path/'private';lab.init(p);values=lab.load(p)
+                             ^^^^^^^^^^^
+
+backend/tests/test_phone_lab_script.py:70:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+directory = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-vwxbdmll/private')
+
+    def init(directory):
+        if os.name != 'posix':
+            raise LabFailure('USE_LINUX_MACOS_OR_WSL_FOR_PRIVATE_FILES')
+        directory = directory.expanduser().resolve()
+        if any((p / '.git').exists() for p in [directory, *directory.parents]):
+&gt;           raise LabFailure('SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT')
+E           phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT
+
+scripts/phone_lab.py:42: LabFailure</failure></testcase><testcase classname="tests.test_phone_lab_script" name="test_stop_never_deletes_volume_or_files_and_failure_redacted" time="0.001"><failure message="phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT">tmp_path = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-i_i7r6b2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f7d560872c0&gt;
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x7f7d56087230&gt;
+
+    def test_stop_never_deletes_volume_or_files_and_failure_redacted(tmp_path,monkeypatch,capsys):
+&gt;       p=tmp_path/'private';lab.init(p);before=(p/'lab.env').read_bytes();calls=[]
+                             ^^^^^^^^^^^
+
+backend/tests/test_phone_lab_script.py:77:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+directory = PosixPath('/workspace/scratch/53212d4cde44/phone-lab-test-i_i7r6b2/private')
+
+    def init(directory):
+        if os.name != 'posix':
+            raise LabFailure('USE_LINUX_MACOS_OR_WSL_FOR_PRIVATE_FILES')
+        directory = directory.expanduser().resolve()
+        if any((p / '.git').exists() for p in [directory, *directory.parents]):
+&gt;           raise LabFailure('SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT')
+E           phone_lab_cli.LabFailure: SECRET_DIRECTORY_MUST_BE_OUTSIDE_GIT
+
+scripts/phone_lab.py:42: LabFailure</failure></testcase><testcase classname="tests.test_phone_lab_script" name="test_loopback_requests_ignore_proxies_and_never_redirect" time="0.000" /><testcase classname="tests.test_market_runtime" name="test_one_fetch_per_symbol_for_two_accounts_no_synthetic_mutation" time="0.013" /><testcase classname="tests.test_market_runtime" name="test_stale_cache_does_not_claim_stop_or_fresh_quote" time="0.008" /><testcase classname="tests.test_market_runtime" name="test_network_failure_backoff_survives_new_collector_and_recovers" time="0.007" /><testcase classname="tests.test_market_runtime" name="test_auth_failure_persisted_without_credentials_in_output[401]" time="0.006" /><testcase classname="tests.test_market_runtime" name="test_auth_failure_persisted_without_credentials_in_output[403]" time="0.005" /><testcase classname="tests.test_market_runtime" name="test_retry_after_and_request_budget_persist_after_restart" time="0.006" /><testcase classname="tests.test_market_runtime" name="test_two_connections_lease_and_recovery_preserve_demo_state" time="0.010" /><testcase classname="tests.test_market_runtime" name="test_lease_fencing_rejects_result_returning_after_takeover" time="0.005" /><testcase classname="tests.test_market_runtime" name="test_disable_during_fetch_prevents_archive_and_decision" time="0.006" /><testcase classname="tests.test_market_runtime" name="test_disabled_default_weekend_unknown_calendar_no_requests" time="0.005" /><testcase classname="tests.test_market_runtime" name="test_disabled_provider_does_not_connect_even_enabled_account" time="0.006" /><testcase classname="tests.test_market_runtime" name="test_archive_segments_continue_without_fills" time="0.009" /><testcase classname="tests.test_market_runtime" name="test_event_immutability_ack_isolation_and_duplicate_control" time="0.005" /><testcase classname="tests.test_market_runtime" name="test_analysis_rejects_invalid_causal_input[future]" time="0.008" /><testcase classname="tests.test_market_runtime" name="test_analysis_rejects_invalid_causal_input[gap]" time="0.008" /><testcase classname="tests.test_market_runtime" name="test_analysis_rejects_invalid_causal_input[stale]" time="0.008" /><testcase classname="tests.test_market_runtime" name="test_analysis_rejects_invalid_causal_input[incomplete]" time="0.007" /><testcase classname="tests.test_market_runtime" name="test_api_auth_strict_controls_account_scope_no_upstream_reads" time="0.044" /><testcase classname="tests.test_market_runtime" name="test_disposable_multi_connection_acceptance_harness" time="0.017" /><testcase classname="tests.test_market_runtime_worker" name="test_unapproved_worker_ignores_other_app_and_never_reads_file" time="0.000" /><testcase classname="tests.test_market_runtime_worker" name="test_secret_file_strict_safe_failure[missing]" time="0.001" /><testcase classname="tests.test_market_runtime_worker" name="test_secret_file_strict_safe_failure[symlink]" time="0.001" /><testcase classname="tests.test_market_runtime_worker" name="test_secret_file_strict_safe_failure[world_readable]" time="0.001" /><testcase classname="tests.test_market_runtime_worker" name="test_secret_file_strict_safe_failure[extra_field]" time="0.001" /><testcase classname="tests.test_market_runtime_worker" name="test_secret_file_strict_safe_failure[invalid_json]" time="0.001" /><testcase classname="tests.test_market_runtime_worker" name="test_secret_file_strict_safe_failure[directory]" time="0.001" /><testcase classname="tests.test_market_runtime_worker" name="test_secret_file_strict_safe_failure[oversize]" time="0.001" /><testcase classname="tests.test_market_runtime_worker" name="test_private_explicit_credentials_do_not_leak_in_repr" time="0.001" /><testcase classname="tests.test_market_runtime_worker" name="test_cache_only_api_cannot_construct_second_provider" time="0.043" /><testcase classname="tests.test_market_runtime_worker" name="test_actual_process_restart_and_heartbeat_without_phone_or_network" time="0.254" /><testcase classname="tests.test_market_runtime_worker" name="test_explicit_auth_reset_requires_collector_stopped_and_audits" time="0.004" /><testcase classname="tests.test_runtime_mobile_contract" name="test_status_prices_use_original_timestamps_and_current_staleness" time="0.011" /><testcase classname="tests.test_runtime_mobile_contract" name="test_event_pagination_covers_equal_timestamps_and_binds_account" time="0.010" /><testcase classname="tests.test_runtime_mobile_contract" name="test_malformed_cursor_is_safe_422[garbage]" time="0.005" /><testcase classname="tests.test_runtime_mobile_contract" name="test_malformed_cursor_is_safe_422[AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]" time="0.005" /><testcase classname="tests.test_runtime_mobile_contract" name="test_malformed_cursor_is_safe_422[e30=]" time="0.005" /><testcase classname="tests.test_runtime_mobile_contract" name="test_malformed_cursor_is_safe_422[bnVsbA==]" time="0.005" /><testcase classname="tests.test_runtime_mobile_contract" name="test_runtime_read_and_control_http_never_queries_provider_or_demo" time="0.055" /><testcase classname="tests.test_runtime_mobile_contract" name="test_saved_flutter_fixture_is_real_backend_shape" time="0.001" /></testsuite></testsuites>

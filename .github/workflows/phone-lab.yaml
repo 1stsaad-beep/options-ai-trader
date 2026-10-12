@@ -1,0 +1,35 @@
+name: Lab19 isolated phone server acceptance
+on:
+  push:
+    paths: ['backend/app/phone_lab.py', 'backend/tests/test_phone_lab*.py', 'scripts/phone_lab.py', 'infra/compose.phone-lab.yaml', '.github/workflows/phone-lab.yaml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  postgres-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Create private isolated fixture outside checkout without displaying secrets
+        run: python scripts/phone_lab.py init --directory "$RUNNER_TEMP/oat-phone-private" > phone-lab-init.json
+      - name: Build and run actual PostgreSQL API and disabled-provider runtime
+        run: python scripts/phone_lab.py start --directory "$RUNNER_TEMP/oat-phone-private" > phone-lab-start.json
+      - name: Exercise authentication account controls and event isolation
+        run: python scripts/phone_lab.py exercise --directory "$RUNNER_TEMP/oat-phone-private" > phone-lab-exercise.json
+      - name: Stop this generated project, retain all volumes
+        if: always()
+        run: python scripts/phone_lab.py stop --directory "$RUNNER_TEMP/oat-phone-private" > phone-lab-stop.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: phone-lab-acceptance
+          path: |
+            phone-lab-start.json
+            phone-lab-exercise.json
+            phone-lab-stop.json
+          if-no-files-found: error
+          retention-days: 14

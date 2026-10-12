@@ -1,5 +1,13 @@
 # Progress — recovery/v1.0-20261011
 
+## Lab19 physical-phone connection preparation — pending CI
+
+- User confirms Lab19 APK installed on an actual Android phone; server connection timed out at emulator-only default10.0.2.2. Latest remote/local HEAD4613a68 verified clean before edits. Flutter has editable HTTPS/token settings, so no APK/source change is needed for connection.
+- Environment has no Docker/PostgreSQL/managed public port or tunnel utility. Sites Worker hosting cannot run the existing Python/PostgreSQL stack. No public HTTPS URL or actual phone-to-server success is claimed.
+- Added a standalone isolated phone-lab Compose, private secret generator/operator CLI and guarded API entrypoint. Three services (API/PostgreSQL/real runtime with provider disabled), new random project/volume and two named Mock accounts, internal network, loopback18019 only. Runtime controls/ack only; all other writes blocked. No synthetic trading worker, broker credentials, provider requests or user Demo mutations.
+- 60 targeted Python tests passed locally, including21new lab/secret-tooling cases. Two preflight failures came from test temporary directories inside a checkout/unused parent marker; retained reports with trailing whitespace normalized. Tests now create private sibling fixtures; production guard checks real checkout metadata and still rejects Git worktrees/symlink aliases. Docker acceptance/full Backend CI pending after source push.
+- [Phone connection and private-token guide](docs/LAB19_PHONE_CONNECTION_AR.md). Next: receive dedicated actual Compose CI; then user runs lab on their existing computer and obtains the real temporary HTTPS URL there. Physical HTTPS/phone display/background behavior still require user evidence. No purchase or provider approval requested.
+
 ## Lab19 delivered — verified artifacts and resumption checkpoint
 
 - Resumed actual remote HEAD143fef6def4457cf145d903f14e345752b92a12b. Native source **1daeb53667b8cd22442b8b76118165a4b10a2427**: Android38285393031 **success**,272 Flutter +6 Golden,30 Java policy checks, analyze and actual signed APK. Artifact11763357536 ZIP CRC/API SHA and APK CRC/SHA verified. Packagev1previewrc2b19/code19; development v2 signature; compiled service private/dataSync/stopWithTask, no boot/wake-lock permission. APK SHA-256 `5da8bc4dfaa6f3c683a9edcb8cacc650b415d4931d01a65cd1c6be83f90146bb`.
