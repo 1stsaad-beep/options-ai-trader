@@ -129,3 +129,10 @@ The final native jobs build `c5033ab2e108b18de1b873652d911b226b7770a8`. Runtime,
 # Continuation checkpoint — 2026-10-12
 
 Verified `2260e5baa7ec7c4cd3579bff07dec277a399dd9a` clean and equal to the remote Recovery head. The user's new continuation authorizes the next independent batch: recovery import after an initial unreadable Demo snapshot. Source and targeted regressions are saved with CI acceptance pending; see the latest `PROGRESS.md` entry. Build 15 binaries remain accepted on their own source, while physical-device acceptance remains not run. No prior-session unsaved data is claimed, and no broker/Live/financial data connection was made.
+
+## Alpaca data-only recovery — 2026-10-12
+
+- Verified newest branch head `8161c458a4734eeb26839e95dd7b16379acaf1ac`; main is older. Recovered 142 selected source/report files with exact Git blob hash verification and reconstructed the complete remote tree index. Unmaterialized files remain preserved remotely and in the index.
+- No earlier local checkout or uncommitted source was available. No unsaved work from an ended session is claimed recovered. No deletions, reset, force push, or other project access.
+- Build 16 delivery and V1 requirements/test/security/safety reports reviewed; their previous test results remain historical, not rerun results.
+- New scope: isolated Alpaca Market Data REST adapter, disabled pending separate connection approval. Basic IEX stock data and indicative options will retain provenance; indicative options cannot authorize fills. No trading host, API, Paper, IBKR, credentials discovery, or changes to the other app.

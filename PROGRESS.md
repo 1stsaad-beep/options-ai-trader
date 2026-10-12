@@ -261,3 +261,9 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - A current Library prepared-upload helper attempted the ordered APK/iOS/checksum save and failed before transfer because authentication was unavailable. No files were claimed saved there; no direct-write bypass or credential probing. Local downloads and private GitHub artifacts remain available; source/reports/evidence are in Git.
 - Updated final delivery, recovery/resume guide, four-category report, requirements, test and safety reports. The initial recovery gap is closed within the explicit single-original-slot scope. Backend/Backtesting were unchanged and not re-run. Device installation/coexistence/upgrade/power-loss, stable signing and TestFlight remain not run/unavailable; V1.0 is still incomplete.
 - All source batches were pushed and read back before the next batch. This final checkpoint is documentation/evidence only. Resume from the actual Recovery head using `docs/BUILD16_RESUME.md`; preserve earlier apps and reports. No broker, Live, financial data, paid service, secret key or unrelated project was introduced.
+
+## Alpaca batch 0 — source checkpoint
+
+- Baseline `8161c458a4734eeb26839e95dd7b16379acaf1ac`, recovery branch preserved. Exact source/tree hashes verified; no local edits existed to rescue.
+- Reviewed official Alpaca US documentation: Basic IEX versus consolidated SIP; indicative option quotes are modified and trades delayed, not executable OPRA. Will use bounded shared REST cache/polling and no stream connection to avoid competing with the other app.
+- Documentation-only checkpoint: no new runtime code, account connection, credentials, market-data fetch, or tests claimed. Next batch: provider protocol, fixed data-only transport, mock/documented fixture tests and safe API integration.
