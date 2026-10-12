@@ -46,7 +46,7 @@ class AutomationRun(StrictModel):
     """A run accepts no signals, prices, account override or risk bypass flags."""
     pass
 
-def create_app(repository=None, token=None):
+def create_app(repository=None, token=None, market_data_provider=None):
     configured_token = token if token is not None else os.getenv('OPTIONS_API_TOKEN', '')
     @asynccontextmanager
     async def lifespan(app):
@@ -56,6 +56,8 @@ def create_app(repository=None, token=None):
             raise RuntimeError('Live execution is hard locked; only paper mode is permitted')
         app.state.repository = repository or Repository(os.getenv('DATABASE_URL','sqlite:///options_demo.db'))
         app.state.service = TradingService(app.state.repository)
+        from .market_data import from_environment
+        app.state.market_data = market_data_provider if market_data_provider is not None else from_environment()
         yield
         if repository is None:
             app.state.repository.close()
@@ -73,6 +75,8 @@ def create_app(repository=None, token=None):
     def health():
         return {'status':'ok','version':'1.0.0-rc.2','mode':'paper','broker':'mock','live_enabled':False,'market_data':'synthetic','external_analysis_enabled':False}
     secured = [Depends(auth)]
+    from .market_data_api import install_market_data_routes
+    install_market_data_routes(app, secured, service, lambda: app.state.market_data)
     @app.get('/api/readiness',dependencies=secured)
     def readiness(s=Depends(service)):
         from .monitoring import readiness as inspect

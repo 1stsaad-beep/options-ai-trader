@@ -276,3 +276,11 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Shared bounded REST cache (128 entries), concurrent request deduplication, default 30 requests/minute, provider headers/429 cooldown, bounded read retries and terminal auth/entitlement circuit. Budget is local to one provider process; cannot see the other app's usage. No streaming implementation is claimed.
 - Local offline targeted test: **55 passed**, zero failed/skipped. Includes fixed-host transport mocks, no-network guard, documented AAPL IEX historical example, no future/unclosed bars, DST completion, missing/modified options, concurrency, reconnect and rate limits. Evidence: `docs/evidence/alpaca-20261012/adapter-targeted.*`.
 - Not yet connected to the API or mobile at this checkpoint. No actual account credentials/connection, OPRA entitlement, out-of-sample study or profitability claim.
+
+## Alpaca batch 2 — account-scoped API and virtual execution lock
+
+- Adapter batch published/read back at `e7f179a5306b69654224b56d55e21ae479419af4`; GitHub backend/Compose run `38222631771` and security run `38222631809` succeeded. Exact result counts will be checked at the final gate.
+- Added authenticated `/market-data` endpoints under each account for status, IEX snapshots/history, indicative chains and delayed option history. Existing per-account watchlist symbols, including disabled synthetic symbols, can be read without granting synthetic execution permission. Unknown accounts/symbols are rejected before provider calls.
+- Separate `real_market_virtual` namespace is explicitly `ANALYSIS_ONLY` for Basic options. Its virtual-order gate always rejects; it cannot call the existing synthetic submit/fill path or any external order endpoint. It audits the reason and refuses caller-supplied prices/broker overrides. No new trading ledger or migration, no modification of user risk settings.
+- Offline API/adapter/critical regression gate: **86 passed**, zero failures/skips; existing Starlette TestClient deprecation warning. SQLite integration checks authentication, account scope, unchanged Demo ledger/risk, restart persistence and blocked duplicate attempts. Evidence in `docs/evidence/alpaca-20261012/api-targeted.*`.
+- No real Alpaca connection, keys or account entitlements validated. Mobile integration and final gates are next.
