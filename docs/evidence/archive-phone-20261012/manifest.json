@@ -6,29 +6,53 @@
   "provider_connection": false,
   "device_installation_tested": false,
   "files": {
-    "preflight/mobile-analysis-failure.txt": {
-      "sha256": "82993e82822488f04357dd04e27de5e3b9c3666bed1f43d43715fa3bf17d089d",
-      "bytes": 391
+    "android/apk-package.txt": {
+      "sha256": "7ac93eff84d185bda7f90735c4962bd2a78080068acbd9a9d385f18951936a5e",
+      "bytes": 6183
     },
-    "security/dependency-audit.json": {
-      "sha256": "1a484e5b2896c3c1c6dda9da516a72784f80dc13449a69cde8922cff592b1903",
-      "bytes": 1392
+    "android/apk-signature.txt": {
+      "sha256": "285f1974a7a86981f91fcaee972c351fcd6a332a2f4b0236b6c544fc4d7a8e77",
+      "bytes": 1026
     },
-    "security/dart-dependency-audit.json": {
-      "sha256": "50ec25f62f981eb86da05b8b1a8f3769de4b1a483890d68480fb927458768c43",
-      "bytes": 4886
+    "android/apk.sha256": {
+      "sha256": "60fd7fc7dd918724dbb886723f2e1f67aa057c93822585ea80becd14481fd940",
+      "bytes": 108
     },
-    "security/secret-scan.json": {
-      "sha256": "d2d8e8cc6092319af67170384c7147a9e429cc7a654cb647d89cfc313e000041",
-      "bytes": 11656
+    "android/build-provenance.txt": {
+      "sha256": "cac45af2d46d3a88781f52122f01c7ab0264bc7d433244d4a163bac1fdfe3d64",
+      "bytes": 233
     },
-    "mobile-targeted/market-data-tests.json": {
-      "sha256": "0415c500183a2df7b99eca30e75ca61a1a79f7fc5595045306324774c4743cec",
-      "bytes": 25613
+    "android/flutter-build-version.txt": {
+      "sha256": "4996a9a0ef46ebbc93176875ad386317fec42d189367f2357793c6b09aeea9b8",
+      "bytes": 317
     },
-    "compose/compose-smoke.json": {
-      "sha256": "ff6ab204bd052f6842a7cec23957ec522b42972ab4b56537b711a5e890106a31",
-      "bytes": 1135
+    "android/flutter-tests.json": {
+      "sha256": "982fd758e8aac17344e7526c0d4f706b1a5aa577880ba7623a522bea840518cf",
+      "bytes": 130112
+    },
+    "android/golden-tests.json": {
+      "sha256": "e524de8a6ddfe6d24b8742c17d7fe09fdc3ff5579535afef665e2c69392d0f0c",
+      "bytes": 15579
+    },
+    "android/receipt.json": {
+      "sha256": "5419d8ffb5170e18a68b0d6364393fe3f8cf93b6f4ed624e23823ad01e4d88ed",
+      "bytes": 718
+    },
+    "backend/http-smoke.json": {
+      "sha256": "6d4f4bf404ddcb84de8affcc4fe33827c430340942b7dc689199d73e0c2cd979",
+      "bytes": 706
+    },
+    "backend/lifecycle-synthetic.json": {
+      "sha256": "ca00c1099a8b424e7af0189783a33bc38f3e351eb62bafeec90b8733ccc57bc5",
+      "bytes": 21101
+    },
+    "backend/market-data-journal-postgres.json": {
+      "sha256": "2f845116e5610995ecb05afc4663c56be356ca015e275bea4054130704560154",
+      "bytes": 474
+    },
+    "backend/market-runtime-postgres.json": {
+      "sha256": "8ca64df70a14b3f32b6c56e9a7c8f2549a7586184c9fe187f6326a36d37e7fd2",
+      "bytes": 649
     },
     "backend/postgres-backup-restore.json": {
       "sha256": "d95f240aaf684a331a8a13b218ae6cb03e9f52eb28999f5f2bb1aacc72af4b8e",
@@ -38,37 +62,45 @@
       "sha256": "86917cdafbd785be2cc3039b265866ec5a3a4f5442631c83de8f4bb40cfb58c9",
       "bytes": 164
     },
-    "backend/market-runtime-postgres.json": {
-      "sha256": "8ca64df70a14b3f32b6c56e9a7c8f2549a7586184c9fe187f6326a36d37e7fd2",
-      "bytes": 649
-    },
-    "backend/http-smoke.json": {
-      "sha256": "6d4f4bf404ddcb84de8affcc4fe33827c430340942b7dc689199d73e0c2cd979",
-      "bytes": 706
-    },
-    "backend/market-data-journal-postgres.json": {
-      "sha256": "2f845116e5610995ecb05afc4663c56be356ca015e275bea4054130704560154",
-      "bytes": 474
-    },
-    "backend/lifecycle-synthetic.json": {
-      "sha256": "ca00c1099a8b424e7af0189783a33bc38f3e351eb62bafeec90b8733ccc57bc5",
-      "bytes": 21101
+    "backend/postgres-v1-results.json": {
+      "sha256": "b8934d0b27544e07ca2b70745a2683c84a202443103740a5ac0557ed83248182",
+      "bytes": 1303
     },
     "backend/test-results.xml": {
       "sha256": "37d4185736da4ab1a59eeb691453fa03dabe35f85b7c5e671747e9105aa34c63",
       "bytes": 140493
     },
-    "backend/postgres-v1-results.json": {
-      "sha256": "b8934d0b27544e07ca2b70745a2683c84a202443103740a5ac0557ed83248182",
-      "bytes": 1303
+    "compose/compose-smoke.json": {
+      "sha256": "ff6ab204bd052f6842a7cec23957ec522b42972ab4b56537b711a5e890106a31",
+      "bytes": 1135
+    },
+    "ios/flutter-tests.json": {
+      "sha256": "d422d99379a3f512605d0ceda953f6872bc85da858064d5dce9d6c29d2ffe2da",
+      "bytes": 130326
     },
     "ios/receipt.json": {
       "sha256": "819cf4980bfcf00071918c6b2ba600a94183acd5eb6d7a3e75d9b09a6a68807e",
       "bytes": 437
     },
-    "ios/flutter-tests.json": {
-      "sha256": "d422d99379a3f512605d0ceda953f6872bc85da858064d5dce9d6c29d2ffe2da",
-      "bytes": 130326
+    "mobile-targeted/market-data-tests.json": {
+      "sha256": "0415c500183a2df7b99eca30e75ca61a1a79f7fc5595045306324774c4743cec",
+      "bytes": 25613
+    },
+    "preflight/mobile-analysis-failure.txt": {
+      "sha256": "82993e82822488f04357dd04e27de5e3b9c3666bed1f43d43715fa3bf17d089d",
+      "bytes": 391
+    },
+    "security/dart-dependency-audit.json": {
+      "sha256": "50ec25f62f981eb86da05b8b1a8f3769de4b1a483890d68480fb927458768c43",
+      "bytes": 4886
+    },
+    "security/dependency-audit.json": {
+      "sha256": "1a484e5b2896c3c1c6dda9da516a72784f80dc13449a69cde8922cff592b1903",
+      "bytes": 1392
+    },
+    "security/secret-scan.json": {
+      "sha256": "d2d8e8cc6092319af67170384c7147a9e429cc7a654cb647d89cfc313e000041",
+      "bytes": 11656
     }
   },
   "ios": {
@@ -78,5 +110,79 @@
     "flutter_passed": 263,
     "unsigned": true
   },
-  "android": "pending_build_receipt"
+  "android": {
+    "run_id": 38276748045,
+    "artifact_id": 11759518047,
+    "source_commit": "89b9bfdc65fec1a8eb2b96b527ae1133481c28f4",
+    "artifact_sha256": "56ef554955d7386e88a46c3179dab9d90d5fd4575411329af7851b99f9c96586",
+    "apk_file": "options-ai-trader-rc2-build18-preview.apk",
+    "apk_sha256": "ae3ab42f65fe56882169bc8b9b7f028b75108ef9355d59d5fe1f77cb323dcc7d",
+    "apk_bytes": 155064456,
+    "application_id": "com.optionsaitrader.options_ai_trader.v1previewrc2b18",
+    "version_code": 18,
+    "min_sdk": 24,
+    "signing": "ephemeral-runner-development-key",
+    "certificate_sha256": "3fa32007dd4b0e5d1b2f7730bc22cd59a36a8bd4bd7a8f2ea0923ae09f930cb2",
+    "flutter_passed": 263,
+    "golden_passed": 6,
+    "physical_device_tested": false
+  },
+  "checks": {
+    "backend_tests": 1014,
+    "postgres_v1": 22,
+    "postgres_journal": 6,
+    "postgres_runtime": 8,
+    "postgres_backup_restore": 16,
+    "compose": 17,
+    "flutter_targeted": 52,
+    "flutter_android": 263,
+    "flutter_ios": 263,
+    "golden_android": 6
+  },
+  "workflow_runs": {
+    "backend_compose": 38275768725,
+    "targeted_flutter": 38276385194,
+    "android": 38276748045,
+    "ios": 38276748013,
+    "security": 38276747993
+  },
+  "artifacts": [
+    {
+      "id": 11759107629,
+      "run_id": 38275768725,
+      "name": "backend-test-results",
+      "sha256": "7cf1c019ba2fc86dfebc6e13b4d53d61e64ccf1f49cb6c40de4cb57b4fb34bc5"
+    },
+    {
+      "id": 11757999449,
+      "run_id": 38275768725,
+      "name": "compose-runtime-result",
+      "sha256": "6776b12e61ed258d24d35810f682f6e40bdcdd8b6370c79c6c708985ae1806f2"
+    },
+    {
+      "id": 11759735013,
+      "run_id": 38276385194,
+      "name": "alpaca-mobile-contract-results",
+      "sha256": "1fc4170126b2d2c8848194adbd06c16154d72935c0c65199bb9639d9d75621b4"
+    },
+    {
+      "id": 11759491758,
+      "run_id": 38276747993,
+      "name": "v1-security-results",
+      "sha256": "156291b898981ee3ab0c13b122f6b139cb8525f1643f2ca633397adc5dcdd174"
+    },
+    {
+      "id": 11759518047,
+      "run_id": 38276748045,
+      "name": "options-ai-trader-rc2-build18-android",
+      "sha256": "56ef554955d7386e88a46c3179dab9d90d5fd4575411329af7851b99f9c96586"
+    },
+    {
+      "id": 11760275241,
+      "run_id": 38276748013,
+      "name": "options-ai-trader-rc2-build18-ios-unsigned",
+      "sha256": "682f1dc02aa396253d904a0f8a43aea729ee8c9f40014dbdf43f0a9caf8505e7"
+    }
+  ],
+  "additional_durable_attachment": "failed_before_transfer_authentication_unavailable"
 }

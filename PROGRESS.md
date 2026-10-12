@@ -1,5 +1,13 @@
 # Progress — recovery/v1.0-20261011
 
+## Archive and phone — final accepted engineering delivery
+
+- Resumed after interrupted APK download from matching clean local/remote head `5c2f5ef090d126731f5ca2c5921b09cd0af69982`. No missing source or uncommitted app edits inferred. Continued receipt verification only; no successful tests/builds rerun.
+- Android run `38276748045` **succeeded** on `89b9bfdc65fec1a8eb2b96b527ae1133481c28f4`: analyze,263 Flutter,6 Golden, actual APK build/signature/package gates. Downloaded artifact11759518047, verified ZIP CRC/API digest and APK digest `ae3ab42f65fe56882169bc8b9b7f028b75108ef9355d59d5fe1f77cb323dcc7d` (155064456bytes). Isolated `.v1previewrc2b18`, API24+, ephemeral development signature; no stable upgrade-key claim.
+- iOS receipt remains accepted:263 Flutter, actual unsigned macOS build1.0.0/18. Backend/PG/restore/Compose acceptance unchanged:1014Python,22+6+8PG,16restore,17Compose. Raw results, identity/signing/checksum receipts and manifest saved with reports. Explicitly include the generated Flutter log files in evidence despite the repository's general log-ignore rule; no signing keys/binary archives committed.
+- Final delivery/Recovery pointers and Android instructions updated. An additional durable APK attachment save failed before transfer because upload authentication was unavailable; GitHub artifact and downloaded local APK remain available. No false storage-success claim.
+- No actual phone installation/upgrade, provider connection, financial orders, paid service, independent-host24/7 test or other-app access. Push, external/automated cold storage and real-option virtual execution remain incomplete. Full V1.0 is not declared complete. The final receipt commit changes reports/evidence only, not tested runtime.
+
 ## Archive/phone evidence checkpoint
 
 - Native source `89b9bfdc65fec1a8eb2b96b527ae1133481c28f4` saved/read back. iOS CI `38276748013` completed: **263 Flutter passed**, actual macOS release build1.0.0/18 with `--no-codesign`, not TestFlight/device acceptance. Downloaded archive CRC and SHA-256 verified, actual Runner Info.plist matches version18. Android full Flutter/Golden steps succeeded; APK compilation is still running at this checkpoint, so APK delivery is not yet claimed.

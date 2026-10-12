@@ -1,0 +1,17 @@
+{
+  "run_id": 38276748045,
+  "artifact_id": 11759518047,
+  "source_commit": "89b9bfdc65fec1a8eb2b96b527ae1133481c28f4",
+  "artifact_sha256": "56ef554955d7386e88a46c3179dab9d90d5fd4575411329af7851b99f9c96586",
+  "apk_file": "options-ai-trader-rc2-build18-preview.apk",
+  "apk_sha256": "ae3ab42f65fe56882169bc8b9b7f028b75108ef9355d59d5fe1f77cb323dcc7d",
+  "apk_bytes": 155064456,
+  "application_id": "com.optionsaitrader.options_ai_trader.v1previewrc2b18",
+  "version_code": 18,
+  "min_sdk": 24,
+  "signing": "ephemeral-runner-development-key",
+  "certificate_sha256": "3fa32007dd4b0e5d1b2f7730bc22cd59a36a8bd4bd7a8f2ea0923ae09f930cb2",
+  "flutter_passed": 263,
+  "golden_passed": 6,
+  "physical_device_tested": false
+}

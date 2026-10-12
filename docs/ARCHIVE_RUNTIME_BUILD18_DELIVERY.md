@@ -4,6 +4,21 @@
 
 مصدر بناء الهاتف: **`89b9bfdc65fec1a8eb2b96b527ae1133481c28f4`**. مصدر قبول الخادم: **`ce745489233a48b84944c97e5e30a41e0c4aca46`**؛ ملفات backend لم تتغير بعده. تقارير الأدلة اللاحقة لا تغير المصدر المختبر. خذ رأس الفرع الفعلي عند الاستئناف، ولا تعُد إلى main.
 
+## ملفات التسليم المتحققة
+
+- [Android Lab18 — APK داخل أرشيف GitHub الخاص](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38276748045/artifacts/11759518047). استخرج `options-ai-trader-rc2-build18-preview.apk` ولا تغيّر امتداد ZIP إلى APK. الحجم155064456 بايت، Android API24 فأعلى، arm64-v8a/armeabi-v7a/x86_64. طابقت بصمة الملف المنزل بصمة CI، ونجح فحص ZIP CRC وهوية الحزمة والتوقيع داخل CI.
+- حزمة Android الفعلية `com.optionsaitrader.options_ai_trader.v1previewrc2b18`، versionCode18، الاسم **Options AI Trader Lab 18**. التوقيع **مؤقت للتطوير** من runner، وليس مفتاح إصدار ثابت. شهادة SHA-256: `3fa32007dd4b0e5d1b2f7730bc22cd59a36a8bd4bd7a8f2ea0923ae09f930cb2`.
+- [iOS1.0.0/18 — Runner.app غير موقع للتوزيع](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38276748013/artifacts/11760275241). بناء macOS ناجح مع no-codesign؛ ليس IPA/TestFlight ولا إثبات تثبيت iPhone. بصمة ZIP: `682f1dc02aa396253d904a0f8a43aea729ee8c9f40014dbdf43f0a9caf8505e7`.
+- ملفات GitHub هذه خاصة وتتطلب حسابًا مخولًا، وتنتهي مدة الاحتفاظ الحالية في **2026-10-26**. المصدر والتقارير والأدلة النصية محفوظة في تاريخ Git. تعذر إنشاء نسخة دائمة إضافية للمرفق داخل المحادثة بسبب عدم توفر مصادقة الحفظ؛ لا يُدّعى نجاح هذا الحفظ. ملف APK المنزل وروابط GitHub هما التسليم المتاح.
+
+**SHA-256 لملف APK:**
+
+```text
+ae3ab42f65fe56882169bc8b9b7f028b75108ef9355d59d5fe1f77cb323dcc7d
+```
+
+ثبّت Lab18 بجانب التطبيق السابق؛ لا تحذف Build14–17 أو تمسح بياناتها. له مخزن مستقل ولا ينقل Demo تلقائيًا. راجع [خطوات Android الآمنة](ANDROID_LAB18_TEST_GUIDE.md). لم يُختبر التثبيت/التعايش على هاتف فعلي هنا.
+
 ## النتائج المنفذة
 
 | المتطلب | ما ثبت وما بقي |
@@ -32,12 +47,14 @@
 | Docker Compose |**17 فحصًا ناجحًا**، provider معطل؛ استمرار العامل دون API، إعادة تشغيل، انقطاع DB وتعافي |
 | Flutter مستهدفة |**52 نجاح،0 فشل/تخطي** بعد نجاح analyze؛ عقد فعلي مولّد من backend بمزود Mock معزول |
 | Flutter على macOS وiOS |**263 نجاح**؛ Runner.app1.0.0/18 بُني على macOS مع no-codesign، ليس IPA/TestFlight |
-| Android وGolden |خطوتا الاختبارات ناجحتان؛ تجميع APK وإيصال artifacts لم يكتمل عند نقطة حفظ هذا التقرير |
+| Android وGolden |**263 Flutter +6 Golden،0 فشل/تخطي**؛ analyze وبناء APK والتحقق من الهوية والتوقيع والبصمة ناجحة |
 | هاتف Android فعلي |**لم يُنفّذ هنا**؛ دليل الاختبار مرفق، ونتائج المستخدم القديمة تخص Build14 |
 
 الأعداد المستهدفة متداخلة مع الكاملة وليست مجموعًا إضافيًا. اختبارات السعر/المزود تستعمل استجابات Mock موثقة، وليست شهادة اتصال بالحساب أو OPRA أو ربحية. لا إعادة backtesting مالي أو جلب أسعار فعلية في هذه الدفعة.
 
 [Backend/PostgreSQL/Compose](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38275768725) · [Flutter المستهدفة](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38276385194) · [Android](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38276748045) · [iOS](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38276748013) · [الأمان](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38276747993).
+
+[سجل الأدلة وبصمات الملفات](evidence/archive-phone-20261012/manifest.json). أُعيد الاستئناف بعد انقطاع عند تنزيل APK: بقي الرأس المحلي والبعيد `5c2f5ef090d126731f5ca2c5921b09cd0af69982` بلا تغييرات مصدر معلقة، واكتمل تنزيل البناء الموجود والتحقق منه دون إعادة اختبارات ناجحة أو بناء جديد.
 
 فشل أول فحصَي Flutter قبل الاختبارات بسبب شرط متعدد الأسطر يحتاج أقواسًا؛ التعديل الأول أصاب شرطًا مختلفًا ولم يحل التحذير. صُحّح السطر المعني، ثم اجتازت البوابة52 اختبارًا. لم تُخفّض قواعد analyze ولم تُعتمد المحاولتان الفاشلتان كقبول؛ التشخيص محفوظ في مجلد الأدلة.
 
