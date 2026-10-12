@@ -312,3 +312,14 @@ def test_api_rejects_future_naive_or_unbounded_replay_queries(setup, query):
         assert client.get(base(a)+'/observations', headers=HEADERS, params=query).status_code == 422
         assert not transport.calls
 
+
+def test_two_connection_acceptance_scenarios_locally(setup, tmp_path):
+    from test_operations_v1 import module
+    acceptance = module('market_data_journal_check')
+    url = 'sqlite:///' + str(tmp_path/'multi-connection.db')
+    repositories = [Repository(url), Repository(url)]
+    try:
+        assert len(acceptance.check(repositories)) == 6
+    finally:
+        for repo in repositories:
+            repo.close()

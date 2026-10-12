@@ -331,3 +331,11 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Initial targeted test: 49 passed/1 failed because a test helper consumed an intended forbidden field; corrected the request construction. First full gate: 959 passed/4 failed (one new test import relative to wrong cwd; three missing original mobile fixture/signing-script prerequisites). Corrected import, recovered exact missing originals, reran full gate successfully.
 - PostgreSQL/Compose and source/dependency CI for this commit are pending publication, not claimed rerun. Next batch extends actual PostgreSQL race and backup/restore acceptance for the new journal.
 - Flutter/APK/iOS sources unchanged; Lab 17 remains the latest accepted phone build. Journal UI, actual provider connection, point-in-time market backtesting and qualified real-option virtual execution remain incomplete/unperformed. No other app access, credentials read, Alpaca/IBKR connection or financial order.
+
+## Market data journal batch 2 — storage acceptance
+
+- First feature batch published and verified at `3fc090a9d24a9dc69289fd140d6a965ba63c88e8`. Existing backend/Compose workflow `38260160654` and security workflow `38260160771` succeeded on that source.
+- Added six disposable two-connection database acceptance scenarios for journal idempotency, native immutable guards, account foreign keys/isolation, causal availability and atomic audit rollback. Local execution against two SQLite connections passed; PostgreSQL execution is gated in CI, not conflated with that local run.
+- Extended actual PostgreSQL backup/restore fixture to include the original market receipt and verify restored UPDATE/DELETE protection. Checks run only against an explicitly acknowledged disposable local/container database; no market transport.
+- Targeted journal + backup tool tests: **97 passed**, zero failures/errors/skips, including one new multi-connection acceptance test. Python compile and whitespace checks pass. Full Python count is expected to increase by one, pending the CI result.
+- No runtime/API behavior changed in this batch; no native build requested. Source and evidence are saved before subsequent work.

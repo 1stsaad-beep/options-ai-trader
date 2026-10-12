@@ -82,6 +82,13 @@ def run():
                 service.fill(account, order["id"], "restore-fill-" + str(index), 1, 50)
                 accounts.append(account)
                 orders.append(order["id"])
+            from market_data_journal_check import fixture
+            from app import market_data_journal as journal
+            from unittest.mock import patch
+            provider, journal_time = fixture()
+            with patch.object(journal, 'utc_now', lambda: journal_time):
+                saved_market = journal.capture(service, accounts[0], {
+                    'kind': 'stock_snapshot', 'symbol': 'AAPL', 'request_key': 'backup-journal'}, provider)
             with tempfile.TemporaryDirectory(prefix="oat-postgres-roundtrip-") as temporary:
                 archive = Path(temporary) / "ledger.dump"
                 metadata = snapshots.backup(fixture, archive)
@@ -132,6 +139,19 @@ def run():
                 recovered_repository = Repository(_url(fixture, restored_name))
                 try:
                     recovered = TradingService(recovered_repository, today=lambda: now.date(), now=lambda: now)
+                    with patch.object(journal, 'utc_now', lambda: journal_time):
+                        assert journal.replay(recovered, accounts[0], saved_market['id']) == saved_market
+                    checks.append('market_journal_exact_payload_hash_and_receipt_restored')
+                    for statement in ('UPDATE market_data_journal SET payload=payload WHERE id=?',
+                                      'DELETE FROM market_data_journal WHERE id=?'):
+                        try:
+                            with recovered_repository.transaction() as db:
+                                db.execute(statement, (saved_market['id'],))
+                        except psycopg.Error as error:
+                            assert 'immutable' in str(error)
+                        else:
+                            raise AssertionError('Restored market journal immutable guard missing')
+                    checks.append('restored_market_journal_update_delete_guards')
                     assert all(not row["state_known"] for row in recovered.list_accounts())
                     for account in accounts:
                         assert recovered.reconcile(account)["resubmitted"] == 0
