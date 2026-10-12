@@ -142,3 +142,10 @@ Verified `2260e5baa7ec7c4cd3579bff07dec277a399dd9a` clean and equal to the remot
 - All code batches published/read back: 9b72e0c (recovery), e7f179a5 (adapter), a4fde3de (API), b5cad48e (mobile), 7dc4f00b (lint/guide), 03dc0d1f (viewport test), 55b4940c (Lab 17 native identity). No prior user edits were available locally to recover.
 - Native source `55b4940cc6cbd237a1ea93478bef768c9c0380db` passed full Flutter/build gates and security. Backend source/runtime unchanged since successful 920/22/10/12 acceptance. Original engine/store/risk/dependency locks unchanged; no other project or account keys inspected.
 - Resume with FINAL_DELIVERY.md, docs/ALPACA_BUILD17_DELIVERY.md and docs/ALPACA_DATA_V1.md. External connection remains pending separate approval; Basic option execution is analysis-only. Do not claim completion of remaining V1.0 requirements.
+
+## Market journal continuation — 2026-10-12
+
+- Latest remote `cfff75b71f3400160156a1647d36d00e57bcf695` verified before work; workspace had no prior checkout or uncommitted source to recover. Restored 116 relevant files with exact Git blob verification and preserved the full remote tree/index; no force push, reset, clean, branch deletion or source removal.
+- Safe published checkpoints: `3fc090a9d24a9dc69289fd140d6a965ba63c88e8` (journal), `a42021b718a5510978570983cc30d36ee6c1958d` (storage tests), `54cdf16952a9253fb5c4abbd795fa85ba60720e1` (backup harness correction). Each head was read back after its guarded update.
+- Last tested source 54cdf169: 964 Python, 22+6 PostgreSQL, 12 backup/restore, 12 Compose, security all passed. Final receipt only adds reports/evidence. Resume from latest Recovery head, read docs/MARKET_DATA_JOURNAL_V1.md and its evidence manifest.
+- Additive database migration 6; existing trading data/risk and mobile files unchanged. Next independent task: account-scoped Flutter archive UI/tests. No provider connection is authorized by generic continuation; separate explicit approval remains required.

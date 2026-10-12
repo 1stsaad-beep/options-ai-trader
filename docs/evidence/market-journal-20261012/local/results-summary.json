@@ -1,0 +1,57 @@
+{
+  "journal-targeted-pass.xml": {
+    "tests": 120,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "sha256": "69ef29880f6355bc772e3e97f86bdb6de1cb5fc7c62e6de4721a070a5020d2de",
+    "failure_cases": []
+  },
+  "journal-full-first.xml": {
+    "tests": 963,
+    "failures": 4,
+    "errors": 0,
+    "skipped": 0,
+    "sha256": "244da725267f3384b2ed9e87a01643bea2d769c892afa64e59649be516476db6",
+    "failure_cases": [
+      "test_restart_and_sqlite_backup_restore_keep_original_receipt",
+      "test_python_and_flutter_share_real_service_contract",
+      "test_missing_secrets_produces_explicit_unsigned_build",
+      "test_complete_fixture_is_private_and_not_printed"
+    ]
+  },
+  "journal-full-pass.xml": {
+    "tests": 963,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "sha256": "fd2deee395424b9d0d8bf03e518e55c30cc0c38671ec8d70b38accc1e67858a3",
+    "failure_cases": []
+  },
+  "journal-targeted.xml": {
+    "tests": 50,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "sha256": "d4d6759ef176c1452e5cbb26edc50a168fad5643ccdf34213eb5a5fb81afdf92",
+    "failure_cases": [
+      "test_api_rejects_client_prices_credentials_overrides_and_invalid_queries[changes4]"
+    ]
+  },
+  "journal-storage-pass.xml": {
+    "tests": 97,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "sha256": "9b9fee31a1a850d23213c858d1447316ca4dad1e4939cde0f34cabe8b472870d",
+    "failure_cases": []
+  },
+  "journal-storage-fix.xml": {
+    "tests": 97,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "sha256": "4fb66689b098feef17a45b9cc5af0a438004eaa4377849180bf182ac8a6d3c2b",
+    "failure_cases": []
+  }
+}

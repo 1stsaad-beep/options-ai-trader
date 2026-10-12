@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-12",
+  "branch": "recovery/v1.0-20261011",
+  "recovered_head": "cfff75b71f3400160156a1647d36d00e57bcf695",
+  "feature_commit": "3fc090a9d24a9dc69289fd140d6a965ba63c88e8",
+  "acceptance_commit": "54cdf16952a9253fb5c4abbd795fa85ba60720e1",
+  "passed_runs": [
+    {
+      "id": 38260912057,
+      "name": "Mock safety checks",
+      "sha": "54cdf16952a9253fb5c4abbd795fa85ba60720e1"
+    },
+    {
+      "id": 38260911861,
+      "name": "Source and dependency security checks",
+      "sha": "54cdf16952a9253fb5c4abbd795fa85ba60720e1"
+    }
+  ],
+  "prior_failed_run": {
+    "id": 38260543598,
+    "sha": "a42021b718a5510978570983cc30d36ee6c1958d",
+    "failure": "backup harness imported fixture function over database connection variable; corrected alias; full gate subsequently passed"
+  },
+  "artifacts": [
+    {
+      "id": 11752975134,
+      "name": "compose-runtime-result",
+      "sha256": "sha256:85740b569d08b8f4d1544113f7330ba916f83656ec5ee2113ee5abf185dfe805",
+      "run_id": 38260912057,
+      "source": "54cdf16952a9253fb5c4abbd795fa85ba60720e1",
+      "expires_at": "2026-10-26T14:10:50Z",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38260912057/artifacts/11752975134"
+    },
+    {
+      "id": 11751569550,
+      "name": "backend-test-results",
+      "sha256": "sha256:88b4f7e797618cebc43008cbba976f2196ce4a437d7f7d463b90ead1fb4cab86",
+      "run_id": 38260912057,
+      "source": "54cdf16952a9253fb5c4abbd795fa85ba60720e1",
+      "expires_at": "2027-01-10T14:09:57Z",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38260912057/artifacts/11751569550"
+    },
+    {
+      "id": 11752063467,
+      "name": "v1-security-results",
+      "sha256": "sha256:77f6d3a012d0c0b1c0112e071bc001bb45a0ac9ecf6c68778145d9980bf1ae83",
+      "run_id": 38260911861,
+      "source": "54cdf16952a9253fb5c4abbd795fa85ba60720e1",
+      "expires_at": "2026-10-26T14:10:21Z",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38260911861/artifacts/11752063467"
+    }
+  ],
+  "acceptance": {
+    "python": {
+      "passed": 964,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "new_journal_tests": 44
+    },
+    "postgres_existing": 22,
+    "postgres_journal": 6,
+    "postgres_backup_restore": 12,
+    "compose": 12,
+    "security": {
+      "files": 622,
+      "commits": 62,
+      "historical_blobs": 928,
+      "findings": 0,
+      "python_dependencies": 24,
+      "pub_dependencies": 43
+    }
+  },
+  "not_performed": [
+    "Alpaca account connection",
+    "IBKR or broker order",
+    "physical phone test",
+    "Flutter/native rebuild (source unchanged)",
+    "out-of-sample market-data profitability backtest"
+  ],
+  "remaining": [
+    "Mobile capture/replay UI",
+    "real-data chart/analysis integration",
+    "long-term archive/export capacity management",
+    "qualified actual options data and separately accepted virtual execution",
+    "separate explicit approval and server credentials for real data connection"
+  ],
+  "files": {
+    "backend/postgres-backup-restore.json": "87d8f529045adcee999af97897d305d3e89d87dc0192a1cb625c5edf91ae51c7",
+    "backend/postgres-basic.txt": "86917cdafbd785be2cc3039b265866ec5a3a4f5442631c83de8f4bb40cfb58c9",
+    "backend/http-smoke.json": "6d4f4bf404ddcb84de8affcc4fe33827c430340942b7dc689199d73e0c2cd979",
+    "backend/market-data-journal-postgres.json": "2f845116e5610995ecb05afc4663c56be356ca015e275bea4054130704560154",
+    "backend/lifecycle-synthetic.json": "7ca21085415e9781c35dade937d57007005ae75beb64108d98c97bd0ef720fe2",
+    "backend/test-results.xml": "88e2971310beef9757987b60903d1cbe7852025fd54101d6b5b0a287dccf0aff",
+    "backend/postgres-v1-results.json": "b8934d0b27544e07ca2b70745a2683c84a202443103740a5ac0557ed83248182",
+    "compose/compose-smoke.json": "85cf9aa9ba8e40b812a9a4833fcd60ded5ac792a89197b2f8d9e272a6663e5ca",
+    "final-security/dependency-audit.json": "1a484e5b2896c3c1c6dda9da516a72784f80dc13449a69cde8922cff592b1903",
+    "final-security/dart-dependency-audit.json": "3288fbf881cead1737f21620499581689dcbc65de0970762795115cad7d6f61d",
+    "final-security/secret-scan.json": "3949916568e3ab1a6afd9aa221b0db2c89ad28f6e50c93c850828c7b37e140a6",
+    "local/results-summary.json": "05d7486bc2295374956635df867dbcfb75a1ab4cb7d3c145b26bc37d3efbf89f",
+    "preflight/backup-failure.txt": "229838a0d1170809818f9a1614ae32b210774aef0a620e38acba46834f07e07b"
+  }
+}
