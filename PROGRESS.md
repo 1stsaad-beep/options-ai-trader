@@ -302,3 +302,9 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 
 - Checkpoint `7dc4f00bef78dbe149af8dbed1a714b17ba60c70`: analyze now passes. Focused runner `38224616335` reached tests; one widget expectation queried a lazily rendered result below the visible scroll viewport. Parser, account-race, disabled connection, history rendering and error cases passed.
 - Updated that test to scroll to the actual price/Greeks rows before asserting. No production data or risk logic changed. Preserved the failing machine log in `mobile-preflight2/market-data-tests.json`; native builds remain gated until success.
+
+## Alpaca batch 4 — native acceptance gate
+
+- Widget correction published/read back at `03dc0d1fbecb18e25178d696c8c3c4a9675a7e86`; focused Flutter runner **38225000099 succeeded** (analyze + market-data/API tests). No more production mobile changes after the const notice correction.
+- Preparing Lab 17 with distinct Android identity `.v1previewrc2b17`, launcher name `Options AI Trader Lab 17` and version code 17. Prior Build 14/15/16 apps and storage are not replaced. Signing remains the existing private-development-key path, or explicitly reported ephemeral runner development key; no key is added to Git.
+- Requesting the full existing Flutter/strict chart Golden + Android APK gates and macOS unsigned iOS build on this source. Their results remain pending until checked. No device installation or real Alpaca connection is claimed.
