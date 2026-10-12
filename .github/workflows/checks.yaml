@@ -87,7 +87,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Disposable base Compose API worker and PostgreSQL smoke
-        run: python scripts/compose_smoke.py --run > compose-smoke.json
+        run: python scripts/compose_smoke.py --run --market-runtime > compose-smoke.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:

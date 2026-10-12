@@ -56,8 +56,9 @@ def create_app(repository=None, token=None, market_data_provider=None):
             raise RuntimeError('Live execution is hard locked; only paper mode is permitted')
         app.state.repository = repository or Repository(os.getenv('DATABASE_URL','sqlite:///options_demo.db'))
         app.state.service = TradingService(app.state.repository)
-        from .market_data import from_environment
-        app.state.market_data = market_data_provider if market_data_provider is not None else from_environment()
+        from .market_data import from_environment, DisabledMarketData
+        app.state.market_data = (market_data_provider if market_data_provider is not None else
+            DisabledMarketData() if os.getenv('OAT_MARKET_RUNTIME_ROLE') == 'api_cache_only' else from_environment())
         yield
         if repository is None:
             app.state.repository.close()

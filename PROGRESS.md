@@ -1,5 +1,13 @@
 # Progress — recovery/v1.0-20261011
 
+## Independent market runtime batch 2 — process and Compose
+
+- Batch 1 published/read back at `ea7f9e4cd26f2c4c5a52753753bd6254e6263aef`. GitHub backend/Compose `38267289325` and security `38267289373` succeeded on that source.
+- Added a long-lived collector CLI with SIGTERM handling, safe DB reconnect, heartbeat healthcheck and explicit audited maintenance to reset a stopped collector's authentication lock. Its default performs no credential read or provider connection. Secrets require separate approval and an explicit private regular file; other-app/legacy key variables are ignored.
+- Opt-in `infra/compose.market-runtime.yaml` adds a fourth non-root, read-only service. Only that service mounts the data secret; API becomes persisted-cache-only even if manual provider approval variables were inherited. Existing Synthetic worker remains separate. The profile is disabled by default.
+- Targeted process/runtime/Compose guard tests: **44 passed**. Includes two real independent Python process starts against persisted SQLite, unchanged Demo account state, strict secret-file rejection and no API provider construction. Actual new Compose container stop/restart/PostgreSQL-outage scenarios are added to CI; not yet claimed run here. Existing base Compose acceptance is retained.
+- No mobile source or user account connection. Persisted API inbox is implemented; mobile rendering/push delivery, qualified option simulation, long-running archival retention and actual independent server acceptance remain incomplete.
+
 ## Independent market runtime batch 1 — 2026-10-12
 
 - Inspected current branch/reports at `119f0b3805392f8f090fcbb330b3f135894e3a15`; tracked source was clean. Reused the accepted Alpaca adapter, immutable journal, causal analysis pipeline and US calendar. No earlier work rebuilt.

@@ -1,0 +1,42 @@
+# Opt-in collector profile. Default approval is absent; no real account connection.
+# Do not combine with compose.alpaca-data.yaml (manual API provider topology).
+services:
+  api:
+    environment:
+      OAT_MARKET_RUNTIME_ROLE: api_cache_only
+  market-collector:
+    profiles: [market-runtime]
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    command: [python, -m, app.market_runtime_worker]
+    environment:
+      DATABASE_URL: postgresql://trader:${POSTGRES_PASSWORD}@postgres:5432/options_demo
+      TRADING_MODE: paper
+      BROKER_PROVIDER: mock
+      ENABLE_LIVE: 'false'
+      OAT_ALPACA_DATA_APPROVAL: ${OAT_ALPACA_DATA_APPROVAL:-}
+      OAT_ALPACA_DATA_CREDENTIALS_FILE: /run/secrets/oat_alpaca_data
+      OAT_ALPACA_COLLECTOR_REQUESTS_PER_MINUTE: ${OAT_ALPACA_COLLECTOR_REQUESTS_PER_MINUTE:-10}
+    secrets:
+      - oat_alpaca_data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    stop_grace_period: 30s
+    healthcheck:
+      test: [CMD, python, -m, app.market_runtime_worker, --healthcheck]
+      interval: 15s
+      timeout: 8s
+      retries: 3
+      start_period: 20s
+secrets:
+  oat_alpaca_data:
+    # An explicit file outside the checkout; no secret value in Compose/env/APK.
+    file: ${OAT_ALPACA_SECRET_FILE:?Set path to a private external file; an empty placeholder is sufficient while approval is absent}
