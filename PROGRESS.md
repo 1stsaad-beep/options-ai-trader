@@ -339,3 +339,9 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Extended actual PostgreSQL backup/restore fixture to include the original market receipt and verify restored UPDATE/DELETE protection. Checks run only against an explicitly acknowledged disposable local/container database; no market transport.
 - Targeted journal + backup tool tests: **97 passed**, zero failures/errors/skips, including one new multi-connection acceptance test. Python compile and whitespace checks pass. Full Python count is expected to increase by one, pending the CI result.
 - No runtime/API behavior changed in this batch; no native build requested. Source and evidence are saved before subsequent work.
+
+### PostgreSQL backup acceptance correction
+
+- Storage checkpoint `a42021b718a5510978570983cc30d36ee6c1958d` published/read back. CI `38260543598` passed Python, existing PostgreSQL checks, all six new journal PostgreSQL scenarios and Compose. The backup step **failed**, so its expanded acceptance remains unpassed.
+- The failure was a name collision in the test harness: importing the journal fixture function replaced the existing database connection variable named fixture. Corrected to an explicit market_journal_fixture alias; production archive/backup APIs are unchanged.
+- Retained the actual traceback in docs/evidence/market-journal-20261012/preflight/backup-failure.txt. Targeted journal and backup-tool tests rerun: **97 passed**. Publishing correction to repeat actual PostgreSQL backup/restore CI; no new feature started.

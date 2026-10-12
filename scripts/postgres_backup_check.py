@@ -82,10 +82,10 @@ def run():
                 service.fill(account, order["id"], "restore-fill-" + str(index), 1, 50)
                 accounts.append(account)
                 orders.append(order["id"])
-            from market_data_journal_check import fixture
+            from market_data_journal_check import fixture as market_journal_fixture
             from app import market_data_journal as journal
             from unittest.mock import patch
-            provider, journal_time = fixture()
+            provider, journal_time = market_journal_fixture()
             with patch.object(journal, 'utc_now', lambda: journal_time):
                 saved_market = journal.capture(service, accounts[0], {
                     'kind': 'stock_snapshot', 'symbol': 'AAPL', 'request_key': 'backup-journal'}, provider)

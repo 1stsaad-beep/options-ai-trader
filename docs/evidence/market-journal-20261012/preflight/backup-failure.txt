@@ -1,0 +1,12 @@
+Source a42021b718a5510978570983cc30d36ee6c1958d; run 38260543598 job 114849596610
+Traceback (most recent call last):
+2026-10-12T14:07:46.6539338Z   File "/home/runner/work/options-ai-trader/options-ai-trader/scripts/postgres_backup_check.py", line 186, in <module>
+2026-10-12T14:07:46.6549307Z     print(json.dumps(run(), indent=2))
+2026-10-12T14:07:46.6559426Z                      ^^^^^
+2026-10-12T14:07:46.6560586Z   File "/home/runner/work/options-ai-trader/options-ai-trader/scripts/postgres_backup_check.py", line 94, in run
+2026-10-12T14:07:46.6561685Z     metadata = snapshots.backup(fixture, archive)
+2026-10-12T14:07:46.6562336Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-12T14:07:46.6563379Z   File "/home/runner/work/options-ai-trader/options-ai-trader/scripts/postgres_backup_restore.py", line 280, in backup
+2026-10-12T14:07:46.6564623Z     with _credentials(connection, directory, connection.database) as environment:
+2026-10-12T14:07:46.6565501Z                                              ^^^^^^^^^^^^^^^^^^^
+2026-10-12T14:07:46.6566221Z AttributeError: 'function' object has no attribute 'database'
