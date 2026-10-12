@@ -1,5 +1,11 @@
 # Progress — recovery/v1.0-20261011
 
+## Lab19 native build gate
+
+- Corrected source `6f8b518b4be2024c9f613432436f28bcc23017b1` passed targeted CI38284973647: analyze,30 native Java policy checks and **61 Flutter tests**, zero failures/skips. Downloaded artifact11762453026; ZIP CRC and API SHA-256 verified before parsing results. Rejected-stop picker-state regression now passes with the controlled value.
+- Prepare isolated Lab19 (package suffixv1previewrc2b19, labelLab19, code19) and retain Lab18 and earlier stores. Identity verifier accepts19 and rejects18/17/14. Existing private-development-signing/ephemeral fallback remains unchanged; no key generated locally or committed.
+- Trigger the existing full Flutter/Golden/Android APK and unsigned iOS gates; results remain pending until received. Add compiled manifest dump to inspect actual packaged service permissions and exported state. Resume/delivery/installation drafts preserve acceptance scope and outstanding device/hosting work.
+
 ### Controlled account picker regression
 
 - CI38284613383 passed Java30/analyze, then the stronger account-selection assertion reproduced the exact bug: the picker retained account-two after stop refusal while requests still named account-one. Merely removing the field during an async stop can be coalesced before the next frame and does not guarantee disposal. Replaced the internally stateful FormField with a controlled DropdownButton whose value is the actual selected account. Same account-isolation regression retained; no sleep, weakened assertion or platform workaround.
