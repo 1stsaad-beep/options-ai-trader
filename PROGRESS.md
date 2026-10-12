@@ -322,3 +322,12 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 
 - Delivery reports and raw acceptance evidence published/read back at `7520fb848776c277005ce6837f9b37a9b0b66981`. Added the exact CI APK checksum file to the source evidence manifest and a machine summary of the initial missing-prerequisite failures. Manifest SHA-256 values rechecked; no runtime changes or extra rebuild.
 - All source/report edits are committed; remaining local untracked files are intermediate logs/download ZIPs, not uncommitted application changes. No previous files or Git history deleted.
+
+## Market data journal batch 1 — 2026-10-12
+
+- Recovered latest remote `cfff75b71f3400160156a1647d36d00e57bcf695` and exact tree from GitHub. No previous workspace checkout or uncommitted source survived; no unavailable session edits are claimed recovered. Recovery branch/history and unmaterialized files are preserved.
+- Added an explicit account-scoped capture/list/replay API and additive migration 6. Immutable original observations, SHA-256 integrity, original source/missing values, server-recorded availability, idempotent requests and transactional audit. No automatic GET persistence, no trading or analysis coupling.
+- Before changes: 70 existing Alpaca tests passed. Targeted archive/migration/Alpaca: 120 passed. Full local Python on corrected code: **963 passed**, zero failures/errors/skips, including 43 new journal cases.
+- Initial targeted test: 49 passed/1 failed because a test helper consumed an intended forbidden field; corrected the request construction. First full gate: 959 passed/4 failed (one new test import relative to wrong cwd; three missing original mobile fixture/signing-script prerequisites). Corrected import, recovered exact missing originals, reran full gate successfully.
+- PostgreSQL/Compose and source/dependency CI for this commit are pending publication, not claimed rerun. Next batch extends actual PostgreSQL race and backup/restore acceptance for the new journal.
+- Flutter/APK/iOS sources unchanged; Lab 17 remains the latest accepted phone build. Journal UI, actual provider connection, point-in-time market backtesting and qualified real-option virtual execution remain incomplete/unperformed. No other app access, credentials read, Alpaca/IBKR connection or financial order.

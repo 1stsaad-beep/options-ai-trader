@@ -5,11 +5,13 @@ options are monitoring-only; the real-market virtual order gate cannot reach the
 synthetic submit/fill path or any broker, even if a caller supplies a price.
 """
 from datetime import datetime
+from typing import Literal
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict
 from .market_data import MarketDataError, MODE, INDICATIVE_REASON, OPTION, symbol
 from .service import Rejected
+from . import market_data_journal as journal
 
 
 class VirtualOrderIntent(BaseModel):
@@ -17,6 +19,17 @@ class VirtualOrderIntent(BaseModel):
     symbol: str
     contract: str
     request_key: str
+
+
+class CaptureObservation(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    kind: Literal['stock_snapshot', 'stock_bars', 'option_chain', 'option_bars']
+    symbol: str
+    request_key: str
+    contract: str | None = None
+    start: datetime | None = None
+    end: datetime | None = None
+    timeframe: str | None = None
 
 
 def scoped_symbol(service, account_id, ticker):
@@ -45,6 +58,11 @@ def account_result(account_id, result):
 
 
 def install_market_data_routes(app, secured, service_dependency, provider_dependency):
+    @app.exception_handler(journal.JournalError)
+    async def journal_error(request, exc):
+        return JSONResponse(status_code=exc.status, content={'detail': exc.code, 'mode': MODE,
+            'synthetic_fallback': False, 'external_orders_enabled': False, 'virtual_fills_enabled': False})
+
     @app.exception_handler(MarketDataError)
     async def market_data_error(request, exc):
         status = 429 if exc.code == 'DATA_RATE_LIMITED' else 503
@@ -54,6 +72,21 @@ def install_market_data_routes(app, secured, service_dependency, provider_depend
             'synthetic_fallback': False, 'external_orders_enabled': False, 'virtual_fills_enabled': False})
 
     prefix = '/api/accounts/{account_id}/market-data'
+
+    @app.post(prefix + '/observations', dependencies=secured)
+    def capture_observation(account_id: str, body: CaptureObservation,
+                            s=Depends(service_dependency), p=Depends(provider_dependency)):
+        return journal.capture(s, account_id, body.model_dump(), p)
+
+    @app.get(prefix + '/observations', dependencies=secured)
+    def list_observations(account_id: str, as_of: datetime | None = None,
+                          before_sequence: int | None = None, limit: int = 20, s=Depends(service_dependency)):
+        return journal.list_records(s, account_id, as_of=as_of, before_sequence=before_sequence, limit=limit)
+
+    @app.get(prefix + '/observations/{observation_id}', dependencies=secured)
+    def replay_observation(account_id: str, observation_id: str, as_of: datetime | None = None,
+                            s=Depends(service_dependency)):
+        return journal.replay(s, account_id, observation_id, as_of=as_of)
 
     @app.get(prefix + '/status', dependencies=secured)
     def data_status(account_id: str, s=Depends(service_dependency), p=Depends(provider_dependency)):

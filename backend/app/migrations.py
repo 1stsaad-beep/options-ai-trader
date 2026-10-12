@@ -109,7 +109,19 @@ def research_observation_schema(db, postgres):
             db.execute(f"CREATE TRIGGER immutable_research_observation_{action.lower()} BEFORE {action} ON research_observations BEGIN SELECT RAISE(ABORT, 'research observations are immutable'); END")
 
 
-MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema)]
+def market_data_journal_schema(db, postgres):
+    """A separate observation archive; never an execution mark or old decision."""
+    db.execute('CREATE TABLE market_data_journal (id TEXT NOT NULL UNIQUE, account_id TEXT NOT NULL REFERENCES accounts(id), sequence INTEGER NOT NULL CHECK(sequence>0), request_key TEXT NOT NULL, fingerprint TEXT NOT NULL, kind TEXT NOT NULL, symbol TEXT NOT NULL, recorded_at TEXT NOT NULL, payload TEXT NOT NULL, digest TEXT NOT NULL, size_bytes INTEGER NOT NULL CHECK(size_bytes>0), PRIMARY KEY(account_id,sequence), UNIQUE(account_id,request_key))')
+    db.execute('CREATE INDEX ix_market_journal_account_time ON market_data_journal(account_id,recorded_at,sequence)')
+    if postgres:
+        db.execute("CREATE FUNCTION immutable_market_journal_v1() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'market data journal is immutable'; END $$")
+        db.execute('CREATE TRIGGER immutable_market_journal_v1 BEFORE UPDATE OR DELETE ON market_data_journal FOR EACH ROW EXECUTE FUNCTION immutable_market_journal_v1()')
+    else:
+        for action in ('UPDATE', 'DELETE'):
+            db.execute(f"CREATE TRIGGER immutable_market_journal_v1_{action.lower()} BEFORE {action} ON market_data_journal BEGIN SELECT RAISE(ABORT, 'market data journal is immutable'); END")
+
+
+MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema)]
 
 
 def migrate(db, postgres):
