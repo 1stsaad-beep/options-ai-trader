@@ -112,7 +112,9 @@ class RuntimeEvents {
         throw const FormatException('Invalid original event');
       }
       runtimeObject(item['detail']);
-      if (item['acknowledged_at'] != null) runtimeTime(item['acknowledged_at']);
+      if (item['acknowledged_at'] != null) {
+        runtimeTime(item['acknowledged_at']);
+      }
       items.add(item);
     }
     return RuntimeEvents(items, value['next_before'] as String?);

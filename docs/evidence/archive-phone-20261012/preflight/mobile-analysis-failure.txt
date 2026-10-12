@@ -1,0 +1,4 @@
+2026-10-12T16:13:18.4164999Z Analyzing mobile...
+2026-10-12T16:13:18.4195726Z    info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/market_runtime.dart:103:56 • curly_braces_in_flow_control_structures
+2026-10-12T16:13:18.4274378Z 1 issue found. (ran in 11.0s)
+2026-10-12T16:13:18.4405668Z ##[error]Process completed with exit code 1.

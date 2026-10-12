@@ -1,5 +1,10 @@
 # Progress — recovery/v1.0-20261011
 
+### Mobile static-analysis correction
+
+- Phone checkpoint published/read back at `ce745489233a48b84944c97e5e30a41e0c4aca46`; backend/Compose and security CI succeeded. Targeted mobile `38275768609` stopped at one required curly-brace lint in the event parser; widget tests had **not run**, and no APK was built. Corrected the lint without weakening analysis. Original diagnostic retained under `docs/evidence/archive-phone-20261012/preflight/`.
+- Saving the correction before rerunning the affected Flutter gate. No market connection or additional feature in this correction.
+
 ## Archive and phone phase — batch 2, 2026-10-12
 
 - Archive batch saved/read back at `ac2c0c9688b035d4f54e7b26a563aef035bd8178`. Backend/PostgreSQL/backup and Compose workflow `38273980759` succeeded, including the new post-backup archive recovery; security `38273979946` succeeded. No provider connection.
