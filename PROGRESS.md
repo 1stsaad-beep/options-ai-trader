@@ -1,5 +1,11 @@
 # Progress — recovery/v1.0-20261011
 
+### Android monitor preflight correction
+
+- Source `a135f7fac20fca89fc5395d46c4bb043e3d6eadd`: Java policy **30 checks passed**, Flutter analyze passed. Targeted widget run38283579485 failed: eight new tests retained the debug platform override until teardown (after Flutter's invariant check), and the existing account-race test lacked a native stop-channel mock.
+- Clear the platform override before widget invariant verification; explicitly mock native stop in runtime tests and assert it precedes account switching. Added a rejected-stop case retaining the original account with redacted errors. No production behavior or test invariant weakened. Raw failed machine output retained in preflight/mobile/.
+- Archive CI receipts downloaded/CRC/digest verified:1027 Python,22+6+8 PostgreSQL,16 restore,17 Compose. Native build remains gated pending corrected Flutter tests.
+
 ## Android background monitor — source checkpoint
 
 - Archive batch published/read back at `14f854da7dc62573d0ecda177d5a00d20fc47fd1`. Backend/PostgreSQL/Compose38282705999 and security38282706758 succeeded; exact evidence receipts will be collected before final delivery.

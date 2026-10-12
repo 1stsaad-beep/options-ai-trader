@@ -11,7 +11,6 @@ void main() {
   bool permission = true, failStart = false, failStatus = false;
   Map<String, dynamic> native = {'active': false, 'state': 'STOPPED'};
   setUp(() {
-    debugDefaultTargetPlatformOverride = TargetPlatform.android;
     calls.clear(); permission = true; failStart = false; failStatus = false;
     native = {'active': false, 'state': 'STOPPED'};
     binding.defaultBinaryMessenger.setMockMethodCallHandler(MarketMonitor.channel, (call) async {
@@ -42,7 +41,10 @@ void main() {
     await tester.tap(find.text(confirm ? 'بدء الجلسة' : 'إلغاء'));
     await tester.pumpAndSettle();
   }
-  Future<void> close(WidgetTester tester) async { await tester.pumpWidget(const SizedBox()); }
+  Future<void> close(WidgetTester tester) async {
+    await tester.pumpWidget(const SizedBox());
+    debugDefaultTargetPlatformOverride = null;
+  }
 
   testWidgets('no automatic start or permission request; cancellation is inert', (tester) async {
     await open(tester);

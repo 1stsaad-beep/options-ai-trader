@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:options_ai_trader/api.dart';
 import 'package:options_ai_trader/market_runtime.dart';
+import 'package:options_ai_trader/market_monitor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Map<String, dynamic> fixture() => Map<String, dynamic>.from(
@@ -68,6 +70,16 @@ Future<void> scrollTo(WidgetTester tester, Finder target) async {
 }
 
 void main() {
+  final binding = TestWidgetsFlutterBinding.ensureInitialized();
+  final monitorCalls = <MethodCall>[];
+  setUp(() {
+    monitorCalls.clear();
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(MarketMonitor.channel, (call) async {
+      monitorCalls.add(call);
+      return {'active': false, 'state': 'STOPPED'};
+    });
+  });
+  tearDown(() => binding.defaultBinaryMessenger.setMockMethodCallHandler(MarketMonitor.channel, null));
   test('actual Python fixture preserves timestamps prices source and disabled fills', () {
     final raw = fixture();
     final status = RuntimeStatus.parse(raw['status'], 'account-one');
@@ -191,9 +203,24 @@ void main() {
     pending.complete(http.Response(jsonEncode(server.data['status']), 200));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('runtime-account-account-two')), findsOneWidget);
+    expect(monitorCalls.where((c) => c.method == 'stop').length, 1);
     await scrollTo(tester, find.textContaining('لا مشاهدات محفوظة'));
     expect(find.byKey(const Key('runtime-price-AAPL')), findsNothing);
     expect(tester.takeException(), null);
+  });
+  testWidgets('uncertain native stop blocks account switch without leaking details', (tester) async {
+    final server = RuntimeServer(), api = server.api(); addTearDown(api.close);
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(MarketMonitor.channel, (call) async {
+      throw PlatformException(code: 'fixture', message: 'PRIVATE_NATIVE_DETAIL');
+    });
+    await mount(tester, api);
+    await tester.tap(find.byKey(const ValueKey('runtime-account-account-one')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('الحساب الثاني').last); await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('runtime-account-account-one')), findsOneWidget);
+    expect(find.textContaining('لم يتأكد إيقاف المراقبة'), findsOneWidget);
+    expect(find.textContaining('PRIVATE_NATIVE_DETAIL'), findsNothing);
+    expect(server.calls.every((r) => r.url.path.contains('/account-one/')), true);
   });
   testWidgets('durable event acknowledgement and pagination use own backend only', (tester) async {
     final server = RuntimeServer();
