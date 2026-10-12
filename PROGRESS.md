@@ -1,5 +1,10 @@
 # Progress — recovery/v1.0-20261011
 
+### Controlled account picker regression
+
+- CI38284613383 passed Java30/analyze, then the stronger account-selection assertion reproduced the exact bug: the picker retained account-two after stop refusal while requests still named account-one. Merely removing the field during an async stop can be coalesced before the next frame and does not guarantee disposal. Replaced the internally stateful FormField with a controlled DropdownButton whose value is the actual selected account. Same account-isolation regression retained; no sleep, weakened assertion or platform workaround.
+- Saved the actual failing machine report in preflight/picker-state. Prior fixture-correction run38284050425 verified61 passes; it lacked the new value-state assertion and is not acceptance of the later fix. Native packaging remains pending.
+
 ### Account-picker lint gate
 
 - Test-fixture correction50b3c06 passed targeted CI38284050425. Follow-up4ea42d2 stopped at one multiline-if braces lint at market_runtime.dart:296 before running widgets (CI38284373544); Java30 policy checks passed. Added the required block without changing behavior or weakening analysis. Packaging19 files are prepared locally but not included until the corrected gate succeeds.

@@ -283,8 +283,9 @@ class _MarketRuntimeScreenState extends State<MarketRuntimeScreen> with WidgetsB
         const Text('استمرار المحرك مسؤولية الخادم. إغلاق الهاتف لا يوقفه. لا مفاتيح Alpaca داخل التطبيق.'),
         const SizedBox(height: 12),
         if (changingAccount) const Text('جار إيقاف مراقبة الحساب السابق…') else
-        DropdownButtonFormField<String>(key: ValueKey('runtime-account-$account'), initialValue: account,
-          isExpanded: true, decoration: const InputDecoration(labelText: 'حساب الخادم'),
+        InputDecorator(decoration: const InputDecoration(labelText: 'حساب الخادم'),
+          child: DropdownButtonHideUnderline(child: DropdownButton<String>(
+          key: ValueKey('runtime-account-$account'), value: account, isExpanded: true,
           items: widget.accounts.map((a) => DropdownMenuItem<String>(value: '${a['id'] ?? a['account_id']}',
             child: Text('${a['name']}', overflow: TextOverflow.ellipsis))).toList(),
           onChanged: (id) async {
@@ -301,7 +302,7 @@ class _MarketRuntimeScreenState extends State<MarketRuntimeScreen> with WidgetsB
             }
             if (!mounted) return;
             setState(() { account = id; changingAccount = false; notice = null; }); load();
-          }),
+          }))),
         if (busy) const LinearProgressIndicator(),
         if (error != null) Semantics(liveRegion: true, child: Padding(padding: const EdgeInsets.all(12),
           child: Text(error!, key: const Key('runtime-error'), style: TextStyle(color: Theme.of(context).colorScheme.error)))),

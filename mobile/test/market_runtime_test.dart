@@ -220,7 +220,7 @@ void main() {
     expect(find.byKey(const ValueKey('runtime-account-account-one')), findsOneWidget);
     expect(find.textContaining('لم يتأكد إيقاف المراقبة'), findsOneWidget);
     expect(find.textContaining('PRIVATE_NATIVE_DETAIL'), findsNothing);
-    expect(tester.state<FormFieldState<String>>(find.byKey(const ValueKey('runtime-account-account-one'))).value, 'account-one');
+    expect(tester.widget<DropdownButton<String>>(find.byKey(const ValueKey('runtime-account-account-one'))).value, 'account-one');
     expect(server.calls.every((r) => r.url.path.contains('/account-one/')), true);
   });
   testWidgets('durable event acknowledgement and pagination use own backend only', (tester) async {
