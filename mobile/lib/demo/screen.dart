@@ -143,7 +143,9 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
 
   Future<void> importBackup({bool recovery = false}) async {
     if (recovery ? !controller.canRecover :
-        (!controller.ready || controller.busy || controller.storageUncertain)) return;
+        (!controller.ready || controller.busy || controller.storageUncertain)) {
+      return;
+    }
     controller.pause();
     final expectedCurrent = engine.encode();
     final expectedDamaged = controller.unreadableSnapshot;

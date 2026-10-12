@@ -1,0 +1,8 @@
+Source: 7165cca807c4a7d0e99f92f37f1df8a08260094a
+Run: 38205010875 / job: 114666454009
+Extracted actual analyzer diagnostics (tests not run):
+2026-10-12T04:45:13.1018340Z Analyzing mobile...
+2026-10-12T04:45:13.1059458Z    info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/demo/screen.dart:146:80 • curly_braces_in_flow_control_structures
+2026-10-12T04:45:13.1078356Z   error • The method 'loadRecoveryCopy' isn't defined for the type 'DemoStore'. Try correcting the name to the name of an existing method, or defining a method named 'loadRecoveryCopy' • lib/demo/store.dart:201:49 • undefined_method
+2026-10-12T04:45:13.1186715Z 2 issues found. (ran in 12.1s)
+2026-10-12T04:45:13.1282158Z ##[error]Process completed with exit code 1.

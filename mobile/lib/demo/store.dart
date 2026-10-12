@@ -108,7 +108,9 @@ class DemoController extends ChangeNotifier {
       final data = await store.load();
       loaded = data;
       if (data == null) {
-        if (recovering) throw const DemoRejected('الحفظ غير موجود؛ احتفظ بنسخة الذاكرة وصدّرها');
+        if (recovering || previouslyReady || _unreadableSnapshot != null) {
+          throw const DemoRejected('الحفظ غير موجود؛ احتفظ بالأصل المتاح وصدّره');
+        }
         engine = DemoEngine();
         for (final name in ['حساب تجريبي محلي', 'محفظة التوازن', 'مختبر Swing', 'مراقبة الفرص']) {
           final a = engine.createAccount(name, 1000000);
@@ -116,6 +118,9 @@ class DemoController extends ChangeNotifier {
           if (name == 'مراقبة الفرص') engine.configure(a['id'], {'mode': 'observe'});
         }
         await store.save(engine.encode());
+        if (await store.load() != engine.encode()) {
+          throw const DemoRejected('تعذر التحقق من الحفظ الأول؛ لم يبدأ تشغيل المحاكاة');
+        }
       } else {
         engine = DemoEngine.decode(data);
       }
@@ -130,7 +135,7 @@ class DemoController extends ChangeNotifier {
         error = 'تعذرت إعادة قراءة الحفظ؛ بيانات الذاكرة محفوظة والتصدير متاح، والكتابة مقفلة. $e';
       } else {
         ready = false;
-        _unreadableSnapshot = loaded;
+        _unreadableSnapshot = loaded ?? _unreadableSnapshot;
         error = '$e';
       }
     }
@@ -198,7 +203,8 @@ class DemoController extends ChangeNotifier {
   Future<String?> recoveryCopy() async {
     if (_disposed || busy) return null;
     final target = store;
-    return target is DemoRecoveryStore ? target.loadRecoveryCopy() : null;
+    return target is DemoRecoveryStore
+        ? (target as DemoRecoveryStore).loadRecoveryCopy() : null;
   }
 
   Future<bool> recoverBackup(DemoBackupPreview preview,

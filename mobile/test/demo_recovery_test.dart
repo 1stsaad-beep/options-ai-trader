@@ -239,4 +239,40 @@ void main() {
     controller.dispose();
     reopened.dispose();
   });
+
+  for (final valid in [false, true]) {
+    test('missing disk after ${valid ? "valid" : "unreadable"} load never creates replacement accounts', () async {
+      final store = MemoryDemoStore(valid ? source().encode() : damaged);
+      final controller = DemoController(store);
+      await controller.load();
+      final memory = controller.engine.encode();
+      store.data = null;
+      await controller.load();
+      expect(store.data, isNull);
+      expect(controller.engine.encode(), memory);
+      expect(controller.ready, valid);
+      if (valid) {
+        expect(controller.storageUncertain, true);
+        expect(controller.exportBackup(), isNotEmpty);
+      } else {
+        expect(controller.unreadableSnapshot, damaged);
+        expect(await controller.recoverBackup(preview(), expectedDamaged: damaged), false);
+      }
+      controller.dispose();
+    });
+  }
+
+  test('first-ever initialization verifies writeback before enabling simulation', () async {
+    final store = FaultStore()..data = null..wrongReplacement = true;
+    final controller = DemoController(store);
+    await controller.load();
+    expect(controller.ready, false);
+    controller.play();
+    expect(controller.playing, false);
+    expect(store.data, 'truncated replacement');
+    await controller.load();
+    expect(controller.canRecover, true);
+    expect(controller.unreadableSnapshot, 'truncated replacement');
+    controller.dispose();
+  });
 }
