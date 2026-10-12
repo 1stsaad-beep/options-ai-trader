@@ -317,3 +317,8 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Security run `38225336652`: zero pattern findings (589 tracked text files /57 commits /873 historical blobs); 24 Python and 43 Pub dependencies with no known advisories at query time. Not a comprehensive vulnerability assessment.
 - Reports, requirement statuses, connection procedure, phone guide, backtest limits, failure history and raw text evidence saved in Git. Android/iOS artifacts expire 2026-10-26. Latest delivery commit only documents the verified source; no additional feature or rebuild is needed.
 - Real account connection, other-app access, financial orders, Live/Paper/IBKR, paid services and key handling were not performed. Basic indicative options remain monitoring-only; local virtual execution over qualified real option quotes and full V1.0 completion remain unclaimed.
+
+### Delivery receipt verification
+
+- Delivery reports and raw acceptance evidence published/read back at `7520fb848776c277005ce6837f9b37a9b0b66981`. Added the exact CI APK checksum file to the source evidence manifest and a machine summary of the initial missing-prerequisite failures. Manifest SHA-256 values rechecked; no runtime changes or extra rebuild.
+- All source/report edits are committed; remaining local untracked files are intermediate logs/download ZIPs, not uncommitted application changes. No previous files or Git history deleted.

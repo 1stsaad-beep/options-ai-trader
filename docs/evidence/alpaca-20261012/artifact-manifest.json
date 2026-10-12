@@ -164,6 +164,16 @@
       "path": "security-final/secret-scan.json",
       "bytes": 11655,
       "sha256": "523366c0183a619359a989afd4b53996c8dd5495a0001d1a25a6e3177066d5e2"
+    },
+    {
+      "path": "native/apk.sha256",
+      "bytes": 108,
+      "sha256": "0473e08c4b0c63ed805bf5913134f687e9058960b861cd50b77fa54feeb42596"
+    },
+    {
+      "path": "local-prerequisite-failures.json",
+      "bytes": 991,
+      "sha256": "d373fa2af8b76d7f1da743b550b1b579d565b5d4d62a75326d1bb3e74877899b"
     }
   ],
   "runs": {

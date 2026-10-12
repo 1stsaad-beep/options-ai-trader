@@ -1,0 +1,28 @@
+{
+  "scope": "initial_local_checkout_missing_two_original_files",
+  "runtime_changes_to_resolve": false,
+  "result": "failed_then_exact_prerequisites_recovered",
+  "counts": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "2",
+      "skipped": "0",
+      "tests": "919",
+      "time": "8.234",
+      "timestamp": "2026-10-12T11:20:59.223652+03:00",
+      "hostname": "4daa437f09f3"
+    }
+  ],
+  "failures": [
+    {
+      "name": "test_reviewed_documentation_fixture_exception_is_value_and_path_specific",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/30bf1042c108/options-ai-trader/docs/DATABASE.md'"
+    },
+    {
+      "name": "test_opt_in_https_has_loopback_only_binding_and_internal_ca",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/30bf1042c108/options-ai-trader/infra/compose.https.yaml'"
+    }
+  ],
+  "subsequent_full_result": "920 passed; python-full-final.xml"
+}
