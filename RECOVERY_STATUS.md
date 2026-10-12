@@ -113,3 +113,6 @@ Current code acceptance is at `b39b164f6869305b1e71586ef2d6978a7612fcf1`: 631 Py
 ## Lab 15 native checkpoint
 
 The final native jobs build `c5033ab2e108b18de1b873652d911b226b7770a8`. Runtime, reviewed goldens and isolated safety exercises are saved. `docs/evidence/phone-build15/run-manifest.json` maps the actual runs and counts. iOS is built and inspected (unsigned); Android is pending assembly/identity/signature/checksum acceptance in run `38180059532`. Do not launch another feature or rebuild already passed iOS tests. Complete the artifact checks and final phone report; keep Build 14 and its private data untouched. The new Android identifier is `com.optionsaitrader.options_ai_trader.v1previewrc2b15`.
+# Continuation checkpoint — 2026-10-12
+
+Verified `2260e5baa7ec7c4cd3579bff07dec277a399dd9a` clean and equal to the remote Recovery head. The user's new continuation authorizes the next independent batch: recovery import after an initial unreadable Demo snapshot. Source and targeted regressions are saved with CI acceptance pending; see the latest `PROGRESS.md` entry. Build 15 binaries remain accepted on their own source, while physical-device acceptance remains not run. No prior-session unsaved data is claimed, and no broker/Live/financial data connection was made.

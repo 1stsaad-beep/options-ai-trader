@@ -1,0 +1,31 @@
+name: Demo recovery targeted verification
+on:
+  push:
+    branches: [recovery/v1.0-20261011]
+    paths: ["mobile/lib/demo/store.dart", "mobile/lib/demo/screen.dart", "mobile/test/demo*", ".github/workflows/demo-recovery.yaml"]
+permissions:
+  contents: read
+jobs:
+  recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+        working-directory: mobile
+      - run: flutter analyze
+        working-directory: mobile
+      - name: Recovery and prior persistence regressions
+        run: flutter test test/demo_recovery_test.dart test/demo_recovery_widget_test.dart test/demo_backup_test.dart test/demo_backup_widget_test.dart test/demo_widget_test.dart test/demo_engine_test.dart test/demo_adversarial_v1_test.dart --machine > recovery-tests.json
+        working-directory: mobile
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: demo-recovery-evidence
+          path: mobile/recovery-tests.json
+          retention-days: 14

@@ -128,17 +128,32 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
     } catch (e) { backupMessage('تعذر تصدير النسخة: $e'); }
   }
 
-  Future<void> importBackup() async {
-    if (!controller.ready || controller.busy || controller.storageUncertain) return;
+  Future<void> exportRecoveryCopy({bool original = false}) async {
+    try {
+      final text = original
+          ? controller.unreadableSnapshot : await controller.recoveryCopy();
+      if (text == null) {
+        backupMessage('لا توجد نسخة أصل محفوظة للاسترداد.');
+        return;
+      }
+      await Clipboard.setData(ClipboardData(text: text));
+      backupMessage('نُسخ النص الأصلي إلى الحافظة كما هو. احفظه بنفسك؛ ليس نسخة Demo صالحة للاستيراد بالضرورة.');
+    } catch (_) { backupMessage('تعذرت قراءة نسخة الأصل أو نسخها؛ لم تتغير البيانات.'); }
+  }
+
+  Future<void> importBackup({bool recovery = false}) async {
+    if (recovery ? !controller.canRecover :
+        (!controller.ready || controller.busy || controller.storageUncertain)) return;
     controller.pause();
     final expectedCurrent = engine.encode();
+    final expectedDamaged = controller.unreadableSnapshot;
     final text = await showDialog<String>(context: context,
       builder: (_) => const _DemoBackupInputDialog());
     if (text == null || !mounted) return;
     try {
       final preview = DemoBackup.inspect(text);
       final confirmed = await showDialog<bool>(context: context, builder: (dialog) => AlertDialog(
-        title: const Text('معاينة استبدال بيانات Demo'),
+        title: Text(recovery ? 'معاينة استرداد Demo' : 'معاينة استبدال بيانات Demo'),
         content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('الحسابات: ${preview.accountCount} • الأوامر: ${preview.orderCount}\n'
@@ -146,6 +161,9 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
               key: const Key('demo-backup-preview-counts')),
             Text(preview.accountNames.take(10).join('، ')),
             const SizedBox(height: 12),
+            if (recovery) const Text('سيُحفظ النص الأصلي غير المقروء في نسخة محلية منفصلة قبل الاستبدال. '
+              'إذا تعذر حفظه والتحقق منه يتوقف الاسترداد. لا تُحذف نسخة أصل سابقة مختلفة. '
+              'يمكن نسخ الأصل من قائمة النسخ بعد نجاح الاسترداد.'),
             const Text('سيُستبدل جميع حسابات Demo على الجهاز؛ لا دمج. '
               'تبقى القرارات والتعبئات الأصلية محفوظة، وتتوقف الأتمتة والتعزيز والانعكاس. '
               'راجع الأوامر المعلقة ثم صالح كل حساب واستأنفه صراحة قبل أي دخول جديد. '
@@ -160,7 +178,9 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
         ],
       ));
       if (confirmed != true || !mounted) return;
-      final imported = await controller.importBackup(preview, expectedCurrent: expectedCurrent);
+      final imported = recovery
+          ? await controller.recoverBackup(preview, expectedDamaged: expectedDamaged!)
+          : await controller.importBackup(preview, expectedCurrent: expectedCurrent);
       if (!mounted) return;
       if (imported) {
         setState(() {
@@ -382,11 +402,14 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
           onSelected: (action) {
             if (action == 'export') { exportBackup(); }
             if (action == 'import') { importBackup(); }
+            if (action == 'recovery-copy') { exportRecoveryCopy(); }
           },
           itemBuilder: (_) => [
             const PopupMenuItem(value: 'export', child: Text('نسخ نسخة Demo إلى الحافظة')),
             PopupMenuItem(value: 'import', enabled: !controller.storageUncertain,
               child: const Text('استيراد نسخة Demo من JSON')),
+            const PopupMenuItem(value: 'recovery-copy',
+              child: Text('نسخ الأصل المحتفظ به قبل الاسترداد')),
           ],
         ),
         PopupMenuButton<String>(
@@ -502,9 +525,17 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
               padding: const EdgeInsets.all(16),
               children: !controller.ready
                   ? [
-                      const Text(
-                        'جارٍ فتح الحفظ المحلي. لا يُطلب اتصال بالشبكة.',
-                      ),
+                      Text(controller.busy
+                        ? 'جارٍ فتح الحفظ المحلي. لا يُطلب اتصال بالشبكة.'
+                        : 'تعذر فتح الحفظ المحلي بهذا الإصدار. لا تُنشأ حسابات بديلة تلقائيًا. احتفظ بالأصل قبل الاسترداد.'),
+                      if (controller.unreadableSnapshot != null)
+                        OutlinedButton(key: const Key('demo-recovery-export'),
+                          onPressed: controller.busy ? null : () => exportRecoveryCopy(original: true),
+                          child: const Text('نسخ النص الأصلي غير المقروء إلى الحافظة')),
+                      if (controller.unreadableSnapshot != null)
+                        FilledButton(key: const Key('demo-recovery-import'),
+                          onPressed: controller.canRecover ? () => importBackup(recovery: true) : null,
+                          child: const Text('استرداد من نسخة Demo محفوظة')),
                       if (!controller.busy)
                         button('إعادة محاولة تحميل البيانات', controller.load),
                     ]

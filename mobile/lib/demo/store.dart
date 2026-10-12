@@ -9,11 +9,22 @@ abstract interface class DemoStore {
   Future<void> save(String value);
 }
 
-class PreferencesDemoStore implements DemoStore {
+/// An immutable local copy, separate from the active ledger. Implementations
+/// must refuse a different second value; recovery must never erase old evidence.
+abstract interface class DemoRecoveryStore {
+  Future<String?> loadRecoveryCopy();
+  Future<void> preserveRecoveryCopy(String value);
+}
+
+class PreferencesDemoStore implements DemoStore, DemoRecoveryStore {
   static const key = 'options_ai_trader.local_demo.v1';
+  static const recoveryKey = 'options_ai_trader.local_demo.recovery.v1';
   @override
-  Future<String?> load() async =>
-      (await SharedPreferences.getInstance()).getString(key);
+  Future<String?> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
+    return prefs.getString(key);
+  }
   @override
   Future<void> save(String value) async {
     final ok = await (await SharedPreferences.getInstance()).setString(
@@ -22,10 +33,32 @@ class PreferencesDemoStore implements DemoStore {
     );
     if (!ok) throw const DemoRejected('تعذر حفظ المحاكاة على الجهاز');
   }
+
+  @override
+  Future<String?> loadRecoveryCopy() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
+    return prefs.getString(recoveryKey);
+  }
+
+  @override
+  Future<void> preserveRecoveryCopy(String value) async {
+    final existing = await loadRecoveryCopy();
+    if (existing == value) return;
+    if (existing != null) {
+      throw const DemoRejected('توجد نسخة استرداد سابقة مختلفة؛ لن تُمحى');
+    }
+    final prefs = await SharedPreferences.getInstance();
+    if (!await prefs.setString(recoveryKey, value) ||
+        await loadRecoveryCopy() != value) {
+      throw const DemoRejected('تعذر حفظ نسخة البيانات الأصلية والتحقق منها');
+    }
+  }
 }
 
-class MemoryDemoStore implements DemoStore {
+class MemoryDemoStore implements DemoStore, DemoRecoveryStore {
   String? data;
+  String? recoveryCopy;
   bool failWrites = false;
   MemoryDemoStore([this.data]);
   @override
@@ -35,6 +68,15 @@ class MemoryDemoStore implements DemoStore {
     if (failWrites) throw const DemoRejected('فشل حفظ اصطناعي');
     data = value;
   }
+  @override
+  Future<String?> loadRecoveryCopy() async => recoveryCopy;
+  @override
+  Future<void> preserveRecoveryCopy(String value) async {
+    if (failWrites || (recoveryCopy != null && recoveryCopy != value)) {
+      throw const DemoRejected('تعذر حفظ نسخة الاسترداد دون محو نسخة سابقة');
+    }
+    recoveryCopy = value;
+  }
 }
 
 class DemoController extends ChangeNotifier {
@@ -43,6 +85,10 @@ class DemoController extends ChangeNotifier {
   bool ready = false, busy = false;
   bool storageUncertain = false;
   String? error;
+  String? _unreadableSnapshot;
+  String? get unreadableSnapshot => _unreadableSnapshot;
+  bool get canRecover => !ready && !busy && !storageUncertain &&
+      !_disposed && _unreadableSnapshot != null && store is DemoRecoveryStore;
   Timer? _timer;
   bool _disposed = false;
   bool get playing => _timer != null;
@@ -53,12 +99,14 @@ class DemoController extends ChangeNotifier {
     final recovering = storageUncertain;
     final previousEngine = engine;
     final previouslyReady = ready;
+    String? loaded;
     pause();
     busy = true;
     error = null;
     notifyListeners();
     try {
       final data = await store.load();
+      loaded = data;
       if (data == null) {
         if (recovering) throw const DemoRejected('الحفظ غير موجود؛ احتفظ بنسخة الذاكرة وصدّرها');
         engine = DemoEngine();
@@ -73,13 +121,16 @@ class DemoController extends ChangeNotifier {
       }
       ready = true;
       storageUncertain = false;
+      _unreadableSnapshot = null;
     } catch (e) {
-      if (recovering) {
+      if (recovering || previouslyReady) {
         engine = previousEngine;
         ready = previouslyReady;
+        storageUncertain = true;
         error = 'تعذرت إعادة قراءة الحفظ؛ بيانات الذاكرة محفوظة والتصدير متاح، والكتابة مقفلة. $e';
       } else {
         ready = false;
+        _unreadableSnapshot = loaded;
         error = '$e';
       }
     }
@@ -142,6 +193,58 @@ class DemoController extends ChangeNotifier {
     }
     pause();
     return DemoBackup.export(engine);
+  }
+
+  Future<String?> recoveryCopy() async {
+    if (_disposed || busy) return null;
+    final target = store;
+    return target is DemoRecoveryStore ? target.loadRecoveryCopy() : null;
+  }
+
+  Future<bool> recoverBackup(DemoBackupPreview preview,
+      {required String expectedDamaged}) async {
+    if (!canRecover || _unreadableSnapshot != expectedDamaged) return false;
+    final target = store as DemoRecoveryStore;
+    pause();
+    busy = true;
+    error = null;
+    notifyListeners();
+    var writeStarted = false;
+    var success = false;
+    try {
+      final candidate = DemoBackup.prepareImport(preview);
+      if (await store.load() != expectedDamaged) {
+        throw const DemoRejected('تغير الحفظ؛ أعد القراءة والمعاينة');
+      }
+      await target.preserveRecoveryCopy(expectedDamaged);
+      if (await target.loadRecoveryCopy() != expectedDamaged) {
+        throw const DemoRejected('لم تثبت مطابقة نسخة البيانات الأصلية');
+      }
+      // Recheck after the asynchronous archive operation, before replacing.
+      if (await store.load() != expectedDamaged) {
+        throw const DemoRejected('تغير الحفظ أثناء الاحتفاظ بالأصل؛ أعد القراءة');
+      }
+      final replacement = candidate.encode();
+      writeStarted = true;
+      await store.save(replacement);
+      if (await store.load() != replacement) {
+        throw const DemoRejected('تعذر التحقق من الحفظ المستعاد');
+      }
+      engine = candidate;
+      ready = true;
+      storageUncertain = false;
+      _unreadableSnapshot = null;
+      success = true;
+    } catch (_) {
+      final restored = !writeStarted || await _restoreStored(expectedDamaged);
+      storageUncertain = !restored;
+      error = restored
+          ? 'تعذر الاسترداد. لم يُستبدل الحفظ أو أُعيد أصله؛ أعد القراءة. قد توجد نسخة استرداد سابقة مختلفة لا يمكن محوها.'
+          : 'تعذر التحقق من الاسترداد والتراجع؛ الكتابة مقفلة. النص الأصلي محفوظ منفصلًا ومتاح للنسخ؛ أعد القراءة قبل أي إجراء.';
+    }
+    busy = false;
+    if (!_disposed) notifyListeners();
+    return success;
   }
 
   Future<bool> importBackup(DemoBackupPreview preview, {required String expectedCurrent}) async {
