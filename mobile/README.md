@@ -1,10 +1,10 @@
-# Options AI Trader — RC2 Lab 15
+# Options AI Trader — RC2 Lab 16
 
 Offline Arabic RTL Demo with a separately identified Android development preview. Continue from `recovery/v1.0-20261011`; this is an engineering candidate, not a complete or broker-connected V1.0.
 
 ## Phone repair and safe installation
 
-See [the repair/evidence report](../docs/PHONE_BUILD15_REPAIR.md) and [Arabic phone instructions](../docs/PHONE_BUILD15_INSTALL_AR.md). Build 15 uses `com.optionsaitrader.options_ai_trader.v1previewrc2b15` and launcher label **Options AI Trader Lab 15**. Keep Build 14 installed; there is no in-place migration or automatic sharing of its private storage. Manual Demo backup/import remains available.
+See [initial unreadable Demo recovery](../docs/DEMO_RECOVERY_V1.md), [Build 16 installation](../docs/PHONE_BUILD16_INSTALL_AR.md), [the preceding chart repair/evidence report](../docs/PHONE_BUILD15_REPAIR.md) and [Arabic phone instructions](../docs/PHONE_BUILD15_INSTALL_AR.md). Build 16 uses `com.optionsaitrader.options_ai_trader.v1previewrc2b16` and launcher label **Options AI Trader Lab 16**. Keep Build 14 and 15 installed; there is no in-place migration or automatic sharing of its private storage. Manual Demo backup/import remains available.
 
 Chart Lab includes explicit display-only wave/ABC/Bat/divergence fixtures, independent RSI/MACD scales, confirmed pivot overlays, replay and honest no-result states. The emergency page links to five isolated safety exercises using the actual local engine without accessing the user's account/store. These features do not connect research outputs to execution.
 
@@ -17,7 +17,7 @@ bash scripts/bootstrap.sh
 flutter analyze
 flutter test --exclude-tags=golden
 flutter test --tags=golden
-OAT_PREVIEW_BUILD=true flutter build apk --debug --build-name=1.0.0 --build-number=15
+OAT_PREVIEW_BUILD=true flutter build apk --debug --build-name=1.0.0 --build-number=16
 ```
 
 The reviewed golden reference is Linux at 360×440 with the pinned SDK's Roboto. Set `FLUTTER_ROOT` to that SDK for the golden test. CI compares committed images; it never updates them automatically. See [baseline review notes](test/goldens/README.md).

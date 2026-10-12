@@ -231,3 +231,10 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Correction `3ae10f85fe472f3a887761b354751c63d3c4ba53` pushed/read back. Targeted run **38205166729** passed analyze and **102 visible Flutter tests**, zero failures/errors/skips. Artifact **11726728614** downloaded, SHA-256/CRC verified, raw JSONL parsed and preserved. Chart **38205166732** and security **38205166880** gates also succeeded.
 - Saved `docs/DEMO_RECOVERY_V1.md`: explicit recovery steps, immutable original copy, fail-closed cases, single archive-slot limitation, no device/power-loss/multi-process guarantee. No engine/financial logic or Demo ledger schema change.
 - The next bounded batch prepares a separately identified Build 16 and runs the complete mobile acceptance gate once. Build 14/15 binaries and app data remain independent; no in-place upgrade under an ephemeral key is promised. Native build and physical-device tests for Build 16 are not yet executed.
+
+### Build 16 packaging gate prepared
+
+- Accepted evidence/report checkpoint `863148cd1a92592f0ee09b57aff888742e17d731` pushed and read back before this batch. Changed only native preview identity/version and related delivery instructions: `.v1previewrc2b16`, `Options AI Trader Lab 16`, build 16. No further Demo runtime change since the passing targeted source.
+- The identity verifier locally accepted synthetic Build 16 badging and rejected Build 14, Build 15, and a wrong-package candidate with a matching label/version. Actual binary verification remains required in CI; these checks do not prove installation.
+- Added `PHONE_BUILD16_INSTALL_AR.md`: preserve both prior apps/data, compare checksum, manual backup/preview/cancel/import, never damage real data to test recovery. Stable signing remains unconfigured unless existing CI Secrets supply the private key; no key or secret is added to Git.
+- Publish to start the full Android/iOS mobile gate. No new feature will begin while packaging/acceptance is unresolved. Recovery targeted proof remains 102 passes; full Flutter count and APK/iOS hashes are pending the actual runs.
