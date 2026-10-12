@@ -1,5 +1,13 @@
 # Progress — recovery/v1.0-20261011
 
+## Archive and phone phase — batch 2, 2026-10-12
+
+- Archive batch saved/read back at `ac2c0c9688b035d4f54e7b26a563aef035bd8178`. Backend/PostgreSQL/backup and Compose workflow `38273980759` succeeded, including the new post-backup archive recovery; security `38273979946` succeeded. No provider connection.
+- Added cache-only runtime status prices with original market/capture/save times, account/schema authority on controls, and account-bound keyset event pagination. Existing immutable event payloads are not rewritten. Local targeted Python: **40 passed**, zero failures/errors/skips (one existing Starlette deprecation warning).
+- Added Flutter Market Runtime screen under the server dashboard, independent per-account versioned analysis/strategy controls, inbox acknowledgements/pagination, foreground polling, stale/error states, and rejection of mismatched accounts/unsafe authority. No DemoStore import, provider URL, key entry or trading route in this screen. It uses the existing HTTPS API token connection.
+- Added actual offline backend-generated JSON contract and Flutter parser/widget tests covering RTL 360px light/dark, account races, timestamp/source display, unknown prices, error redaction, no mutation retry, polling lifecycle and unchanged preference sentinel. Flutter is unavailable in this local executor: analysis/widget CI is **pending**, not claimed passed. This checkpoint uses `[chart-check]` to avoid native rebuild until targeted CI passes.
+- APK identity/build bump and final acceptance/report are the next batch. No real phone test, actual Alpaca/IBKR connection, production host or paid service.
+
 ## Archive and phone phase — batch 1, 2026-10-12
 
 - Verified remote/local head `e26e932705bed794213ca079a3bd3a66ab2eb2d9`, clean tracked source. Read autonomous-runtime reports and current code; no missing session changes assumed recovered.

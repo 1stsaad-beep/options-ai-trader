@@ -8,6 +8,7 @@ from copy import deepcopy
 from dataclasses import asdict
 from datetime import timedelta
 from hashlib import sha256
+import base64
 import json
 import uuid
 
@@ -20,7 +21,7 @@ from .market_sessions import evaluate_session, US_EQUITY_OPTIONS_POLICY
 LEASE_SECONDS = 120
 INTERVALS = {'stock_snapshot': 60, 'stock_bars': 300, 'option_chain': 300}
 STRATEGIES = {'breakout', 'pullback'}
-AUTHORITY = {'mode': MODE, 'virtual_fills_enabled': False,
+AUTHORITY = {'schema_version': 1, 'mode': MODE, 'virtual_fills_enabled': False,
              'external_orders_enabled': False, 'new_risk_allowed': False,
              'execution_block_reason': INDICATIVE_REASON,
              'stop_loss_execution_assumed': False}
@@ -56,13 +57,13 @@ def configure(service, account_id, *, expected_version, enabled, strategies):
         if current['version'] != expected_version:
             # Repeated identical control after a lost response is harmless.
             if expected_version == current['version'] - 1 and all(current[k] == v for k, v in value.items()):
-                return {**current, **AUTHORITY}
+                return {'account_id': account_id, **current, **AUTHORITY}
             raise journal.JournalError('RUNTIME_CONFIG_VERSION_CONFLICT')
         version = current['version'] + 1
         db.execute('INSERT INTO market_runtime_config VALUES(?,?,?) ON CONFLICT(account_id) DO UPDATE SET version=excluded.version,payload=excluded.payload',
                    (account_id, version, journal.canonical(value)))
         event_in(db, account_id, 'config:' + str(version), service.now(), 'CONFIG_CHANGED', value)
-        return {'version': version, **value, **AUTHORITY}
+        return {'account_id': account_id, 'version': version, **value, **AUTHORITY}
 
 
 def coordinator_in(db):
@@ -322,28 +323,59 @@ def status(service, account_id):
         latest = []
         for link in links:
             record = journal._decode(link)
+            observation = record['observation']
+            data = observation['data']
+            trade = data.get('trade') if link['kind'] == 'stock_snapshot' else None
             latest.append({'symbol': link['symbol'], 'kind': link['kind'], 'observation_id': link['id'],
                            'recorded_at': link['recorded_at'],
-                           'state_now': observation_state(link['kind'], record['observation'], now)})
+                           'state_now': observation_state(link['kind'], observation, now),
+                           'feed': observation['feed'], 'captured_at': observation['captured_at'],
+                           'price': trade.get('p') if trade else None,
+                           'market_time': trade.get('timestamp') if trade else None,
+                           'sha256': record['sha256']})
         capacity = market_segments.stats(db, account_id)
-    return {'account_id': account_id, 'config': config, 'heartbeat_fresh': healthy,
+    return {'account_id': account_id, 'server_time': journal.utc(now), 'config': config, 'heartbeat_fresh': healthy,
             'collector': heartbeat, 'latest': latest, 'archive': capacity,
             'collection_block_reason': None,
             'state': 'WORKER_UNAVAILABLE' if not healthy else heartbeat['state'], **AUTHORITY}
 
 
-def events(service, account_id, *, limit=50):
+def events(service, account_id, *, limit=50, before=None):
     if type(limit) is not int or not 1 <= limit <= 100:
         raise journal.JournalError('INVALID_RUNTIME_PAGE', 422)
+    cutoff = journal.utc(service.now())
+    cursor = None
+    if before is not None:
+        try:
+            if not isinstance(before, str) or len(before) > 1024:
+                raise ValueError()
+            cursor = json.loads(base64.urlsafe_b64decode(before.encode()))
+            if set(cursor) != {'account_id', 'as_of', 'created', 'id'} or cursor['account_id'] != account_id:
+                raise ValueError()
+            if not isinstance(cursor['id'], str) or not 1 <= len(cursor['id']) <= 128:
+                raise ValueError()
+            if timestamp(cursor['created']) > timestamp(cursor['as_of']) or timestamp(cursor['as_of']) > timestamp(cutoff):
+                raise ValueError()
+            cutoff = journal.utc(cursor['as_of'])
+        except (ValueError, TypeError, KeyError, MarketDataError):
+            raise journal.JournalError('INVALID_RUNTIME_CURSOR', 422) from None
     with service.repo.transaction() as db:
         service.account(db, account_id)
-        rows = db.all('SELECT e.*,a.acknowledged_at FROM market_runtime_events e LEFT JOIN market_runtime_ack a ON a.event_id=e.id WHERE e.account_id=? ORDER BY e.created DESC,e.id DESC LIMIT ?', (account_id, limit))
+        where = ' AND (e.created<? OR (e.created=? AND e.id<?))' if cursor else ''
+        args = (account_id, cutoff) + ((cursor['created'], cursor['created'], cursor['id']) if cursor else ()) + (limit + 1,)
+        rows = db.all('SELECT e.*,a.acknowledged_at FROM market_runtime_events e LEFT JOIN market_runtime_ack a ON a.event_id=e.id WHERE e.account_id=? AND e.created<=?' + where + ' ORDER BY e.created DESC,e.id DESC LIMIT ?', args)
     result = []
-    for row in rows:
+    for row in rows[:limit]:
         if sha256(row['payload'].encode()).hexdigest() != row['digest']:
             raise journal.JournalError('RUNTIME_EVENT_INTEGRITY_FAILED', 503)
         result.append({**json.loads(row['payload']), 'sha256': row['digest'], 'acknowledged_at': row['acknowledged_at']})
-    return {'account_id': account_id, 'items': result, 'delivery': 'DURABLE_API_INBOX_ONLY', **AUTHORITY}
+    next_before = None
+    if len(rows) > limit:
+        last = rows[limit-1]
+        next_before = base64.urlsafe_b64encode(journal.canonical({'account_id': account_id,
+            'as_of': cutoff, 'created': last['created'], 'id': last['id']}).encode()).decode()
+    return {'account_id': account_id, 'as_of': cutoff, 'items': result, 'next_before': next_before,
+            'delivery': 'DURABLE_API_INBOX_ONLY', **AUTHORITY}
 
 
 def acknowledge(service, account_id, event_id):
@@ -353,4 +385,4 @@ def acknowledge(service, account_id, event_id):
             raise journal.JournalError('RUNTIME_EVENT_NOT_FOUND', 404)
         db.execute('INSERT INTO market_runtime_ack VALUES(?,?,?) ON CONFLICT(event_id) DO NOTHING',
                    (account_id, event_id, journal.utc(service.now())))
-    return {'acknowledged': True, **AUTHORITY}
+    return {'account_id': account_id, 'acknowledged': True, **AUTHORITY}

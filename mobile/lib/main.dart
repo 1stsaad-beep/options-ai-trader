@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'api.dart';
 import 'analysis_contract.dart';
 import 'market_data.dart';
+import 'market_runtime.dart';
 import 'demo/screen.dart';
 import 'demo/store.dart';
 
@@ -799,6 +800,18 @@ class _DashboardState extends State<Dashboard> {
                   reload();
                 },
               ),
+            ListTile(
+              leading: const Icon(Icons.dns_outlined),
+              title: const Text('خادم السوق'),
+              enabled: accountId != null,
+              onTap: accountId == null ? null : () {
+                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute<void>(
+                  builder: (_) => MarketRuntimeScreen(api: api,
+                    accounts: List<Map<String, dynamic>>.from(accounts), initialAccount: accountId!),
+                ));
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.public),
               title: const Text('بيانات السوق الحقيقية'),

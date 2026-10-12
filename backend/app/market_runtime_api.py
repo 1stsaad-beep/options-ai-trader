@@ -23,8 +23,8 @@ def install_market_runtime_routes(app, secured, service_dependency):
         return runtime.configure(s, account_id, **body.model_dump())
 
     @app.get(prefix + '/events', dependencies=secured)
-    def events(account_id: str, limit: int = 50, s=Depends(service_dependency)):
-        return runtime.events(s, account_id, limit=limit)
+    def events(account_id: str, limit: int = 50, before: str | None = None, s=Depends(service_dependency)):
+        return runtime.events(s, account_id, limit=limit, before=before)
 
     @app.post(prefix + '/events/{event_id}/ack', dependencies=secured)
     def acknowledge(account_id: str, event_id: str, s=Depends(service_dependency)):
