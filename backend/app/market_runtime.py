@@ -12,6 +12,7 @@ import json
 import uuid
 
 from . import market_data_journal as journal
+from . import market_segments
 from .engines import AnalysisPipeline, Bar
 from .market_data import MarketDataError, INDICATIVE_REASON, MODE, timestamp
 from .market_sessions import evaluate_session, US_EQUITY_OPTIONS_POLICY
@@ -194,12 +195,6 @@ class MarketCollector:
             account = row['account_id']
             config = config_in(db, account)
             if config['enabled']:
-                try:
-                    journal._capacity(db, account)
-                except journal.JournalError:
-                    event_in(db, account, 'capacity:' + str(config['version']), self.now(),
-                             'ACCOUNT_COLLECTION_BLOCKED', {'code': 'JOURNAL_CAPACITY_REACHED'})
-                    continue
                 for watch in db.all('SELECT symbol FROM watchlist WHERE account_id=?', (account,)):
                     result.setdefault(watch['symbol'], {})[account] = config
         return result
@@ -330,12 +325,10 @@ def status(service, account_id):
             latest.append({'symbol': link['symbol'], 'kind': link['kind'], 'observation_id': link['id'],
                            'recorded_at': link['recorded_at'],
                            'state_now': observation_state(link['kind'], record['observation'], now)})
-        capacity = db.one('SELECT COUNT(*) AS records,COALESCE(SUM(size_bytes),0) AS bytes FROM market_data_journal WHERE account_id=?', (account_id,))
+        capacity = market_segments.stats(db, account_id)
     return {'account_id': account_id, 'config': config, 'heartbeat_fresh': healthy,
-            'collector': heartbeat, 'latest': latest, 'archive': {**capacity,
-                'max_records': journal.MAX_ACCOUNT_RECORDS, 'max_bytes': journal.MAX_ACCOUNT_BYTES},
-            'collection_block_reason': ('JOURNAL_CAPACITY_REACHED' if capacity['records'] >= journal.MAX_ACCOUNT_RECORDS
-                or capacity['bytes'] >= journal.MAX_ACCOUNT_BYTES else None),
+            'collector': heartbeat, 'latest': latest, 'archive': capacity,
+            'collection_block_reason': None,
             'state': 'WORKER_UNAVAILABLE' if not healthy else heartbeat['state'], **AUTHORITY}
 
 

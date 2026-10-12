@@ -13,10 +13,9 @@ import re
 import uuid
 
 from .market_data import MODE, OPTION, TIMEFRAMES, symbol, timestamp
+from . import market_segments
 
 MAX_RECORD_BYTES = 2 * 1024 * 1024
-MAX_ACCOUNT_BYTES = 64 * 1024 * 1024
-MAX_ACCOUNT_RECORDS = 1000
 KINDS = {'stock_snapshot': 'iex', 'stock_bars': 'iex',
          'option_chain': 'indicative', 'option_bars': 'historical_options'}
 
@@ -61,12 +60,6 @@ def normalize_request(body):
     elif body.get('contract') is not None:
         raise JournalError('INVALID_JOURNAL_REQUEST', 422)
     return key, result
-
-
-def _capacity(db, account_id, additional=0):
-    row = db.one('SELECT COUNT(*) AS n, COALESCE(SUM(size_bytes),0) AS size FROM market_data_journal WHERE account_id=?', (account_id,))
-    if row['n'] >= MAX_ACCOUNT_RECORDS or row['size'] + additional > MAX_ACCOUNT_BYTES:
-        raise JournalError('JOURNAL_CAPACITY_REACHED', 503)
 
 
 def _existing(db, account_id, key, fingerprint):
@@ -139,7 +132,6 @@ def capture(service, account_id, body, provider, *, commit_guard=None):
             return existing  # Lost response recovery needs no provider/permission.
         if db.one('SELECT symbol FROM watchlist WHERE account_id=? AND symbol=?', (account_id, request['symbol'])) is None:
             raise JournalError('JOURNAL_SYMBOL_NOT_WATCHED')
-        _capacity(db, account_id)
     # Never hold a trading database transaction across the read-only HTTP call.
     value = _provider_observation(provider, request)
     with service.repo.transaction() as db:
@@ -166,11 +158,11 @@ def capture(service, account_id, body, provider, *, commit_guard=None):
         size = len(payload.encode())
         if size > MAX_RECORD_BYTES:
             raise JournalError('JOURNAL_RECORD_TOO_LARGE', 503)
-        _capacity(db, account_id, size)
         digest = sha256(payload.encode()).hexdigest()
         db.execute('INSERT INTO market_data_journal VALUES(?,?,?,?,?,?,?,?,?,?,?)', (
             record['id'], account_id, record['sequence'], key, fingerprint, request['kind'],
             request['symbol'], record['recorded_at'], payload, digest, size))
+        market_segments.append(db, account_id, record['sequence'], size, digest)
         service.audit(db, account_id, 'MARKET_DATA_OBSERVATION_SAVED', {
             'observation_id': record['id'], 'kind': request['kind'], 'symbol': request['symbol'],
             'sha256': digest, 'mode': MODE})

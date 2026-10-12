@@ -237,17 +237,18 @@ def test_disabled_provider_does_not_connect_even_enabled_account(setup):
     assert c.tick()['state'] == 'DISABLED' and not wire.calls
 
 
-def test_archive_capacity_fault_is_visible_without_fills(setup, monkeypatch):
+def test_archive_segments_continue_without_fills(setup, monkeypatch):
     c, _, _ = setup
     account = enable(c.service)
-    monkeypatch.setattr(journal, 'MAX_ACCOUNT_RECORDS', 1)
+    monkeypatch.setattr(rt.market_segments, 'SEGMENT_RECORDS', 1)
     assert c.tick()['state'] == 'COLLECTING_ANALYSIS_ONLY'
-    assert c.tick()['state'] == 'NO_ACTIVE_DEMAND'
-    assert c.tick()['state'] == 'NO_ACTIVE_DEMAND'
-    assert rt.status(c.service, account)['archive']['records'] == 1
-    assert rt.status(c.service, account)['collection_block_reason'] == 'JOURNAL_CAPACITY_REACHED'
+    assert c.tick()['state'] == 'COLLECTING_ANALYSIS_ONLY'
+    assert c.tick()['state'] == 'COLLECTING_ANALYSIS_ONLY'
+    assert rt.status(c.service, account)['archive']['records'] == 3
+    assert rt.status(c.service, account)['archive']['segments'] == 3
+    assert rt.status(c.service, account)['collection_block_reason'] is None
     faults = [e for e in rt.events(c.service, account)['items'] if e['kind'] == 'ACCOUNT_COLLECTION_BLOCKED']
-    assert len(faults) == 1 and faults[0]['detail']['code'] == 'JOURNAL_CAPACITY_REACHED'
+    assert faults == []
     with c.repo.transaction() as db:
         assert db.all('SELECT * FROM fills') == []
 

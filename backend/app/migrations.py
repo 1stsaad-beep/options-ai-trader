@@ -138,7 +138,22 @@ def market_runtime_schema(db, postgres):
             db.execute(f"CREATE TRIGGER immutable_runtime_event_{action.lower()} BEFORE {action} ON market_runtime_events BEGIN SELECT RAISE(ABORT, 'runtime events are immutable'); END")
 
 
-MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema), (7, 'v1_market_runtime', market_runtime_schema)]
+def market_segments_schema(db, postgres):
+    from .market_segments import append
+    db.execute('CREATE TABLE market_journal_segments (account_id TEXT NOT NULL REFERENCES accounts(id), number INTEGER NOT NULL, first_sequence INTEGER NOT NULL, last_sequence INTEGER NOT NULL, record_count INTEGER NOT NULL, size_bytes BIGINT NOT NULL, first_sha256 TEXT NOT NULL, sealed INTEGER NOT NULL, chain_sha256 TEXT NOT NULL, PRIMARY KEY(account_id,number))')
+    # Reconstruct indexes only; never rewrite original payloads or availability.
+    for raw in db.execute('SELECT account_id,sequence,size_bytes,digest FROM market_data_journal ORDER BY account_id,sequence'):
+        row = dict(raw)
+        append(db, row['account_id'], row['sequence'], row['size_bytes'], row['digest'])
+    if postgres:
+        db.execute("CREATE FUNCTION guard_market_segment() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF TG_OP='DELETE' OR OLD.sealed=1 THEN RAISE EXCEPTION 'sealed segments are immutable'; END IF; RETURN NEW; END $$")
+        db.execute('CREATE TRIGGER guard_market_segment BEFORE UPDATE OR DELETE ON market_journal_segments FOR EACH ROW EXECUTE FUNCTION guard_market_segment()')
+    else:
+        db.execute("CREATE TRIGGER guard_market_segment_update BEFORE UPDATE ON market_journal_segments WHEN OLD.sealed=1 BEGIN SELECT RAISE(ABORT, 'sealed segments are immutable'); END")
+        db.execute("CREATE TRIGGER guard_market_segment_delete BEFORE DELETE ON market_journal_segments BEGIN SELECT RAISE(ABORT, 'segments are immutable'); END")
+
+
+MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema), (7, 'v1_market_runtime', market_runtime_schema), (8, 'v1_market_segments', market_segments_schema)]
 
 
 def migrate(db, postgres):

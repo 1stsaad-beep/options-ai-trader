@@ -186,11 +186,10 @@ def test_corrupt_payload_detected_after_bypassing_trigger_in_disposable_fixture(
         journal.capture(s, a, intent(), p)
 
 
-@pytest.mark.parametrize('limit', ['MAX_ACCOUNT_RECORDS', 'MAX_ACCOUNT_BYTES', 'MAX_RECORD_BYTES'])
-def test_capacity_failure_never_evicts_existing_snapshots(setup, monkeypatch, limit):
+def test_oversized_record_never_evicts_existing_snapshots(setup, monkeypatch):
     s, a, _, p, _, _ = setup
     saved = journal.capture(s, a, intent(), p)
-    monkeypatch.setattr(journal, limit, 1)
+    monkeypatch.setattr(journal, 'MAX_RECORD_BYTES', 1)
     with pytest.raises(journal.JournalError, match='CAPACITY_REACHED|RECORD_TOO_LARGE'):
         journal.capture(s, a, intent('second'), p)
     assert journal.replay(s, a, saved['id']) == saved

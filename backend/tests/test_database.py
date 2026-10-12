@@ -23,11 +23,11 @@ def test_legacy_migration_preserves_ledger_and_locks_state(tmp_path):
         assert db.one('SELECT * FROM accounts')['name'] == 'old'
         assert db.one('SELECT * FROM accounts')['state_known'] == 0
         assert db.one('SELECT * FROM watchlist')['enabled'] == 1
-        assert [r['version'] for r in db.all('SELECT * FROM schema_migrations ORDER BY version')] == [1, 2, 3, 4, 5, 6, 7]
+        assert [r['version'] for r in db.all('SELECT * FROM schema_migrations ORDER BY version')] == [1, 2, 3, 4, 5, 6, 7, 8]
     repo.close()
     repo = Repository(f'sqlite:///{path}')
     with repo.transaction() as db:
-        assert len(db.all('SELECT * FROM schema_migrations')) == 7
+        assert len(db.all('SELECT * FROM schema_migrations')) == 8
     repo.close()
 
 

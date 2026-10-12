@@ -110,6 +110,16 @@ def run():
                 service.create_account("after-snapshot-account")
                 assert len(service.list_accounts()) == 5
                 checks.append("source_changes_after_snapshot_are_independent")
+                from app import market_archive as market_archiver
+                with patch.object(journal, 'utc_now', lambda: journal_time):
+                    late_market = journal.capture(service, accounts[0], {
+                        'kind': 'stock_snapshot', 'symbol': 'AAPL', 'request_key': 'post-backup-market'}, provider)
+                with repository.transaction() as db:
+                    runtime.event_in(db, accounts[0], 'post-backup-event', now, 'OBSERVATION_ANALYZED',
+                        {'observation_id': late_market['id'], 'source': 'synthetic_fixture'})
+                market_export = Path(temporary) / 'market-observations.jsonl'
+                # Use the real export clock; original event/capture times remain untouched.
+                market_manifest = market_archiver.export(service, accounts[0], market_export)
                 try:
                     snapshots.restore(fixture, archive, restored_name, trusted_archive=True)
                 finally:
@@ -181,6 +191,19 @@ def run():
                     else:
                         raise AssertionError('Restored runtime event guard missing')
                     checks.append('restored_runtime_event_immutable_guard')
+                    runtime.configure(recovered, accounts[0], expected_version=1, enabled=False,
+                                      strategies={'breakout': True, 'pullback': False})
+                    imported = market_archiver.restore(recovered, accounts[0], market_export,
+                        expected_sha256=market_manifest['sha256'], trusted_archive=True)
+                    assert imported['added']['market_data_journal'] == 1
+                    with patch.object(journal, 'utc_now', lambda: journal_time):
+                        assert journal.replay(recovered, accounts[0], late_market['id']) == late_market
+                        assert journal.replay(recovered, accounts[0], saved_market['id']) == saved_market
+                    checks.append('streaming_market_archive_restores_post_backup_original_without_overwriting_prior_rows')
+                    repeated = market_archiver.restore(recovered, accounts[0], market_export,
+                        expected_sha256=market_manifest['sha256'], trusted_archive=True)
+                    assert all(n == 0 for n in repeated['added'].values())
+                    checks.append('market_archive_idempotent_restore_preserves_disabled_runtime_and_orders')
                     assert all(not row["state_known"] for row in recovered.list_accounts())
                     for account in accounts:
                         assert recovered.reconcile(account)["resubmitted"] == 0

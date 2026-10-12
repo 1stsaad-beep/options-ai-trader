@@ -1,5 +1,13 @@
 # Progress — recovery/v1.0-20261011
 
+## Archive and phone phase — batch 1, 2026-10-12
+
+- Verified remote/local head `e26e932705bed794213ca079a3bd3a66ab2eb2d9`, clean tracked source. Read autonomous-runtime reports and current code; no missing session changes assumed recovered.
+- Additive migration8 changes1000records/64MiB from a total-account stop into per-segment rollover, preserving every original and its availability timestamp. Closed segment metadata is immutable. New captures and segment index updates are atomic; no eviction/old-record rewrite.
+- Added streaming local export/verify/transactional restore of original journal rows, runtime events/acknowledgements and market-capture audit. Exact SHA-256/row checks, incomplete/truncated/changed-file detection, existing-row conflict rollback, no overwrites, disabled matching-account restore and repeat idempotency. No keys/SQL/financial balances or order permission in the archive format. Full DB backups remain necessary for account identity and financial ledger.
+- Targeted archive/runtime/journal/migration/backup-tool tests: **134 passed**. Includes1003 actual stored observations and actual total bytes exceeding64MiB; disk/index failure rollback, source-byte preservation and late conflict rejection. Full local migration acceptance: **1006 passed**, zero failures/errors/skips; existing Starlette deprecation warning only. Extended real PostgreSQL backup/restore CI to recover post-backup observations from the streaming export; actual result pending CI.
+- No Flutter edits yet; no Alpaca/IBKR connection or external financial operation. Save this batch before mobile development. Export is a consistent full-account snapshot with a DB write lock; no cloud tiering/deletion, physical disk growth and external backup scheduling remain operator responsibilities.
+
 ## Independent market runtime — accepted engineering checkpoint
 
 - Storage checkpoint published/read back at `a4b7dca6956ada7a73edefef2ce5817bd745f2f6`. Full acceptance run `38268643465` **succeeded**:995 Python, zero failures/errors/skips;22 prior PostgreSQL +6 journal +8 new runtime checks;14 PostgreSQL backup/restore;17 actual Compose checks. Existing HTTP/worker/lifecycle passed. Four containers proved continued heartbeat without API, a new collector process after restart, and real DB outage/healthcheck rejection/recovery; provider remained disabled.
