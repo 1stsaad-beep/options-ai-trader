@@ -1,5 +1,6 @@
 """Offline FastAPI+SQLite integration: scope, persistence and execution isolation."""
 from datetime import timedelta
+from pathlib import Path
 import json
 from unittest.mock import patch
 import pytest
@@ -7,6 +8,7 @@ from fastapi.testclient import TestClient
 from app.main import create_app
 from app.repository import Repository
 from app.market_data import AlpacaBasicData, DisabledMarketData
+from app.market_data_api import account_result
 from test_alpaca_market_data import Clock, Responses, NOW, CONTRACT, stock_responses, chain, ok, bar
 
 TOKEN = 'test-token-at-least-32-characters-long'
@@ -28,6 +30,19 @@ def api():
 
 def base(account):
     return f'/api/accounts/{account}/market-data'
+
+
+def test_shared_mobile_fixture_is_current_provider_output_not_handwritten_contract():
+    from test_alpaca_market_data import adapter
+    provider, _, _ = adapter(*stock_responses(), chain(), ok({'bars': {'AAPL': [bar()]}}))
+    fixture = json.loads((Path(__file__).resolve().parents[2]/'mobile/test/fixtures/market_data_v1.json').read_text())
+    assert fixture['fixture_source'] == 'mock_transport_for_contract_tests_not_live_prices'
+    status = {'schema_version': 1, **account_result('account-one', provider.status()),
+              'symbols': ['AAPL', 'MSFT'], 'virtual_execution_state': 'ANALYSIS_ONLY'}
+    assert fixture['status'] == status
+    assert fixture['snapshot'] == account_result('account-one', provider.stock_snapshot('AAPL'))
+    assert fixture['chain'] == account_result('account-one', provider.option_chain('AAPL'))
+    assert fixture['bars'] == account_result('account-one', provider.stock_bars('AAPL', NOW-timedelta(hours=2), NOW, '1Min'))
 
 
 def test_data_routes_require_existing_auth_before_provider(api):

@@ -1,0 +1,36 @@
+name: Alpaca data-only mobile contract
+on:
+  push:
+    branches: [recovery/v1.0-20261011]
+    paths: ['mobile/lib/market_data.dart', 'mobile/lib/main.dart', 'mobile/test/market_data_test.dart', 'mobile/test/fixtures/market_data_v1.json', '.github/workflows/market-data-mobile.yaml']
+  pull_request:
+    paths: ['mobile/lib/market_data.dart', 'mobile/lib/main.dart', 'mobile/test/market_data_test.dart', 'mobile/test/fixtures/market_data_v1.json', '.github/workflows/market-data-mobile.yaml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: market-data-mobile-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  isolated-mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+        working-directory: mobile
+      - run: flutter analyze
+        working-directory: mobile
+      - run: flutter test test/market_data_test.dart test/api_test.dart --machine > market-data-tests.json
+        working-directory: mobile
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: alpaca-mobile-contract-results
+          path: mobile/market-data-tests.json
+          retention-days: 14

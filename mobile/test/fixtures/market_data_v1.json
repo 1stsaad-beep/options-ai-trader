@@ -1,0 +1,164 @@
+{
+  "fixture_source": "mock_transport_for_contract_tests_not_live_prices",
+  "account_id": "account-one",
+  "status": {
+    "schema_version": 1,
+    "provider": "alpaca",
+    "mode": "real_market_virtual",
+    "connection_enabled": true,
+    "connection_state": "READY_NOT_VERIFIED",
+    "live_enabled": false,
+    "external_orders_enabled": false,
+    "virtual_fills_enabled": false,
+    "stock_feed": "iex",
+    "option_feed": "indicative",
+    "stream_subscriptions": 0,
+    "requests_per_minute": 30,
+    "cache_entries": 0,
+    "requests": 0,
+    "cache_hits": 0,
+    "retries": 0,
+    "rate_limited": 0,
+    "errors": 0,
+    "provider_limit": null,
+    "provider_remaining": null,
+    "account_id": "account-one",
+    "symbols": [
+      "AAPL",
+      "MSFT"
+    ],
+    "virtual_execution_state": "ANALYSIS_ONLY"
+  },
+  "snapshot": {
+    "schema_version": 1,
+    "provider": "alpaca",
+    "mode": "real_market_virtual",
+    "feed": "iex",
+    "nominal_delay_seconds": 0,
+    "captured_at": "2026-10-12T15:00:00+00:00",
+    "last_page_captured_at": "2026-10-12T15:00:00+00:00",
+    "served_at": "2026-10-12T15:00:00+00:00",
+    "cached": false,
+    "complete": true,
+    "data": {
+      "symbol": "AAPL",
+      "quote": {
+        "timestamp": "2026-10-12T15:00:00+00:00",
+        "age_seconds": 0.0,
+        "fresh": true,
+        "bp": 199.8,
+        "ap": 200.1,
+        "bs": 10,
+        "as": 12
+      },
+      "trade": {
+        "timestamp": "2026-10-12T15:00:00+00:00",
+        "age_seconds": 0.0,
+        "fresh": true,
+        "p": 200,
+        "s": 20
+      },
+      "price": 200,
+      "price_source": "latest_iex_trade",
+      "coverage": "IEX only; not consolidated NBBO",
+      "availability": "OBSERVED"
+    },
+    "virtual_fills_enabled": false,
+    "execution_block_reason": "MARKET_DATA_OBSERVATION_ONLY",
+    "external_orders_enabled": false,
+    "usage": "Subject to Alpaca and exchange agreements; this adapter grants no redistribution rights",
+    "usage_url": "https://alpaca.markets/disclosures",
+    "point_in_time_backtest_verified": false,
+    "account_id": "account-one"
+  },
+  "chain": {
+    "schema_version": 1,
+    "provider": "alpaca",
+    "mode": "real_market_virtual",
+    "feed": "indicative",
+    "nominal_delay_seconds": null,
+    "captured_at": "2026-10-12T15:00:00+00:00",
+    "last_page_captured_at": "2026-10-12T15:00:00+00:00",
+    "served_at": "2026-10-12T15:00:00+00:00",
+    "cached": false,
+    "complete": true,
+    "data": {
+      "symbol": "AAPL",
+      "contracts": [
+        {
+          "symbol": "AAPL261016C00200000",
+          "quote": {
+            "timestamp": "2026-10-12T15:00:00+00:00",
+            "age_seconds": 0.0,
+            "fresh": true,
+            "bp": 199.8,
+            "ap": 200.1,
+            "bs": 10,
+            "as": 12
+          },
+          "trade": {
+            "timestamp": "2026-10-12T14:45:00+00:00",
+            "age_seconds": 900.0,
+            "fresh": false,
+            "p": 200,
+            "s": 20
+          },
+          "greeks": null,
+          "greeks_source": null,
+          "greeks_timestamp": null,
+          "greeks_freshness_verified": false,
+          "implied_volatility": null
+        }
+      ],
+      "quote_quality": "MODIFIED_INDICATIVE_NOT_OPRA",
+      "quote_delay_seconds": null,
+      "trade_delay_seconds": 900,
+      "availability": "OBSERVED"
+    },
+    "virtual_fills_enabled": false,
+    "execution_block_reason": "INDICATIVE_OPTIONS_NOT_EXECUTABLE",
+    "external_orders_enabled": false,
+    "usage": "Subject to Alpaca and exchange agreements; this adapter grants no redistribution rights",
+    "usage_url": "https://alpaca.markets/disclosures",
+    "point_in_time_backtest_verified": false,
+    "account_id": "account-one"
+  },
+  "bars": {
+    "schema_version": 1,
+    "provider": "alpaca",
+    "mode": "real_market_virtual",
+    "feed": "iex",
+    "nominal_delay_seconds": 0,
+    "captured_at": "2026-10-12T15:00:00+00:00",
+    "last_page_captured_at": "2026-10-12T15:00:00+00:00",
+    "served_at": "2026-10-12T15:00:00+00:00",
+    "cached": false,
+    "complete": true,
+    "data": {
+      "symbol": "AAPL",
+      "timeframe": "1Min",
+      "bars": [
+        {
+          "timestamp": "2026-10-12T14:00:00+00:00",
+          "closed_at": "2026-10-12T14:01:00+00:00",
+          "o": 100,
+          "h": 102,
+          "l": 99,
+          "c": 101,
+          "v": 20
+        }
+      ],
+      "incomplete_bars_excluded": 0,
+      "adjustment": "raw",
+      "symbol_mapping": false,
+      "availability": "OBSERVED"
+    },
+    "virtual_fills_enabled": false,
+    "execution_block_reason": "HISTORICAL_BARS_ARE_NOT_EXECUTABLE_QUOTES",
+    "external_orders_enabled": false,
+    "usage": "Subject to Alpaca and exchange agreements; this adapter grants no redistribution rights",
+    "usage_url": "https://alpaca.markets/disclosures",
+    "point_in_time_backtest_verified": false,
+    "account_id": "account-one"
+  }
+}
