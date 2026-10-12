@@ -1,0 +1,1 @@
+{"status": "failed", "action": "start", "stage": "compose_start", "code": "COMMAND_FAILED", "reason": "Check prerequisites, private directory permissions, local Docker and free port18019", "data": "No delete command was issued; existing data retained"}

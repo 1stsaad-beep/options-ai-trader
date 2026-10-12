@@ -1,0 +1,6 @@
+# The official binary requests CAP_NET_BIND_SERVICE even on port8080.
+# Remove that file capability at build time so the runtime can drop ALL caps.
+FROM caddy:2.11.7-alpine
+USER root
+RUN setcap -r /usr/bin/caddy && test -z "$(getcap /usr/bin/caddy)"
+USER 10001:10001

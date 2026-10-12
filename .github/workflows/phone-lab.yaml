@@ -1,7 +1,7 @@
 name: Lab19 isolated phone server acceptance
 on:
   push:
-    paths: ['backend/app/phone_lab.py', 'backend/tests/test_phone_lab*.py', 'scripts/phone_lab.py', 'infra/compose.phone-lab.yaml', 'infra/Caddyfile.phone-lab', '.github/workflows/phone-lab.yaml']
+    paths: ['backend/app/phone_lab.py', 'backend/tests/test_phone_lab*.py', 'scripts/phone_lab.py', 'infra/compose.phone-lab.yaml', 'infra/Caddyfile.phone-lab', 'infra/Dockerfile.phone-lab-gateway', '.github/workflows/phone-lab.yaml']
   workflow_dispatch:
 permissions:
   contents: read

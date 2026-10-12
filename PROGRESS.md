@@ -1,5 +1,10 @@
 # Progress — recovery/v1.0-20261011
 
+## Gateway capability compatibility correction
+
+- Source48954c0 accepted full Backend/PG/restore/base Compose in38290758119 and security38290757970. New phone topology failed at compose_start/COMMAND_FAILED in38290758114 (artifact SHAef23fa64167a3b31be5692f206bd22f9aa35d59c92e48ce522cb560029ba0b4e), before contract checks.
+- Reviewed official caddyserver/caddy-docker2.11/alpine Dockerfile: binary has cap_net_bind_service=+ep; upstream issue396 documents exec EPERM with cap_drop ALL. This is the likely gateway startup cause, not a reason to weaken privileges. Pin2.11.7-alpine and remove/verify absent file capability at build time; retain nonroot10001, readonly, no-new-privileges and ALL runtime capabilities dropped. Actual four-service CI remains required.
+
 ## Phone-lab loopback gateway correction
 
 - Diagnostic source de02613 / actual Compose38290320266 identified `container_isolation / UNEXPECTED_PUBLISHED_PORT`: an internal-only bridge did not publish the API binding. All three services had reached healthy state; no authentication/market connection was attempted by the failing checker. Failed artifact SHA98918f60a26c177bc81b04c4f9368f5225cc778e63b565d7be6108a148893ea1 retained.
