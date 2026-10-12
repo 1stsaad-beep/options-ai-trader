@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-12",
+  "branch": "recovery/v1.0-20261011",
+  "baseline": "2260e5baa7ec7c4cd3579bff07dec277a399dd9a",
+  "runtime_source": "3ae10f85fe472f3a887761b354751c63d3c4ba53",
+  "native_source": "b38b03daab15c70f9a076b1def27b55eae4347b2",
+  "targeted": {
+    "run": 38205166729,
+    "tests": 102,
+    "artifact": {
+      "id": 11726728614,
+      "name": "demo-recovery-evidence",
+      "size_in_bytes": 5904,
+      "url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11726728614",
+      "archive_download_url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11726728614/zip",
+      "expired": false,
+      "created_at": "2026-10-12T04:48:16Z",
+      "expires_at": "2026-10-26T04:48:15Z",
+      "updated_at": "2026-10-12T04:48:16Z",
+      "digest": "sha256:5785a720024f5e00a71fafe7f28efa28ec39c03aff4594afb7ba14d7bf599c68",
+      "workflow_run": {
+        "id": 38205166729,
+        "repository_id": 1413041190,
+        "head_repository_id": 1413041190,
+        "head_branch": "recovery/v1.0-20261011",
+        "head_sha": "3ae10f85fe472f3a887761b354751c63d3c4ba53"
+      }
+    }
+  },
+  "chart": {
+    "run": 38205487142,
+    "tests": 23,
+    "goldens": 6,
+    "artifact": {
+      "id": 11727127014,
+      "name": "chart-repair-evidence",
+      "size_in_bytes": 169503,
+      "url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11727127014",
+      "archive_download_url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11727127014/zip",
+      "expired": false,
+      "created_at": "2026-10-12T04:53:03Z",
+      "expires_at": "2026-10-26T04:53:02Z",
+      "updated_at": "2026-10-12T04:53:03Z",
+      "digest": "sha256:5a80a954daab087c03a9b4ade143b95f18eee75eb33d267d8650ffa7a1e7f7a0",
+      "workflow_run": {
+        "id": 38205487142,
+        "repository_id": 1413041190,
+        "head_repository_id": 1413041190,
+        "head_branch": "recovery/v1.0-20261011",
+        "head_sha": "b38b03daab15c70f9a076b1def27b55eae4347b2"
+      }
+    }
+  },
+  "security": {
+    "run": 38205487148,
+    "artifact": {
+      "id": 11726559425,
+      "name": "v1-security-results",
+      "size_in_bytes": 2472,
+      "url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11726559425",
+      "archive_download_url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11726559425/zip",
+      "expired": false,
+      "created_at": "2026-10-12T04:51:49Z",
+      "expires_at": "2026-10-26T04:51:48Z",
+      "updated_at": "2026-10-12T04:51:49Z",
+      "digest": "sha256:d5c8020a9f79144dfd3ee481312efa6da93e912e107a7d8be0c50c53ee38d8d0",
+      "workflow_run": {
+        "id": 38205487148,
+        "repository_id": 1413041190,
+        "head_repository_id": 1413041190,
+        "head_branch": "recovery/v1.0-20261011",
+        "head_sha": "b38b03daab15c70f9a076b1def27b55eae4347b2"
+      }
+    }
+  },
+  "ios": {
+    "run": 38205487135,
+    "tests": 222,
+    "unsigned": true,
+    "artifact": {
+      "id": 11727431974,
+      "name": "options-ai-trader-v1.0-rc2-ios-unsigned",
+      "size_in_bytes": 7899317,
+      "url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11727431974",
+      "archive_download_url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11727431974/zip",
+      "expired": false,
+      "created_at": "2026-10-12T04:56:34Z",
+      "expires_at": "2026-10-26T04:56:32Z",
+      "updated_at": "2026-10-12T04:56:34Z",
+      "digest": "sha256:bc97aed102bf8f828e4d9d667eb61606728306087c60af23c5499cb1909d640b",
+      "workflow_run": {
+        "id": 38205487135,
+        "repository_id": 1413041190,
+        "head_repository_id": 1413041190,
+        "head_branch": "recovery/v1.0-20261011",
+        "head_sha": "b38b03daab15c70f9a076b1def27b55eae4347b2"
+      }
+    }
+  },
+  "android": {
+    "run": 38205487162,
+    "status": "building"
+  },
+  "physical_device": "not_run",
+  "backend": {
+    "run": 38179500360,
+    "reexecuted_this_batch": false
+  },
+  "backtesting": {
+    "real_market_oos": "not_run",
+    "financial_data": "no_external_data"
+  }
+}

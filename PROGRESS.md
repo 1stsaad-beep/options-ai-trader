@@ -245,3 +245,10 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Final-source chart **38205487142** succeeded. Security **38205487148** artifact **11726559425** downloaded with SHA-256/CRC verification: zero pattern findings across 552 tracked text files /47 commits /806 historical blobs; no known advisories for 24 Python and 43 Pub dependencies at check time. Saved actual JSON reports, security explanation and updated requirement gap.
 - Backend runtime has not changed and was not re-tested in this batch; previous accepted 850 Python/22 PostgreSQL/10 backup/12 Compose evidence remains separately mapped to run 38179500360. Do not present these as new executions.
 - This checkpoint is documentation/evidence only. Continue awaiting existing native runs; do not rebuild them or add features while delivery is pending.
+
+### Build 16 iOS accepted; Android still building
+
+- iOS **38205487135** passed analyze, **222 visible Flutter tests** (the prior 203 plus 19 new recovery/controller/widget regressions), zero failure/error/skip, and its actual macOS unsigned build. Downloaded artifact **11727431974**; CRC and SHA-256 match: `bc97aed102bf8f828e4d9d667eb61606728306087c60af23c5499cb1909d640b`, 7899317 bytes.
+- Inspected actual plist: 1.0.0/build 16, minimum iOS 15.0, bundle `com.optionsaitrader.optionsAiTrader`; root distribution signature resources absent. No signed IPA, TestFlight or iPhone installation is claimed. Saved raw machine tests, plist inspection and source/run manifest.
+- Downloaded final-source chart artifact **11727127014** and parsed **23 targeted passes +6 strict golden passes**, zero errors/skips. Source remains `b38b03daab15c70f9a076b1def27b55eae4347b2`; following report commits do not require rebuilds.
+- Android **38205487162** has passed test gates but is still building. Continue artifact identity/signature/hash inspection when it completes; do not infer the APK result from iOS success.
