@@ -11,7 +11,7 @@ from contextlib import contextmanager
 from .migrations import SCHEMA, migrate
 
 class Repository:
-    def __init__(self, url='sqlite:///:memory:'):
+    def __init__(self, url='sqlite:///:memory:', *, invalidate_accounts=True):
         self.lock = threading.RLock()
         self.postgres = url.startswith(('postgresql://', 'postgres://'))
         if self.postgres:
@@ -28,7 +28,8 @@ class Repository:
         try:
             with self.transaction() as db:
                 migrate(db, self.postgres)
-                db.execute('UPDATE accounts SET state_known=0')
+                if invalidate_accounts:
+                    db.execute('UPDATE accounts SET state_known=0')
         except BaseException:
             self.connection.close()
             raise

@@ -121,7 +121,24 @@ def market_data_journal_schema(db, postgres):
             db.execute(f"CREATE TRIGGER immutable_market_journal_v1_{action.lower()} BEFORE {action} ON market_data_journal BEGIN SELECT RAISE(ABORT, 'market data journal is immutable'); END")
 
 
-MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema)]
+def market_runtime_schema(db, postgres):
+    """Operational state is mutable; original observations and events are not."""
+    db.execute('CREATE TABLE market_runtime_config (account_id TEXT PRIMARY KEY REFERENCES accounts(id), version INTEGER NOT NULL, payload TEXT NOT NULL)')
+    db.execute('CREATE TABLE market_runtime_coordinator (name TEXT PRIMARY KEY, payload TEXT NOT NULL)')
+    db.execute('CREATE TABLE market_runtime_tasks (symbol TEXT NOT NULL, kind TEXT NOT NULL, next_due TEXT NOT NULL, PRIMARY KEY(symbol,kind))')
+    db.execute('CREATE UNIQUE INDEX uq_market_journal_account_id ON market_data_journal(account_id,id)')
+    db.execute('CREATE TABLE market_runtime_latest (account_id TEXT NOT NULL, symbol TEXT NOT NULL, kind TEXT NOT NULL, observation_id TEXT NOT NULL, state TEXT NOT NULL, PRIMARY KEY(account_id,symbol,kind), FOREIGN KEY(account_id,observation_id) REFERENCES market_data_journal(account_id,id))')
+    db.execute('CREATE TABLE market_runtime_events (id TEXT PRIMARY KEY, account_id TEXT NOT NULL REFERENCES accounts(id), event_key TEXT NOT NULL, created TEXT NOT NULL, payload TEXT NOT NULL, digest TEXT NOT NULL, UNIQUE(account_id,event_key), UNIQUE(account_id,id))')
+    db.execute('CREATE TABLE market_runtime_ack (account_id TEXT NOT NULL, event_id TEXT PRIMARY KEY, acknowledged_at TEXT NOT NULL, FOREIGN KEY(account_id,event_id) REFERENCES market_runtime_events(account_id,id))')
+    db.execute('CREATE INDEX ix_runtime_events_account_time ON market_runtime_events(account_id,created,id)')
+    if postgres:
+        db.execute('CREATE TRIGGER immutable_runtime_event BEFORE UPDATE OR DELETE ON market_runtime_events FOR EACH ROW EXECUTE FUNCTION immutable_market_journal_v1()')
+    else:
+        for action in ('UPDATE', 'DELETE'):
+            db.execute(f"CREATE TRIGGER immutable_runtime_event_{action.lower()} BEFORE {action} ON market_runtime_events BEGIN SELECT RAISE(ABORT, 'runtime events are immutable'); END")
+
+
+MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema), (7, 'v1_market_runtime', market_runtime_schema)]
 
 
 def migrate(db, postgres):

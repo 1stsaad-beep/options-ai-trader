@@ -1,5 +1,14 @@
 # Progress — recovery/v1.0-20261011
 
+## Independent market runtime batch 1 — 2026-10-12
+
+- Inspected current branch/reports at `119f0b3805392f8f090fcbb330b3f135894e3a15`; tracked source was clean. Reused the accepted Alpaca adapter, immutable journal, causal analysis pipeline and US calendar. No earlier work rebuilt.
+- Additive migration 7: independent per-account collection/strategy settings, persisted collector lease/request budget/backoff, fair deduplicated symbol tasks, original-observation links, immutable analysis/error events and a durable API notification inbox with account-scoped acknowledgements. Controls require the existing operator bearer token and optimistic config version.
+- Collection never invokes synthetic or external execution. Basic indicative option prices remain non-executable; no SL/TP/reversal fill is assumed during outage. No real-price virtual option ledger claimed. Credentials/production entrypoint and Compose wiring follow in a separate saved batch.
+- A collector repository can opt out of the existing Demo reconciliation invalidation; default trading-process restart behavior is unchanged. Tests verify account/risk/watchlist/positions/orders/fills/marks stay unchanged.
+- Local targeted runtime/journal/migration **69 passed**; full Python **982 passed**, zero failures/errors/skips, one existing Starlette deprecation warning. New cases exercise two SQLite connections, lease takeover/fencing, restart-persistent request/429/auth gates, failed connection/recovery, account isolation, stale/future/gapped bars, immutable events, config races and strict API inputs. Initial 68/1 targeted failure was a new test using an unsupported generic fills reader; corrected to an explicit DB assertion. No production failure hidden.
+- No real Alpaca connection, other-app access, market orders, paid services, deployment or native build. Actual PostgreSQL/Compose acceptance for this batch is pending CI. This is a collector/analysis foundation, not operational 24/7 trading.
+
 ## Batch 0: recovery checkpoint
 
 - Base: 3d35475cd92058f8470d6f81826aaa4a16f587b1 (latest saved RC2).

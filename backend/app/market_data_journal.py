@@ -127,11 +127,13 @@ def _validate_observation(value, account_id, request, recorded):
     return {**value, 'account_id': account_id}
 
 
-def capture(service, account_id, body, provider):
+def capture(service, account_id, body, provider, *, commit_guard=None):
     key, request = normalize_request(body)
     fingerprint = sha256(canonical(request).encode()).hexdigest()
     with service.repo.transaction() as db:
         service.account(db, account_id)
+        if commit_guard is not None:
+            commit_guard(db)
         existing = _existing(db, account_id, key, fingerprint)
         if existing is not None:
             return existing  # Lost response recovery needs no provider/permission.
@@ -142,6 +144,8 @@ def capture(service, account_id, body, provider):
     value = _provider_observation(provider, request)
     with service.repo.transaction() as db:
         service.account(db, account_id)
+        if commit_guard is not None:
+            commit_guard(db)
         existing = _existing(db, account_id, key, fingerprint)
         if existing is not None:
             return existing  # Concurrent identical request already committed.

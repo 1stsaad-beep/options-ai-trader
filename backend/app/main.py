@@ -77,6 +77,8 @@ def create_app(repository=None, token=None, market_data_provider=None):
     secured = [Depends(auth)]
     from .market_data_api import install_market_data_routes
     install_market_data_routes(app, secured, service, lambda: app.state.market_data)
+    from .market_runtime_api import install_market_runtime_routes
+    install_market_runtime_routes(app, secured, service)
     @app.get('/api/readiness',dependencies=secured)
     def readiness(s=Depends(service)):
         from .monitoring import readiness as inspect
