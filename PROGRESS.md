@@ -238,3 +238,10 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - The identity verifier locally accepted synthetic Build 16 badging and rejected Build 14, Build 15, and a wrong-package candidate with a matching label/version. Actual binary verification remains required in CI; these checks do not prove installation.
 - Added `PHONE_BUILD16_INSTALL_AR.md`: preserve both prior apps/data, compare checksum, manual backup/preview/cancel/import, never damage real data to test recovery. Stable signing remains unconfigured unless existing CI Secrets supply the private key; no key or secret is added to Git.
 - Publish to start the full Android/iOS mobile gate. No new feature will begin while packaging/acceptance is unresolved. Recovery targeted proof remains 102 passes; full Flutter count and APK/iOS hashes are pending the actual runs.
+
+### Native gate in progress — security evidence saved
+
+- Packaging source `b38b03daab15c70f9a076b1def27b55eae4347b2` pushed/read back. Android **38205487162** passed analyze/full semantic tests/strict goldens and is building; iOS **38205487135** is running its full tests/build gate. No artifact or physical install acceptance claimed yet.
+- Final-source chart **38205487142** succeeded. Security **38205487148** artifact **11726559425** downloaded with SHA-256/CRC verification: zero pattern findings across 552 tracked text files /47 commits /806 historical blobs; no known advisories for 24 Python and 43 Pub dependencies at check time. Saved actual JSON reports, security explanation and updated requirement gap.
+- Backend runtime has not changed and was not re-tested in this batch; previous accepted 850 Python/22 PostgreSQL/10 backup/12 Compose evidence remains separately mapped to run 38179500360. Do not present these as new executions.
+- This checkpoint is documentation/evidence only. Continue awaiting existing native runs; do not rebuild them or add features while delivery is pending.
