@@ -1,5 +1,12 @@
 # Progress — recovery/v1.0-20261011
 
+## Archive and phone phase — native acceptance checkpoint
+
+- Corrected source saved/read back at `d9f08b67e2e31186f10ad2e621cc1ff46871e8cc`. Targeted Flutter workflow `38276385194` now **passed** analyze and **52 tests**, zero failures/skips. Downloaded artifact and verified ZIP CRC and API SHA-256 before reading the actual machine results. Earlier lint failures remain documented.
+- Backend source `ce745489233a48b84944c97e5e30a41e0c4aca46` acceptance `38275768725`: **1014 Python** /zero failures/errors/skips; **22 PostgreSQL +6 journal +8 runtime** checks; **16 actual PostgreSQL backup/restore** checks (including post-backup archive restore/idempotency); **17 Compose** checks. Exact source and result files retained for delivery; backend is unchanged since that gate.
+- Prepare isolated **Lab18** preview: version18/package suffix v1previewrc2b18/launcher label Lab18, preserving all Build14–17 apps and their storage. Packaging identity helper locally accepts18 and rejects17/14. Java17 remains unchanged. No stable key created or committed; actual CI signing mode will be recorded from the build artifact.
+- Added Android safe installation/connection/account-isolation/outage checklist. Next gate builds Android once and iOS unsigned with their existing full Flutter checks; **build result and phone installation remain pending** at this checkpoint. No actual provider connection, external order or paid hosting.
+
 ### Mobile static-analysis correction
 
 - Follow-up `d9b50261a956556d7ef2d0f57e61639c279723b5` initially added braces to the wrong single-line condition. CI `38276093632` repeated the same line103 diagnostic before tests. Inspected exact numbered source and corrected the multiline event-page condition itself. This failed attempt is retained; neither run is counted as widget acceptance.
