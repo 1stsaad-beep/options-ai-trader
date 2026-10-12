@@ -297,3 +297,8 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Mobile checkpoint `b5cad48e39cbeaab0729c68e8749983f8b69df23` saved/read back. Runner `38224122195` stopped in analyze on three const-constructor lints in the same static notice; tests were not executed and are not counted. Added the outer const without changing behavior and rerunning the focused runner.
 - Added `docs/ALPACA_DATA_V1.md`: Basic capability/source limitations, account namespace, option-fill block, shared-account request budget limits, explicit no-redistribution grant, point-in-time history limitation and private connection procedure requiring separate approval.
 - Added an opt-in Compose overlay passing dedicated credentials only to API. Default Compose and worker stay unchanged; the overlay has not been used to connect to any account.
+
+### Mobile test viewport correction
+
+- Checkpoint `7dc4f00bef78dbe149af8dbed1a714b17ba60c70`: analyze now passes. Focused runner `38224616335` reached tests; one widget expectation queried a lazily rendered result below the visible scroll viewport. Parser, account-race, disabled connection, history rendering and error cases passed.
+- Updated that test to scroll to the actual price/Greeks rows before asserting. No production data or risk logic changed. Preserved the failing machine log in `mobile-preflight2/market-data-tests.json`; native builds remain gated until success.

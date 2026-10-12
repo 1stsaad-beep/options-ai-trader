@@ -97,9 +97,11 @@ void main() {
     await mount(tester, api);
     await tester.ensureVisible(find.text('جلب السعر'));
     await tester.tap(find.text('جلب السعر')); await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.textContaining('آخر صفقة IEX: 200.00'),180);
     expect(find.textContaining('آخر صفقة IEX: 200.00'),findsOneWidget);
     await tester.ensureVisible(find.text('خيارات إرشادية'));
     await tester.tap(find.text('خيارات إرشادية')); await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.textContaining('غير متاحة؛ لم تُقدّر محليًا'),180);
     expect(find.textContaining('غير متاحة؛ لم تُقدّر محليًا'),findsOneWidget);
     expect(methods.every((m) => m == 'GET'),true);
     expect(find.textContaining('آخر صفقة IEX: 200.00'),findsNothing);
