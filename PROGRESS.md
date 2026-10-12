@@ -1,5 +1,12 @@
 # Progress — recovery/v1.0-20261011
 
+## Android background monitor — source checkpoint
+
+- Archive batch published/read back at `14f854da7dc62573d0ecda177d5a00d20fc47fd1`. Backend/PostgreSQL/Compose38282705999 and security38282706758 succeeded; exact evidence receipts will be collected before final delivery.
+- Added an explicitly started Android foreground dataSync monitor: one selected account, fixed status GET, HTTPS only, no redirects/provider hosts, authority/account validation, memory-only API token, generic notification with stop action, 30-minute monotonic session bound and roughly60-second polling. No boot restart, sticky service, wake lock, provider consent, trading or Demo writes. Handles Android timeout/auth failure and stops on account/connection changes.
+- Added Arabic opt-in/limits/status screen, native Java policy harness and Flutter lifecycle/permission/consent/error/RTL tests. Native and Flutter acceptance await CI: local Flutter/JDK compiler unavailable (java launcher cannot load libjli.so); not counted as executed. No new APK yet; `[chart-check]` gates native packaging until mobile tests pass.
+- See ANDROID_BACKGROUND_MONITOR_V1.md for limits and explicit unperformed physical-device checklist. This monitors the remote engine; it does not run the Python market engine on the phone or promise powered-off/24/7 operation.
+
 ## Resumption 2026-10-12 — archive automation batch
 
 - Verified actual Recovery HEAD `143fef6def4457cf145d903f14e345752b92a12b`, six remote branches and recent commits. Empty new workspace had no recoverable prior checkout/unsaved edits. Reconstructed the exact original commit/tree and verified 274 original text-file Git hashes; unmaterialized historical evidence/binaries remain in the base tree, not deleted. Git status was clean before source work. Personal Context was unavailable; GitHub reports are authoritative.

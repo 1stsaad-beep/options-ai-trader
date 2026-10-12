@@ -7,6 +7,7 @@ import 'api.dart';
 import 'analysis_contract.dart';
 import 'market_data.dart';
 import 'market_runtime.dart';
+import 'market_monitor.dart';
 import 'demo/screen.dart';
 import 'demo/store.dart';
 
@@ -457,6 +458,12 @@ class _DashboardState extends State<Dashboard> {
       secret: {'رمز الوصول'},
     );
     if (values == null || !mounted) return;
+    try { await MarketMonitor.stopIfSupported(); }
+    catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('أوقف مراقبة Android قبل تغيير اتصال الخادم.')));
+      return;
+    }
+    if (!mounted) return;
     api.baseUrl = values['عنوان الخادم']!;
     api.token = values['رمز الوصول']!;
     await reloadAccounts();

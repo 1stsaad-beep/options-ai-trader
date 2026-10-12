@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'api.dart';
+import 'market_monitor.dart';
 
 Map<String, dynamic> runtimeObject(dynamic raw) {
   if (raw is! Map || raw.keys.any((k) => k is! String)) {
@@ -271,7 +272,11 @@ class _MarketRuntimeScreenState extends State<MarketRuntimeScreen> with WidgetsB
   Widget build(BuildContext context) {
     final data = status;
     return Scaffold(
-      appBar: AppBar(title: const Text('خادم السوق'), actions: [IconButton(
+      appBar: AppBar(title: const Text('خادم السوق'), actions: [
+        if (MarketMonitor.supported) IconButton(tooltip: 'مراقبة Android التجريبية',
+          onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => MarketMonitorScreen(api: widget.api, account: account))),
+          icon: const Icon(Icons.notifications_active_outlined)),
+        IconButton(
         tooltip: 'تحديث حالة الخادم', onPressed: busy ? null : () => load(), icon: const Icon(Icons.refresh))]),
       body: SafeArea(child: ListView(padding: const EdgeInsets.all(12), children: [
         const Text('مراقبة وتحليل مستقلان عن Demo • تنفيذ الخيارات مقفل', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -281,7 +286,13 @@ class _MarketRuntimeScreenState extends State<MarketRuntimeScreen> with WidgetsB
           isExpanded: true, decoration: const InputDecoration(labelText: 'حساب الخادم'),
           items: widget.accounts.map((a) => DropdownMenuItem<String>(value: '${a['id'] ?? a['account_id']}',
             child: Text('${a['name']}', overflow: TextOverflow.ellipsis))).toList(),
-          onChanged: (id) { if (id != null && id != account) { setState(() { account = id; notice = null; }); load(); } }),
+          onChanged: (id) async {
+            if (id == null || id == account) return;
+            try { await MarketMonitor.stopIfSupported(); }
+            catch (_) { if (mounted) setState(() => notice = 'لم يتأكد إيقاف المراقبة الخلفية؛ أوقفها قبل تغيير الحساب.'); return; }
+            if (!mounted) return;
+            setState(() { account = id; notice = null; }); load();
+          }),
         if (busy) const LinearProgressIndicator(),
         if (error != null) Semantics(liveRegion: true, child: Padding(padding: const EdgeInsets.all(12),
           child: Text(error!, key: const Key('runtime-error'), style: TextStyle(color: Theme.of(context).colorScheme.error)))),

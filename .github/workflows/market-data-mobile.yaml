@@ -2,9 +2,9 @@ name: Alpaca data-only mobile contract
 on:
   push:
     branches: [recovery/v1.0-20261011]
-    paths: ['mobile/lib/market_data.dart', 'mobile/lib/market_runtime.dart', 'mobile/test/market_runtime_test.dart', 'mobile/test/fixtures/market_runtime_v1.json', 'mobile/lib/main.dart', 'mobile/test/market_data_test.dart', 'mobile/test/fixtures/market_data_v1.json', '.github/workflows/market-data-mobile.yaml']
+    paths: ['mobile/lib/market_data.dart', 'mobile/lib/market_runtime.dart', 'mobile/lib/market_monitor.dart', 'mobile/test/market_monitor_test.dart', 'mobile/android/**', 'mobile/test/native/**', 'mobile/scripts/test_monitor_policy.py', 'mobile/test/market_runtime_test.dart', 'mobile/test/fixtures/market_runtime_v1.json', 'mobile/lib/main.dart', 'mobile/test/market_data_test.dart', 'mobile/test/fixtures/market_data_v1.json', '.github/workflows/market-data-mobile.yaml']
   pull_request:
-    paths: ['mobile/lib/market_data.dart', 'mobile/lib/market_runtime.dart', 'mobile/test/market_runtime_test.dart', 'mobile/test/fixtures/market_runtime_v1.json', 'mobile/lib/main.dart', 'mobile/test/market_data_test.dart', 'mobile/test/fixtures/market_data_v1.json', '.github/workflows/market-data-mobile.yaml']
+    paths: ['mobile/lib/market_data.dart', 'mobile/lib/market_runtime.dart', 'mobile/lib/market_monitor.dart', 'mobile/test/market_monitor_test.dart', 'mobile/android/**', 'mobile/test/native/**', 'mobile/scripts/test_monitor_policy.py', 'mobile/test/market_runtime_test.dart', 'mobile/test/fixtures/market_runtime_v1.json', 'mobile/lib/main.dart', 'mobile/test/market_data_test.dart', 'mobile/test/fixtures/market_data_v1.json', '.github/workflows/market-data-mobile.yaml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,11 +22,13 @@ jobs:
           flutter-version: '3.47.7'
           channel: stable
           cache: true
+      - name: Native monitor policy without network
+        run: python3 mobile/scripts/test_monitor_policy.py
       - run: flutter pub get
         working-directory: mobile
       - run: flutter analyze
         working-directory: mobile
-      - run: flutter test test/market_runtime_test.dart test/market_data_test.dart test/api_test.dart --machine > market-data-tests.json
+      - run: flutter test test/market_monitor_test.dart test/market_runtime_test.dart test/market_data_test.dart test/api_test.dart --machine > market-data-tests.json
         working-directory: mobile
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
