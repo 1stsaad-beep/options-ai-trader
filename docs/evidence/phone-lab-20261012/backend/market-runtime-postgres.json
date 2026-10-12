@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "database": "PostgreSQL",
+  "checks_passed": 8,
+  "checks_failed": 0,
+  "checks": [
+    "postgres_two_worker_lease_and_shared_symbol_single_fetch",
+    "demo_account_trust_and_ledger_unchanged",
+    "native_postgres_event_update_delete_guards",
+    "account_scoped_idempotent_notification_ack",
+    "native_account_observation_composite_foreign_key",
+    "expired_lease_takeover_without_duplicate_orders",
+    "postgres_shared_budget_and_retry_after_survive_connection_change",
+    "restart_backoff_recovery_and_no_fabricated_stop_fills"
+  ],
+  "external_market_connection": false,
+  "provider": "explicit_mock_contract"
+}

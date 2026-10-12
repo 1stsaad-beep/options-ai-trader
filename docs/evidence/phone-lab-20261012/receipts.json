@@ -1,0 +1,82 @@
+{
+  "resumed_from": "4613a68b8c51ba585896c967d5f238c46b0bec8b",
+  "source": "418c55437aa0a209f604dc86a60b78fde66449f6",
+  "branch": "recovery/v1.0-20261011",
+  "artifacts": [
+    {
+      "id": 11766200514,
+      "name": "phone-lab-acceptance",
+      "run": 38291253883,
+      "sha256": "86982354ebcebb92168294d6cdce653a470278dcb62e5e94d916ac9640bc995d",
+      "bytes": 1166,
+      "source": "418c55437aa0a209f604dc86a60b78fde66449f6",
+      "expires_at": "2026-10-26T18:30:14Z"
+    },
+    {
+      "id": 11765192857,
+      "name": "backend-test-results",
+      "run": 38291253899,
+      "sha256": "ddfe382ce2b1d611b1a3d5e07d31eb62d1e012070fca996551b56bb840d34810",
+      "bytes": 23991,
+      "source": "418c55437aa0a209f604dc86a60b78fde66449f6",
+      "expires_at": "2027-01-10T18:29:29Z"
+    },
+    {
+      "id": 11765023727,
+      "name": "compose-runtime-result",
+      "run": 38291253899,
+      "sha256": "8669743c082dac394b7812779c71ac142fa67a251cb52fbedfd86a5aedca6ccd",
+      "bytes": 687,
+      "source": "418c55437aa0a209f604dc86a60b78fde66449f6",
+      "expires_at": "2026-10-26T18:30:34Z"
+    },
+    {
+      "id": 11766446154,
+      "name": "v1-security-results",
+      "run": 38291253855,
+      "sha256": "28d9949958d812d5681b7bfc1b7beabdbad015fdcf72d35215973717992f26f1",
+      "bytes": 2519,
+      "source": "418c55437aa0a209f604dc86a60b78fde66449f6",
+      "expires_at": "2026-10-26T18:29:52Z"
+    }
+  ],
+  "results": {
+    "python": 1055,
+    "python_failures": 0,
+    "python_errors": 0,
+    "python_skipped": 0,
+    "local_targeted": 67,
+    "phone_lab_start_checks": 21,
+    "phone_lab_exercise_checks": 28,
+    "postgres_checks": [
+      22,
+      6,
+      8
+    ],
+    "backup_restore": 16,
+    "base_compose": 17,
+    "secret_patterns": 0
+  },
+  "scope": {
+    "postgres_api_runtime_gateway_actually_started_in_CI": true,
+    "public_https_started": false,
+    "phone_connection_tested": false,
+    "phone_apk_install": "user_reported_success",
+    "external_broker_connection": false,
+    "external_orders": false,
+    "live": false,
+    "paid_service": false,
+    "flutter_changed": false,
+    "old_demo_modified": false,
+    "lab_stop_preserves_volumes": true
+  },
+  "preflight": {
+    "fixture_failure_reports": "trailing whitespace normalized; failure content retained",
+    "compose_runs": [
+      38289937851,
+      38290320266,
+      38290758114
+    ],
+    "resolved": "internal-only port publishing and Caddy executable capability compatibility; all isolation gates retained"
+  }
+}

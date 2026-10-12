@@ -1,5 +1,13 @@
 # Progress — recovery/v1.0-20261011
 
+## Phone-lab accepted — actual Docker, public HTTPS/device pending
+
+- Accepted source **418c55437aa0a209f604dc86a60b78fde66449f6**. Phone CI38291253883 passed actual PostgreSQL/API/disabled-provider runtime/loopback gateway:21 start checks and28 exercise checks (overlap), including token401, two accounts, fresh heartbeat, scoped events/ack and independent controls, zero orders/positions. Stop preserved all lab volumes/private files.
+- Backend38291253899: **1055 Python**,0 failures/errors/skips;22+6+8PG,16restore,17baseCompose passed. Security38291253855:766 tracked text files/86commits/1182historical blobs,0 patterns;24Python/43Pub without known advisories at query time. Four downloaded artifacts matched API SHA and passed ZIP CRC; raw receipts and per-file hashes saved in docs/evidence/phone-lab-20261012/.
+- Installed Lab19 remains unchanged; no APK rebuild required. User-reported installation succeeded, but public HTTPS and phone/server acceptance are **not performed**. Current workspace lacks Docker/PostgreSQL/public ingress/tunnel support; no URL is invented, no CI hosting/tunnel was started. Runtime on internal network stays provider-disabled; gateway is local-only until user deliberately starts cloudflared on their own computer.
+- [Acceptance and remaining scope](docs/LAB19_PHONE_TEST_ACCEPTANCE_20261012.md) / [Arabic connection and private token instructions](docs/LAB19_PHONE_CONNECTION_AR.md). Next: identify existing user computer, run isolated lab and real temporary HTTPS tunnel, then receive physical phone evidence without the token. No paid service, external broker/order, Live, other-app or Demo modification.
+- Earlier failure checkpoints below are historical. Caddy file capability removed at build time with runtime cap_drop ALL retained; source commit418c554 passed all final gates. Final reports/evidence commit changes no runtime code.
+
 ## Gateway capability compatibility correction
 
 - Source48954c0 accepted full Backend/PG/restore/base Compose in38290758119 and security38290757970. New phone topology failed at compose_start/COMMAND_FAILED in38290758114 (artifact SHAef23fa64167a3b31be5692f206bd22f9aa35d59c92e48ce522cb560029ba0b4e), before contract checks.

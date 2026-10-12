@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "checks": [
+    "four_healthy_owned_services",
+    "postgres_not_published",
+    "loopback_only_gateway",
+    "internal_network_no_provider_egress",
+    "mock_live_locked",
+    "nonroot_readonly_api_runtime_gateway",
+    "provider_disabled",
+    "missing_token_rejected",
+    "wrong_token_rejected",
+    "two_accounts",
+    "isolated_names",
+    "fresh_disabled_runtime",
+    "execution_locked",
+    "account_events",
+    "no_orders",
+    "no_positions",
+    "fresh_disabled_runtime",
+    "execution_locked",
+    "account_events",
+    "no_orders",
+    "no_positions"
+  ],
+  "count": 21,
+  "public_https": "not_started",
+  "phone_test": "not_performed",
+  "provider_connected": false,
+  "external_orders_enabled": false
+}
