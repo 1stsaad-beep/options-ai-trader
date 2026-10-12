@@ -225,3 +225,9 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Checkpoint `7165cca807c4a7d0e99f92f37f1df8a08260094a` pushed/read back. Recovery run `38205010875` stopped at analyze: missing explicit archive-interface cast and one required brace. Tests did not execute. Corrected both; no analyzer rule disabled.
 - Review also found that a missing disk snapshot after an earlier load could bootstrap replacement accounts. Now only first-ever empty storage bootstraps defaults; a previously read original or valid memory is retained. Initial bootstrap also verifies readback before enabling simulation. Added three regressions for both missing-state paths and incomplete first write.
 - Re-run the targeted gate on this saved correction before packaging. No runtime outside the Demo storage/UI path changed.
+
+### Initial recovery accepted — checkpoint before native packaging
+
+- Correction `3ae10f85fe472f3a887761b354751c63d3c4ba53` pushed/read back. Targeted run **38205166729** passed analyze and **102 visible Flutter tests**, zero failures/errors/skips. Artifact **11726728614** downloaded, SHA-256/CRC verified, raw JSONL parsed and preserved. Chart **38205166732** and security **38205166880** gates also succeeded.
+- Saved `docs/DEMO_RECOVERY_V1.md`: explicit recovery steps, immutable original copy, fail-closed cases, single archive-slot limitation, no device/power-loss/multi-process guarantee. No engine/financial logic or Demo ledger schema change.
+- The next bounded batch prepares a separately identified Build 16 and runs the complete mobile acceptance gate once. Build 14/15 binaries and app data remain independent; no in-place upgrade under an ephemeral key is promised. Native build and physical-device tests for Build 16 are not yet executed.
