@@ -187,27 +187,39 @@ def main(argv=None):
     parser.add_argument('action',choices=['init','start','check','exercise','stop'])
     parser.add_argument('--directory',required=True,type=Path)
     args=parser.parse_args(argv)
+    stage='private_configuration'
     try:
         if args.action=='init':
             result=init(args.directory)
         else:
-            values=load(args.directory); env=safe_env(); require_local_engine(env)
+            values=load(args.directory); env=safe_env()
+            stage='local_docker'
+            require_local_engine(env)
             base=compose(args.directory,values)
             if args.action=='stop':
+                stage='stop_owned_project'
                 command(base+['stop','--timeout','30'],env,90)
                 result={'status':'stopped','data':'all volumes and private files retained'}
             else:
                 if args.action=='start':
+                    stage='compose_start'
                     command(base+['up','--build','-d','--wait','--wait-timeout','150'],env,900)
-                checks=inspect(values,env)+check(values,exercise=args.action=='exercise')
+                stage='container_isolation'
+                checks=inspect(values,env)
+                stage='local_http_contract'
+                checks+=check(values,exercise=args.action=='exercise')
                 result={'status':'passed','checks':checks,'count':len(checks),
                         'public_https':'not_started','phone_test':'not_performed',
                         'provider_connected':False,'external_orders_enabled':False}
         print(json.dumps(result,ensure_ascii=False,indent=2))
         return 0
-    except (OSError,ValueError,KeyError,LabFailure,SmokeFailure):
+    except (OSError,ValueError,KeyError,LabFailure,SmokeFailure) as error:
         # Deliberately omit exception text, Compose output and parsed environment values.
-        print(json.dumps({'status':'failed','action':args.action,
+        # Only fixed uppercase internal identifiers may be exposed, never arbitrary text.
+        code=str(error) if isinstance(error,(LabFailure,SmokeFailure)) else ''
+        if not re.fullmatch(r'[A-Z_]{3,100}',code):
+            code='CHECK_FAILED'
+        print(json.dumps({'status':'failed','action':args.action,'stage':stage,'code':code,
               'reason':'Check prerequisites, private directory permissions, local Docker and free port18019',
               'data':'No delete command was issued; existing data retained'}))
         return 1

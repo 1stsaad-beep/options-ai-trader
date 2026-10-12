@@ -1,5 +1,10 @@
 # Progress — recovery/v1.0-20261011
 
+## Phone-lab redacted diagnostics checkpoint
+
+- Sourcef28b4cc passed the complete Backend job in CI38289937552 and security38289937634. Dedicated actual Compose38289937851 failed during start; raw redacted result retained (ZIP SHA11367f812765fa04456a2e804a508d0fca439c7d290faf90f4b9610a937396fd). The broad generic failure hid whether creation, isolation inspection or HTTP verification failed. No public URL/phone acceptance claimed.
+- Add stage plus a fixed uppercase internal error identifier; never expose arbitrary exception/command text or secrets. Targeted failure-redaction regression retained. Next CI must identify and resolve the concrete failure before calling the prepared lab accepted.
+
 ## Lab19 physical-phone connection preparation — pending CI
 
 - User confirms Lab19 APK installed on an actual Android phone; server connection timed out at emulator-only default10.0.2.2. Latest remote/local HEAD4613a68 verified clean before edits. Flutter has editable HTTPS/token settings, so no APK/source change is needed for connection.

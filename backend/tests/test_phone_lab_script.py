@@ -101,3 +101,14 @@ def test_loopback_requests_ignore_proxies_and_never_redirect(monkeypatch):
         lab.request('private-fixture','GET','/api/accounts')
     assert handlers[0].proxies=={}
     assert isinstance(handlers[1],lab.NoRedirects)
+
+
+def test_safe_diagnostic_identifies_failure_without_raw_output(tmp_path,monkeypatch,capsys):
+    p=tmp_path/'private';lab.init(p)
+    monkeypatch.setattr(lab,'require_local_engine',lambda *_:None)
+    def fail(*_):raise lab.LabFailure('UNEXPECTED_PUBLISHED_PORT')
+    monkeypatch.setattr(lab,'inspect',fail)
+    assert lab.main(['check','--directory',str(p)])==1
+    result=json.loads(capsys.readouterr().out)
+    assert result['stage']=='container_isolation'
+    assert result['code']=='UNEXPECTED_PUBLISHED_PORT'

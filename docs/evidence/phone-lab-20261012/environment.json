@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-12",
+  "resumed_head": "4613a68b8c51ba585896c967d5f238c46b0bec8b",
+  "tools": {
+    "docker": false,
+    "podman": false,
+    "postgres": false,
+    "psql": false,
+    "cloudflared": false,
+    "ngrok": false,
+    "adb": false,
+    "flutter": false
+  },
+  "python_project_venv_available": true,
+  "managed_public_https_endpoint_available": false,
+  "public_tunnel_started": false,
+  "hosting_purchased": false,
+  "broker_connection_performed": false,
+  "physical_device_apk_install": "user_reported_success",
+  "physical_device_server_connection": "user_reported_timeout_at_emulator_default; new endpoint test pending",
+  "limitations": [
+    "No Docker daemon/socket or PostgreSQL executable in this session",
+    "No public port or compatible Python/PostgreSQL hosting tool exposed",
+    "Cloudflare tunnel egress is outside the supplied runtime network allowlist",
+    "Sites Workers are not a replacement for this persistent Python/PostgreSQL stack"
+  ]
+}
