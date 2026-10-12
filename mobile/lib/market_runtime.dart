@@ -100,7 +100,9 @@ class RuntimeEvents {
     runtimeAuthority(value, account: account);
     runtimeTime(value['as_of']);
     if (value['items'] is! List || (value['next_before'] != null && value['next_before'] is! String) ||
-        value['delivery'] != 'DURABLE_API_INBOX_ONLY') throw const FormatException('Invalid event page');
+        value['delivery'] != 'DURABLE_API_INBOX_ONLY') {
+      throw const FormatException('Invalid event page');
+    }
     final items = <Map<String, dynamic>>[];
     final ids = <String>{};
     for (final raw in value['items'] as List) {

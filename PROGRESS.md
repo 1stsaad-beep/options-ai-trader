@@ -2,6 +2,8 @@
 
 ### Mobile static-analysis correction
 
+- Follow-up `d9b50261a956556d7ef2d0f57e61639c279723b5` initially added braces to the wrong single-line condition. CI `38276093632` repeated the same line103 diagnostic before tests. Inspected exact numbered source and corrected the multiline event-page condition itself. This failed attempt is retained; neither run is counted as widget acceptance.
+
 - Phone checkpoint published/read back at `ce745489233a48b84944c97e5e30a41e0c4aca46`; backend/Compose and security CI succeeded. Targeted mobile `38275768609` stopped at one required curly-brace lint in the event parser; widget tests had **not run**, and no APK was built. Corrected the lint without weakening analysis. Original diagnostic retained under `docs/evidence/archive-phone-20261012/preflight/`.
 - Saving the correction before rerunning the affected Flutter gate. No market connection or additional feature in this correction.
 
