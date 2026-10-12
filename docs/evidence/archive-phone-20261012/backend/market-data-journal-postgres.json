@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "database": "PostgreSQL",
+  "checks_passed": 6,
+  "checks_failed": 0,
+  "checks": [
+    "two_connection_duplicate_capture_has_one_receipt_and_audit",
+    "native_update_delete_guards_and_cross_connection_exact_replay",
+    "account_isolation",
+    "native_account_foreign_key",
+    "as_of_cannot_backdate_provider_history",
+    "capture_and_audit_atomic_rollback"
+  ],
+  "provider": "mock_contract_fixture",
+  "external_market_connection": false
+}

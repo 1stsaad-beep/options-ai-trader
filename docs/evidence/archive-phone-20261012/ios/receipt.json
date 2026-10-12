@@ -1,0 +1,13 @@
+{
+  "run_id": 38276748013,
+  "artifact_id": 11760275241,
+  "source_commit": "89b9bfdc65fec1a8eb2b96b527ae1133481c28f4",
+  "artifact_sha256": "682f1dc02aa396253d904a0f8a43aea729ee8c9f40014dbdf43f0a9caf8505e7",
+  "bundle_identifier": "com.optionsaitrader.optionsAiTrader",
+  "version": "1.0.0",
+  "build": "18",
+  "signing": "unsigned_no_codesign_build",
+  "testflight": false,
+  "physical_device_tested": false,
+  "flutter_passed": 263
+}

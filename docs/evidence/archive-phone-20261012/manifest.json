@@ -1,0 +1,82 @@
+{
+  "branch": "recovery/v1.0-20261011",
+  "base": "e26e932705bed794213ca079a3bd3a66ab2eb2d9",
+  "backend_source": "ce745489233a48b84944c97e5e30a41e0c4aca46",
+  "native_source": "89b9bfdc65fec1a8eb2b96b527ae1133481c28f4",
+  "provider_connection": false,
+  "device_installation_tested": false,
+  "files": {
+    "preflight/mobile-analysis-failure.txt": {
+      "sha256": "82993e82822488f04357dd04e27de5e3b9c3666bed1f43d43715fa3bf17d089d",
+      "bytes": 391
+    },
+    "security/dependency-audit.json": {
+      "sha256": "1a484e5b2896c3c1c6dda9da516a72784f80dc13449a69cde8922cff592b1903",
+      "bytes": 1392
+    },
+    "security/dart-dependency-audit.json": {
+      "sha256": "50ec25f62f981eb86da05b8b1a8f3769de4b1a483890d68480fb927458768c43",
+      "bytes": 4886
+    },
+    "security/secret-scan.json": {
+      "sha256": "d2d8e8cc6092319af67170384c7147a9e429cc7a654cb647d89cfc313e000041",
+      "bytes": 11656
+    },
+    "mobile-targeted/market-data-tests.json": {
+      "sha256": "0415c500183a2df7b99eca30e75ca61a1a79f7fc5595045306324774c4743cec",
+      "bytes": 25613
+    },
+    "compose/compose-smoke.json": {
+      "sha256": "ff6ab204bd052f6842a7cec23957ec522b42972ab4b56537b711a5e890106a31",
+      "bytes": 1135
+    },
+    "backend/postgres-backup-restore.json": {
+      "sha256": "d95f240aaf684a331a8a13b218ae6cb03e9f52eb28999f5f2bb1aacc72af4b8e",
+      "bytes": 1187
+    },
+    "backend/postgres-basic.txt": {
+      "sha256": "86917cdafbd785be2cc3039b265866ec5a3a4f5442631c83de8f4bb40cfb58c9",
+      "bytes": 164
+    },
+    "backend/market-runtime-postgres.json": {
+      "sha256": "8ca64df70a14b3f32b6c56e9a7c8f2549a7586184c9fe187f6326a36d37e7fd2",
+      "bytes": 649
+    },
+    "backend/http-smoke.json": {
+      "sha256": "6d4f4bf404ddcb84de8affcc4fe33827c430340942b7dc689199d73e0c2cd979",
+      "bytes": 706
+    },
+    "backend/market-data-journal-postgres.json": {
+      "sha256": "2f845116e5610995ecb05afc4663c56be356ca015e275bea4054130704560154",
+      "bytes": 474
+    },
+    "backend/lifecycle-synthetic.json": {
+      "sha256": "ca00c1099a8b424e7af0189783a33bc38f3e351eb62bafeec90b8733ccc57bc5",
+      "bytes": 21101
+    },
+    "backend/test-results.xml": {
+      "sha256": "37d4185736da4ab1a59eeb691453fa03dabe35f85b7c5e671747e9105aa34c63",
+      "bytes": 140493
+    },
+    "backend/postgres-v1-results.json": {
+      "sha256": "b8934d0b27544e07ca2b70745a2683c84a202443103740a5ac0557ed83248182",
+      "bytes": 1303
+    },
+    "ios/receipt.json": {
+      "sha256": "819cf4980bfcf00071918c6b2ba600a94183acd5eb6d7a3e75d9b09a6a68807e",
+      "bytes": 437
+    },
+    "ios/flutter-tests.json": {
+      "sha256": "d422d99379a3f512605d0ceda953f6872bc85da858064d5dce9d6c29d2ffe2da",
+      "bytes": 130326
+    }
+  },
+  "ios": {
+    "run_id": 38276748013,
+    "artifact_id": 11760275241,
+    "zip_sha256": "682f1dc02aa396253d904a0f8a43aea729ee8c9f40014dbdf43f0a9caf8505e7",
+    "flutter_passed": 263,
+    "unsigned": true
+  },
+  "android": "pending_build_receipt"
+}

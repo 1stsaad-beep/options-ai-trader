@@ -1,0 +1,41 @@
+{
+  "accounts_created": 0,
+  "checks": [
+    "owned_services_running",
+    "postgres_healthy",
+    "loopback_only_ports",
+    "api_worker_nonroot_readonly",
+    "paper_mock_live_false",
+    "public_health_safe",
+    "authenticated_database_readiness",
+    "fresh_worker_heartbeat",
+    "trading_not_ready_without_accounts",
+    "unauthorized_endpoints_401",
+    "authenticated_accounts_empty",
+    "postgres_account_order_position_counts_zero",
+    "collector_heartbeat_advances_without_api_or_phone",
+    "new_collector_process_resumes_persisted_postgres_state",
+    "database_outage_fails_healthcheck_then_worker_recovers",
+    "collector_disabled_without_secret_or_approval",
+    "api_has_no_alpaca_secret_or_transport"
+  ],
+  "cleanup": "owned_resources_removed",
+  "live_enabled": false,
+  "market_connection_tested": false,
+  "orders_created": 0,
+  "project": "oat-smoke-e76abf406609b59a61da0e04",
+  "schema_versions": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "source": "isolated_synthetic_mock",
+  "status": "passed",
+  "test": "compose_base_plus_disabled_market_runtime",
+  "worker_age_seconds": 4.598
+}

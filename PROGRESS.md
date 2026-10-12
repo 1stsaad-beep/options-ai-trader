@@ -1,5 +1,11 @@
 # Progress — recovery/v1.0-20261011
 
+## Archive/phone evidence checkpoint
+
+- Native source `89b9bfdc65fec1a8eb2b96b527ae1133481c28f4` saved/read back. iOS CI `38276748013` completed: **263 Flutter passed**, actual macOS release build1.0.0/18 with `--no-codesign`, not TestFlight/device acceptance. Downloaded archive CRC and SHA-256 verified, actual Runner Info.plist matches version18. Android full Flutter/Golden steps succeeded; APK compilation is still running at this checkpoint, so APK delivery is not yet claimed.
+- Persist verified backend/Compose, mobile-targeted, iOS and security evidence now, before waiting for Android. Security on native source:670 tracked text files/72commits/1029historical blobs,0 findings;24Python+43Pub dependencies without known advisories at query time. Evidence excludes binary ZIPs and private signing files.
+- Updated autonomous-runtime reports with a pointer to the new acceptance scope while preserving their older source-specific history. Archive, mobile API and Android test guides are saved. Final APK checksum/signature receipt and report head remain the next delivery step.
+
 ## Archive and phone phase — native acceptance checkpoint
 
 - Corrected source saved/read back at `d9f08b67e2e31186f10ad2e621cc1ff46871e8cc`. Targeted Flutter workflow `38276385194` now **passed** analyze and **52 tests**, zero failures/skips. Downloaded artifact and verified ZIP CRC and API SHA-256 before reading the actual machine results. Earlier lint failures remain documented.
