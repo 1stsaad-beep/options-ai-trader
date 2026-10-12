@@ -1,5 +1,9 @@
 # Progress — recovery/v1.0-20261011
 
+### Account-picker lint gate
+
+- Test-fixture correction50b3c06 passed targeted CI38284050425. Follow-up4ea42d2 stopped at one multiline-if braces lint at market_runtime.dart:296 before running widgets (CI38284373544); Java30 policy checks passed. Added the required block without changing behavior or weakening analysis. Packaging19 files are prepared locally but not included until the corrected gate succeeds.
+
 ### Account selection consistency
 
 - Review of the rejected-stop path found Flutter FormField can display its internally selected new value even while the server account remains unchanged. Remove the picker while stopping, invalidate old reads and recreate it with the actual account on failure; serialize pending switches. The failure test now checks FormField state as well as account/API identity. This correction is separate from the platform test-fixture fix and needs the affected widget gate.

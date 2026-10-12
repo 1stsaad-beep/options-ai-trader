@@ -1,0 +1,5 @@
+Source: 4ea42d26961fd0fddb74f3dfdd7e3bf0204e5411
+Run: 38284373544
+Java policy: 30 checks passed
+Flutter analyze: curly_braces_in_flow_control_structures at lib/market_runtime.dart:296:28
+Tests: not run (analyze failed)

@@ -293,8 +293,10 @@ class _MarketRuntimeScreenState extends State<MarketRuntimeScreen> with WidgetsB
             setState(() { changingAccount = true; busy = true; status = null; events = null; });
             try { await MarketMonitor.stopIfSupported(); }
             catch (_) {
-              if (mounted) setState(() { changingAccount = false; busy = false;
-                notice = 'لم يتأكد إيقاف المراقبة الخلفية؛ أوقفها قبل تغيير الحساب.'; });
+              if (mounted) {
+                setState(() { changingAccount = false; busy = false;
+                  notice = 'لم يتأكد إيقاف المراقبة الخلفية؛ أوقفها قبل تغيير الحساب.'; });
+              }
               return;
             }
             if (!mounted) return;
