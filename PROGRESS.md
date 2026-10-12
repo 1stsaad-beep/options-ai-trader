@@ -267,3 +267,12 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Baseline `8161c458a4734eeb26839e95dd7b16379acaf1ac`, recovery branch preserved. Exact source/tree hashes verified; no local edits existed to rescue.
 - Reviewed official Alpaca US documentation: Basic IEX versus consolidated SIP; indicative option quotes are modified and trades delayed, not executable OPRA. Will use bounded shared REST cache/polling and no stream connection to avoid competing with the other app.
 - Documentation-only checkpoint: no new runtime code, account connection, credentials, market-data fetch, or tests claimed. Next batch: provider protocol, fixed data-only transport, mock/documented fixture tests and safe API integration.
+
+## Alpaca batch 1 — isolated Basic data adapter
+
+- Batch 0 published/read back at `9b72e0caa3c44d71000ccb74ae0fc754108ca0f5`.
+- Added a provider protocol and fixed HTTPS GET-only transport for Alpaca Market Data. No trading adapter dependency, orders, account endpoint, streams, redirect following or external app configuration discovery. Activation remains disabled without a separate operator approval setting.
+- Explicit IEX quotes/trades/OHLCV; Basic indicative chain snapshots with nullable provider Greeks; delayed historical option bars. Per-result provenance, timestamps, age, completeness and usage notice. No feed auto-upgrade or synthetic price fallback; all option fills remain blocked.
+- Shared bounded REST cache (128 entries), concurrent request deduplication, default 30 requests/minute, provider headers/429 cooldown, bounded read retries and terminal auth/entitlement circuit. Budget is local to one provider process; cannot see the other app's usage. No streaming implementation is claimed.
+- Local offline targeted test: **55 passed**, zero failed/skipped. Includes fixed-host transport mocks, no-network guard, documented AAPL IEX historical example, no future/unclosed bars, DST completion, missing/modified options, concurrency, reconnect and rate limits. Evidence: `docs/evidence/alpaca-20261012/adapter-targeted.*`.
+- Not yet connected to the API or mobile at this checkpoint. No actual account credentials/connection, OPRA entitlement, out-of-sample study or profitability claim.
