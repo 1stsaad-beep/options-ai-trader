@@ -1,5 +1,9 @@
 # Progress — recovery/v1.0-20261011
 
+### Account selection consistency
+
+- Review of the rejected-stop path found Flutter FormField can display its internally selected new value even while the server account remains unchanged. Remove the picker while stopping, invalidate old reads and recreate it with the actual account on failure; serialize pending switches. The failure test now checks FormField state as well as account/API identity. This correction is separate from the platform test-fixture fix and needs the affected widget gate.
+
 ### Android monitor preflight correction
 
 - Source `a135f7fac20fca89fc5395d46c4bb043e3d6eadd`: Java policy **30 checks passed**, Flutter analyze passed. Targeted widget run38283579485 failed: eight new tests retained the debug platform override until teardown (after Flutter's invariant check), and the existing account-race test lacked a native stop-channel mock.

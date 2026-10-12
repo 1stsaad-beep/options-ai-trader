@@ -167,7 +167,7 @@ class _MarketRuntimeScreenState extends State<MarketRuntimeScreen> with WidgetsB
   RuntimeEvents? events;
   String? error;
   String? notice;
-  bool busy = false, active = true;
+  bool busy = false, active = true, changingAccount = false;
   int generation = 0;
   Timer? timer;
   DateTime? received;
@@ -282,16 +282,23 @@ class _MarketRuntimeScreenState extends State<MarketRuntimeScreen> with WidgetsB
         const Text('مراقبة وتحليل مستقلان عن Demo • تنفيذ الخيارات مقفل', style: TextStyle(fontWeight: FontWeight.bold)),
         const Text('استمرار المحرك مسؤولية الخادم. إغلاق الهاتف لا يوقفه. لا مفاتيح Alpaca داخل التطبيق.'),
         const SizedBox(height: 12),
+        if (changingAccount) const Text('جار إيقاف مراقبة الحساب السابق…') else
         DropdownButtonFormField<String>(key: ValueKey('runtime-account-$account'), initialValue: account,
           isExpanded: true, decoration: const InputDecoration(labelText: 'حساب الخادم'),
           items: widget.accounts.map((a) => DropdownMenuItem<String>(value: '${a['id'] ?? a['account_id']}',
             child: Text('${a['name']}', overflow: TextOverflow.ellipsis))).toList(),
           onChanged: (id) async {
-            if (id == null || id == account) return;
+            if (id == null || id == account || changingAccount) return;
+            generation++;
+            setState(() { changingAccount = true; busy = true; status = null; events = null; });
             try { await MarketMonitor.stopIfSupported(); }
-            catch (_) { if (mounted) setState(() => notice = 'لم يتأكد إيقاف المراقبة الخلفية؛ أوقفها قبل تغيير الحساب.'); return; }
+            catch (_) {
+              if (mounted) setState(() { changingAccount = false; busy = false;
+                notice = 'لم يتأكد إيقاف المراقبة الخلفية؛ أوقفها قبل تغيير الحساب.'; });
+              return;
+            }
             if (!mounted) return;
-            setState(() { account = id; notice = null; }); load();
+            setState(() { account = id; changingAccount = false; notice = null; }); load();
           }),
         if (busy) const LinearProgressIndicator(),
         if (error != null) Semantics(liveRegion: true, child: Padding(padding: const EdgeInsets.all(12),
