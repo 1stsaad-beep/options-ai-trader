@@ -1,3 +1,7 @@
+## قبول خدمة السوق المستقلة — 2026-10-12
+
+مصدر `a4b7dca6956ada7a73edefef2ce5817bd745f2f6`:995 Python محليًا وCI،0 فشل/خطأ/تخطي؛ PostgreSQL22+6+8،backup/restore14،Compose17 ناجحة. انقطاع PostgreSQL/إعادة تشغيل العامل/إيقاف API اختُبرت فعليًا داخل Docker. بيانات Alpaca استجابات Mock، والموصل في Docker معطل؛ لا اتصال فعلي أو24/7 على خادم دائم. [النتائج التفصيلية وحدودها](AUTONOMOUS_RUNTIME_ACCEPTANCE_20261012.md).
+
 ## قبول سجل السوق — 2026-10-12
 
 على المصدر `54cdf16952a9253fb5c4abbd795fa85ba60720e1`: CI **38260912057** نجح بـ**964 Python** دون فشل/خطأ/تجاوز (44 جديدة ضمن الإجمالي)، و22 PostgreSQL سابقة +6 سجل باتصالين، و12 backup/restore و12 Compose. HTTP/worker/restart ناجحة. محليًا 963 كاملة قبل إضافة اختبار الاتصالين، ثم 97 مستهدفة ناجحة بعده. Flutter وnative والهاتف لم تعاد؛ ملفاتها لم تتغير. فشل أداة backup في الجولة السابقة وصُحح ثم أعيدت البوابة كاملة. [الأدلة الخام والبصمات](evidence/market-journal-20261012/manifest.json) و[التقرير](MARKET_DATA_JOURNAL_V1.md).

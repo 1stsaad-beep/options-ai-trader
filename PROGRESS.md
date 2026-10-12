@@ -1,5 +1,12 @@
 # Progress — recovery/v1.0-20261011
 
+## Independent market runtime — accepted engineering checkpoint
+
+- Storage checkpoint published/read back at `a4b7dca6956ada7a73edefef2ce5817bd745f2f6`. Full acceptance run `38268643465` **succeeded**:995 Python, zero failures/errors/skips;22 prior PostgreSQL +6 journal +8 new runtime checks;14 PostgreSQL backup/restore;17 actual Compose checks. Existing HTTP/worker/lifecycle passed. Four containers proved continued heartbeat without API, a new collector process after restart, and real DB outage/healthcheck rejection/recovery; provider remained disabled.
+- Security `38268643380` passed:642 tracked text files/66commits/971historical blobs,0 pattern findings;24Python+43Pub dependencies had no known advisories at query time. ZIP CRC and API SHA-256 verified before reading artifacts; raw text evidence and hashes retained in `docs/evidence/market-runtime-20261012/`.
+- Saved Arabic requirements matrix, private-file connection runbook, server sizing/cost examples, backup/restore steps, phone API integration plan, limitations and resumption priorities. No native rebuild, actual Alpaca account/key access, financial orders, other-app changes, paid service or permanent deployment.
+- **Not accepted as 24/7 trading.** Basic indicative options remain analysis-only. Real-option virtual ledger, long-term archival capacity beyond1000records/64MiB per account, mobile runtime UI, external notifications/uptime monitor and independent-server soak test remain incomplete. Current source is a tested collector foundation, not a fulfilled production acceptance claim.
+
 ## Independent market runtime batch 3 — storage acceptance
 
 - Process checkpoint published/read back at `6593eedf8532a0fba09e54159359ea5fddf867d7`. Its backend/new Compose run `38268036959` and security `38268037086` succeeded. New container checks run with the provider disabled, not a real Alpaca account.

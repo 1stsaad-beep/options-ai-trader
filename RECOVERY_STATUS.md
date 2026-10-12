@@ -1,4 +1,12 @@
-# أحدث نقطة تسليم — RC2 Lab 16، 2026-10-12
+# أحدث نقطة خادم — Market Runtime، 2026-10-12
+
+استُكمل من `119f0b3805392f8f090fcbb330b3f135894e3a15` النظيف، دون فقدان مصدر سابق أو إعادة كتابة. دفعات runtime المنشورة والمقروءة من GitHub: `ea7f9e4cd26f2c4c5a52753753bd6254e6263aef`، `6593eedf8532a0fba09e54159359ea5fddf867d7`، `a4b7dca6956ada7a73edefef2ce5817bd745f2f6` (مصدر القبول).
+
+النتائج:995 Python،22+6+8 PostgreSQL،14 restore،17 Compose ناجحة؛ الأدلة محفوظة. آخر native build يبقى Lab17؛ العناوين السابقة أدناه تاريخية. راجع [إيصال القبول](docs/AUTONOMOUS_RUNTIME_ACCEPTANCE_20261012.md) و[خطة التشغيل والاستئناف](docs/AUTONOMOUS_MARKET_RUNTIME_V1.md). اتصال Alpaca والتداول بأسعار السوق والخادم الدائم وواجهة الهاتف الجديدة غير مقبولة بعد؛ التنفيذ مقفل. لا تغيرات جلسة غير محفوظة ادُّعيت استعادتها، ولا حذف/force/reset/clean.
+
+---
+
+# نقطة تسليم سابقة — RC2 Lab 16، 2026-10-12
 
 - مصدر البناء **`b38b03daab15c70f9a076b1def27b55eae4347b2`** على Recovery؛ تقارير لاحقة فقط. Android **38205487162** وiOS **38205487135** ناجحان، 222 Flutter على كل منصة و6 Golden على Android، و102 اختبار استرداد مستهدف محفوظة.
 - APK منفصل `.v1previewrc2b16`، SHA-256 `387511db63af45e435a72be681f80158588d3b83e8c4cc4e95ef8ffa75b07247`. توقيع تطوير مؤقت؛ iOS غير موقع للتوزيع. تعليمات التنزيل والبصمات في `FINAL_DELIVERY.md` و`docs/PHONE_BUILD16_DELIVERY.md`.
