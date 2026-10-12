@@ -232,7 +232,7 @@ class _MarketDataScreenState extends State<MarketDataScreen> {
     body: SafeArea(child: ListView(padding: const EdgeInsets.all(16), children: [
       const Text('Real Market Data + Virtual Trading', textDirection: TextDirection.ltr),
       line('وضع مستقل عن Demo Synthetic • لا أوامر خارجية • Live مقفل'),
-      Card(child: Padding(padding: const EdgeInsets.all(12), child: Text(
+      const Card(child: Padding(padding: EdgeInsets.all(12), child: Text(
         'Alpaca Basic: مراقبة وتحليل فقط. أسعار الخيارات إرشادية معدلة، وليست أسعار OPRA قابلة للتعبئة. التنفيذ الوهمي متوقف حتى تتوفر بيانات عقود مؤهلة.'))),
       DropdownButtonFormField<String>(key: ValueKey('market-account-$account'), initialValue: account,
         isExpanded: true, decoration: const InputDecoration(labelText: 'حساب الخادم'),

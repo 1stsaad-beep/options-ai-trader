@@ -1,0 +1,9 @@
+# Opt-in, AFTER separate read-only connection approval. No worker credentials.
+# The base Compose remains synthetic and does not load this file automatically.
+services:
+  api:
+    environment:
+      OAT_ALPACA_DATA_APPROVAL: ${OAT_ALPACA_DATA_APPROVAL:?Separate read-only connection approval required}
+      OAT_ALPACA_DATA_KEY_ID: ${OAT_ALPACA_DATA_KEY_ID:?Set privately on this backend only}
+      OAT_ALPACA_DATA_SECRET_KEY: ${OAT_ALPACA_DATA_SECRET_KEY:?Set privately on this backend only}
+      OAT_ALPACA_DATA_REQUESTS_PER_MINUTE: ${OAT_ALPACA_DATA_REQUESTS_PER_MINUTE:-30}

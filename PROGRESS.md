@@ -291,3 +291,9 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Added a separate real-market screen reachable from the server dashboard. It uses GET-only account-scoped observations, explicit source/delay/missing-data notices, nullable Greeks and OHLCV candles with zoom/pan. No Demo store/engine writes, Alpaca credentials field, fill button or broker client. Changing accounts invalidates late responses.
 - Added a shared Python-produced mock-transport contract fixture and Flutter parser/widget tests. Python fixture/API integration: **15 passed**. These are mock observations, not actual account market data.
 - Flutter SDK is absent locally and the official SDK/archive metadata download returned HTTP 404 in this environment. Saving this small checkpoint to run the dedicated Flutter analyze/targeted-test CI; mobile acceptance is **pending**, not claimed passed. Native APK/iOS builds are intentionally skipped until that gate succeeds.
+
+### Mobile preflight correction and private connection guide
+
+- Mobile checkpoint `b5cad48e39cbeaab0729c68e8749983f8b69df23` saved/read back. Runner `38224122195` stopped in analyze on three const-constructor lints in the same static notice; tests were not executed and are not counted. Added the outer const without changing behavior and rerunning the focused runner.
+- Added `docs/ALPACA_DATA_V1.md`: Basic capability/source limitations, account namespace, option-fill block, shared-account request budget limits, explicit no-redistribution grant, point-in-time history limitation and private connection procedure requiring separate approval.
+- Added an opt-in Compose overlay passing dedicated credentials only to API. Default Compose and worker stay unchanged; the overlay has not been used to connect to any account.
