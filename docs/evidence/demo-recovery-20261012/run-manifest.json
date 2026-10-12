@@ -95,11 +95,44 @@
         "head_branch": "recovery/v1.0-20261011",
         "head_sha": "b38b03daab15c70f9a076b1def27b55eae4347b2"
       }
-    }
+    },
+    "status": "success"
   },
   "android": {
     "run": 38205487162,
-    "status": "building"
+    "tests": 222,
+    "goldens": 6,
+    "status": "success",
+    "artifact": {
+      "id": 11727516320,
+      "name": "options-ai-trader-rc2-build16-android",
+      "size_in_bytes": 74269194,
+      "url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11727516320",
+      "archive_download_url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11727516320/zip",
+      "expired": false,
+      "created_at": "2026-10-12T04:59:01Z",
+      "expires_at": "2026-10-26T04:58:55Z",
+      "updated_at": "2026-10-12T04:59:01Z",
+      "digest": "sha256:b1ac5547ab2edfcea96903ebb9408393a084a801e671632d0fa08d4bc17ecb29",
+      "workflow_run": {
+        "id": 38205487162,
+        "repository_id": 1413041190,
+        "head_repository_id": 1413041190,
+        "head_branch": "recovery/v1.0-20261011",
+        "head_sha": "b38b03daab15c70f9a076b1def27b55eae4347b2"
+      }
+    },
+    "apk": {
+      "name": "options-ai-trader-rc2-build16-preview.apk",
+      "bytes": 155014268,
+      "sha256": "387511db63af45e435a72be681f80158588d3b83e8c4cc4e95ef8ffa75b07247",
+      "application_id": "com.optionsaitrader.options_ai_trader.v1previewrc2b16",
+      "version_code": 16,
+      "signing": "ephemeral-runner-development-key",
+      "certificate_sha256": "a5e4f390c3599d64b22fec554ac4f3912e5d6e9d85c3d110e7220bfab359207d",
+      "min_api": 24,
+      "target_api": 36
+    }
   },
   "physical_device": "not_run",
   "backend": {
@@ -109,5 +142,6 @@
   "backtesting": {
     "real_market_oos": "not_run",
     "financial_data": "no_external_data"
-  }
+  },
+  "additional_permanent_download_save": "failed_before_transfer_authentication_unavailable"
 }
