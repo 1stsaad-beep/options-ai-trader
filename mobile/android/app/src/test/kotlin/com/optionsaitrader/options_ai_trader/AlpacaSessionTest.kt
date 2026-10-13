@@ -88,7 +88,7 @@ class AlpacaSessionTest {
     }}
     @Test fun staleSocketAfterStopCannotAuthenticate(){Harness().use {h->h.start();h.session.stop();h.auth();Thread.sleep(50);assertFalse(h.view().getBoolean("connected"));assertEquals(0,h.requests.size)}}
     @Test fun authRejectionLocks(){Harness().use {h->h.start();h.send("""[{"T":"error","code":402}]""");h.await{!h.session.enabled};assertFalse(h.view().getBoolean("connected"))}}
-    @Test fun rateLimitSurvivesManualRestart(){Harness(429).use {h->h.start();h.auth();h.await{h.view().getLong("retryAt")>h.clock.get()};val until=h.view().getLong("retryAt");h.session.stop();h.session.start("iex","regular",listOf("NVDA"));assertEquals(until,h.view().getLong("retryAt"));assertEquals(1,h.requests.size)}}
+    @Test fun rateLimitSurvivesManualRestart(){Harness(429).use {h->h.start();h.auth();h.await{h.view().getLong("retryAt")>h.clock.get()};val until=h.view().getLong("retryAt");h.session.stop();h.session.start("iex","regular",listOf("NVDA"));assertEquals(until,h.view().getLong("retryAt"));assertEquals("HTTP_429",h.view().getString("testCode"));assertEquals("RETRY_WAIT",h.view().getString("state"));assertEquals(1,h.requests.size)}}
     @Test fun disconnectedTransportStopsFreshnessAndSchedulesRecovery(){Harness().use {h->h.start();h.auth();h.await{h.view().getBoolean("connected")};h.sockets.listener.onFailure(h.sockets.socket,java.io.IOException("secret provider URL"),null);h.await{!h.view().getBoolean("connected")};assertTrue(h.session.enabled);assertFalse(h.session.snapshot().contains("secret provider"))}}
     @Test fun optionsAreExplicitOpraGetOnly(){Harness().use {h->h.start();h.auth();h.await{h.requests.size==1};h.clock.addAndGet(5000);val done=CountDownLatch(1);var answer:String?=null;h.session.quote("NVDA261016C00200000"){answer=it;done.countDown()};assertTrue(done.await(3,TimeUnit.SECONDS));assertEquals("opra",JSONObject(answer!!).getString("feed"));assertEquals("opra",h.requests.last().url.queryParameter("feed"));assertEquals("GET",h.requests.last().method)}}
     @Test fun optionsForbiddenDoesNotBecomeIndicative(){Harness(403).use {h->h.start();h.auth();h.await{h.requests.size==1};h.clock.addAndGet(5000);val done=CountDownLatch(1);var answer:String?="sentinel";h.session.quote("NVDA261016C00200000"){answer=it;done.countDown()};assertTrue(done.await(3,TimeUnit.SECONDS));assertNull(answer)}}
@@ -134,6 +134,7 @@ class AlpacaSessionTest {
         val gaps=h.sockets.openedAt.zipWithNext{a,b->b-a}
         assertTrue(gaps[0]>=70);assertTrue(gaps[1]>=150);assertTrue(gaps[2]>=310);assertEquals(1,h.sockets.maxLive)
         repeat(10){h.session.start("iex","regular",listOf("NVDA"))};Thread.sleep(30);assertEquals(4,h.sockets.count)
+        assertEquals("CONNECTION_LIMIT",h.view().getString("testCode"));assertEquals("RETRY_WAIT",h.view().getString("state"))
     }}
     @Test fun screenOffPausesAndReturnResumesOnlyExistingConsent(){Harness(fast=true).use{h->
         h.session.foreground();assertEquals(0,h.sockets.count)

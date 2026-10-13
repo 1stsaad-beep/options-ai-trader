@@ -72,6 +72,12 @@ internal class AlpacaSession(
         connecting?.cancel(false)
         val wait=maxOf(0L,openAfter-elapsed(),releasedAfter-elapsed(),blockedUntil-now(),limitUntil-elapsed(),if(retiring!=null)closeGraceMs else 0L)
         retryAt=if(wait>0)now()+wait else 0L
+        if(wait>0){
+            connectionState="RETRY_WAIT"
+            // A manual Test during provider cooldown must report the wait, not run into the UI test timeout.
+            val code=if(now()<blockedUntil)"HTTP_429" else if(elapsed()<limitUntil)"CONNECTION_LIMIT" else null
+            if(code!=null){event(code);testResult("failed",code)}
+        }
         connecting=worker.schedule({connect(g)},wait,TimeUnit.MILLISECONDS)
     }
     private val bars=mutableMapOf<String,TreeMap<Long,JSONObject>>()
