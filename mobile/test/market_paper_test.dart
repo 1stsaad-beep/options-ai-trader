@@ -47,6 +47,13 @@ void main(){
     await evaluate(reader:(c)async=>quote(c,bid:250,ask:255));expect((paper.account(id)['positions'] as Map)['NVDA']['quantity'],2);
     await evaluate(reader:(c)async=>quote(c,bid:210,ask:220));expect(paper.journal.last['decision'],'CLOSED_TRAILING_STOP');});
   test('reload preserves positions and decisions but disarms execution',()async{await evaluate();final restored=MarketPaper(store,clock:()=>now);await restored.load();expect(restored.account(id)['positions'],paper.account(id)['positions']);expect(restored.journal.length,1);expect(restored.account(id)['enabled'],false);});
+  test('addition budget includes all previously paid entry commissions',()async{await paper.configure(id,{'addEnabled':true});
+    await evaluate(reader:(c)async=>quote(c,bid:230,ask:237));
+    await evaluate(reader:(c)async=>quote(c,bid:262,ask:262));
+    expect((paper.account(id)['positions'] as Map)['NVDA']['quantity'],1);
+    expect(paper.account(id)['cash'],976235);
+    expect(paper.journal.last['decision'],'ADD_RISK_LIMIT');
+  });
   test('same observation cannot reopen after close',()async{await evaluate();await evaluate(close:true);await evaluate();expect(paper.account(id)['positions'],isEmpty);expect(paper.journal.last['decision'],'CLOSED_MANUAL');});
   test('new preferences namespace preserves unrelated existing Demo data',()async{SharedPreferences.setMockInitialValues({'existing-demo':'unchanged'});final prefs=PreferencesPaperStore();await prefs.write({'version':1,'accounts':[],'journal':[]});expect((await SharedPreferences.getInstance()).getString('existing-demo'),'unchanged');});
 }

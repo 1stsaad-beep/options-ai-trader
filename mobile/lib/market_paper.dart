@@ -112,9 +112,11 @@ class MarketPaper extends ChangeNotifier {
           if(q.bid>highest)p['highBid']=q.bid;
           if(a['addEnabled']==true&&p['added']!=true&&q.bid>=average*1.10&&signal==p['direction']) {
             final cost=q.ask*100+65;
-            if((p['cost'] as int)+cost<=(target['initialCash'] as int)*(target['riskPercent'] as int)/100&&cost<=(target['cash'] as int)) {
+            if((p['cost'] as int)+qty*65+cost<=(target['initialCash'] as int)*(target['riskPercent'] as int)/100&&cost<=(target['cash'] as int)) {
               p['quantity']=qty+1;p['cost']=(p['cost'] as int)+q.ask*100;p['added']=true;target['cash']=(target['cash'] as int)-cost;
               _log(next,id,symbol,'ADD_ON_OPRA',quote:q);
+            } else if(journal.isEmpty||journal.last['account']!=id||journal.last['symbol']!=symbol||journal.last['decision']!='ADD_RISK_LIMIT') {
+              _log(next,id,symbol,'ADD_RISK_LIMIT',quote:q);
             }
           }
           await commit(next);return;
