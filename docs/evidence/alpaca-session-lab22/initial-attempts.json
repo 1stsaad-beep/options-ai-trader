@@ -1,0 +1,31 @@
+[
+  {
+    "source": "853b8728f74ea8de1390669a83d847197f5ca74f",
+    "run": 38439915452,
+    "stage": "flutter analyze",
+    "result": "failed",
+    "findings": [
+      "curly_braces_in_flow_control_structures",
+      "unused_import",
+      "prefer_const_constructors (3)"
+    ],
+    "fix": "8409c74b8844669a54e4c36b1b4ac773a4605464",
+    "behavior_tests_executed": false
+  },
+  {
+    "source": "8409c74b8844669a54e4c36b1b4ac773a4605464",
+    "run": 38440185760,
+    "stage": "flutter test",
+    "counts": {
+      "success": 315,
+      "error": 1
+    },
+    "failed_tests": [
+      "UI lifecycle does not own socket start stop and reads recovered native state"
+    ],
+    "reason": "The fixture skipped hidden/inactive states required by the Flutter lifecycle state machine. Added intermediate transitions, retaining all assertions.",
+    "fix": "0d52d10c902b5c5322270eff0ce5db56ca7bc2ce",
+    "artifact_id": 11834577363,
+    "artifact_sha256": "780162cb574da68f31ec3dbc286660c31fc9524199f982095fc0fbe1e764525a"
+  }
+]

@@ -1,0 +1,4 @@
+2026-10-13T17:47:27.2202317Z Native monitor policy: 30 checks passed; no Android device or network used
+2026-10-13T17:47:36.2205436Z No issues found! (ran in 8.5s)
+2026-10-13T17:48:59.5193249Z Alpaca policy: 42 checks passed; no network
+2026-10-13T17:52:53.0351947Z BUILD SUCCESSFUL in 3m 53s

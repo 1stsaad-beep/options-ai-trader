@@ -1,0 +1,474 @@
+{
+  "source": "5c4a48cda5aa8b323ce7c036c479a649218ee5e6",
+  "artifacts": [
+    {
+      "id": 11836247350,
+      "name": "options-ai-trader-rc2-build22-android",
+      "size_in_bytes": 26417687,
+      "url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11836247350",
+      "archive_download_url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11836247350/zip",
+      "expired": false,
+      "created_at": "2026-10-13T17:56:03Z",
+      "expires_at": "2026-10-27T17:56:01Z",
+      "updated_at": "2026-10-13T17:56:03Z",
+      "digest": "sha256:ec5cda91b27a9b551317afca9d3d4fbc0ad11815b293c3f4d4c487392162d877",
+      "workflow_run": {
+        "id": 38441252313,
+        "repository_id": 1413041190,
+        "head_repository_id": 1413041190,
+        "head_branch": "recovery/v1.0-20261011",
+        "head_sha": "5c4a48cda5aa8b323ce7c036c479a649218ee5e6"
+      }
+    },
+    {
+      "id": 11837290159,
+      "name": "android-keystore-device-results",
+      "size_in_bytes": 3937,
+      "url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11837290159",
+      "archive_download_url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11837290159/zip",
+      "expired": false,
+      "created_at": "2026-10-13T17:53:51Z",
+      "expires_at": "2026-10-27T17:53:50Z",
+      "updated_at": "2026-10-13T17:53:51Z",
+      "digest": "sha256:16049484f0c7fa11fbc84d3bb4c3208bb59d53706b3ed5fd9e7febfdf0654438",
+      "workflow_run": {
+        "id": 38441252258,
+        "repository_id": 1413041190,
+        "head_repository_id": 1413041190,
+        "head_branch": "recovery/v1.0-20261011",
+        "head_sha": "5c4a48cda5aa8b323ce7c036c479a649218ee5e6"
+      }
+    },
+    {
+      "id": 11836526503,
+      "name": "direct-alpaca-mock-results",
+      "size_in_bytes": 21863,
+      "url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11836526503",
+      "archive_download_url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11836526503/zip",
+      "expired": false,
+      "created_at": "2026-10-13T17:52:58Z",
+      "expires_at": "2026-10-27T17:52:58Z",
+      "updated_at": "2026-10-13T17:52:58Z",
+      "digest": "sha256:5fa01b6036e3a9c2272469f5a84dd5b258c9b9318aa36ec7ae70e83b8ade1c9b",
+      "workflow_run": {
+        "id": 38441252233,
+        "repository_id": 1413041190,
+        "head_repository_id": 1413041190,
+        "head_branch": "recovery/v1.0-20261011",
+        "head_sha": "5c4a48cda5aa8b323ce7c036c479a649218ee5e6"
+      }
+    },
+    {
+      "id": 11836495276,
+      "name": "v1-security-results",
+      "size_in_bytes": 2518,
+      "url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11836495276",
+      "archive_download_url": "https://api.github.com/repos/1stsaad-beep/options-ai-trader/actions/artifacts/11836495276/zip",
+      "expired": false,
+      "created_at": "2026-10-13T17:46:11Z",
+      "expires_at": "2026-10-27T17:46:10Z",
+      "updated_at": "2026-10-13T17:46:11Z",
+      "digest": "sha256:da987bf14be478a8db3ca7ded73348ce2a3f5191f689b8ef688bb0997b4fca57",
+      "workflow_run": {
+        "id": 38441252311,
+        "repository_id": 1413041190,
+        "head_repository_id": 1413041190,
+        "head_branch": "recovery/v1.0-20261011",
+        "head_sha": "5c4a48cda5aa8b323ce7c036c479a649218ee5e6"
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "run_id": 38441252313,
+      "jobs": [
+        {
+          "id": 115448490878,
+          "name": "android",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 38441252313,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run bash scripts/bootstrap.sh",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Native monitor policy",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run flutter analyze",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run flutter test --exclude-tags=golden --machine > flutter-tests.json",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Compare reviewed chart golden baselines",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Native data-only mock regression",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Audit Android runtime dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Prepare private development key when available",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Build separately identified development preview",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Verify preview identity signature checksum and provenance",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Remove runner signing material",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Post Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30
+            },
+            {
+              "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 32
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 33
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 38441252258,
+      "jobs": [
+        {
+          "id": 115448095699,
+          "name": "build_tests",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 38441252258,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run bash scripts/bootstrap.sh",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Compile signed target and instrumentation without emulator disk use",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Post Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            }
+          ]
+        },
+        {
+          "id": 115450583327,
+          "name": "emulator",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 38441252258,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Prepare disposable Android 28 emulator without Flutter or Gradle caches",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Real Android Keystore tests with mock values only",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Stop disposable emulator",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 38441252233,
+      "jobs": [
+        {
+          "id": 115448500630,
+          "name": "mock",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 38441252233,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run python3 mobile/scripts/test_alpaca_policy.py > alpaca-policy.txt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run bash scripts/bootstrap.sh",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run flutter analyze",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run flutter test --exclude-tags=golden --machine > direct-flutter-tests.json",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Native HTTP and WebSocket mock tests (no provider network)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Post Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18
+            },
+            {
+              "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
