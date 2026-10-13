@@ -1,6 +1,6 @@
 # Direct Alpaca Android Lab20 — acceptance and delivery
 
-Date: 2026-10-13 UTC. Android release artifact verified; Keystore emulator gate is finishing. No real provider/physical-phone acceptance is claimed.
+Date: 2026-10-13 UTC. Android release artifact and Android28 Keystore instrumentation accepted. No real provider/physical-phone acceptance is claimed.
 
 ## Recovery and preservation
 
@@ -21,7 +21,7 @@ Existing Lab19 had the synthetic labs, account isolation, market-server client a
 ## Verified APK receipt
 
 - APK source: `24e19611b38f8b43c41410d42b6b4ff98af96557`. Subsequent changes are CI/report/evidence only.
-- [Successful Android run38411807924](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38411807924) and [downloadable artifact11822923266](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38411807924/artifacts/11822923266). Artifact ZIP SHA-256 `f17d9261bf7f2c1cc4e56bc529abb3a8a5008927c6c572bd6dd450cee1eea6e5`, CRC checked. Actions retention is14 days from upload (2026-10-13); download a copy promptly.
+- [Successful Android run38411807924](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38411807924) and [downloadable artifact11822923266](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38411807924/artifacts/11822923266). Artifact ZIP SHA-256 `f17d9261bf7f2c1cc4e56bc529abb3a8a5008927c6c572bd6dd450cee1eea6e5`, CRC checked. Actions artifact expires at2026-10-27T14:26:48Z; download a copy before expiry.
 - APK `options-ai-trader-rc2-build20-preview.apk` (delivery copy `Options_AI_Trader_Lab20.apk`),57,135,549 bytes. SHA-256: `e06e4a8879c419b3f88c65456727187661a7fcbb6b9332186297edcfd1a586ee`. Recomputed after download and matched CI receipt; APK ZIP CRC also passed.
 - Package `com.optionsaitrader.options_ai_trader.v1previewrc2b20`, version1.0.0/code20, label `Options AI Trader Lab 20`, minSDK24/targetSDK36; arm64-v8a, armeabi-v7a, x86_64. Release mode; `application-debuggable` absent from verified package data.
 - APK Signature Scheme v2 verified by apksigner; one RSA2048 certificate, DN `C=US, O=Android, CN=Android Debug`. Certificate SHA-256: `333931a16179f986fc12f2ca8157b16b27945b1f47ad355e68152647116028b9`.
@@ -38,6 +38,7 @@ Existing Lab19 had the synthetic labs, account isolation, market-server client a
 | Reviewed chart Goldens |6 passed |24e1961 /38411807924 |
 | Native HTTP/WS JVM mocks |11 passed,0 errors/failures/skips |24e1961 /38411807924 |
 | GET-only Alpaca policy |42 checks passed, no network |24e1961 /38411807924 |
+| Android Keystore instrumentation |5 passed,0 failures/skips on Android28 emulator |6a2aa912 /38415911278; identical mobile tree to APK source |
 | Existing server monitor policy |30 checks passed |24e1961 /38411807924 |
 | Backend Python |1055 passed,0 failures/errors/skips |c3e03a3 /38407423803; backend unchanged afterward |
 | Actual disposable PostgreSQL |22 existing +6 journal +8 runtime passed |c3e03a3 /38407423803 |
@@ -46,19 +47,22 @@ Existing Lab19 had the synthetic labs, account isolation, market-server client a
 | Source/history patterns |806 text files,105 commits,1314 historical blobs;0 matches |24e1961 /38411807925 |
 | Known dependency advisories |24 Python,43 Pub,90 resolved Maven package/version entries;0 advisories |24e1961 /38411807925 and38411807924 |
 
+Keystore [run38415911278](https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38415911278) succeeded in both isolated build and emulator jobs. Artifact11824123105 SHA-256 `155d18d3066e90ad21140a8d470aca90abf613283291cb2b0edc0b914d8b1995` and ZIP CRC verified. Raw AndroidJUnitRunner output contains all five distinct successful cases and `OK (5 tests)`: encrypted roundtrip/nonexportable key, randomized IV/ciphertext, tamper rejection, disabled backup/nonexported service, explicit-session requirement. This uses a debug instrumented build on a disposable emulator, not a real phone or a claim of hardware-backed/attack-proof key protection. Mobile Git subtree `439b5d64cab9cd52a37655eeef353d5cb373c1e9` is identical at the APK and Keystore sources.
+
 Zero findings is the result of these scoped checks at query time, not a security certification. Secret scanning excludes binary/untracked/unreachable content; dependency checks do not certify OS/SDK security. Existing iOS unsigned CI38411807520 also succeeded, but this Android delivery makes no iOS device/direct-provider claim.
 
 ## Validation boundaries
 
 All transport/authentication tests use mocks or intercepted HTTP and fake sockets. Android Keystore tests use mock strings on a disposable emulator. A successful build or emulator test is not evidence of real Alpaca connectivity or of the user's physical phone behavior. No production data API was called during development.
 
-The exact final test and binary receipts, hashes and source/run mapping are recorded below and in `evidence/direct-alpaca-lab20/acceptance.json`. Raw JSON/JUnit receipts are retained with a SHA-256 manifest. Historical unsuccessful gates are preserved and are not counted as passes.
+The exact final test and binary receipts, hashes and source/run mapping are recorded below and in `evidence/direct-alpaca-lab20/acceptance.json`. Raw JSON/JUnit/AndroidJUnitRunner receipts are retained with a SHA-256 manifest. Historical unsuccessful gates are preserved and are not counted as passes.
 
 ## Failed attempts and corrections
 
 - Flutter preflight38405189019: 289 passed / 3 new test cases failed (typed fixture map, offscreen widget lookup, reused-observation expectation). Corrected fixtures/assertions; subsequent full suite passed. These were not hidden with skips.
 - Release38407423416: Flutter/native/golden/advisory gates passed, then Android release lint required explicit `includeSubdomains=false` on three exact local HTTP domains. Added the attributes without expanding cleartext policy or disabling lint.
 - Initial Keystore emulator could not locate its generated AVD. Aligned the explicit AVD directory and bounded startup waits. Android35 attempts38409692607 and38410865274 then failed before boot because the default userdata allocation exceeded available free-runner disk. CLI partition sizing did not override the generated configuration. Set the AVD configuration to 1GiB and selected the smaller official Android28 image. Android28 run38412885421 also failed before boot: upstream emulator enforces a6GiB minimum at first boot for API>=24. The final workflow allocates that supported size before Flutter consumes runner disk and preserves target metadata. No user files were deleted and no paid runner was used. Failed preparation attempts did not execute device tests. See the [upstream implementation](https://android.googlesource.com/platform/external/qemu/+/emu-master-dev/android-qemu2-glue/main.cpp).
+- Run38413976826 booted Android28, then the combined Flutter-debug build/emulator runner ran out of disk while merging native libraries, before instrumentation. Split compilation and emulator execution into two fresh free runners. The emulator runner receives signed target/test APKs, needs no Flutter/Gradle cache, and requires all five named AndroidJUnitRunner successes without failures/skips. No app code, release APK or test assertions were changed.
 - Superseded APK builds were canceled when the risk-fee and shared-ledger regressions required a newer source. Only the final source's successful artifact is accepted for delivery.
 
 ## Installation and phone acceptance

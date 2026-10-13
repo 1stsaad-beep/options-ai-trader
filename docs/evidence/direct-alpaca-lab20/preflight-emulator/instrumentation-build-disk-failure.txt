@@ -1,0 +1,10 @@
+Run: 38413976826 / source bc47ecd58e3cf3b01f6b2adeebc9822c33c682d9
+Android 28 booted, but instrumentation did not run because the target APK build exhausted disk.
+2026-10-13T14:40:22.4684738Z ##[warning]You are running out of disk space. The runner will stop working when the machine runs out of disk space. Free space left: 50 MB
+2026-10-13T14:40:31.5279576Z > Task :app:mergeDebugNativeLibs FAILED
+2026-10-13T14:40:31.7312516Z       java.io.IOException: No space left on device
+2026-10-13T14:40:31.7346948Z    > java.io.IOException: No space left on device
+2026-10-13T14:40:31.7380117Z java.io.IOException: No space left on device
+2026-10-13T14:40:31.7384506Z BUILD FAILED in 6m 47s
+2026-10-13T14:40:31.8419579Z BUILD FAILED in 6m 47s
+2026-10-13T14:40:33.1919139Z ##[error]Process completed with exit code 1.

@@ -34,14 +34,24 @@
     "postgres_journal": 6,
     "postgres_runtime": 8,
     "postgres_backup_restore": 16,
-    "compose": 17
+    "compose": 17,
+    "android_keystore_instrumented": 5
   },
   "backend_source": "c3e03a316d58deb31cfe1cb69e02d7fbaae06704",
   "backend_run": 38407423803,
   "android_emulator": {
-    "status": "pending",
-    "run": 38413976826,
-    "source": "bc47ecd58e3cf3b01f6b2adeebc9822c33c682d9"
+    "status": "passed",
+    "run": 38415911278,
+    "source": "6a2aa9122a9fc7223037f830bbe038c3143d9a2b",
+    "api_level": 28,
+    "tests": 5,
+    "failures": 0,
+    "skips": 0,
+    "mobile_tree_sha": "439b5d64cab9cd52a37655eeef353d5cb373c1e9",
+    "artifact_id": 11824123105,
+    "artifact_sha256": "155d18d3066e90ad21140a8d470aca90abf613283291cb2b0edc0b914d8b1995",
+    "raw_result": "android-keystore/keystore-instrumentation.txt",
+    "prior_build_disk_failure_run": 38413976826
   },
   "actual_alpaca_tested": false,
   "physical_phone_tested": false,
@@ -73,5 +83,7 @@
       "size_bytes": 2521,
       "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38411807925/artifacts/11822401401"
     }
-  }
+  },
+  "artifact_expires_at": "2026-10-27T14:26:48Z",
+  "mobile_tree_sha": "439b5d64cab9cd52a37655eeef353d5cb373c1e9"
 }

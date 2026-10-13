@@ -1,7 +1,7 @@
 {
   "algorithm": "sha256",
   "files": {
-    "acceptance.json": "3f9226cc005d804ada9f8a6a6bf8add144505b4a0e28310e738653fc81481e3c",
+    "acceptance.json": "3c66ed19a72cb13d1ccca8d88b9c6fb3dcf253eac160fe330df4aebb0b19dbbb",
     "android/alpaca-policy.txt": "12442117db1874dd4cc09a7ec8d382b22897dc6ee08cf8f081709543bccab358",
     "android/android-dependency-audit.json": "6176959b1a4faf4fca75d75d133af0857f9c955a4706e205ad126bb4c0303eac",
     "android/apk-manifest.txt": "a3aee7549c5a9e1b968b4d03c9067f6654354e0f8c6310790b5492cf8270f6d3",
@@ -15,6 +15,9 @@
     "android/gradle-runtime-dependencies.txt": "2c699863822f14e770106c54a3fbc801509a4266cec2c9c2d80f9e872e5fd95b",
     "android/job-gates.txt": "2870b0cd38d3fc89c143900d4340f17fd4b7c1f6bb727cc474cbbef8c805cd75",
     "android/native-junit.xml": "f6973baa1bf7c23c803c5a4e81c69bd7455a4ff86a21f825b66f1230ce0d3776",
+    "android-keystore/emulator-start.log": "6857708ec4d736a9d6cb2a3d9b9ae715902ce6cfc1908c4239edc268dc6dede8",
+    "android-keystore/keystore-instrumentation.txt": "591df09ca0fcf5a7eb94e6e22c61dbbe9354ed8c28b1aa27cf097828e1b3a3db",
+    "android-keystore/keystore-result.json": "f74bf363f63057d1e09d8cd040788d48b46cca770ad77644fe5d79ef9f3f915b",
     "backend/http-smoke.json": "6d4f4bf404ddcb84de8affcc4fe33827c430340942b7dc689199d73e0c2cd979",
     "backend/lifecycle-synthetic.json": "4ddca44250c3526f0adf1734cb9e080ed69a23b24436179992a4fb8e4fdef83b",
     "backend/market-data-journal-postgres.json": "2f845116e5610995ecb05afc4663c56be356ca015e275bea4054130704560154",
@@ -26,6 +29,7 @@
     "compose/compose-smoke.json": "7195bc63faf2eb0ad2212641e6ac2ac5a4a10b75633d2e98e8fb6a93818c9aec",
     "preflight-emulator/android28-firstboot-failure.txt": "8e095fb83e146d3957be2eb626da4a051e666d7525e8e0706f3862a8d7c2ad2d",
     "preflight-emulator/emulator-start.log": "b1b187d96f5eea526f917af673f35aaf9493809c64d3822f0374841199cf7e1b",
+    "preflight-emulator/instrumentation-build-disk-failure.txt": "1c4ff63e6d49bcafacdeb50d3e9edd0f292b037f9dd029af9c170d8eb016fea8",
     "preflight-flutter/alpaca-policy.txt": "12442117db1874dd4cc09a7ec8d382b22897dc6ee08cf8f081709543bccab358",
     "preflight-flutter/mobile/direct-flutter-tests.json": "ac0fadb283733d3200071b4cb9a4e85c772e53e661464829924b0817e00dcc9a",
     "preflight-release-lint.txt": "fbee94954e5fd0036d367b3ca7be9ea7bfd91abf183ce1261920a919e6da4842",
