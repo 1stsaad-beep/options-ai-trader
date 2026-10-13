@@ -514,3 +514,8 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 - Added strict native GET-only data endpoint policy, validation, New York session filtering (DST), bounded retry rules and rolling indicator helpers. Keystore AES-GCM vault stores encrypted credentials in noBackupFilesDir; saved secrets never have a Flutter read method. Keystore is not an extraction-proof guarantee.
 - Added adversarial policy checks to existing isolated mobile gate. Local attempt could not execute because javac is absent (Flutter also absent); CI acceptance pending. Full APK intentionally deferred using the existing [chart-check] preflight gate.
 - No Alpaca/IBKR connection, credentials, orders, paid service, Demo data or server/Oracle configuration changes. Next: native transport, direct Flutter screen, separate Market Paper and foreground monitoring; then full APK acceptance.
+
+### Direct batch 2 — native session
+- Fixed allowlisted HTTPS/WS transport, explicit IEX/SIP without entitlement fallback, authenticated-only subscription, corrected bars, DST session filter, rate/backoff and other-app connection-limit stop. OPRA snapshot reading only; no indicative substitution or order verbs.
+- Encrypted vault is consumed only in Android. Optional 30-minute foreground monitoring computes rolling RSI/MACD locally; persistent Stop notification, no boot restart, no phone-off guarantee. Activity stops the session on background without the service.
+- Added nine JVM mock tests and dedicated native/Flutter acceptance workflow. Tests use intercepted transport and fake sockets; CI pending. Real account/device testing not performed.

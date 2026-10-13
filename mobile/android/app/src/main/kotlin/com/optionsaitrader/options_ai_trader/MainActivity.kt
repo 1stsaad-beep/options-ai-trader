@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
+import android.view.WindowManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -12,6 +13,37 @@ class MainActivity : FlutterActivity() {
     private var permissionResult: MethodChannel.Result? = null
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger,"oat/alpaca_data").setMethodCallHandler { call,result ->
+            try {
+                when(call.method) {
+                    "keyStatus" -> result.success(AlpacaVault(this).exists())
+                    "saveKeys" -> {
+                        AlpacaMonitorService.stop(this)
+                        AlpacaVault(this).save(call.argument<String>("key")?:"",call.argument<String>("secret")?:"")
+                        result.success(true)
+                    }
+                    "secureScreen" -> {
+                        if(call.argument<Boolean>("enabled")==true)window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                        else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                        result.success(true)
+                    }
+                    "start" -> {
+                        check(hasWindowFocus())
+                        AlpacaRuntime.get(this).start(call.argument<String>("feed")?:"",call.argument<String>("session")?:"",call.argument<List<String>>("symbols")?:emptyList())
+                        result.success(true)
+                    }
+                    "stop" -> {AlpacaMonitorService.stop(this);result.success(true)}
+                    "snapshot" -> result.success(AlpacaRuntime.get(this).snapshot())
+                    "quote" -> AlpacaRuntime.get(this).quote(call.argument<String>("contract")?:"") { quote -> runOnUiThread {result.success(quote)} }
+                    "backgroundStatus" -> result.success(AlpacaMonitorService.running)
+                    "backgroundStart" -> {
+                        check(hasWindowFocus() && getSystemService(NotificationManager::class.java).areNotificationsEnabled())
+                        AlpacaMonitorService.start(this);result.success(true)
+                    }
+                    else -> result.notImplemented()
+                }
+            }catch(_:Exception){result.error("DATA_UNAVAILABLE","تعذر تنفيذ العملية؛ راجع المفاتيح أو الإعدادات أو إذن الإشعارات.",null)}
+        }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "oat/market_monitor").setMethodCallHandler { call, result ->
             try {
                 when (call.method) {
@@ -47,5 +79,9 @@ class MainActivity : FlutterActivity() {
         permissionResult?.success(false)
         permissionResult = null
         super.onDestroy()
+    }
+    override fun onStop() {
+        if(!AlpacaMonitorService.running)AlpacaRuntime.stop()
+        super.onStop()
     }
 }
