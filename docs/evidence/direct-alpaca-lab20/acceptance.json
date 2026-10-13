@@ -1,0 +1,77 @@
+{
+  "format_version": 1,
+  "date_utc": "2026-10-13",
+  "apk_source": "24e19611b38f8b43c41410d42b6b4ff98af96557",
+  "artifact_sha256": "f17d9261bf7f2c1cc4e56bc529abb3a8a5008927c6c572bd6dd450cee1eea6e5",
+  "apk_sha256": "e06e4a8879c419b3f88c65456727187661a7fcbb6b9332186297edcfd1a586ee",
+  "apk_bytes": 57135549,
+  "application_id": "com.optionsaitrader.options_ai_trader.v1previewrc2b20",
+  "version_code": 20,
+  "version_name": "1.0.0",
+  "min_sdk": 24,
+  "target_sdk": 36,
+  "debuggable": false,
+  "signing": "ephemeral-runner-development-key",
+  "signature_scheme": "v2",
+  "certificate_sha256": "333931a16179f986fc12f2ca8157b16b27945b1f47ad355e68152647116028b9",
+  "certificate_dn": "C=US, O=Android, CN=Android Debug",
+  "key_algorithm": "RSA",
+  "key_bits": 2048,
+  "checks": {
+    "flutter": 294,
+    "golden": 6,
+    "native_jvm": 11,
+    "native_policy": 42,
+    "existing_monitor_policy": 30,
+    "maven_versions": 90,
+    "maven_advisories": 0,
+    "python_dependencies": 24,
+    "pub_dependencies": 43,
+    "dependency_advisories": 0,
+    "source_secret_patterns": 0,
+    "backend_python": 1055,
+    "postgres_v1": 22,
+    "postgres_journal": 6,
+    "postgres_runtime": 8,
+    "postgres_backup_restore": 16,
+    "compose": 17
+  },
+  "backend_source": "c3e03a316d58deb31cfe1cb69e02d7fbaae06704",
+  "backend_run": 38407423803,
+  "android_emulator": {
+    "status": "pending",
+    "run": 38413976826,
+    "source": "bc47ecd58e3cf3b01f6b2adeebc9822c33c682d9"
+  },
+  "actual_alpaca_tested": false,
+  "physical_phone_tested": false,
+  "external_trading_requests": false,
+  "user_credentials_used": false,
+  "artifact_retention_days": 14,
+  "artifacts": {
+    "android": {
+      "run": 38411807924,
+      "source": "24e19611b38f8b43c41410d42b6b4ff98af96557",
+      "id": 11822923266,
+      "sha256": "f17d9261bf7f2c1cc4e56bc529abb3a8a5008927c6c572bd6dd450cee1eea6e5",
+      "size_bytes": 26368911,
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38411807924/artifacts/11822923266"
+    },
+    "mock": {
+      "run": 38411807349,
+      "source": "24e19611b38f8b43c41410d42b6b4ff98af96557",
+      "id": 11822977323,
+      "sha256": "08077a4ba3f2dd572ac1e83975d81064a6c9c061c3c54bff3a4cc64db17e3925",
+      "size_bytes": 18130,
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38411807349/artifacts/11822977323"
+    },
+    "security": {
+      "run": 38411807925,
+      "source": "24e19611b38f8b43c41410d42b6b4ff98af96557",
+      "id": 11822401401,
+      "sha256": "6a479fb32c6975628b4b4d2e44bb39395a305aa98f810c7e42482721e8ee2675",
+      "size_bytes": 2521,
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38411807925/artifacts/11822401401"
+    }
+  }
+}

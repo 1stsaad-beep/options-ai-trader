@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-13T14:22:23.347Z" hostname="runnervmmprz5" time="6.094">
+  <properties/>
+  <testcase name="optionsForbiddenDoesNotBecomeIndicative" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="0.663"/>
+  <testcase name="conflictDoesNotDisplaceOtherApp" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="0.016"/>
+  <testcase name="correctedBarReplacesRatherThanDuplicatesAndFutureIsRejected" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="0.027"/>
+  <testcase name="reconnectionRequiresNewAuthentication" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="5.249"/>
+  <testcase name="rateLimitSurvivesManualRestart" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="0.018"/>
+  <testcase name="staleSocketAfterStopCannotAuthenticate" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="0.053"/>
+  <testcase name="authIsRequiredAndSecretNeverInSnapshot" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="0.017"/>
+  <testcase name="optionsAreExplicitOpraGetOnly" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="0.015"/>
+  <testcase name="dataClientRejectsOrderBeforeNetwork" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="0.003"/>
+  <testcase name="disconnectedTransportStopsFreshnessAndSchedulesRecovery" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="0.005"/>
+  <testcase name="authRejectionLocks" classname="com.optionsaitrader.options_ai_trader.AlpacaSessionTest" time="0.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

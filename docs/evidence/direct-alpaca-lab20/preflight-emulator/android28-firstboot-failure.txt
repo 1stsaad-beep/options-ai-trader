@@ -1,0 +1,8 @@
+Run: 38412885421 / source 19c94acf834eb17ff8c72f2b9a641fb5c2203245
+2026-10-13T14:27:40.3301536Z Do you wish to create a custom hardware profile? [no] INFO         | Android emulator version 37.2.12.0 (build_id 16428233) (CL:N/A)
+2026-10-13T14:27:40.3306943Z INFO         | Found systemPath /usr/local/lib/android/sdk/system-images/android-28/google_apis/x86_64/
+2026-10-13T14:27:40.3308194Z INFO         | Saving last run QEMU version for the AVD to 2
+2026-10-13T14:27:40.3309417Z INFO         | Increasing RAM size to 4096MB
+2026-10-13T14:27:40.3313128Z INFO         |      Ok: Disk space requirements to run avd: `oat_keystore` are met
+2026-10-13T14:27:40.3318253Z FATAL        | Not enough space to create userdata partition. Available: 6401.27 MB at /home/runner/work/_temp/oat-avd/oat_keystore.avd, need 7372.80 MB.
+2026-10-13T14:27:40.3343684Z ##[error]Process completed with exit code 1.

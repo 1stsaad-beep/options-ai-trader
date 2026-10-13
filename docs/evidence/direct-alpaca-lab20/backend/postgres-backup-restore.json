@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "checks_passed": 16,
+  "checks_failed": 0,
+  "checks": [
+    "matching_postgresql_client_and_server_versions",
+    "custom_dump_checksum_and_offline_verification",
+    "source_changes_after_snapshot_are_independent",
+    "non_superuser_restore_to_new_database_only",
+    "second_restore_refuses_existing_target",
+    "four_account_ledger_fills_positions_migrations_and_validated_constraints_restored",
+    "restored_immutable_decisions_and_account_foreign_keys_enforced",
+    "market_journal_exact_payload_hash_and_receipt_restored",
+    "restored_market_journal_update_delete_guards",
+    "runtime_config_inbox_ack_cache_link_budget_backoff_restored",
+    "restored_runtime_event_immutable_guard",
+    "streaming_market_archive_restores_post_backup_original_without_overwriting_prior_rows",
+    "market_archive_idempotent_restore_preserves_disabled_runtime_and_orders",
+    "application_invalidates_account_trust_and_reconciles_without_resubmission",
+    "tampered_archive_rejected_before_database_creation",
+    "only_owned_disposable_fixtures_cleaned_up"
+  ],
+  "database": "PostgreSQL",
+  "postgresql_major": 16,
+  "broker": "none",
+  "data": "synthetic"
+}

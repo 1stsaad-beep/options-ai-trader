@@ -1,0 +1,11 @@
+2026-10-13T13:55:03.7721206Z Lint found 3 errors. First failure:
+2026-10-13T13:55:03.7751443Z /home/runner/work/options-ai-trader/options-ai-trader/mobile/android/app/src/main/res/xml/network_security_config.xml:6: Error: Missing includeSubdomains attribute [NetworkSecurityConfig]
+2026-10-13T13:55:03.7753706Z /home/runner/work/options-ai-trader/options-ai-trader/mobile/android/app/src/main/res/xml/network_security_config.xml:6: Error: Missing includeSubdomains attribute [NetworkSecurityConfig]
+2026-10-13T13:55:03.7816855Z /home/runner/work/options-ai-trader/options-ai-trader/mobile/android/app/src/main/res/xml/network_security_config.xml:7: Error: Missing includeSubdomains attribute [NetworkSecurityConfig]
+2026-10-13T13:55:03.7851801Z /home/runner/work/options-ai-trader/options-ai-trader/mobile/android/app/src/main/res/xml/network_security_config.xml:8: Error: Missing includeSubdomains attribute [NetworkSecurityConfig]
+2026-10-13T13:55:33.7133769Z Execution failed for task ':app:lintVitalRelease'.
+2026-10-13T13:55:33.7136828Z > Lint found fatal errors while assembling a release target.
+2026-10-13T13:55:33.7260201Z   /home/runner/work/options-ai-trader/options-ai-trader/mobile/android/app/src/main/res/xml/network_security_config.xml:6: Error: Missing includeSubdomains attribute [NetworkSecurityConfig]
+2026-10-13T13:55:33.7285320Z   /home/runner/work/options-ai-trader/options-ai-trader/mobile/android/app/src/main/res/xml/network_security_config.xml:7: Error: Missing includeSubdomains attribute [NetworkSecurityConfig]
+2026-10-13T13:55:33.7311384Z   /home/runner/work/options-ai-trader/options-ai-trader/mobile/android/app/src/main/res/xml/network_security_config.xml:8: Error: Missing includeSubdomains attribute [NetworkSecurityConfig]
+2026-10-13T13:55:33.7709927Z BUILD FAILED in 3m 27s

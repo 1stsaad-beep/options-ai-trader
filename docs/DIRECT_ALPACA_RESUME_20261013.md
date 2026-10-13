@@ -1,5 +1,9 @@
 # Direct Alpaca Android — work checkpoint
 
+LATEST CHECKPOINT: APK source24e19611b38f8b43c41410d42b6b4ff98af96557 accepted on Android38411807924. Download artifact11822923266; inspect DIRECT_ALPACA_ACCEPTANCE_20261013.md and evidence/direct-alpaca-lab20/acceptance.json for exact digest/signing/tests. Application code is frozen. CI-only sourcebc47ecd58e3cf3b01f6b2adeebc9822c33c682d9 starts the emulator before Flutter disk allocation; run38413976826 has booted and is running Keystore instrumentation. Next: inspect its final raw JUnit, update acceptance/manifest, commit/push/read back actual branch HEAD. No actual Alpaca or physical-phone test; user enters credentials only on-device. Existing Lab19/server/Oracle/Demo remain preserved. Persistent attachment upload failed; GitHub artifact and verified local APK exist. Do not rebuild unnecessarily or deliver an older source.
+
+Historical checkpoints below retain the actual sequence, including failed gates.
+
 Start from actual recovery/v1.0-20261011 HEAD, never a hard-coded report SHA.
 Original accepted source: 67995126bd095e3e3bbbae2d74e9d19e0e2c8207; Lab19 remains unchanged on users' phones.
 

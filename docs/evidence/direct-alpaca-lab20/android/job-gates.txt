@@ -1,0 +1,8 @@
+Run: https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38411807924
+Source: 24e19611b38f8b43c41410d42b6b4ff98af96557
+2026-10-13T14:16:50.4407796Z Native monitor policy: 30 checks passed; no Android device or network used
+2026-10-13T14:17:01.6560928Z No issues found! (ran in 10.3s)
+2026-10-13T14:18:27.4895725Z Alpaca policy: 42 checks passed; no network
+2026-10-13T14:22:29.9972776Z BUILD SUCCESSFUL in 4m 2s
+2026-10-13T14:22:51.8595059Z Signing Secrets unavailable: default artifact policy is unsigned; the separately identified preview job may explicitly select the ephemeral SDK development key
+2026-10-13T14:26:46.5927464Z ✓ Built build/app/outputs/flutter-apk/app-release.apk (57.1MB)
