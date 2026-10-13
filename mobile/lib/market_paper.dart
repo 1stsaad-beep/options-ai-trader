@@ -257,7 +257,8 @@ class MarketPaper extends ChangeNotifier {
         Future<void> retainIntent(String reason,String event) async {
           final next=copy();final p=(_in(next,id)['positions'] as Map)[symbol] as PaperRow;
           // Persist only ownership/intent. No missing-price cash or inventory mutation.
-          p['closeIntent']={'reason':reason,'remaining':qty,'at':now().toUtc().toIso8601String()};
+          p['closeIntent']={'reason':reason,'remaining':pending!=null&&pending['reason']==reason?pending['remaining']:qty,
+            'at':pending!=null&&pending['reason']==reason?pending['at']:now().toUtc().toIso8601String()};
           (_in(next,id)['positions'] as Map)[symbol]=p;
           _log(next,id,symbol,event);await _commit(next,admission:()=>_current(id,epoch));
         }
@@ -286,7 +287,7 @@ class MarketPaper extends ChangeNotifier {
           final reason=closeReason;
           final desired=reason=='PARTIAL_PROFIT'?(pending?['remaining'] as int? ?? qty~/2):qty;
           final quoteId='${q.contract}/${q.time.toUtc().toIso8601String()}/${q.bid}/${q.ask}/${q.bidSize}/${q.askSize}';
-          if(position['consumedQuote']==quoteId){await _record(id,symbol,'CLOSE_WAIT_NEW_QUOTE');return;}
+          if(position['consumedQuote']==quoteId||(position['lastCloseQuoteAt'] is String&&!q.time.isAfter(DateTime.parse(position['lastCloseQuoteAt'] as String)))){await _record(id,symbol,'CLOSE_WAIT_NEW_QUOTE');return;}
           final filled=math.min(desired,math.min(q.bidSize,q.askSize));
           final remaining=qty-filled,unfilled=desired-filled;
           final removedCost=(position['cost'] as int)*filled~/qty;
@@ -297,7 +298,7 @@ class MarketPaper extends ChangeNotifier {
           if(remaining==0){(target['positions'] as Map).remove(symbol);}else{
             p['quantity']=remaining;p['cost']=(position['cost'] as int)-removedCost;
             p['entryFees']=((position['entryFees']??qty*65) as int)-entryFees;p['realizedPnl']=tradePnl;
-            p['mark']=_quote(q);p['consumedQuote']=quoteId;
+            p['mark']=_quote(q);p['consumedQuote']=quoteId;p['lastCloseQuoteAt']=q.time.toUtc().toIso8601String();
             if(reason=='PARTIAL_PROFIT')p['partialTaken']=true;
             if(unfilled>0){p['closeIntent']={'reason':reason,'remaining':unfilled,'at':pending?['at']??now().toUtc().toIso8601String()};}
             else{p.remove('closeIntent');}

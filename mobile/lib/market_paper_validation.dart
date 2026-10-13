@@ -98,6 +98,7 @@ void validatePaper(Map<String, dynamic> book) {
       if (p.containsKey('scenarioLevel') && (p['scenarioLevel'] is! num || !(p['scenarioLevel'] as num).isFinite || p['scenarioLevel']<=0)) invalid();
       if (p.containsKey('realizedPnl') && !integer(p['realizedPnl'],-maxMoney,maxMoney)) invalid();
       if (p.containsKey('partialTaken') && p['partialTaken'] is! bool) invalid();
+      if (p.containsKey('lastCloseQuoteAt') && !timestamp(p['lastCloseQuoteAt'])) invalid();
       if (p.containsKey('consumedQuote') && !text(p['consumedQuote'])) invalid();
       if (p.containsKey('closeIntent')) {
         final intent=p['closeIntent'];

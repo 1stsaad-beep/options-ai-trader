@@ -111,4 +111,30 @@ void main() {
     expect(paperExpiry('NVDA261225C00200000',DateTime.utc(2026,12,24,18)).close,false);
     expect(paperSession(DateTime.utc(2028,1,3,15)).entry,false);
   });
+  test('quote outage preserves original partial-profit target quantity',()async{
+    await paper.configure(id,{'quantity':6,'riskPercent':30});await cycle();
+    clock=clock.add(const Duration(seconds:1));await cycle(bid:260,ask:270,size:1);
+    expect(paper.account(id)['positions']['NVDA']['closeIntent']['remaining'],2);
+    await cycle(missing:true);expect(paper.account(id)['positions']['NVDA']['closeIntent']['remaining'],2);
+    clock=clock.add(const Duration(seconds:1));await cycle(bid:260,ask:270);
+    expect(paper.account(id)['positions']['NVDA']['quantity'],3);
+    expect(paper.account(id)['positions']['NVDA']['closeIntent'],isNull);
+  });
+  test('out-of-order partial close quote cannot consume liquidity twice',()async{
+    await cycle();clock=clock.add(const Duration(seconds:2));await cycle(signal:'PUT',reverse:true,size:1);
+    final cash=paper.account(id)['cash'];
+    await paper.evaluate(id:id,symbol:'NVDA',signal:'PUT',confirmedReverse:true,dataValid:()=>true,observation:'later',
+      quotes:(c)async=>OptionQuote(c,'opra',clock.subtract(const Duration(seconds:1)),201,211,1,1));
+    expect(paper.account(id)['cash'],cash);expect(paper.journal.last['decision'],'CLOSE_WAIT_NEW_QUOTE');
+  });
+  test('uncertain partial-close acknowledgement latches before any opposite entry',()async{
+    await cycle();store.failReadAfterWrite=true;clock=clock.add(const Duration(seconds:1));await cycle(signal:'PUT',reverse:true,size:1);
+    expect(paper.ready,false);expect(store.value!['accounts'][0]['positions']['NVDA']['quantity'],2);
+    store.failReadAfterWrite=false;store.unreadable=false;
+    final writes=store.writes;await cycle(signal:'PUT',reverse:true);expect(store.writes,writes);
+    paper=MarketPaper(store,clock:()=>clock);await paper.load();expect(paper.ready,true);
+    expect(paper.account(id)['positions']['NVDA']['quantity'],2);expect(paper.account(id)['enabled'],false);
+    expect(paper.journal.where((e)=>e['decision']=='OPENED_PUT'),isEmpty);
+  });
+
 }
