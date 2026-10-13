@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.optionsaitrader.options_ai_trader.AlpacaTransportTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-13T13:31:38.869Z" hostname="runnervmmprz5" time="0.057">
+  <properties/>
+  <testcase name="invalidDataAndRevokedCredentialsFailClosed" classname="com.optionsaitrader.options_ai_trader.AlpacaTransportTest" time="0.014"/>
+  <testcase name="authOnlyUsesFixedDataGetAndNeverReturnsCredentials" classname="com.optionsaitrader.options_ai_trader.AlpacaTransportTest" time="0.006"/>
+  <testcase name="rateLimitsReconnectDedupAndStopRejectLateWork" classname="com.optionsaitrader.options_ai_trader.AlpacaTransportTest" time="0.015"/>
+  <testcase name="errorsIncludingRedirectsNeverSurfaceBodiesOrRetryAutomatically" classname="com.optionsaitrader.options_ai_trader.AlpacaTransportTest" time="0.022"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

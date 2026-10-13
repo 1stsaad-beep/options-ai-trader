@@ -31,3 +31,11 @@ The target branch advanced again to `157b91ccf21cd35b1a722d1a54ceca13abe54d19` d
 ## Actual failed acceptance retained
 
 Run 38403905558 at b9c09da6fe9ceb39ff147ca81c10bbaed825fef1 passed Flutter analysis but failed Android AAR metadata: OkHttp 5.5.0 requires compileSdk 37 while the established Flutter/AGP toolchain compiles SDK 36. Unit tests did not run. Corrected the dependency to 5.3.2 (the documented timeout-fix release), preserving the existing toolchain; next targeted native run must pass. This is not a provider authentication failure.
+
+## Final isolated acceptance receipt — 2026-10-13
+
+Accepted native source: `2c698c697ecb60195ff32935f81530b0814518b0`, isolated branch `recovery/direct-alpaca-lab20-20261013`. GitHub Actions run **38404976275** succeeded: **11 native JUnit Mock tests**, 0 failures, 0 errors, 0 skipped; `flutter analyze` passed. The conditional Flutter direct-test step found no `test/alpaca_direct_test.dart` on this isolated branch, so **no new Flutter widget test execution is claimed**. These native tests compile the Android Kotlin/Java application code but are not Keystore instrumentation or physical-phone tests. No APK packaging was run.
+
+Downloaded artifact **11818487146**, verified ZIP CRC and SHA-256 `3369a1729ab1213ed6168ac2a4f79cd2cbf4ef646c2597bf563945fdf11865b2`, and read all three JUnit suites. Exact XML and receipt are saved under `docs/evidence/direct-alpaca-isolated-20261013/`. The earlier SDK compatibility failure is retained above. The subsequent receipt commit changes documentation/evidence only.
+
+Read `docs/DIRECT_ALPACA_RECONCILIATION_20261013.md` before resuming. The requested recovery branch advanced independently again to **7935c01c56a4df22101d16495dcb0689b5a867ca**, adding Flutter labs and Market Paper while this session tested its isolated checkpoint. This branch is therefore deliberately not merged wholesale. No new accepted APK, signature, live connectivity, OPRA entitlement or phone/background acceptance is claimed. Lab19/Demo/backend data were not changed or migrated.

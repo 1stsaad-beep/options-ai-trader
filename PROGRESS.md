@@ -535,3 +535,9 @@ Run 38403905558 failed before native tests: OkHttp 5.5.0 requires compileSdk 37,
 ### Connection hardening within the same acceptance batch
 
 Mock review exposed a local cooldown reset on manual reconnect. Preserve 429 cooldown across stop/start and honour numeric Retry-After/X-RateLimit-Reset within a bounded day. Historical bootstrap cannot overwrite an already observed streaming correction. Repeated authentication acknowledgements do not duplicate subscriptions; unauthenticated sockets have a 12-second timeout. These fixes require targeted native acceptance, still no UI/release claim.
+
+## Direct Alpaca isolated checkpoint — actual acceptance receipt
+
+Native source 2c698c697ecb60195ff32935f81530b0814518b0 passed run 38404976275: 11 JUnit mocks, zero failures/errors/skips; Flutter analysis passed. No new widget execution (conditional file absent), device/Keystore instrumentation, provider connection or APK build claimed. Artifact 11818487146 downloaded and checksum/CRC/XML verified; evidence retained in docs/evidence/direct-alpaca-isolated-20261013/.
+
+Saved on recovery/direct-alpaca-lab20-20261013 because the requested recovery branch changed concurrently three times (latest observed 7935c01c56a4df22101d16495dcb0689b5a867ca). Both independent histories remain preserved. Read docs/DIRECT_ALPACA_RECONCILIATION_20261013.md; choose one active transport owner before integrating. This is a tested engineering checkpoint, not an accepted Lab20 release. No Lab19/Demo/server data, external app, keys or paid resources touched.
