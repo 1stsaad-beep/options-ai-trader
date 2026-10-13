@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:options_ai_trader/direct_alpaca.dart';
 import 'package:options_ai_trader/direct_screen.dart';
 import 'package:options_ai_trader/direct_labs.dart';
+import 'package:options_ai_trader/market_paper.dart';
 import 'market_paper_test.dart' show MemoryPaperStore;
 
 class MockDirect extends DirectAlpaca {
@@ -43,4 +44,16 @@ void main(){
     }
     expect(find.textContaining('اصطناعية • Shadow'),findsNothing);
   });
+  testWidgets('four independent accounts and controls fit a narrow RTL phone',(tester)async{
+    tester.view.physicalSize=const Size(360,800);tester.view.devicePixelRatio=1;
+    addTearDown(tester.view.resetPhysicalSize);addTearDown(tester.view.resetDevicePixelRatio);
+    final store=MemoryPaperStore(),ledger=MarketPaper(MemoryPaperStore());
+    await ledger.load();await ledger.createComparisonExperiment();await store.write(ledger.copy());
+    await tester.pumpWidget(MaterialApp(builder:(c,child)=>Directionality(textDirection:TextDirection.rtl,child:child!),
+      home:DirectAlpacaScreen(api:MockDirect(),paperStore:store,initialPage:2)));
+    await tester.pumpAndSettle();expect(tester.takeException(),isNull);
+    for(var i=0;i<8;i++){await tester.drag(find.byType(ListView),const Offset(0,-600));await tester.pumpAndSettle();expect(tester.takeException(),isNull);}
+    await tester.pumpWidget(const SizedBox());await tester.pumpAndSettle();
+  });
+
 }

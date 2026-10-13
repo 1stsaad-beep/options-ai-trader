@@ -7,6 +7,8 @@ import 'direct_labs.dart';
 import 'market_monitor.dart';
 import 'market_paper.dart';
 import 'market_paper_reports.dart';
+import 'market_paper_backup.dart';
+import 'direct_replay.dart';
 
 class DirectAlpacaScreen extends StatefulWidget {
   final DirectAlpaca? api;
@@ -127,11 +129,13 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
           catch(_){return const MarketSignal('WAIT',false,reason:'OPTIONAL_ANALYSIS_UNAVAILABLE');}
         }
         final signal=readSignal();
+        PaperRow research;try{research=directResearchSnapshot(rows);}
+        catch(_){research={'version':'direct-research-v1','status':'OPTIONAL_RESEARCH_UNAVAILABLE','executable':false};}
         await paper.evaluate(id:a['id'] as String,symbol:symbol,signal:signal.direction,confirmedReverse:signal.confirmedReverse,
           dataValid:()=>visible&&snapshot.validForDecision(symbol,DateTime.now()),
           observation:rows.isEmpty?'none':rows.last.time.toIso8601String(),quotes:api.quote,forceClose:forceClose,
           currentSignal:()=>readSignal().direction,evidence:{'source':snapshot.source=='alpaca'?'alpaca':'fixture',
-            'feed':snapshot.feed,'rule':signal.reason,'recordedAt':DateTime.now().toUtc().toIso8601String(),
+            'feed':snapshot.feed,'rule':signal.reason,'research':research,'recordedAt':DateTime.now().toUtc().toIso8601String(),
             'bars':[for(final bar in rows.skip(rows.length>120?rows.length-120:0))
               {'at':bar.time.toUtc().toIso8601String(),'o':bar.open,'h':bar.high,'l':bar.low,'c':bar.close,'v':bar.volume}]});
       }
@@ -233,8 +237,26 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     DropdownButtonFormField<String>(initialValue:selectedSymbol,decoration:const InputDecoration(labelText:'السهم'),
       items:{selectedSymbol,...watch,...snapshot.series.keys}.map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(),
       onChanged:(s){if(s!=null)setState(()=>selectedSymbol=s);}),
-    DirectLabs(rows:snapshot.series[selectedSymbol]??[],symbol:selectedSymbol,source:snapshot.label(selectedSymbol,DateTime.now())),
+    DirectLabs(rows:snapshot.series[selectedSymbol]??[],symbol:selectedSymbol,source:snapshot.label(selectedSymbol,DateTime.now()),
+      decisions:paper.journal.where((e)=>e['account']==selectedAccount).toList()),
   ];
+  Future<void> restorePaper() async {
+    final input=TextEditingController();String? validation;
+    try {
+      final accepted=await showDialog<String>(context:context,builder:(context)=>StatefulBuilder(builder:(context,setDialog)=>AlertDialog(
+        title:const Text('استعادة دفتر Market Paper إلى دفتر فارغ'),
+        content:SizedBox(width:520,child:SingleChildScrollView(child:Column(mainAxisSize:MainAxisSize.min,children:[
+          const Text('الصق نسخة الدفتر فقط. لن تُحذف حسابات قائمة. لا مفاتيح أو إعدادات اتصال في النسخة؛ تبدأ الحسابات متوقفة. النسخة غير موقعة ولا تثبت صحة التاريخ.'),
+          TextField(key:const Key('paper-backup-input'),controller:input,maxLines:6,enableSuggestions:false,autocorrect:false),
+          if(validation!=null)Text(validation!),
+        ]))),actions:[TextButton(onPressed:()=>Navigator.pop(context),child:const Text('إلغاء')),
+          FilledButton(onPressed:(){try{final book=PaperBackup.inspect(input.text);if((book['accounts'] as List).isEmpty)throw const FormatException();Navigator.pop(context,input.text);}
+            catch(_){setDialog(()=>validation='نسخة غير صالحة أو تحتوي حقولًا غير مسموحة؛ لم تتغير البيانات.');}},child:const Text('التحقق والاستعادة'))],
+      )));
+      if(accepted!=null){try{await paper.restoreBackup(accepted);message('استُعيد الدفتر وتحققت قراءة الحفظ؛ كل الحسابات متوقفة.');}
+        catch(_){message('لم تُعتمد الاستعادة؛ قد يكون الدفتر غير فارغ أو الحفظ غير مؤكد. لم تُحذف البيانات.');}}
+    }finally{input.dispose();}
+  }
   List<Widget> paperWidgets(){
     final a=selectedAccount==null?null:paper.account(selectedAccount!);
     final report=a==null?null:paper.performance(selectedAccount!);
@@ -251,16 +273,24 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
         await Clipboard.setData(ClipboardData(text:const JsonEncoder.withIndent('  ').convert(paper.comparison())));
         message('نُسخ تقرير المقارنة وأسباب القرارات الأصلية. الجلسات غير المرصودة موسومة NOT_RUN.');
       },child:const Text('نسخ تقرير الحسابات وثلاث جلسات بصيغة JSON')),
+      Wrap(spacing:8,children:[
+        OutlinedButton(key:const Key('paper-backup-export'),onPressed:paper.busy||!paper.ready?null:()async{
+          try{await Clipboard.setData(ClipboardData(text:paper.exportBackup()));message('نُسخت نسخة دفتر Market Paper دون مفاتيح. احفظها في مكان خاص؛ تحتوي تاريخ الحسابات الافتراضية.');}
+          catch(_){message('تعذر تصدير نسخة متحققة؛ لم تتغير البيانات.');}
+        },child:const Text('نسخ احتياطي للدفتر')),
+        OutlinedButton(key:const Key('paper-backup-restore'),onPressed:paper.busy||!paper.ready||paper.accounts.isNotEmpty?null:restorePaper,
+          child:const Text('استعادة إلى دفتر فارغ')),
+      ]),
       TextField(controller:accountName,decoration:const InputDecoration(labelText:'اسم حساب Market Paper جديد')),
       OutlinedButton(onPressed:paper.busy||!paper.ready?null:()=>paper.add(accountName.text),child:const Text('إنشاء حساب افتراضي 10,000 USD')),
       if(a!=null)...[
-        DropdownButtonFormField<String>(initialValue:selectedAccount,items:paper.accounts.map((x)=>DropdownMenuItem(value:x['id'] as String,child:Text(x['name'] as String))).toList(),
+        DropdownButtonFormField<String>(isExpanded:true,initialValue:selectedAccount,items:paper.accounts.map((x)=>DropdownMenuItem(value:x['id'] as String,child:Text(x['name'] as String))).toList(),
           onChanged:(v)=>setState(()=>selectedAccount=v),decoration:const InputDecoration(labelText:'الحساب المستقل')),
         Text('النقد الافتراضي: ${(a['cash']/100).toStringAsFixed(2)} USD'),
         Text('P&L محقق: ${money(report!['realizedPnlCents'])} • غير محقق: ${money(report['unrealizedPnlCents'])}'),
         Text('الرسوم: ${money(report['totalFeesCents'])} • الصفقات المغلقة: ${report['closedTrades']??"غير متاح"} • النجاح: ${report['winRatePercent']??"—"}%'),
         Text('العائد: ${report['returnPercent']??"غير متاح"}% • التراجع المرصود: ${money(report['sampledMaxDrawdownCents'])}؛ لا تقدير خلال انقطاع الأسعار.'),
-        DropdownButtonFormField<String>(key:ValueKey('paper-strategy-$selectedAccount-${a['strategy']}'),
+        DropdownButtonFormField<String>(isExpanded:true,key:ValueKey('paper-strategy-$selectedAccount-${a['strategy']}'),
           initialValue:a['strategy'] as String? ?? 'confluence',decoration:const InputDecoration(labelText:'استراتيجية هذا الحساب'),
           items:paperStrategyLabels.entries.map((e)=>DropdownMenuItem(value:e.key,child:Text(e.value))).toList(),
           onChanged:paper.busy?null:(v){if(v!=null)paper.configure(selectedAccount!,{'strategy':v});}),
@@ -278,7 +308,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
             IconButton(onPressed:paper.busy?null:()=>paper.configure(selectedAccount!,{entry.key:((a[entry.key] as int? ?? entry.value)-1).clamp(entry.key.endsWith('Percent')?0:1,100)}),icon:const Icon(Icons.remove)),
             Text('${a[entry.key]??entry.value}'),
             IconButton(onPressed:paper.busy?null:()=>paper.configure(selectedAccount!,{entry.key:((a[entry.key] as int? ?? entry.value)+1).clamp(entry.key.endsWith('Percent')?0:1,100)}),icon:const Icon(Icons.add))]),
-        DropdownButtonFormField<String>(key:ValueKey('paper-holding-$selectedAccount-${a['holdingMode']}'),
+        DropdownButtonFormField<String>(isExpanded:true,key:ValueKey('paper-holding-$selectedAccount-${a['holdingMode']}'),
           initialValue:a['holdingMode'] as String? ?? 'swing',decoration:const InputDecoration(labelText:'سياسة الاحتفاظ'),
           items:const [DropdownMenuItem(value:'intraday',child:Text('Intraday — إغلاق قبل نهاية الجلسة')),DropdownMenuItem(value:'swing',child:Text('Swing — مدة محدودة وحماية انتهاء'))],
           onChanged:paper.busy?null:(v){if(v!=null)paper.configure(selectedAccount!,{'holdingMode':v});}),

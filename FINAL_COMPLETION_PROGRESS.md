@@ -39,3 +39,9 @@ No new Codex/GitHub Agent automation, broker order, Live/IBKR connection, public
 ## Partial lifecycle and time policy batch
 
 Authored durable residual close intent, per-quote liquidity consumption identity, proportional partial cost/fee reconciliation and complete-round-trip win counting. A restarted account stays disabled, retaining its pending close; a future qualified cycle may finish the close but cannot revive an old opposite signal. Added partial profit, explicit intraday/swing/maximum holding/scenario policies, conservative regular sessions and close-only last trading date. Expired holdings are retained for review, never erased or assigned a fabricated settlement. Calendar uses the existing server 2026–2027 policy and 130 independent server-evaluated boundary fixtures. Twelve lifecycle/calendar regression cases authored; source is pending CI, not release acceptance.
+
+## Portability and original chart evidence batch
+
+Added bounded, strictly mode-separated Market Paper export/import; import requires an empty ledger and disables all imported accounts. Original data is never replaced. Account/schema/receipt checks, credential-field rejection, size/depth bounds and durable readback precede acceptance. It is an unsigned manual backup, not proof that imported history occurred. Added six adversarial portability regressions.
+
+Added completed UTC-anchored 1/5/15/60-minute Direct charts, layers, account-scoped original trade markers and receipt inspection. At each decision the current Shadow wave/harmonic/indicator/multiple-timeframe divergence snapshot is retained with original bars and a version; later bars never replace recorded reasons. Three causal/replay tests and a narrow RTL account-screen test added. Still no real OPRA collection, calibrated strategy claim, full-session evidence, or modeled exercise/stock settlement. Research never promotes itself to execution authority.

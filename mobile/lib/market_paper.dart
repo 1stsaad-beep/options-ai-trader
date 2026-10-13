@@ -6,6 +6,7 @@ import 'market_paper_validation.dart';
 import 'market_paper_reports.dart';
 import 'market_paper_risk.dart';
 import 'market_paper_policy.dart';
+import 'market_paper_backup.dart';
 import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
@@ -53,6 +54,20 @@ class MarketPaper extends ChangeNotifier {
   PaperRow copy()=>copyPaper(_book);
   PaperRow performance(String id)=>paperPerformance(account(id),now());
   PaperRow comparison()=>paperComparison({...copy(),'journal':journal},now());
+  String exportBackup() {
+    if(!ready||busy)throw StateError('Ledger is not stable');
+    return PaperBackup.export(copy());
+  }
+  Future<void> restoreBackup(String text) async {
+    if(!ready||busy)throw StateError('Ledger is not stable');
+    // Import is allowed only into an empty device ledger. Existing data is never
+    // replaced, merged, deleted or silently renamed by a backup operation.
+    if(accounts.isNotEmpty||journal.isNotEmpty)throw StateError('Restore requires an empty Market Paper ledger');
+    final restored=PaperBackup.prepare(text);
+    busy=true;notifyListeners();
+    try{if(!await _commit(restored))throw StateError('Restore was not confirmed');}
+    finally{busy=false;notifyListeners();}
+  }
   Future<void> load()=>_loading??=_load();
   Future<void> _load() async {try {final saved=await store.read();if(saved!=null){
     validatePaper(saved);
