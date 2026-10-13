@@ -13,6 +13,18 @@ class MainActivity : FlutterActivity() {
     private var permissionResult: MethodChannel.Result? = null
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        val paperDisk=PaperDiskStore(java.io.File(noBackupFilesDir,"market-paper-v1.json"))
+        val paperChannel=MethodChannel(flutterEngine.dartExecutor.binaryMessenger,"oat/market_paper_disk",
+            io.flutter.plugin.common.StandardMethodCodec.INSTANCE,flutterEngine.dartExecutor.binaryMessenger.makeBackgroundTaskQueue())
+        paperChannel.setMethodCallHandler { call,result ->
+            try {
+                when(call.method) {
+                    "read" -> result.success(paperDisk.read())
+                    "write" -> result.success(paperDisk.write(call.argument<String>("expected"),call.argument<String>("next")?:""))
+                    else -> result.notImplemented()
+                }
+            }catch(_:Exception){result.error("PAPER_STORAGE_UNCERTAIN","Ledger storage could not be confirmed",null)}
+        }
         val access=AlpacaAccess(AlpacaVault(this),AlpacaPreferences(this))
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger,"oat/alpaca_data").setMethodCallHandler { call,result ->
             try {

@@ -13,10 +13,10 @@ void main() {
   late MarketPaper paper;
   late String id;
   OptionQuote quote(String c,{int bid=200,int ask=210,int size=10})=>OptionQuote(c,'opra',clock,bid,ask,size,size);
-  Future<void> cycle({String signal='CALL',bool reverse=false,bool close=false,bool valid=true,
+  Future<void> cycle({String signal='CALL',bool reverse=false,bool close=false,bool valid=true,bool broken=false,
     int bid=200,int ask=210,int size=10,bool missing=false})=>paper.evaluate(id:id,symbol:'NVDA',signal:signal,
       confirmedReverse:reverse,dataValid:()=>valid,observation:clock.toIso8601String(),
-      quotes:(c)async=>missing?null:quote(c,bid:bid,ask:ask,size:size),forceClose:close);
+      quotes:(c)async=>missing?null:quote(c,bid:bid,ask:ask,size:size),forceClose:close,scenarioInvalidated:()=>broken);
   setUp(()async{
     clock=DateTime.utc(2026,10,13,15,1,15);store=FaultPaperStore();paper=MarketPaper(store,clock:()=>clock);
     await paper.load();await paper.add('Lifecycle');id=paper.accounts.single['id'] as String;
@@ -93,7 +93,8 @@ void main() {
   });
   test('optional scenario exit and bounded swing holding use explicit account policy',()async{
     await paper.configure(id,{'holdingMode':'swing','scenarioExit':true});await cycle();
-    clock=clock.add(const Duration(seconds:1));await cycle(signal:'WAIT');
+    clock=clock.add(const Duration(seconds:1));await cycle(signal:'WAIT');expect(paper.account(id)['positions'],isNotEmpty);
+    await cycle(signal:'WAIT',broken:true);
     expect(paper.journal.last['decision'],'CLOSED_SCENARIO_EXIT');
     await paper.configure(id,{'scenarioExit':false,'maxHoldingDays':1});
     clock=clock.add(const Duration(seconds:1));await cycle();clock=DateTime.utc(2026,10,14,16);await cycle();

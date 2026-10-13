@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'direct_alpaca.dart';
 import 'market_paper_validation.dart';
@@ -29,10 +30,37 @@ class PreferencesPaperStore implements PaperStore {
   }
 }
 
+/// Android uses real disk readback and atomic compare-and-swap. Legacy prefs
+/// migrate once after validation and are retained; no data or key is deleted.
+class DevicePaperStore implements PaperStore {
+  static const channel=MethodChannel('oat/market_paper_disk');
+  final PaperStore legacy;
+  String? _observed;
+  DevicePaperStore({PaperStore? legacyStore}):legacy=legacyStore??PreferencesPaperStore();
+  @override Future<PaperRow?> read() async {
+    if(defaultTargetPlatform!=TargetPlatform.android)return legacy.read();
+    _observed=await channel.invokeMethod<String>('read');
+    if(_observed==null) {
+      final saved=await legacy.read();
+      if(saved==null)return null;
+      validatePaper(saved);
+      final text=jsonEncode(saved);
+      if(await channel.invokeMethod<bool>('write',{'expected':null,'next':text})!=true)throw StateError('Migration not confirmed');
+      _observed=await channel.invokeMethod<String>('read');
+      if(_observed!=text)throw StateError('Migration readback differs');
+    }
+    return jsonDecode(_observed!) as PaperRow;
+  }
+  @override Future<void> write(PaperRow next) async {
+    if(defaultTargetPlatform!=TargetPlatform.android){await legacy.write(next);return;}
+    if(await channel.invokeMethod<bool>('write',{'expected':_observed,'next':jsonEncode(next)})!=true)throw StateError('Disk write not confirmed');
+  }
+}
+
 /// Independent virtual ledger. No Demo imports, no broker submission or stock-price fills.
 class MarketPaper extends ChangeNotifier {
   /// One device ledger across routes; a pending quote/save cannot race a second controller.
-  static final device=MarketPaper(PreferencesPaperStore());
+  static final device=MarketPaper(DevicePaperStore());
   final PaperStore store;
   final DateTime Function() now;
   PaperRow _book={'version':1,'accounts':<dynamic>[],'journal':<dynamic>[]};
@@ -183,11 +211,14 @@ class MarketPaper extends ChangeNotifier {
   bool _current(String id,int epoch)=>ready&&!_paused.contains(id)&&(_epochs[id]??0)==epoch&&account(id)['enabled']==true;
   Future<void> evaluate({required String id,required String symbol,required String signal,
     required bool confirmedReverse,required bool Function() dataValid,required String observation,required QuoteReader quotes,
-    bool forceClose=false,PaperRow? evidence,String Function()? currentSignal}) async {
+    bool forceClose=false,PaperRow? evidence,String Function()? currentSignal,
+    bool Function()? scenarioInvalidated,bool Function()? currentReverse}) async {
     if(!ready||busy||_paused.contains(id)||account(id)['enabled']!=true)return;
     busy=true;notifyListeners();final epoch=_epochs[id]??0;
     bool stockValid(){try{return dataValid();}catch(_){return false;}}
     bool signalCurrent(){try{return currentSignal==null||currentSignal()==signal;}catch(_){return false;}}
+    bool scenarioBroken(){try{return scenarioInvalidated?.call()==true;}catch(_){return false;}}
+    bool reverseCurrent(){try{return confirmedReverse&&(currentReverse?.call()??true)&&stockValid()&&signalCurrent();}catch(_){return false;}}
     final marks=<String,OptionQuote>{};
     Future<bool> collectMarks() async {
       for(final p in (account(id)['positions'] as Map).values) {
@@ -213,7 +244,7 @@ class MarketPaper extends ChangeNotifier {
       final position=positions[symbol] as PaperRow?;
       if(forceClose&&position==null){await _record(id,symbol,'NO_OWNED_POSITION');return;}
       if(position!=null) {
-        final reverse=signal!=position['direction']&&['CALL','PUT'].contains(signal)&&confirmedReverse&&stockValid()&&signalCurrent();
+        final reverse=signal!=position['direction']&&['CALL','PUT'].contains(signal)&&reverseCurrent();
         final session=paperSession(now()),expiry=paperExpiry(position['contract'] as String,now());
         final opened=DateTime.parse(position['opened'] as String),qty=position['quantity'] as int;
         final pending=position['closeIntent'] as Map?;
@@ -222,7 +253,7 @@ class MarketPaper extends ChangeNotifier {
         String? closeReason=forceClose?'MANUAL':pending?['reason'] as String?;
         closeReason??=!expiry.entry?'EXPIRATION_PROTECTION':overdue?'INTRADAY_EXIT':
           now().difference(opened).inHours>=((a['maxHoldingDays']??3) as int)*24?'MAX_HOLDING_EXIT':
-          reverse?'CONFIRMED_DIVERGENCE':a['scenarioExit']==true&&stockValid()&&signalCurrent()&&signal=='WAIT'?'SCENARIO_EXIT':null;
+          reverse?'CONFIRMED_DIVERGENCE':a['scenarioExit']==true&&stockValid()&&scenarioBroken()?'SCENARIO_EXIT':null;
         Future<void> retainIntent(String reason,String event) async {
           final next=copy();final p=(_in(next,id)['positions'] as Map)[symbol] as PaperRow;
           // Persist only ownership/intent. No missing-price cash or inventory mutation.
@@ -281,8 +312,10 @@ class MarketPaper extends ChangeNotifier {
           _log(next,id,symbol,'${remaining==0?'CLOSED':'PARTIAL'}_$reason',quote:q,
             fill:{'side':'SELL_TO_CLOSE','quantity':filled,'price':q.bid,'fee':filled*65,'removedCost':removedCost,
               'entryFees':entryFees,'realizedPnl':pnl,'cashAfter':target['cash']});
-          if(!await _commit(next,admission:()=>_current(id,epoch)&&q.valid(now(),quantity:filled)&&paperSession(now()).fill&&paperExpiry(q.contract,now()).close))return;
-          if(remaining>0||forceClose||!reverse||!_current(id,epoch)||!stockValid()||!signalCurrent())return;
+          if(!await _commit(next,admission:()=>_current(id,epoch)&&q.valid(now(),quantity:filled)&&paperSession(now()).fill&&paperExpiry(q.contract,now()).close&&
+            (pending!=null||reason!='CONFIRMED_DIVERGENCE'||reverseCurrent())&&
+            (pending!=null||reason!='SCENARIO_EXIT'||(stockValid()&&scenarioBroken()))))return;
+          if(remaining>0||forceClose||!reverse||!reverseCurrent()||!_current(id,epoch)||!stockValid()||!signalCurrent())return;
           if((account(id)['positions'] as Map).containsKey(symbol))return;
         } else {
           if(!stockValid()){await _record(id,symbol,'INVALID_OR_STALE_STOCK_DATA');return;}
@@ -331,7 +364,9 @@ class MarketPaper extends ChangeNotifier {
       if(positions.containsKey(symbol)){await _record(id,symbol,'OPPOSITE_POSITION_BLOCKED');return;}
       final cost=q.ask*quantity*100,fee=quantity*65;
       if(cost+fee>(target['cash'] as int)||cost+fee>(target['initialCash'] as int)*(target['riskPercent'] as int)/100) {await _record(id,symbol,'RISK_LIMIT');return;}
+      final scenarioLevel=evidence?['scenarioLevel'];
       positions[symbol]={'contract':contract,'direction':signal,'quantity':quantity,'cost':cost,'entryFees':fee,'mark':_quote(q),
+        if(scenarioLevel is num&&scenarioLevel.isFinite&&scenarioLevel>0)'scenarioLevel':scenarioLevel,
         'highBid':q.bid,'added':false,'realizedPnl':0,'partialTaken':false,'opened':now().toUtc().toIso8601String()};
       target['positions']=positions;target['cash']=(target['cash'] as int)-cost-fee;(target['lastSignal'] as Map)[symbol]=observation;
       if(target['fees'] is int)target['fees']=(target['fees'] as int)+fee;

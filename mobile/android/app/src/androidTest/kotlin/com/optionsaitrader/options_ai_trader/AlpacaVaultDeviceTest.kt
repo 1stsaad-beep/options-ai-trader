@@ -27,6 +27,29 @@ class AlpacaVaultDeviceTest {
         while(!check()&&System.nanoTime()<until)Thread.sleep(30)
         assertTrue(check())
     }
+    @Test fun paperDiskCompareAndSwapSurvivesNewInstance(){
+        val dir=File(context.cacheDir,"paper-disk-cas-test").apply{mkdirs()}
+        val file=File(dir,"ledger.json");val first="""{"version":1,"accounts":[],"journal":[]}"""
+        val second="""{"version":1,"accounts":[],"journal":[],"journalArchive":[]}"""
+        try {
+            val store=PaperDiskStore(file);assertNull(store.read());assertTrue(store.write(null,first))
+            assertEquals(first,PaperDiskStore(file).read())
+            try{PaperDiskStore(file).write(null,second);fail("stale writer accepted")}catch(_:IllegalStateException){}
+            assertEquals(first,store.read());assertTrue(store.write(first,second));assertEquals(second,PaperDiskStore(file).read())
+        }finally{dir.deleteRecursively()}
+    }
+    @Test fun paperDiskInterruptedWriteRecoversOriginalWithoutInventingLedger(){
+        val dir=File(context.cacheDir,"paper-disk-recovery-test").apply{mkdirs()}
+        val file=File(dir,"ledger.json");val first="""{"version":1,"accounts":[],"journal":[]}"""
+        try {
+            PaperDiskStore(file).write(null,first)
+            val atomic=android.util.AtomicFile(file);val interrupted=atomic.startWrite()
+            interrupted.write("partial".toByteArray());interrupted.flush();interrupted.fd.sync();interrupted.close()
+            assertEquals(first,PaperDiskStore(file).read())
+            try{PaperDiskStore(file).write(first,"not-json");fail("invalid bytes accepted")}catch(_:org.json.JSONException){}
+            assertEquals(first,PaperDiskStore(file).read())
+        }finally{dir.deleteRecursively()}
+    }
     @Test fun runtimeIsSharedAcrossActivityAndApplicationContexts(){
         assertSame(AlpacaRuntime.get(context),AlpacaRuntime.get(context.applicationContext))
     }

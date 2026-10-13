@@ -134,8 +134,12 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
         await paper.evaluate(id:a['id'] as String,symbol:symbol,signal:signal.direction,confirmedReverse:signal.confirmedReverse,
           dataValid:()=>visible&&snapshot.validForDecision(symbol,DateTime.now()),
           observation:rows.isEmpty?'none':rows.last.time.toIso8601String(),quotes:api.quote,forceClose:forceClose,
-          currentSignal:()=>readSignal().direction,evidence:{'source':snapshot.source=='alpaca'?'alpaca':'fixture',
-            'feed':snapshot.feed,'rule':signal.reason,'research':research,'recordedAt':DateTime.now().toUtc().toIso8601String(),
+          currentSignal:()=>readSignal().direction,currentReverse:()=>readSignal().confirmedReverse,
+          scenarioInvalidated:(){final p=paper.account(a['id'] as String)['positions'][symbol];final price=snapshot.series[symbol]?.lastOrNull?.close;
+            if(p==null||p['scenarioLevel'] is! num||price==null)return false;
+            return p['direction']=='CALL'?price<p['scenarioLevel']:price>p['scenarioLevel'];},evidence:{'source':snapshot.source=='alpaca'?'alpaca':'fixture',
+            'feed':snapshot.feed,'rule':signal.reason,'research':research,
+            'scenarioLevel':research['indicators']?[signal.direction=='CALL'?'support':'resistance'],'recordedAt':DateTime.now().toUtc().toIso8601String(),
             'bars':[for(final bar in rows.skip(rows.length>120?rows.length-120:0))
               {'at':bar.time.toUtc().toIso8601String(),'o':bar.open,'h':bar.high,'l':bar.low,'c':bar.close,'v':bar.volume}]});
       }
@@ -317,7 +321,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
             IconButton(onPressed:paper.busy?null:()=>paper.configure(selectedAccount!,{entry.key:((a[entry.key] as int? ?? entry.value)-1).clamp(entry.key=='partialPercent'?0:1,entry.key=='partialPercent'?100:30)}),icon:const Icon(Icons.remove)),
             Text('${a[entry.key]??entry.value}'),
             IconButton(onPressed:paper.busy?null:()=>paper.configure(selectedAccount!,{entry.key:((a[entry.key] as int? ?? entry.value)+1).clamp(entry.key=='partialPercent'?0:1,entry.key=='partialPercent'?100:30)}),icon:const Icon(Icons.add))]),
-        SwitchListTile(title:const Text('خروج عند فقد توافق السيناريو'),subtitle:const Text('يتطلب بيانات سهم حديثة؛ فشل التحليل وحده لا يشغله.'),
+        SwitchListTile(title:const Text('خروج عند كسر مستوى إلغاء السيناريو الأصلي'),subtitle:const Text('يتطلب سعر سهم حديثًا وكسر الدعم/المقاومة المحفوظة عند الدخول؛ فشل التحليل وحده لا يشغله.'),
           value:a['scenarioExit']==true,onChanged:paper.busy?null:(v)=>paper.configure(selectedAccount!,{'scenarioExit':v})),
         SwitchListTile(title:const Text('تعزيز واحد بعد ربح 10% ضمن حد المخاطرة'),value:a['addEnabled']==true,onChanged:paper.busy?null:(v)=>paper.configure(selectedAccount!,{'addEnabled':v})),
         DropdownButtonFormField<String>(initialValue:direction,items:const [DropdownMenuItem(value:'CALL',child:Text('Call')),DropdownMenuItem(value:'PUT',child:Text('Put'))],onChanged:(v){if(v!=null)setState(()=>direction=v);}),

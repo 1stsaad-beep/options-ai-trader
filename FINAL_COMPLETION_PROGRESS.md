@@ -45,3 +45,11 @@ Authored durable residual close intent, per-quote liquidity consumption identity
 Added bounded, strictly mode-separated Market Paper export/import; import requires an empty ledger and disables all imported accounts. Original data is never replaced. Account/schema/receipt checks, credential-field rejection, size/depth bounds and durable readback precede acceptance. It is an unsigned manual backup, not proof that imported history occurred. Added six adversarial portability regressions.
 
 Added completed UTC-anchored 1/5/15/60-minute Direct charts, layers, account-scoped original trade markers and receipt inspection. At each decision the current Shadow wave/harmonic/indicator/multiple-timeframe divergence snapshot is retained with original bars and a version; later bars never replace recorded reasons. Three causal/replay tests and a narrow RTL account-screen test added. Still no real OPRA collection, calibrated strategy claim, full-session evidence, or modeled exercise/stock settlement. Research never promotes itself to execution authority.
+
+## Independent review pass: disk durability and scenario authority
+
+Risk Flutter artifact: 355 passed/0 failed. Partial lifecycle artifact: 367 passed/0 failed. The earlier direct workflow runs were superseded/cancelled while native jobs were running; their Flutter results are valid component evidence, not a passed full workflow. Final-source native and device gates remain mandatory.
+
+Review found that a SharedPreferences reload alone proves only platform-visible state, not a synced disk transaction. Android now uses a background MethodChannel, app-private AtomicFile with explicit fsync, uncached file readback and process-wide expected-byte compare-and-swap. Existing validated preference bytes migrate once and remain untouched. Added four Dart bridge/migration tests and two real Android file recovery/CAS instrumentation tests (13 device cases total). The fallback preferences implementation on other platforms is not claimed crash-proof.
+
+Review also separated structural scenario invalidation from WAIT/optional analysis failures, and added revalidation of reversal/structural triggers after awaited reads. The opening support/resistance boundary is saved, then compared with fresh stock data; missing analysis cannot invent invalidation. This batch is pending CI.

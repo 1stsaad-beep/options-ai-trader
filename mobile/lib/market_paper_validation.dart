@@ -43,6 +43,7 @@ void validatePaper(Map<String, dynamic> book) {
     for (final field in ['riskPercent', 'stopPercent', 'takePercent', 'trailPercent']) {
       if (!integer(a[field], 1, 50)) invalid();
     }
+    if (a.containsKey('ledgerPolicy') && a['ledgerPolicy']!='receipt-v2') invalid();
     if (a.containsKey('strategy') && !paperStrategyLabels.containsKey(a['strategy'])) invalid();
     if (a.containsKey('watchlist')) {
       final watch = a['watchlist'];
@@ -94,12 +95,13 @@ void validatePaper(Map<String, dynamic> book) {
         invalid();
       }
       if (p.containsKey('entryFees') && !integer(p['entryFees'], 0, maxMoney)) invalid();
+      if (p.containsKey('scenarioLevel') && (p['scenarioLevel'] is! num || !(p['scenarioLevel'] as num).isFinite || p['scenarioLevel']<=0)) invalid();
       if (p.containsKey('realizedPnl') && !integer(p['realizedPnl'],-maxMoney,maxMoney)) invalid();
       if (p.containsKey('partialTaken') && p['partialTaken'] is! bool) invalid();
       if (p.containsKey('consumedQuote') && !text(p['consumedQuote'])) invalid();
       if (p.containsKey('closeIntent')) {
         final intent=p['closeIntent'];
-        if (intent is! Map || !text(intent['reason']) || !integer(intent['remaining'],1,p['quantity'] as int) || !timestamp(intent['at'])) invalid();
+        if (intent is! Map || !{'MANUAL','STOP_LOSS','TAKE_PROFIT','TRAILING_STOP','EXPIRATION_PROTECTION','INTRADAY_EXIT','MAX_HOLDING_EXIT','CONFIRMED_DIVERGENCE','SCENARIO_EXIT','PARTIAL_PROFIT'}.contains(intent['reason']) || !integer(intent['remaining'],1,p['quantity'] as int) || !timestamp(intent['at'])) invalid();
       }
       if (p.containsKey('mark')) {
         final m = p['mark'];
