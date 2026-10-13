@@ -36,6 +36,8 @@ class AlpacaVaultDeviceTest {
             assertEquals(first,PaperDiskStore(file).read())
             try{PaperDiskStore(file).write(null,second);fail("stale writer accepted")}catch(_:IllegalStateException){}
             assertEquals(first,store.read());assertTrue(store.write(first,second));assertEquals(second,PaperDiskStore(file).read())
+            assertTrue(file.delete()) // disposable test file only
+            try{PaperDiskStore(file).read();fail("missing initialized ledger accepted")}catch(_:java.io.FileNotFoundException){}
         }finally{dir.deleteRecursively()}
     }
     @Test fun paperDiskInterruptedWriteRecoversOriginalWithoutInventingLedger(){

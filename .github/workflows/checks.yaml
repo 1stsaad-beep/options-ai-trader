@@ -1,4 +1,5 @@
 name: Mock safety checks
+# Final completion gate: current Python, PostgreSQL, backup and disposable Compose evidence.
 on:
   push:
     paths: ["backend/**", "scripts/**", "infra/**", "mobile/scripts/prepare_ci_signing.py", ".github/workflows/checks.yaml"]

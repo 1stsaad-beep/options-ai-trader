@@ -1,0 +1,192 @@
+{
+  "scope": "Raw historical component outputs; cancellation is not full workflow acceptance",
+  "archive": "checkpoint-evidence.zip",
+  "sha256": "e9b5a864d2c1887bf95f8c5af5abd36a6e030c41be30d9a2260338d964c72098",
+  "checkpoints": [
+    {
+      "source": "87088fa59d879280ca65c931555b9e4c2ab72086",
+      "run": 38465847468,
+      "zip_sha256": "b8fcba570bf2aa0d24e9774a49ff948e204419943d019aa3ffc377c04a93c15a",
+      "flutter": [
+        {
+          "file": "mobile/direct-flutter-tests.json",
+          "results": {
+            "success": 344
+          },
+          "failed": [],
+          "errors": [],
+          "non_json_lines": []
+        }
+      ],
+      "directory": "experiment-accepted",
+      "native_suites": [
+        {
+          "name": "com.optionsaitrader.options_ai_trader.AlpacaSessionTest",
+          "tests": "29",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0"
+        },
+        {
+          "name": "com.optionsaitrader.options_ai_trader.AlpacaAccessTest",
+          "tests": "12",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0"
+        }
+      ]
+    },
+    {
+      "source": "92b17ea74e5290b9357bb514a706b63171b4ebaf",
+      "run": 38468044079,
+      "zip_sha256": "9c2b7323a724d5b9e0bd419f164147aae1f0732ea6e69e9bb954abcf82ac64a6",
+      "flutter": [
+        {
+          "file": "mobile/direct-flutter-tests.json",
+          "results": {
+            "success": 367
+          },
+          "failed": [],
+          "errors": [],
+          "non_json_lines": []
+        }
+      ],
+      "directory": "lifecycle-preflight",
+      "native_suites": []
+    },
+    {
+      "source": "f62707f271365f022c85f151486a6cf9332758c4",
+      "run": 38464325467,
+      "zip_sha256": "9e5cb5819ec52ab10a991e8de9eb761410626ac5a4b5679ff0cd15ae47f443e9",
+      "flutter": [
+        {
+          "file": "mobile/direct-flutter-tests.json",
+          "results": {
+            "success": 332,
+            "error": 1
+          },
+          "failed": [
+            "overlapping route initialization cannot overwrite a newly created account"
+          ],
+          "errors": [
+            "TimeoutException after 0:00:30.000000: Test timed out after 30 seconds. See https://pub.dev/packages/test#timeouts"
+          ],
+          "non_json_lines": []
+        }
+      ],
+      "directory": "repair-preflight",
+      "native_suites": []
+    },
+    {
+      "source": "25627f05658b83d4058e54e8edd3b55aca28f1fe",
+      "run": 38463826148,
+      "artifact": 11847990715,
+      "zip_sha256": "0f988e65aa8eb32d672692fce9ae41327f849ec7f0e43a95695fb8248f886992",
+      "results": {
+        "success": 318,
+        "failure": 14
+      },
+      "failed": [
+        "fresh option stop survives stale optional stock analysis",
+        "throwing optional analysis cannot suppress a justified stop",
+        "fresh option take profit survives stale optional analysis",
+        "owned manual close does not require a new stock entry signal",
+        "invalid stock signal never opens opposite after protective close",
+        "persisted malformed account is refused without replacing original",
+        "duplicate persisted account identity is rejected",
+        "returned nested account data cannot mutate authoritative ledger",
+        "configuration rejects wrong enablement type",
+        "configuration rejects a contract bound to the wrong direction",
+        "lost write acknowledgement is resolved by exact durable readback",
+        "successful write response without stored bytes cannot create a fill",
+        "unreadable write outcome latches mutation until recovery",
+        "changed durable state is never overwritten from stale memory"
+      ],
+      "errors": [
+        "Expected: empty\n  Actual: {\n            'NVDA': {\n              'contract': 'NVDA261016C00200000',\n              'direction': 'CALL',\n              'quantity': 1,\n              'cost': 21000,\n              'highBid': 200,\n              'added': false,\n              'opened': '2026-10-13T15:01:15.000Z'\n            }\n          }\n",
+        "Expected: empty\n  Actual: {\n            'NVDA': {\n              'contract': 'NVDA261016C00200000',\n              'direction': 'CALL',\n              'quantity': 1,\n              'cost': 21000,\n              'highBid': 200,\n              'added': false,\n              'opened': '2026-10-13T15:01:15.000Z'\n            }\n          }\n",
+        "Expected: empty\n  Actual: {\n            'NVDA': {\n              'contract': 'NVDA261016C00200000',\n              'direction': 'CALL',\n              'quantity': 1,\n              'cost': 21000,\n              'highBid': 200,\n              'added': false,\n              'opened': '2026-10-13T15:01:15.000Z'\n            }\n          }\n",
+        "Expected: empty\n  Actual: {\n            'NVDA': {\n              'contract': 'NVDA261016C00200000',\n              'direction': 'CALL',\n              'quantity': 1,\n              'cost': 21000,\n              'highBid': 200,\n              'added': false,\n              'opened': '2026-10-13T15:01:15.000Z'\n            }\n          }\n",
+        "Expected: empty\n  Actual: {\n            'NVDA': {\n              'contract': 'NVDA261016C00200000',\n              'direction': 'CALL',\n              'quantity': 1,\n              'cost': 21000,\n              'highBid': 200,\n              'added': false,\n              'opened': '2026-10-13T15:01:15.000Z'\n            }\n          }\n",
+        "Expected: false\n  Actual: <true>\n",
+        "Expected: false\n  Actual: <true>\n",
+        "Expected: <1>\n  Actual: <0>\n",
+        "Expected: throws <Instance of 'ArgumentError'>\n  Actual: <Instance of 'Future<void>'>\n   Which: emitted <null>\n",
+        "Expected: throws <Instance of 'ArgumentError'>\n  Actual: <Instance of 'Future<void>'>\n   Which: emitted <null>\n",
+        "Expected: <1>\n  Actual: <0>\n",
+        "Expected: empty\n  Actual: {\n            'NVDA': {\n              'contract': 'NVDA261016C00200000',\n              'direction': 'CALL',\n              'quantity': 1,\n              'cost': 21000,\n              'highBid': 200,\n              'added': false,\n              'opened': '2026-10-13T15:01:15.000Z'\n            }\n          }\n",
+        "Expected: false\n  Actual: <true>\n",
+        "Expected: false\n  Actual: <true>\n"
+      ],
+      "non_json_lines": [],
+      "directory": "reproduction",
+      "native_suites": []
+    },
+    {
+      "source": "4fc2ac234ca49ad0b4292feb51de8cec6cd0612d",
+      "run": 38467320954,
+      "zip_sha256": "cbf8d570373de0984ac552b4e30256b9a12e1e76c1298a5dbcb78e7685986640",
+      "flutter": [
+        {
+          "file": "mobile/direct-flutter-tests.json",
+          "results": {
+            "success": 355
+          },
+          "failed": [],
+          "errors": [],
+          "non_json_lines": []
+        }
+      ],
+      "directory": "risk-flutter",
+      "native_suites": [
+        {
+          "name": "com.optionsaitrader.options_ai_trader.AlpacaSessionTest",
+          "tests": "29",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0"
+        },
+        {
+          "name": "com.optionsaitrader.options_ai_trader.AlpacaAccessTest",
+          "tests": "12",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0"
+        }
+      ]
+    },
+    {
+      "source": "23b0fd1cbd583a58ee249f1f95b880bd8e427c18",
+      "run": 38464950537,
+      "zip_sha256": "11dae0a952d4b2fdee2c6717efa7b37e20da621717466e6c44d9d9c0ffbd3fa0",
+      "flutter": [
+        {
+          "file": "mobile/direct-flutter-tests.json",
+          "results": {
+            "success": 333
+          },
+          "failed": [],
+          "errors": [],
+          "non_json_lines": []
+        }
+      ],
+      "directory": "safety-accepted",
+      "native_suites": [
+        {
+          "name": "com.optionsaitrader.options_ai_trader.AlpacaSessionTest",
+          "tests": "29",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0"
+        },
+        {
+          "name": "com.optionsaitrader.options_ai_trader.AlpacaAccessTest",
+          "tests": "12",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0"
+        }
+      ]
+    }
+  ]
+}
