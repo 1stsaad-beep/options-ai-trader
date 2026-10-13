@@ -15,7 +15,9 @@
 
 Checkpoint `7641960d8ead0fcc140eeb9b3b8c7f450ec46f8b` published and remote HEAD read back. Original local Git commit/tree reconstructed exactly; worktree synchronized without a reset. Baseline Python JUnit is committed.
 
-Sixteen direct-paper regression cases now specify protection during missing/throwing optional stock analysis, no-price/no-fill, invalid/cross-direction configuration, saved-state validation, returned-map isolation and ambiguous/lost writes. These are intentionally exercised against the baseline implementation first; **Flutter reproduction is pending CI**, not a claimed pass. `[chart-check]` defers Android/iOS release packaging.
+Sixteen direct-paper regression cases were published at `25627f05658b83d4058e54e8edd3b55aca28f1fe`. Baseline run `38463826148` passed analyze and failed the expected Flutter reproduction gate; raw artifact `11847990715` is being inspected. Android/iOS release packaging was skipped, chart/Golden and security workflows succeeded. No failed gate is called accepted.
+
+The repair now separates optional stock analysis from qualified owned-option protection; refuses a manual close with no position instead of falling through into an entry; validates saved/configured account/contract state; deep-copies returned nested data; compares the durable preimage and verifies readback. Lost acknowledgements are accepted only when exact saved bytes confirm the outcome. Unknown read/write outcomes latch all mutation; original storage is not deleted or overwritten. Current quote/admission is rechecked after awaited preimage reads. Seventeen safety regressions (including the newly found empty-position manual-close bug) await repaired-source CI.
 
 1. Finish baseline results and preserve raw evidence; reproduce direct-paper safety failures in regression tests.
 2. Fix verified persistence and protective-exit defects, then explicit four-account/reporting flow; use `[chart-check]` existing test CI to defer APK packaging.

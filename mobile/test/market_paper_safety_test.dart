@@ -85,6 +85,12 @@ void main() {
     expect((paper.account(id)['positions'] as Map).length, 1);
     expect(paper.account(id)['cash'], cash);
   });
+  test('manual close with no owned position never becomes an entry', () async {
+    await cycle(close: true);
+    expect(paper.account(id)['positions'], isEmpty);
+    expect(paper.account(id)['cash'], 1000000);
+    expect(paper.journal.last['decision'], 'NO_OWNED_POSITION');
+  });
   test('invalid stock data cannot authorize profitable addition', () async {
     await paper.configure(id, {'addEnabled': true});
     await cycle();
