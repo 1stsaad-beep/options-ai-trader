@@ -147,4 +147,11 @@ void main() {
     bars[10] = MarketBar(bars[10].time.subtract(const Duration(minutes:1)),100,101,99,100,100);
     expect(snapshot(bars).validForDecision('NVDA',now), isFalse);
   });
+  test('a rejected admission is a risk block rather than a claimed violation',()async{
+    await paper.configure(id,{'allocationPercent':0});await evaluate();
+    final account=(paper.comparison()['accounts'] as List).first;
+    expect(account['riskBlocks'],1);expect(account['riskViolations'],isNull);
+    expect(paper.account(id)['positions'],isEmpty);
+  });
+
 }

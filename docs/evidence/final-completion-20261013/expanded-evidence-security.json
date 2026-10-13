@@ -1,0 +1,23 @@
+[
+  {
+    "archive": "checkpoint-evidence.zip",
+    "files_inspected": 30,
+    "findings": [],
+    "finding_count": 0,
+    "scope": "expanded text entries, offline existing rules, no secret values printed"
+  },
+  {
+    "archive": "backend-final.zip",
+    "files_inspected": 8,
+    "findings": [],
+    "finding_count": 0,
+    "scope": "expanded text entries, offline existing rules, no secret values printed"
+  },
+  {
+    "archive": "portability-preflight.zip",
+    "files_inspected": 2,
+    "findings": [],
+    "finding_count": 0,
+    "scope": "expanded text entries, offline existing rules, no secret values printed"
+  }
+]

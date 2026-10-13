@@ -1,3 +1,5 @@
+> Current completion mission (2026-10-13): accepted engineering preflight; Build23 packaging in progress. Follow FINAL_COMPLETION_PROGRESS.md and REQUIREMENTS_TRACEABILITY.md. Historical phone-test instructions below are superseded; no intermediate user phone test is requested. Full V1.0 completion is not claimed.
+
 # Progress — recovery/v1.0-20261011
 
 ## Lab22 accepted — shared Alpaca session and explicit chart source (2026-10-13)

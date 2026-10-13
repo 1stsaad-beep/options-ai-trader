@@ -2,7 +2,7 @@
 
 ## Mission and current gate
 
-2026-10-13: full attached master prompt read. Working branch `recovery/v1.0-20261011`, latest observed HEAD `9ff7b6084c5a874dd3621748346bf0692f5bc962` (Lab22 reports). **Phase 1: audit/implementation. No final APK candidate yet.** No intermediate phone test requested.
+2026-10-13: full attached master prompt read. Working branch `recovery/v1.0-20261011`, latest observed HEAD `9ff7b6084c5a874dd3621748346bf0692f5bc962` (Lab22 reports). **Phase 3: release candidate packaging, after accepted review/test gates.** No intermediate phone test requested.
 
 ## Recovered and inspected
 
@@ -61,3 +61,11 @@ Build23 identity is prepared but release packaging remains skipped via `[chart-c
 Final review found and corrected two residual partial-fill hazards before packaging: a missing quote must preserve the original partial-profit remaining target, and older/out-of-order quotes must not consume liquidity again. Added target-preservation, out-of-order quote and lost partial-close acknowledgement/restart regressions. Source/backup/chart component preflight was377 Flutter passes/zero failures; all pending final gates will include these additional cases.
 
 Final preflight4bad1a00 failed Flutter analyze on one multiline-if braces lint in structural admission. No runtime test pass is inferred from that run. Braces corrected without changing the condition; exact failure excerpt retained.
+
+## Accepted pre-release gate and packaging authorization
+
+Source `e5559f0b91e96da03239e5008f5b6e4fcb333ad0`: direct run38470254079 succeeded with384 Flutter and41 JVM tests; chart run38470254193 passed23 semantic and6 reviewed Golden checks; security run38470254048 succeeded with no findings/advisories in its stated scope. Artifact ZIP hashes/CRC and raw JSON/XML were inspected.
+
+Unchanged backend/native source on4bad1a00: run38469775315 passed1055 Python, PostgreSQL22 execution/concurrency +6 journal +8 runtime +16 backup/restore checks and17 disposable Compose checks. Android run38469775290 passed13 framework instrumentation tests on API28 (including AtomicFile recovery/CAS). No provider network or real credentials were used.
+
+A final report correction distinguishes rejected admissions (`riskBlocks`) from unmeasured actual risk violations (`riskViolations: null`), with a targeted regression. The release workflow repeats all Flutter/JVM/Golden gates including that case before building. Build23 packaging is now authorized by the user's original mission. One release candidate will be delivered only after actual artifact/signature/provenance inspection. No intermediate phone test has been requested. Full raw pre-release evidence is preserved in `pre-release-evidence.zip` with a digest/index; earlier failure/reproduction evidence remains intact.

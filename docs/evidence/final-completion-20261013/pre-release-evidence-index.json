@@ -1,0 +1,94 @@
+{
+  "archive": "pre-release-evidence.zip",
+  "sha256": "10c122404b96f0681de8049bc48eb32a3a112d0400be3f8eeb07c2d20c01d5b7",
+  "components": [
+    {
+      "source": "4bad1a00cb59de0d790b0099bc32ee3b98e8159b",
+      "run": 38469775315,
+      "zip_sha256": "e14406bf586a9cca5320659c7e2c3d00454b00fdf5a58137ed258b90c76bb15f",
+      "flutter": [],
+      "directory": "backend-final"
+    },
+    {
+      "source": "4bad1a00cb59de0d790b0099bc32ee3b98e8159b",
+      "run": 38469775315,
+      "zip_sha256": "115b0eb5ad167c5a39118b5e3a65c581068e66d02a5357c0412fe45bdf41bfe2",
+      "flutter": [],
+      "directory": "compose-final"
+    },
+    {
+      "source": "ea48cf6652ad7b17849ac13782657677f99bb21e",
+      "run": 38468725149,
+      "zip_sha256": "8d11bd21acbec4da1b5fc6cb8cbce10ae105651294c44077a4793e6eed5e6c8a",
+      "flutter": [
+        {
+          "file": "mobile/direct-flutter-tests.json",
+          "results": {
+            "success": 377
+          },
+          "failed": [],
+          "errors": [],
+          "non_json_lines": []
+        }
+      ],
+      "directory": "portability-preflight"
+    },
+    {
+      "source": "e5559f0b91e96da03239e5008f5b6e4fcb333ad0",
+      "run": 38470254193,
+      "zip_sha256": "1ff7bce08eee9733a5e9a531cd9014dc7e447720ab8b9689a94e70c8ac091386",
+      "flutter": [],
+      "directory": "chart-final"
+    },
+    {
+      "source": "e5559f0b91e96da03239e5008f5b6e4fcb333ad0",
+      "run": 38470254048,
+      "zip_sha256": "2850147abbd95b8ca2a02eb1e64f73c47de0f8babd7ad6c6ac19dcad6d1bcc5f",
+      "flutter": [],
+      "directory": "security-final"
+    },
+    {
+      "source": "4bad1a00cb59de0d790b0099bc32ee3b98e8159b",
+      "run": 38469775290,
+      "zip_sha256": "47b8778ee9cdf1562b0f24c1c43babb5e7c0a281676e9b5d7cc018bd073f6b84",
+      "flutter": [],
+      "directory": "android-device-final"
+    },
+    {
+      "source": "e5559f0b91e96da03239e5008f5b6e4fcb333ad0",
+      "run": 38470254079,
+      "zip_sha256": "b441e1d5c3d822534d4e72c6502c0f7797e1eab2e1977d89db75cea74a3eb9bd",
+      "flutter": [
+        {
+          "file": "mobile/direct-flutter-tests.json",
+          "results": {
+            "success": 384
+          },
+          "failed": [],
+          "errors": [],
+          "non_json_lines": []
+        }
+      ],
+      "directory": "direct-final"
+    }
+  ],
+  "accepted": {
+    "python": 1055,
+    "postgres_execution": 22,
+    "postgres_journal": 6,
+    "postgres_runtime": 8,
+    "postgres_backup": 16,
+    "compose": 17,
+    "flutter": 384,
+    "jvm": 41,
+    "android_emulator": 13,
+    "golden": 6,
+    "chart_semantic": 23
+  },
+  "limitations": [
+    "Exact component sources differ; backend/native source unchanged since tested4bad1a00.",
+    "Flutter/JVM/chart/security accepted on e5559f0b.",
+    "No provider connection or user-phone test.",
+    "Packaging pipeline repeats full Flutter/JVM/Golden gates before APK build."
+  ]
+}

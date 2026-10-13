@@ -63,7 +63,9 @@ Map<String, dynamic> paperComparison(Map<String, dynamic> book, DateTime now) {
     'accounts': [for (final a in accounts) {
       'id': a['id'], 'name': a['name'], 'strategy': a['strategy'], 'watchlist': a['watchlist'],
       'performance': paperPerformance(a, now),
-      'riskViolations': events.where((e) => e['account'] == a['id'] && (e['decision'] as String).contains('RISK')).length,
+      'riskViolations': null,
+      'riskViolationPolicy': 'Not measured; rejected admissions are riskBlocks, not proven violations',
+      'riskBlocks': events.where((e) => e['account'] == a['id'] && (e['decision'] as String).contains('RISK')).length,
       'dataInterruptions': events.where((e) => e['account'] == a['id'] &&
         ['INVALID_OR_STALE_STOCK_DATA', 'OPRA_QUOTE_REQUIRED_NO_FILL', 'CLOSE_UNCONFIRMED_NO_REVERSAL'].contains(e['decision'])).length,
     }],
