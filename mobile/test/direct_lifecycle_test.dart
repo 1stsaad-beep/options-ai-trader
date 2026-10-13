@@ -34,10 +34,13 @@ void main(){
   testWidgets('UI lifecycle does not own socket start stop and reads recovered native state',(t)async{
     final mock=NativeMock()..active=true..phase='succeeded';await open(t,mock);
     t.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    t.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
     t.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);await t.pump();
     expect(mock.stops,0);expect(mock.starts,0);
     // Native Activity/Session handles screen-off separately; this verifies bridge/UI recovery.
-    mock.active=false;t.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);await t.pumpAndSettle();
+    mock.active=false;t.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    t.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    t.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);await t.pumpAndSettle();
     expect(find.textContaining('Disconnected •'),findsWidgets);
     mock.active=true;await t.pump(const Duration(seconds:1));await t.pumpAndSettle();
     expect(find.textContaining('Connected •'),findsWidgets);expect(mock.starts,0);await close(t);
