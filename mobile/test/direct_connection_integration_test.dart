@@ -47,8 +47,13 @@ Future<void> open(WidgetTester tester,NativeMock mock)async{
   await tester.pumpWidget(MaterialApp(home:DirectAlpacaScreen(paperStore:MemoryPaperStore())));await tester.pumpAndSettle();
 }
 Future<void> tap(WidgetTester tester,String key)async{
-  await tester.scrollUntilVisible(find.byKey(Key(key)),180,scrollable:find.byType(Scrollable).first);
-  await tester.tap(find.byKey(Key(key)));await tester.pumpAndSettle();
+  final target=find.byKey(Key(key));
+  await tester.scrollUntilVisible(target,180,scrollable:find.byType(Scrollable).first);
+  await tester.pumpAndSettle();
+  // Settle lazy layout before centering; an edge-visible button can be under navigation.
+  await Scrollable.ensureVisible(tester.element(target),alignment:0.5);
+  await tester.pumpAndSettle();expect(target.hitTestable(),findsOneWidget);
+  await tester.tap(target);await tester.pumpAndSettle();
 }
 Future<void> close(WidgetTester tester)async{await tester.pumpWidget(const SizedBox());await tester.pumpAndSettle();}
 void main(){
