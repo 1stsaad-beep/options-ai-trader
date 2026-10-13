@@ -1,4 +1,4 @@
-> Current completion mission (2026-10-13): accepted engineering preflight; Build23 packaging in progress. Follow FINAL_COMPLETION_PROGRESS.md and REQUIREMENTS_TRACEABILITY.md. Historical phone-test instructions below are superseded; no intermediate user phone test is requested. Full V1.0 completion is not claimed.
+> Current completion mission (2026-10-13): Build23 final candidate built and verified; see current FINAL_DELIVERY.md for source/signature/checksum and open requirements. Follow FINAL_COMPLETION_PROGRESS.md and REQUIREMENTS_TRACEABILITY.md. Historical phone-test instructions below are superseded; no intermediate user phone test is requested. Full V1.0 completion is not claimed.
 
 # Progress — recovery/v1.0-20261011
 

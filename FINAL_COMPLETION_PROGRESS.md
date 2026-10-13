@@ -2,7 +2,7 @@
 
 ## Mission and current gate
 
-2026-10-13: full attached master prompt read. Working branch `recovery/v1.0-20261011`, latest observed HEAD `9ff7b6084c5a874dd3621748346bf0692f5bc962` (Lab22 reports). **Phase 3: release candidate packaging, after accepted review/test gates.** No intermediate phone test requested.
+2026-10-13: full attached master prompt read. Working branch `recovery/v1.0-20261011`, latest observed HEAD `9ff7b6084c5a874dd3621748346bf0692f5bc962` (Lab22 reports). **Phase 3 complete: Build23 APK verified and delivered for final acceptance; V1.0 completeness not claimed.** No intermediate phone test requested.
 
 ## Recovered and inspected
 
@@ -69,3 +69,11 @@ Source `e5559f0b91e96da03239e5008f5b6e4fcb333ad0`: direct run38470254079 succeed
 Unchanged backend/native source on4bad1a00: run38469775315 passed1055 Python, PostgreSQL22 execution/concurrency +6 journal +8 runtime +16 backup/restore checks and17 disposable Compose checks. Android run38469775290 passed13 framework instrumentation tests on API28 (including AtomicFile recovery/CAS). No provider network or real credentials were used.
 
 A final report correction distinguishes rejected admissions (`riskBlocks`) from unmeasured actual risk violations (`riskViolations: null`), with a targeted regression. The release workflow repeats all Flutter/JVM/Golden gates including that case before building. Build23 packaging is now authorized by the user's original mission. One release candidate will be delivered only after actual artifact/signature/provenance inspection. No intermediate phone test has been requested. Full raw pre-release evidence is preserved in `pre-release-evidence.zip` with a digest/index; earlier failure/reproduction evidence remains intact.
+
+## Final verified result
+
+APK source `63a6d646d86f75c322751b3e791c66a204e75f2b`; successful Android run38471411489/artifact11852877216. Exact downloaded APK SHA256 `f9453ce614184e394a38ec57307b4bd89845bd9dea9d85f6e601fcf85bd39d91`; certificate SHA256 `e033011a4b8e22ecff0328f97ac66653545a42902e263d991c667f2203472ab9`. Isolated Build23 package/version/label, debuggable absent, APKv2 verified with ephemeral development RSA2048 key. Actual packaged tests:385 Flutter,6 Golden,41 JVM, all passing; final dependency audit90 Maven packages, no known advisories. APK368 entries scanned with no credential-pattern/sensitive-path findings; source security923 files/1545 historical blobs/131 commits, no findings. iOS run38471411423 built an unsigned18.9MB Runner.app; not distribution-ready.
+
+Release evidence ZIP and digest index preserve raw signature/package/manifest/provenance/test/dependency/security files, plus workflow references. Existing Python1055/PostgreSQL/Compose/native13-emulator evidence remains applicable because their source directories are unchanged. No user phone test has occurred or been requested before this final candidate. Guide/readiness/matrix/gaps are complete. The original verified GitHub artifact ZIP (26,639,041 bytes) is available as the persistent downloadable delivery package and contains the same verified APK plus raw verification outputs. The private GitHub artifact link also remains available until2026-10-27. No uncertain write retry, credential access or data replacement was performed.
+
+Exact next action is user final acceptance of Build23 using `docs/BUILD23_INSTALL_ACCEPTANCE_AR.md`. Do not rerun the ephemeral-signer build as a same-package upgrade or label unresolved settlement/provider/three-session/iOS requirements complete. No automatic continuation outside the session is promised.

@@ -31,3 +31,5 @@ Original baseline regression run had14 failures among332 results, all in newly s
 ## Remaining limits
 
 See `../KNOWN_GAPS.md` and `../REQUIREMENTS_TRACEABILITY.md`. Exercise/stock delivery/settlement, realistic option queue/slippage, adjusted contracts, unlimited live wave continuity, iOS distribution and actual provider/phone/three-session evidence remain incomplete. The release candidate is for acceptance of the documented engineering scope; it must not be described as complete V1.0 or validated real-market profitability.
+
+Final packaged source `63a6d646d86f75c322751b3e791c66a204e75f2b` passed385 Flutter,6 Golden,41 JVM and90-package Android dependency audit. APK/public signer/hash and raw outputs are recorded in FINAL_DELIVERY; no third-party/provider/physical-phone approval is inferred.

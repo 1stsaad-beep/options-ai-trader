@@ -1,0 +1,36 @@
+{
+  "source": "63a6d646d86f75c322751b3e791c66a204e75f2b",
+  "release_run": 38471411489,
+  "artifact_id": 11852877216,
+  "artifact_zip_sha256": "2836c835e106aca8e463c3d08ce1ea638245174e273390452983c49f31f8aea7",
+  "apk_sha256": "f9453ce614184e394a38ec57307b4bd89845bd9dea9d85f6e601fcf85bd39d91",
+  "certificate_sha256": "e033011a4b8e22ecff0328f97ac66653545a42902e263d991c667f2203472ab9",
+  "evidence_zip_sha256": "d73d1cc647d26508a3e9646221676985c559078014fb73d8693bcab89beb1a42",
+  "status": "engineering_candidate_verified_not_complete_v1",
+  "tests": {
+    "python": 1055,
+    "flutter": 385,
+    "golden": 6,
+    "jvm": 41,
+    "android_api28_instrumentation": 13
+  },
+  "workflows": {
+    "android": 38471411489,
+    "direct": 38471412091,
+    "chart": 38471411505,
+    "security": 38471411504,
+    "ios_unsigned": 38471411423,
+    "backend_compose": 38469775315,
+    "android_device": 38469775290
+  },
+  "no_external_orders": true,
+  "provider_connected": false,
+  "three_sessions": "NOT_RUN",
+  "delivery_archive": {
+    "name": "build23-android.zip",
+    "size_bytes": 26639041,
+    "sha256": "2836c835e106aca8e463c3d08ce1ea638245174e273390452983c49f31f8aea7",
+    "status": "available",
+    "contains": "same verified Build23 APK and raw CI verification outputs"
+  }
+}
