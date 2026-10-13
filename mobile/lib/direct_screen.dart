@@ -24,12 +24,13 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
   int page=0;
   List<String> get watch=>symbols.text.toUpperCase().split(',').map((s)=>s.trim()).where((s)=>s.isNotEmpty).toSet().toList();
   @override void initState(){super.initState();WidgetsBinding.instance.addObserver(this);
-    api=widget.api??DirectAlpaca();paper=MarketPaper(widget.paperStore??PreferencesPaperStore())..addListener(changed);
+    api=widget.api??DirectAlpaca();paper=widget.paperStore==null?MarketPaper.device:MarketPaper(widget.paperStore!);
+    paper.addListener(changed);
     initialize();timer=Timer.periodic(const Duration(seconds:1),(_){if(visible)refresh();});
     cycle=Timer.periodic(const Duration(seconds:30),(_){if(visible)paperCycle();});
   }
   void changed(){if(mounted)setState((){selectedAccount??=paper.accounts.isEmpty?null:paper.accounts.first['id'] as String;});}
-  Future<void> initialize() async {await paper.load();await run(()async{
+  Future<void> initialize() async {await paper.load();changed();await run(()async{
     await api.secureScreen(true);hasKeys=await api.hasKeys();await refresh();
     if(snapshot.enabled){real=true;feed=snapshot.feed;session=snapshot.session;if(snapshot.symbols.isNotEmpty)symbols.text=snapshot.symbols.join(',');}
   });}

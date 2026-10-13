@@ -10,6 +10,10 @@ class MemoryPaperStore implements PaperStore {
   @override Future<PaperRow?> read()async=>value==null?null:jsonDecode(jsonEncode(value)) as PaperRow;
   @override Future<void> write(PaperRow v)async{if(fail)throw StateError('disk');value=jsonDecode(jsonEncode(v)) as PaperRow;}
 }
+class DelayedReadStore extends MemoryPaperStore {
+  final reads=<Completer<PaperRow?>>[];
+  @override Future<PaperRow?> read(){final c=Completer<PaperRow?>();reads.add(c);return c.future;}
+}
 void main(){
   final now=DateTime.utc(2026,10,13,15,1,15);
   const call='NVDA261016C00200000',put='NVDA261016P00200000';
@@ -56,4 +60,13 @@ void main(){
   });
   test('same observation cannot reopen after close',()async{await evaluate();await evaluate(close:true);await evaluate();expect(paper.account(id)['positions'],isEmpty);expect(paper.journal.last['decision'],'CLOSED_MANUAL');});
   test('new preferences namespace preserves unrelated existing Demo data',()async{SharedPreferences.setMockInitialValues({'existing-demo':'unchanged'});final prefs=PreferencesPaperStore();await prefs.write({'version':1,'accounts':[],'journal':[]});expect((await SharedPreferences.getInstance()).getString('existing-demo'),'unchanged');});
+  test('overlapping route initialization cannot overwrite a newly created account',()async{
+    final delayed=DelayedReadStore();
+    // Exercise a second load arriving while the original storage read is pending.
+    final active=MarketPaper(delayed,clock:()=>now);
+    final load1=active.load(),load2=active.load();delayed.reads.first.complete(null);await load1;
+    await active.add('Preserve after first load');
+    for(final read in delayed.reads.skip(1)){read.complete(null);}await load2;
+    expect(active.accounts.single['name'],'Preserve after first load');
+  });
 }

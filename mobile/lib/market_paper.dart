@@ -20,11 +20,14 @@ class PreferencesPaperStore implements PaperStore {
 
 /// Independent virtual ledger. No Demo imports, no broker submission or stock-price fills.
 class MarketPaper extends ChangeNotifier {
+  /// One device ledger across routes; a pending quote/save cannot race a second controller.
+  static final device=MarketPaper(PreferencesPaperStore());
   final PaperStore store;
   final DateTime Function() now;
   PaperRow _book={'version':1,'accounts':<dynamic>[],'journal':<dynamic>[]};
   bool ready=false,busy=false;
   String? error;
+  Future<void>? _loading;
   final _epochs=<String,int>{};
   final _paused=<String>{};
   MarketPaper(this.store,{DateTime Function()? clock}):now=clock??DateTime.now;
@@ -32,7 +35,8 @@ class MarketPaper extends ChangeNotifier {
   List<PaperRow> get journal=>(_book['journal'] as List).map((x)=>Map<String,dynamic>.from(x as Map)).toList();
   PaperRow account(String id)=>accounts.singleWhere((a)=>a['id']==id);
   PaperRow copy()=>jsonDecode(jsonEncode(_book)) as PaperRow;
-  Future<void> load() async {try {final saved=await store.read();if(saved!=null){
+  Future<void> load()=>_loading??=_load();
+  Future<void> _load() async {try {final saved=await store.read();if(saved!=null){
     if(saved['version']!=1||saved['accounts'] is! List||saved['journal'] is! List)throw const FormatException();
     _book=saved;
     // Never auto-resume virtual execution after process restart.
