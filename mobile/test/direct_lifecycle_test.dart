@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:options_ai_trader/direct_alpaca.dart';
 import 'package:options_ai_trader/direct_screen.dart';
@@ -56,7 +55,7 @@ void main(){
     expect(mock.starts,0);await close(t);
   });
   testWidgets('empty actual data shows no synthetic candles',(t)async{
-    await t.pumpWidget(MaterialApp(home:Scaffold(body:DirectLabs(rows:const [],symbol:'NVDA',source:'Alpaca IEX • قديمة'))));
+    await t.pumpWidget(const MaterialApp(home:Scaffold(body:DirectLabs(rows:[],symbol:'NVDA',source:'Alpaca IEX • قديمة'))));
     expect(find.byKey(const Key('direct-empty-chart')),findsOneWidget);expect(find.byKey(const Key('direct-chart')),findsNothing);
   });
   test('stale and disconnected actual bars never earn LIVE and timestamps retain provenance',(){

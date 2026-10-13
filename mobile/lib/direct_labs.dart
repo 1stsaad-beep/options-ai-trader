@@ -37,13 +37,13 @@ class _DirectLabsState extends State<DirectLabs> {
     final rows=widget.rows;
     if(rows.isEmpty)return Text('${widget.source} • ${widget.symbol}\nلا توجد شموع Alpaca بعد. افتح إعدادات الاتصال وافحص النتيجة. لا تُولد بيانات Demo بديلة.',key:const Key('direct-empty-chart'));
     final bars=[for(var i=0;i<rows.length;i++)rows[i].candle(i)];
-    if(rows.length<35)return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
+    if(rows.length<35){return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
       Text('${widget.symbol} • ${widget.source}',key:const Key('direct-series-source')),
       Text('${rows.length} شمعة OHLCV فعلية • UTC ${rows.last.time.toIso8601String()}؛ يلزم 35 شمعة لإحماء المؤشرات. لا تُولد بيانات بديلة.'),
       SizedBox(height:320,child:LayoutBuilder(builder:(context,c)=>CustomPaint(key:const Key('direct-chart'),size:Size(c.maxWidth,320),
         painter:DemoCandlePainter(bars,{},[],[],Theme.of(context).colorScheme,0,false,false,[],
           priceLabel:'STOCK • ${widget.source}',timeLabels:{for(var i=0;i<rows.length;i++)i:rows[i].time.toIso8601String().substring(11,16)})))),
-    ]);
+    ]);}
     final pivots=DemoChartAnalysis.pivots(bars),summary=DemoChartAnalysis.summary(bars);
     final wave=ChartWaveAnalysis.candidates(pivots,degree:'internal');
     final patterns=lab==0?wave.map((s)=>s.drawing()).toList():lab==2?DemoChartAnalysis.harmonics(pivots):<ChartPattern>[];
