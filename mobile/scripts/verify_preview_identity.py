@@ -5,9 +5,9 @@ import sys
 
 badging = Path(sys.argv[1]).read_text()
 package = re.search(r"^package: name='([^']+)' versionCode='([^']+)'", badging, re.M)
-expected = 'com.optionsaitrader.options_ai_trader.v1previewrc2b20'
-if not package or package.groups() != (expected, '20'):
-    raise SystemExit('Refusing delivery: APK identity/version does not match isolated Build 20')
-if "application-label:'Options AI Trader Lab 20'" not in badging:
+expected = 'com.optionsaitrader.options_ai_trader.v1previewrc2b21'
+if not package or package.groups() != (expected, '21'):
+    raise SystemExit('Refusing delivery: APK identity/version does not match isolated Build 21')
+if "application-label:'Options AI Trader Lab 21'" not in badging:
     raise SystemExit('Refusing delivery: missing distinct launcher label')
-print('Verified actual APK: isolated Build 20 identity and launcher label')
+print('Verified actual APK: isolated Build 21 identity and launcher label')

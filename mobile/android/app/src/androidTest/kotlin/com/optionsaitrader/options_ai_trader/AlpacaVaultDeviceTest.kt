@@ -9,6 +9,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 import java.security.KeyStore
+import okhttp3.*
+import okhttp3.ResponseBody.Companion.toResponseBody
+import okio.ByteString
+import org.json.JSONObject
+import java.time.Instant
+import java.util.concurrent.CopyOnWriteArrayList
 
 /** Disposable emulator only; mock strings, no network and no provider credentials. */
 @RunWith(AndroidJUnit4::class)
@@ -43,5 +49,66 @@ class AlpacaVaultDeviceTest {
     @Test fun monitoringRequiresExplicitActiveSession() {
         AlpacaRuntime.stop();assertFalse(AlpacaRuntime.get(context).enabled)
         try{AlpacaMonitorService.start(context);fail("unarmed monitor started")}catch(_:IllegalStateException){}
+    }
+    @Test fun savedStatusSurvivesNewVaultWithoutReturningSecrets() {
+        val access=AlpacaAccess(AlpacaVault(context),AlpacaPreferences(context))
+        access.save("mock-public-key","mock-private-value")
+        assertEquals("readable",AlpacaAccess(AlpacaVault(context),AlpacaPreferences(context)).keyState())
+    }
+    @Test fun tamperedStorageIsReportedUnreadable() {
+        val vault=AlpacaVault(context);vault.save("mock-public-key","mock-private-value")
+        val file=File(context.noBackupFilesDir,"alpaca-v1.enc");val original=file.readBytes();val changed=original.copyOf()
+        changed[changed.size-1]=(changed.last().toInt() xor 1).toByte()
+        try{file.writeBytes(changed);assertEquals("unreadable",AlpacaAccess(AlpacaVault(context),AlpacaPreferences(context)).keyState())}
+        finally{file.writeBytes(original)}
+    }
+    @Test fun storedSettingsSurviveRecreationWithoutAutomaticConnection() {
+        AlpacaRuntime.stop()
+        val access=AlpacaAccess(AlpacaVault(context),AlpacaPreferences(context))
+        access.save("mock-public-key","mock-private-value")
+        val value=AlpacaSettings(true,"sip","extended",listOf("TSLA"));access.saveSettings(value)
+        val restored=AlpacaAccess(AlpacaVault(context),AlpacaPreferences(context))
+        assertEquals(value,restored.readSettings());assertFalse(AlpacaRuntime.get(context).enabled)
+        try{restored.start(false){fail("connection without button")};fail("consent accepted")}
+        catch(e:AlpacaAccessFailure){assertEquals("CONSENT_REQUIRED",e.code)}
+    }
+    @Test fun secureStorageSettingsAndSessionIntegrateOverMockDataTransport() {
+        val access=AlpacaAccess(AlpacaVault(context),AlpacaPreferences(context))
+        access.save("mock-public-key","mock-private-value");access.saveSettings(AlpacaSettings(true,"iex","regular",listOf("NVDA")))
+        val requests=CopyOnWriteArrayList<Request>()
+        val transport=AlpacaSession.client().newBuilder().addInterceptor{chain->
+            val request=chain.request();requests.add(request)
+            assertEquals("GET",request.method);assertEquals("data.alpaca.markets",request.url.host)
+            assertEquals("mock-public-key",request.header("APCA-API-KEY-ID"));assertEquals("mock-private-value",request.header("APCA-API-SECRET-KEY"))
+            Response.Builder().request(request).protocol(Protocol.HTTP_1_1).code(200).message("mock")
+                .body("""{"bars":{"NVDA":[{"t":"2026-10-13T15:00:00Z","o":100,"h":102,"l":99,"c":101,"v":10}]}}""".toResponseBody()).build()
+        }.build()
+        val sockets=object:WebSocket.Factory{
+            override fun newWebSocket(request:Request,listener:WebSocketListener):WebSocket {
+            val socket=object:WebSocket {
+                override fun request()=request
+                override fun queueSize()=0L
+                override fun send(text:String):Boolean {
+                    if(JSONObject(text).getString("action")=="auth")listener.onMessage(this,"""[{"T":"success","msg":"authenticated"}]""")
+                    return true
+                }
+                override fun send(bytes:ByteString)=false
+                override fun close(code:Int,reason:String?)=true
+                override fun cancel(){}
+            }
+            listener.onOpen(socket,Response.Builder().request(request).protocol(Protocol.HTTP_1_1).code(101).message("mock").build());return socket
+            }
+        }
+        val session=AlpacaSession({AlpacaVault(context).read()},{Instant.parse("2026-10-13T15:01:15Z").toEpochMilli()},transport,sockets)
+        try {
+            val restored=AlpacaAccess(AlpacaVault(context),AlpacaPreferences(context))
+            restored.start(true){session.start(it.feed,it.session,it.symbols)}
+            val end=System.nanoTime()+5_000_000_000L
+            while(JSONObject(session.snapshot()).getString("testStatus")!="succeeded"&&System.nanoTime()<end)Thread.sleep(20)
+            val snapshot=JSONObject(session.snapshot())
+            assertEquals("succeeded",snapshot.getString("testStatus"));assertEquals("CONNECTED_DATA",snapshot.getString("testCode"))
+            assertEquals(1,requests.size);assertEquals(1,snapshot.getJSONObject("bars").getJSONArray("NVDA").length())
+            assertFalse(snapshot.toString().contains("mock-private-value"))
+        }finally{session.close()}
     }
 }

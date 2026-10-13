@@ -33,18 +33,19 @@ class AlpacaSessionTest {
         override fun close(code:Int,reason:String?)=true
         override fun cancel(){cancelled=true}
     }
-    private class Harness(val httpCode:Int=200):AutoCloseable {
+    private class Harness(val httpCode:Int=200,val networkFailure:java.io.IOException?=null,val authTimeout:Long=12000):AutoCloseable {
         val clock=AtomicLong(Instant.parse("2026-10-13T15:01:15Z").toEpochMilli())
         val sockets=SocketFactory();val requests=CopyOnWriteArrayList<Request>()
         val session=AlpacaSession({Pair("mock-key-only","mock-secret-only")},clock::get,
             OkHttpClient.Builder().addInterceptor { chain ->
                 requests.add(chain.request())
+                networkFailure?.let{throw it}
                 val body=if(chain.request().url.encodedPath.contains("options"))
                     """{"snapshots":{"NVDA261016C00200000":{"latestQuote":{"t":"2026-10-13T15:01:15Z","bp":2,"ap":2.1,"bs":10,"as":10}}}}"""
                 else """{"bars":{"NVDA":[{"t":"2026-10-13T15:00:00Z","o":100,"h":102,"l":99,"c":101,"v":10}]}}"""
                 Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(httpCode).message("mock")
                     .header("Retry-After","600").body(body.toResponseBody()).build()
-            }.build(),sockets)
+            }.build(),sockets,authTimeout)
         fun start(){session.start("iex","regular",listOf("NVDA"));assertTrue(sockets.opened.await(3,TimeUnit.SECONDS))}
         fun send(text:String){sockets.listener.onMessage(sockets.socket,text)}
         fun auth(){send("""[{"T":"success","msg":"authenticated"}]""")}
@@ -78,4 +79,13 @@ class AlpacaSessionTest {
     @Test fun dataClientRejectsOrderBeforeNetwork(){val client=AlpacaSession.client();try {
         for(method in listOf("GET","DELETE"))try{client.newCall(Request.Builder().url("https://data.alpaca.markets/v2/orders").method(method,null).build()).execute();fail("order permitted")}catch(_:java.io.IOException){}
     }finally{client.dispatcher.executorService.shutdownNow();client.connectionPool.evictAll()}}
+    @Test fun successfulTestIncludesAuthenticatedReadOnlyHttpData(){Harness().use{h->h.start();h.auth();h.await{h.view().getString("testStatus")=="succeeded"};assertEquals("CONNECTED_DATA",h.view().getString("testCode"));assertTrue(h.requests.all{it.method=="GET"})}}
+    @Test fun http401IsVisibleAndStopsSession(){Harness(401).use{h->h.start();h.auth();h.await{h.view().getString("testCode")=="HTTP_401"};assertFalse(h.session.enabled);assertEquals("failed",h.view().getString("testStatus"))}}
+    @Test fun http403IsVisibleAndStopsSession(){Harness(403).use{h->h.start();h.auth();h.await{h.view().getString("testCode")=="HTTP_403"};assertFalse(h.session.enabled)}}
+    @Test fun rateLimitIsNotOverwrittenByGenericHistoryError(){Harness(429).use{h->h.start();h.auth();h.await{h.view().getString("testCode")=="HTTP_429"};assertEquals("HTTP_429",h.view().getString("reason"));assertTrue(h.view().getLong("retryAt")>h.clock.get())}}
+    @Test fun timeoutIsVisibleWithoutExceptionText(){Harness(networkFailure=java.net.SocketTimeoutException("mock-private-value")).use{h->h.start();h.auth();h.await{h.view().getString("testCode")=="TIMEOUT"};assertFalse(h.session.snapshot().contains("mock-private-value"))}}
+    @Test fun networkFailureIsVisibleWithoutUrlOrSecret(){Harness(networkFailure=java.net.UnknownHostException("mock-private-value")).use{h->h.start();h.auth();h.await{h.view().getString("testCode")=="NETWORK_ERROR"};assertFalse(h.session.snapshot().contains("mock-private-value"))}}
+    @Test fun missingAuthenticationTimesOutWithVisibleResult(){Harness(authTimeout=100).use{h->h.start();h.await{h.view().getString("testCode")=="AUTH_TIMEOUT"};assertEquals("failed",h.view().getString("testStatus"));assertEquals(0,h.requests.size)}}
+    @Test fun websocket403IsDistinctFromHttpEntitlement(){Harness().use{h->h.start();h.send("""[{"T":"error","code":403,"msg":"private response"}]""");h.await{!h.session.enabled};assertEquals("WS_ERROR_403",h.view().getString("testCode"));assertFalse(h.session.snapshot().contains("private response"))}}
+
 }

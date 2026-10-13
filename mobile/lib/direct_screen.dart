@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'direct_alpaca.dart';
 import 'direct_labs.dart';
 import 'market_monitor.dart';
@@ -17,11 +18,12 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
   final keyId=TextEditingController(),secret=TextEditingController(),symbols=TextEditingController(text:'NVDA,AAPL,TSLA');
   final accountName=TextEditingController(),contract=TextEditingController();
   DirectSnapshot snapshot=DirectSnapshot();
-  bool hasKeys=false,real=false,working=false,polling=false,background=false,visible=true;
+  bool hasKeys=false,real=false,working=false,polling=false,background=false,visible=true,ready=false,awaitingTest=false;
+  String keyState='checking';
   String feed='iex',session='regular',selectedSymbol='NVDA',direction='CALL';
   String? selectedAccount,notice;
-  Timer? timer,cycle;
-  int page=0;
+  Timer? timer,cycle,testDeadline;
+  int page=0,connectEpoch=0,refreshEpoch=0;
   List<String> get watch=>symbols.text.toUpperCase().split(',').map((s)=>s.trim()).where((s)=>s.isNotEmpty).toSet().toList();
   @override void initState(){super.initState();WidgetsBinding.instance.addObserver(this);
     api=widget.api??DirectAlpaca();paper=widget.paperStore==null?MarketPaper.device:MarketPaper(widget.paperStore!);
@@ -30,26 +32,80 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     cycle=Timer.periodic(const Duration(seconds:30),(_){if(visible)paperCycle();});
   }
   void changed(){if(mounted)setState((){selectedAccount??=paper.accounts.isEmpty?null:paper.accounts.first['id'] as String;});}
-  Future<void> initialize() async {await paper.load();changed();await run(()async{
-    await api.secureScreen(true);hasKeys=await api.hasKeys();await refresh();
-    if(snapshot.enabled){real=true;feed=snapshot.feed;session=snapshot.session;if(snapshot.symbols.isNotEmpty)symbols.text=snapshot.symbols.join(',');}
-  });}
+  void message(String value,{bool toast=true}) {
+    if(!mounted)return;
+    setState(()=>notice=value);
+    if(toast){ScaffoldMessenger.of(context).hideCurrentSnackBar();ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(value)));}
+  }
+  Future<void> initialize() async {
+    unawaited(paper.load().then((_){changed();}));
+    await run(()async{
+      await api.secureScreen(true);
+      keyState=await api.keyState();hasKeys=keyState=='readable';
+      final config=await api.settings();
+      if(!mounted)return;
+      real=config.real;feed=config.feed;session=config.session;symbols.text=config.symbols.join(',');
+      selectedSymbol=config.symbols.isEmpty?'NVDA':config.symbols.first;
+      await refresh();ready=true;
+      if(real&&!snapshot.enabled)notice='Real Market Data محفوظ على ON؛ الاتصال متوقف. اضغط فحص الاتصال للبدء.';
+    });
+  }
   Future<void> run(Future<void> Function() action) async {
     if(working||!mounted)return;setState(()=>working=true);
-    try{await action();}catch(_){notice='تعذر تنفيذ العملية. راجع الإعدادات والاتصال وصلاحيات Android؛ لم تُرسل أوامر تداول.';}
+    try{await action().timeout(const Duration(seconds:15));}
+    on PlatformException catch(e){message(directMessage(e.code));}
+    on TimeoutException {connectEpoch++;unawaited(api.stop().catchError((_){ }));message(directMessage('BRIDGE_TIMEOUT'));}
+    catch(_){message(directMessage('CHANNEL_UNAVAILABLE'));}
     finally{if(mounted)setState(()=>working=false);}
   }
   Future<void> refresh() async {
-    if(polling)return;polling=true;
-    try{final s=await api.snapshot();final bg=await api.background();if(mounted)setState((){snapshot=s;background=bg;});}
-    catch(_){if(mounted)setState(()=>snapshot=DirectSnapshot());}finally{polling=false;}
+    if(polling||!mounted)return;polling=true;final epoch=refreshEpoch;
+    try{
+      final s=await api.snapshot().timeout(const Duration(seconds:8));
+      final bg=await api.background().timeout(const Duration(seconds:8));
+      if(!mounted||epoch!=refreshEpoch)return;
+      setState((){snapshot=s;background=bg;});
+      if(awaitingTest&&['succeeded','failed','cancelled'].contains(s.testStatus)){
+        awaitingTest=false;testDeadline?.cancel();message(directMessage(s.testCode));
+      }
+    }catch(e){
+      if(mounted&&epoch==refreshEpoch){setState(()=>snapshot=DirectSnapshot());
+        if(awaitingTest){awaitingTest=false;testDeadline?.cancel();unawaited(api.stop().catchError((_){ }));
+          message(directMessage(e is TimeoutException?'BRIDGE_TIMEOUT':'CHANNEL_UNAVAILABLE'));}
+      }
+    }finally{polling=false;}
   }
-  Future<void> disconnect() async {await paper.pauseAll();await api.stop();await refresh();}
+  Future<void> disconnect() async {
+    connectEpoch++;refreshEpoch++;awaitingTest=false;testDeadline?.cancel();await api.stop();await paper.pauseAll();await refresh();
+  }
+  Future<void> persist({bool? enabled,String? selectedFeed,String? selectedSession}) async {
+    final config=DirectSettings(real:enabled??real,feed:selectedFeed??feed,session:selectedSession??session,symbols:watch);
+    await api.saveSettings(config);
+    if(!mounted)return;
+    setState((){real=config.real;feed=config.feed;session=config.session;});
+  }
   Future<void> connect() async {
-    if(!real||!hasKeys)return;
-    if(watch.isEmpty||watch.length>10||watch.any((s)=>!RegExp(r'^[A-Z][A-Z0-9.]{0,9}$').hasMatch(s))){notice='اختر من 1 إلى 10 رموز صحيحة، مفصولة بفاصلة إنجليزية.';return;}
-    await paper.pauseAll();await api.start(feed,session,watch);selectedSymbol=watch.contains(selectedSymbol)?selectedSymbol:watch.first;
-    notice='بدأ اختبار HTTPS وWebSocket. Connected لا تعني LIVE حتى تصل شموع حديثة.';await refresh();
+    final epoch=++connectEpoch;refreshEpoch++;
+    if(!ready){message('لم تكتمل قراءة الإعدادات؛ اضغط إعادة قراءة حالة الحفظ أولًا.');return;}
+    keyState=await api.keyState();hasKeys=keyState=='readable';
+    if(!hasKeys){message(directMessage(keyState=='missing'?'KEYS_MISSING':'KEYSTORE_UNAVAILABLE'));return;}
+    if(!real){message(directMessage('REAL_DATA_OFF'));return;}
+    if(watch.isEmpty||watch.length>10||watch.any((s)=>!RegExp(r'^[A-Z][A-Z0-9.]{0,9}$').hasMatch(s))){message(directMessage('INVALID_SETTINGS'));return;}
+    message(directMessage('CONNECTING'));
+    await persist();await paper.pauseAll();
+    if(!mounted||!visible||epoch!=connectEpoch)return;
+    // Only this explicit button (or an already opted-in monitor button) can start transport.
+    try {await api.start(feed,session,watch).timeout(const Duration(seconds:10));}
+    catch(_){unawaited(api.stop().catchError((_){ }));rethrow;}
+    if(!mounted||!visible||epoch!=connectEpoch){await api.stop();return;}
+    refreshEpoch++;
+    selectedSymbol=watch.contains(selectedSymbol)?selectedSymbol:watch.first;
+    awaitingTest=true;testDeadline?.cancel();
+    testDeadline=Timer(const Duration(seconds:35),(){
+      if(!mounted||!awaitingTest)return;
+      awaitingTest=false;unawaited(api.stop().catchError((_){ }));message(directMessage('TIMEOUT'));
+    });
+    await refresh();
   }
   Future<void> paperCycle({bool forceClose=false}) async {
     if(!visible||!snapshot.enabled||paper.busy)return;
@@ -67,26 +123,15 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     }
   }
   @override void didChangeAppLifecycleState(AppLifecycleState state){visible=state==AppLifecycleState.resumed;
-    if(!visible){unawaited(paper.pauseAll());}else{refresh();}}
-  @override void dispose(){timer?.cancel();cycle?.cancel();WidgetsBinding.instance.removeObserver(this);
+    if(!visible){connectEpoch++;unawaited(paper.pauseAll());}else{refresh();}}
+  @override void dispose(){connectEpoch++;refreshEpoch++;timer?.cancel();cycle?.cancel();testDeadline?.cancel();WidgetsBinding.instance.removeObserver(this);
     paper.removeListener(changed);unawaited(paper.pauseAll());
     unawaited(api.secureScreen(false).catchError((_){ }));
     if(!background)unawaited(api.stop().catchError((_){ }));
     for(final c in [keyId,secret,symbols,accountName,contract]){c.clear();c.dispose();}
     super.dispose();
   }
-  String reason(String code)=>const {
-    'OTHER_APP_CONNECTION_LIMIT':'اتصال مستخدم في تطبيق آخر؛ توقفنا دون قطع اتصاله. لا تغيّر مفاتيحه.',
-    'AUTH_OR_ENTITLEMENT_401':'بيانات المصادقة مرفوضة.',
-    'AUTH_OR_ENTITLEMENT_402':'مصادقة WebSocket مرفوضة.',
-    'AUTH_OR_ENTITLEMENT_403':'الصلاحية أو الاشتراك لا يسمحان بهذا المصدر.',
-    'AUTH_OR_ENTITLEMENT_409':'الاشتراك لا يسمح بهذا Feed.',
-    'RATE_LIMIT':'بلغت حصة الطلبات؛ انتظار المهلة دون تجاوزها.',
-    'HISTORY_UNAVAILABLE':'التاريخ غير متاح الآن؛ ستُعاد المحاولة دون بيانات بديلة.',
-    'DISCONNECTED':'انقطع الاتصال؛ إعادة المحاولة تدريجيًا.',
-    'RETRY_EXHAUSTED':'توقفت إعادة المحاولة؛ اختبر الاتصال يدويًا بعد معالجة السبب.',
-    'KEYSTORE_UNAVAILABLE':'تعذرت قراءة المخزن المشفر؛ أدخل المفاتيح بنفسك مجددًا.',
-  }[code]??code;
+  String reason(String code)=>directMessage(code);
   @override Widget build(BuildContext context)=>Scaffold(
     appBar:AppBar(title:const Text('Alpaca مباشر • Market Data'),actions:[IconButton(tooltip:'إيقاف الاتصال',onPressed:()=>run(disconnect),icon:const Icon(Icons.stop_circle_outlined))]),
     bottomNavigationBar:NavigationBar(selectedIndex:page,onDestinationSelected:(i)=>setState(()=>page=i),destinations:const [
@@ -108,26 +153,42 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
   List<Widget> settings()=>[
     const SizedBox(height:12),
     const Text('تُشفّر المفاتيح بمفتاح Android Keystore. الجهاز المخترق أو تطبيق مُعدّل قد يستخرجها أثناء الاستخدام؛ ليست حماية مطلقة. تقييد التطبيق للبيانات لا يغيّر صلاحيات المفتاح لدى Alpaca. لا تشارك المفاتيح في Work، ولا تستخدم إعدادات التطبيق الآخر تلقائيًا.'),
-    Text(hasKeys?'المفاتيح محفوظة • لا تُعرض القيم بعد الحفظ':'أدخل المفاتيح على هذا الهاتف فقط'),
+    Text(switch(keyState){
+      'readable'=>'المفاتيح محفوظة ويمكن فك تشفيرها محليًا. صلاحيتها لدى Alpaca تُفحص بزر الاتصال؛ السر لا يُعرض.',
+      'missing'=>'لا توجد مفاتيح محفوظة على هذا الهاتف.',
+      'unreadable'=>'تعذرت قراءة المفاتيح المشفرة؛ أعد إدخالها دون مسح بيانات التطبيق.',
+      _=>'جارٍ التحقق من حالة الحفظ…',
+    },key:const Key('alpaca-key-state')),
+    OutlinedButton(key:const Key('alpaca-reload'),onPressed:working?null:initialize,child:const Text('إعادة قراءة حالة الحفظ والإعدادات')),
     TextField(key:const Key('alpaca-key'),controller:keyId,enableSuggestions:false,autocorrect:false,enableIMEPersonalizedLearning:false,
       decoration:const InputDecoration(labelText:'API Key ID',helperText:'اترك الحقول فارغة لاستخدام القيم المحفوظة')),
     TextField(key:const Key('alpaca-secret'),controller:secret,obscureText:true,enableSuggestions:false,autocorrect:false,enableIMEPersonalizedLearning:false,
       decoration:const InputDecoration(labelText:'API Secret — لا يمكن عرضه بعد الحفظ')),
-    FilledButton(onPressed:working?null:()=>run(()async{
-      try{await paper.pauseAll();await api.saveKeys(keyId.text.trim(),secret.text.trim());hasKeys=await api.hasKeys();notice='حُفظت المفاتيح في الهاتف فقط.';}
-      finally{keyId.clear();secret.clear();}
+    FilledButton(key:const Key('alpaca-save'),onPressed:working?null:()=>run(()async{
+      await disconnect();await api.saveKeys(keyId.text.trim(),secret.text.trim());
+      keyState=await api.keyState();hasKeys=keyState=='readable';
+      if(!hasKeys)throw PlatformException(code:'KEY_SAVE_FAILED');
+      if(!mounted)return;
+      keyId.clear();secret.clear();
+      message('تم الحفظ والتحقق من القراءة المشفرة. إفراغ الحقول لحماية السر؛ لم يبدأ اتصال Alpaca.');
     }),child:const Text('حفظ المفاتيح المشفرة')),
-    DropdownButtonFormField<String>(initialValue:feed,decoration:const InputDecoration(labelText:'Feed'),items:const [
+    DropdownButtonFormField<String>(key:ValueKey('feed-$feed'),initialValue:feed,decoration:const InputDecoration(labelText:'Feed'),items:const [
       DropdownMenuItem(value:'iex',child:Text('IEX — تداولات بورصة واحدة')),DropdownMenuItem(value:'sip',child:Text('SIP — يتطلب صلاحية الاشتراك'))],
-      onChanged:working?null:(v){if(v!=null)run(()async{await disconnect();feed=v;});}),
-    DropdownButtonFormField<String>(initialValue:session,decoration:const InputDecoration(labelText:'Session — توقيت New York'),items:const [
+      onChanged:working?null:(v){if(v!=null)run(()async{await disconnect();await persist(selectedFeed:v);});}),
+    DropdownButtonFormField<String>(key:ValueKey('session-$session'),initialValue:session,decoration:const InputDecoration(labelText:'Session — توقيت New York'),items:const [
       DropdownMenuItem(value:'regular',child:Text('Regular 09:30–16:00')),DropdownMenuItem(value:'extended',child:Text('Extended 04:00–20:00 ضمن تغطية Feed'))],
-      onChanged:working?null:(v){if(v!=null)run(()async{await disconnect();session=v;});}),
+      onChanged:working?null:(v){if(v!=null)run(()async{await disconnect();await persist(selectedSession:v);});}),
     const Text('مرشح الجلسة يتبع التوقيت الصيفي. العطلات والإغلاق المبكر وغياب التداول لا يولّدون شموعًا؛ الأسعار القديمة لا تصبح LIVE.'),
     TextField(controller:symbols,enabled:!snapshot.enabled,decoration:const InputDecoration(labelText:'الأسهم — حتى 10 رموز',hintText:'NVDA,AAPL,TSLA')),
-    SwitchListTile(title:const Text('Real Market Data'),subtitle:const Text('التفعيل يجهّز الاتصال؛ زر Test Connection يبدأ الاتصال بـAlpaca فقط.'),value:real,
-      onChanged:working?null:(v)=>run(()async{real=v;if(!v)await disconnect();})),
-    FilledButton(key:const Key('alpaca-test'),onPressed:working||!real||!hasKeys?null:()=>run(connect),child:const Text('Test Connection')),
+    SwitchListTile(key:const Key('alpaca-real'),title:const Text('Real Market Data'),subtitle:const Text('التفعيل يجهّز الاتصال؛ زر Test Connection يبدأ الاتصال بـAlpaca فقط.'),value:real,
+      onChanged:working?null:(v)=>run(()async{if(!v)await disconnect();await persist(enabled:v);message(v?'حُفظ Real Market Data على ON. اضغط فحص الاتصال؛ لم يبدأ اتصال تلقائي.':'حُفظ Real Market Data على OFF وتوقف الاتصال.');})),
+    FilledButton(key:const Key('alpaca-test'),onPressed:working||awaitingTest?null:()=>run(connect),child:Text(awaitingTest?'جارٍ الفحص…':'فحص الاتصال • Test Connection')),
+    if(!hasKeys)Text(directMessage(keyState=='unreadable'?'KEYSTORE_UNAVAILABLE':'KEYS_MISSING')),
+    if(!real)Text(directMessage('REAL_DATA_OFF')),
+    if(notice!=null)Text(notice!,key:const Key('alpaca-test-feedback')),
+    Text('نتيجة آخر محاولة: ${directMessage(snapshot.testCode)}',key:const Key('alpaca-test-result')),
+    if(snapshot.testAt>0)Text('وقت النتيجة UTC: ${DateTime.fromMillisecondsSinceEpoch(snapshot.testAt,isUtc:true).toIso8601String()}'),
+    Text('الاتصال الحالي: ${snapshot.connected?'Connected':'Disconnected'} • ${directMessage(snapshot.reason)}'),
     const Text('احتمال وجود حد WebSocket واحد للحساب. عند 406 يتوقف هذا التطبيق دون إيقاف التطبيق الآخر. لا نغيّر الاشتراك أو نشتري خدمات.'),
     const Divider(),
     Text('مراقبة الخلفية: ${background?'تعمل مؤقتًا':'متوقفة'}'),

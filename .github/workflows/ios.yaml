@@ -37,12 +37,12 @@ jobs:
         working-directory: mobile
       - run: flutter test --exclude-tags=golden --machine > flutter-tests.json
         working-directory: mobile
-      - run: flutter build ios --release --no-codesign --build-name=1.0.0 --build-number=20
+      - run: flutter build ios --release --no-codesign --build-name=1.0.0 --build-number=21
         working-directory: mobile
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
-          name: options-ai-trader-rc2-build20-ios-unsigned
+          name: options-ai-trader-rc2-build21-ios-unsigned
           path: |
             mobile/build/ios/iphoneos/Runner.app
             mobile/flutter-tests.json

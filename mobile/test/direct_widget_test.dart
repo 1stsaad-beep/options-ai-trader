@@ -6,8 +6,11 @@ import 'package:options_ai_trader/direct_labs.dart';
 import 'market_paper_test.dart' show MemoryPaperStore;
 
 class MockDirect extends DirectAlpaca {
-  bool saved=false;int starts=0,stops=0;bool secure=false;
+  bool saved=false;int starts=0,stops=0;bool secure=false;DirectSettings config=const DirectSettings();
   @override Future<bool> hasKeys()async=>saved;
+  @override Future<String> keyState()async=>saved?'readable':'missing';
+  @override Future<DirectSettings> settings()async=>config;
+  @override Future<void> saveSettings(DirectSettings value)async{config=value;}
   @override Future<void> secureScreen(bool enabled)async{secure=enabled;}
   @override Future<void> saveKeys(String id,String secret)async{saved=true;}
   @override Future<void> start(String feed,String session,List<String> symbols)async{starts++;}
@@ -17,6 +20,7 @@ class MockDirect extends DirectAlpaca {
 }
 void main(){
   testWidgets('no automatic network connection, secret is obscured then cleared after save',(tester)async{
+    tester.view.physicalSize=const Size(1100,2400);tester.view.devicePixelRatio=1;addTearDown(tester.view.resetPhysicalSize);addTearDown(tester.view.resetDevicePixelRatio);
     final api=MockDirect();await tester.pumpWidget(MaterialApp(home:DirectAlpacaScreen(api:api,paperStore:MemoryPaperStore())));await tester.pumpAndSettle();
     expect(api.starts,0);expect(api.secure,isTrue);
     await tester.enterText(find.byKey(const Key('alpaca-key')),'mock-public');

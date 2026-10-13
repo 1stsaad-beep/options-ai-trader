@@ -13,13 +13,22 @@ class MainActivity : FlutterActivity() {
     private var permissionResult: MethodChannel.Result? = null
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        val access=AlpacaAccess(AlpacaVault(this),AlpacaPreferences(this))
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger,"oat/alpaca_data").setMethodCallHandler { call,result ->
             try {
                 when(call.method) {
-                    "keyStatus" -> result.success(AlpacaVault(this).exists())
+                    "keyStatus" -> result.success(access.keyState()=="readable")
+                    "keyState" -> result.success(access.keyState())
+                    "getSettings" -> result.success(access.readSettings().json().toString())
+                    "saveSettings" -> {
+                        val config=try{AlpacaSettings.parse(call.argument<String>("settings")?:"")}
+                            catch(_:Exception){throw AlpacaAccessFailure("INVALID_SETTINGS")}
+                        access.saveSettings(config)
+                        result.success(true)
+                    }
                     "saveKeys" -> {
                         AlpacaMonitorService.stop(this)
-                        AlpacaVault(this).save(call.argument<String>("key")?:"",call.argument<String>("secret")?:"")
+                        access.save(call.argument<String>("key")?:"",call.argument<String>("secret")?:"")
                         result.success(true)
                     }
                     "secureScreen" -> {
@@ -28,8 +37,10 @@ class MainActivity : FlutterActivity() {
                         result.success(true)
                     }
                     "start" -> {
-                        check(hasWindowFocus())
-                        AlpacaRuntime.get(this).start(call.argument<String>("feed")?:"",call.argument<String>("session")?:"",call.argument<List<String>>("symbols")?:emptyList())
+                        if(!hasWindowFocus())throw AlpacaAccessFailure("FOREGROUND_REQUIRED")
+                        access.start(call.argument<Boolean>("confirmed")==true){config->
+                            AlpacaRuntime.get(this).start(config.feed,config.session,config.symbols)
+                        }
                         result.success(true)
                     }
                     "stop" -> {AlpacaMonitorService.stop(this);result.success(true)}
@@ -42,7 +53,8 @@ class MainActivity : FlutterActivity() {
                     }
                     else -> result.notImplemented()
                 }
-            }catch(_:Exception){result.error("DATA_UNAVAILABLE","تعذر تنفيذ العملية؛ راجع المفاتيح أو الإعدادات أو إذن الإشعارات.",null)}
+            }catch(e:AlpacaAccessFailure){result.error(e.code,e.code,null)}
+            catch(_:Exception){result.error("DATA_UNAVAILABLE","DATA_UNAVAILABLE",null)}
         }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "oat/market_monitor").setMethodCallHandler { call, result ->
             try {
