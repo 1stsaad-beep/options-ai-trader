@@ -12,7 +12,12 @@ class MemoryPaperStore implements PaperStore {
 }
 class DelayedReadStore extends MemoryPaperStore {
   final reads=<Completer<PaperRow?>>[];
-  @override Future<PaperRow?> read(){final c=Completer<PaperRow?>();reads.add(c);return c.future;}
+  bool initialized=false;
+  @override Future<PaperRow?> read(){
+    if(initialized)return super.read();
+    final c=Completer<PaperRow?>();reads.add(c);
+    return c.future.then((value){initialized=true;return value;});
+  }
 }
 void main(){
   final now=DateTime.utc(2026,10,13,15,1,15);
