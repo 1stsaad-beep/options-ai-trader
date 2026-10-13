@@ -527,3 +527,7 @@ Both target-ref lease checks safely refused to replace newly advanced source. Wo
 ### Isolated acceptance hardening
 
 Added aligned-minute rejection and deterministic mocked WebSocket coverage: authentication before subscription, one timestamp on correction, connection-limit 406 falls back to REST without replacing the other application stream, no stream when disabled, and late authentication after stop cannot revive connectivity. Native CI still running for the previous checkpoint; these additions require the next targeted run. Main recovery branch is left untouched while concurrent development is active.
+
+### Native dependency compatibility correction
+
+Run 38403905558 failed before native tests: OkHttp 5.5.0 requires compileSdk 37, project is SDK 36. Flutter analysis passed. Pin corrected to 5.3.2 without changing Android toolchain. Rerun targeted native tests; no success claimed until actual CI.

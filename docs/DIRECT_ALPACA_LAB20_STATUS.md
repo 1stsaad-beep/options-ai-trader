@@ -18,7 +18,7 @@ Recovered on 2026-10-13 from `67995126bd095e3e3bbbae2d74e9d19e0e2c8207`, branch 
 - https://docs.alpaca.markets/us/docs/real-time-stock-pricing-data — closed one-minute bars and late updatedBars, extended-session bars.
 - https://docs.alpaca.markets/us/reference/stockbars — historical OHLCV endpoint.
 - https://developer.android.com/reference/android/security/keystore/KeyGenParameterSpec.Builder — GCM randomized encryption and authentication settings.
-- https://github.com/square/okhttp/blob/master/CHANGELOG.md — pinned OkHttp 5.5.0.
+- https://github.com/square/okhttp/blob/master/CHANGELOG.md — OkHttp changelog; initial 5.5.0 pin corrected to 5.3.2 for compileSdk 36 compatibility.
 
 No OPRA entitlement, true provider connectivity, profitable backtest, actual phone service survival or realistic option fills is established by mocks.
 
@@ -27,3 +27,7 @@ Concurrent checkpoint 3bc4345d574f2be16340c214ca595bd68d730af1 was detected and 
 ## Concurrent writer detected; isolated acceptance
 
 The target branch advanced again to `157b91ccf21cd35b1a722d1a54ceca13abe54d19` during the second lease check, with another transport/service implementation. Neither attempted lease replaced that work. Our merged checkpoint is `a96d35f47a989271d0ee9d5839f3e881e65a17f3` on `recovery/direct-alpaca-lab20-20261013`, preserving the earlier concurrent checkpoint and our source. This branch is experimental and must not be blindly merged: AlpacaEngine and the independently added AlpacaSession overlap. Native mock CI on this isolated branch will verify its checkpoint; no new APK or UI is claimed. Reconcile against the actual target head after the concurrent writer stops.
+
+## Actual failed acceptance retained
+
+Run 38403905558 at b9c09da6fe9ceb39ff147ca81c10bbaed825fef1 passed Flutter analysis but failed Android AAR metadata: OkHttp 5.5.0 requires compileSdk 37 while the established Flutter/AGP toolchain compiles SDK 36. Unit tests did not run. Corrected the dependency to 5.3.2 (the documented timeout-fix release), preserving the existing toolchain; next targeted native run must pass. This is not a provider authentication failure.
