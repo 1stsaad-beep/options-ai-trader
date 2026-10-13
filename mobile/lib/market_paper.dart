@@ -315,7 +315,9 @@ class MarketPaper extends ChangeNotifier {
               'entryFees':entryFees,'realizedPnl':pnl,'cashAfter':target['cash']});
           if(!await _commit(next,admission:()=>_current(id,epoch)&&q.valid(now(),quantity:filled)&&paperSession(now()).fill&&paperExpiry(q.contract,now()).close&&
             (pending!=null||reason!='CONFIRMED_DIVERGENCE'||reverseCurrent())&&
-            (pending!=null||reason!='SCENARIO_EXIT'||(stockValid()&&scenarioBroken()))))return;
+            (pending!=null||reason!='SCENARIO_EXIT'||(stockValid()&&scenarioBroken())))) {
+            return;
+          }
           if(remaining>0||forceClose||!reverse||!reverseCurrent()||!_current(id,epoch)||!stockValid()||!signalCurrent())return;
           if((account(id)['positions'] as Map).containsKey(symbol))return;
         } else {

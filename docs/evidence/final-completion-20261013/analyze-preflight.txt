@@ -1,0 +1,12 @@
+Source 4bad1a00cb59de0d790b0099bc32ee3b98e8159b, run38469775436, job115545546006; extract from actual job log, full logs retained by GitHub.
+[endgroup]
+2026-10-13T21:20:53.7352966Z 1 issue found. (ran in 11.2s)
+2026-10-13T21:20:53.7353619Z Analyzing mobile...                                             
+2026-10-13T21:20:53.7354072Z 
+2026-10-13T21:20:53.7355381Z    info • Statements in an if should be enclosed in a block. Try wrapping the statement in a block • lib/market_paper.dart:317:89 • curly_braces_in_flow_control_structures
+2026-10-13T21:20:53.7356612Z 
+2026-10-13T21:20:53.7399664Z ##[error]Process completed with exit code 1.
+2026-10-13T21:20:53.7504437Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-10-13T21:20:53.7505139Z with:
+2026-10-13T21:20:53.7505511Z   name: direct-alpaca-mock-results
+2026-10-13T21:20:53.7506293Z   path
