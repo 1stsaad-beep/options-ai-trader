@@ -23,3 +23,7 @@ Recovered on 2026-10-13 from `67995126bd095e3e3bbbae2d74e9d19e0e2c8207`, branch 
 No OPRA entitlement, true provider connectivity, profitable backtest, actual phone service survival or realistic option fills is established by mocks.
 
 Concurrent checkpoint 3bc4345d574f2be16340c214ca595bd68d730af1 was detected and preserved. Its Java policy/tests and original vault format remain intact; additional bounded cache/transport tests extend that work. Our checkpoint 2c4350f051488a586f66d79c1ffaa8ca8b439c11 is also preserved on recovery/direct-alpaca-lab20-20261013.
+
+## Concurrent writer detected; isolated acceptance
+
+The target branch advanced again to `157b91ccf21cd35b1a722d1a54ceca13abe54d19` during the second lease check, with another transport/service implementation. Neither attempted lease replaced that work. Our merged checkpoint is `a96d35f47a989271d0ee9d5839f3e881e65a17f3` on `recovery/direct-alpaca-lab20-20261013`, preserving the earlier concurrent checkpoint and our source. This branch is experimental and must not be blindly merged: AlpacaEngine and the independently added AlpacaSession overlap. Native mock CI on this isolated branch will verify its checkpoint; no new APK or UI is claimed. Reconcile against the actual target head after the concurrent writer stops.

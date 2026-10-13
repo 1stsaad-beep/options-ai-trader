@@ -1,7 +1,7 @@
 name: Direct Alpaca mock acceptance
 on:
   push:
-    branches: [recovery/v1.0-20261011]
+    branches: [recovery/v1.0-20261011, recovery/direct-alpaca-lab20-20261013]
     paths: ["mobile/**", ".github/workflows/alpaca-direct.yaml"]
 permissions:
   contents: read

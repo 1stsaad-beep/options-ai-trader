@@ -519,3 +519,7 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 # 2026-10-13 — Direct Alpaca batch 1, acceptance pending
 
 Recovered actual Lab19 head `67995126bd095e3e3bbbae2d74e9d19e0e2c8207`; previous local workspace was removed by maintenance. All existing repository entries retained. Added native fixed-endpoint data transport, encrypted no-backup vault, causal OHLCV cache and targeted native Mock CI. No keys, actual Alpaca/IBKR calls, orders or paid resources used. Test execution is pending CI, not claimed passed. See `docs/DIRECT_ALPACA_LAB20_STATUS.md`. Next batch starts only after this checkpoint and targeted results are saved.
+
+## Direct Alpaca concurrent-write recovery checkpoint
+
+Both target-ref lease checks safely refused to replace newly advanced source. Work saved on recovery/direct-alpaca-lab20-20261013 at a96d35f47a989271d0ee9d5839f3e881e65a17f3. Isolated native acceptance enabled there; not an accepted Lab20 APK. Target source is concurrently adding another transport/service. Do not merge overlapping transports without review. No provider account connected.
