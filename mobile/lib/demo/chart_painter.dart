@@ -18,9 +18,12 @@ class DemoCandlePainter extends CustomPainter {
   final ChartMacd? macdValues;
   final List<ChartDivergence> divergences;
   final String? fontFamily;
+  final String priceLabel;
+  final Map<int,String>? timeLabels;
   DemoCandlePainter(this.bars,this.summary,this.patterns,this.markers,this.colors,
     this.lab,this.overlays,this.indicators,this.rsiValues,
-    {this.macdValues,this.divergences=const [],this.fontFamily});
+    {this.macdValues,this.divergences=const [],this.fontFamily,
+    this.priceLabel='PRICE • synthetic',this.timeLabels});
 
   List<String> get layerLabels => [
     'Candles ${bars.length}', 'Observation axis',
@@ -62,7 +65,7 @@ class DemoCandlePainter extends CustomPainter {
     }
     void line(Offset a,Offset b,Color color,[double width=1]) =>
       canvas.drawLine(a,b,Paint()..color=color..strokeWidth=width);
-    text('PRICE • synthetic',const Offset(50,7),colors.onSurface);
+    text(priceLabel,const Offset(50,7),colors.onSurface);
     for(var i=0;i<5;i++) {
       final price=low+(high-low)*i/4;
       line(Offset(plot.left,y(price)),Offset(plot.right,y(price)),colors.outlineVariant,.5);
@@ -76,7 +79,7 @@ class DemoCandlePainter extends CustomPainter {
         math.max(1,(y(b.open)-y(b.close)).abs())),Paint()..color=color);
     }
     for(final i in {0,bars.length~/2,bars.length-1}) {
-      text('#${bars[i].tick}',Offset(x(bars[i].tick)-10,plot.bottom+4),colors.onSurfaceVariant);
+      text(timeLabels?[bars[i].tick]??'#${bars[i].tick}',Offset(x(bars[i].tick)-10,plot.bottom+4),colors.onSurfaceVariant);
     }
     if(overlays) {
       void level(double price,String label,Color color) {

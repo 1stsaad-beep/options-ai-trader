@@ -170,6 +170,7 @@ internal class AlpacaSession(
     fun quote(contract:String,done:(String?)->Unit) {
         require(AlpacaPolicy.contract(contract));val g=generation
         worker.execute { try {
+            require(AlpacaPolicy.inSession(now(),"regular"))
             val url="https://data.alpaca.markets/v1beta1/options/snapshots".toHttpUrl().newBuilder()
                 .addQueryParameter("symbols",contract).addQueryParameter("feed","opra").build()
             val q=request(g,url).getJSONObject("snapshots").getJSONObject(contract).getJSONObject("latestQuote")

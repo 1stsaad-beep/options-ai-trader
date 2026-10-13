@@ -17,8 +17,9 @@ class AlpacaSessionTest {
         lateinit var listener:WebSocketListener
         lateinit var socket:FakeSocket
         val opened=CountDownLatch(1)
+        @Volatile var count=0
         override fun newWebSocket(request:Request,listener:WebSocketListener):WebSocket {
-            this.listener=listener;socket=FakeSocket(request)
+            this.listener=listener;socket=FakeSocket(request);count++
             listener.onOpen(socket,Response.Builder().request(request).protocol(Protocol.HTTP_1_1).code(101).message("mock").build())
             opened.countDown();return socket
         }
@@ -73,4 +74,8 @@ class AlpacaSessionTest {
     @Test fun disconnectedTransportStopsFreshnessAndSchedulesRecovery(){Harness().use {h->h.start();h.auth();h.await{h.view().getBoolean("connected")};h.sockets.listener.onFailure(h.sockets.socket,java.io.IOException("secret provider URL"),null);h.await{!h.view().getBoolean("connected")};assertTrue(h.session.enabled);assertFalse(h.session.snapshot().contains("secret provider"))}}
     @Test fun optionsAreExplicitOpraGetOnly(){Harness().use {h->h.start();h.auth();h.await{h.requests.size==1};h.clock.addAndGet(5000);val done=CountDownLatch(1);var answer:String?=null;h.session.quote("NVDA261016C00200000"){answer=it;done.countDown()};assertTrue(done.await(3,TimeUnit.SECONDS));assertEquals("opra",JSONObject(answer!!).getString("feed"));assertEquals("opra",h.requests.last().url.queryParameter("feed"));assertEquals("GET",h.requests.last().method)}}
     @Test fun optionsForbiddenDoesNotBecomeIndicative(){Harness(403).use {h->h.start();h.auth();h.await{h.requests.size==1};h.clock.addAndGet(5000);val done=CountDownLatch(1);var answer:String?="sentinel";h.session.quote("NVDA261016C00200000"){answer=it;done.countDown()};assertTrue(done.await(3,TimeUnit.SECONDS));assertNull(answer)}}
+    @Test fun reconnectionRequiresNewAuthentication(){Harness().use {h->h.start();h.auth();h.await{h.view().getBoolean("connected")};h.sockets.listener.onFailure(h.sockets.socket,java.io.IOException(),null);h.await{!h.view().getBoolean("connected")};Thread.sleep(5200);h.await{h.sockets.count==2};assertFalse(h.view().getBoolean("connected"));h.auth();h.await{h.view().getBoolean("connected")}}}
+    @Test fun dataClientRejectsOrderBeforeNetwork(){val client=AlpacaSession.client();try {
+        for(method in listOf("GET","DELETE"))try{client.newCall(Request.Builder().url("https://data.alpaca.markets/v2/orders").method(method,null).build()).execute();fail("order permitted")}catch(_:java.io.IOException){}
+    }finally{client.dispatcher.executorService.shutdownNow();client.connectionPool.evictAll()}}
 }

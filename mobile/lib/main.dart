@@ -10,6 +10,7 @@ import 'market_runtime.dart';
 import 'market_monitor.dart';
 import 'demo/screen.dart';
 import 'demo/store.dart';
+import 'direct_screen.dart';
 
 void main() => runApp(const TraderApp());
 
@@ -44,6 +45,7 @@ class _TraderAppState extends State<TraderApp> {
               onTheme: (value) => setState(() => mode = value),
             )
           : DemoScreen(
+              onDirect:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DirectAlpacaScreen())),
               store: widget.demoStore,
               onTheme: (value) {
                 if (mode != value) setState(() => mode = value);
@@ -753,6 +755,8 @@ class _DashboardState extends State<Dashboard> {
     appBar: AppBar(
       title: Text(pages[page]),
       actions: [
+        IconButton(tooltip:'Alpaca مباشر من الهاتف',icon:const Icon(Icons.cloud_outlined),
+          onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DirectAlpacaScreen()))),
         PopupMenuButton<ThemeMode>(
           tooltip: 'مظهر التطبيق',
           initialValue: widget.themeMode,

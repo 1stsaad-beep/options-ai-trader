@@ -11,11 +11,13 @@ class DemoScreen extends StatefulWidget {
   final DemoStore? store;
   final ValueChanged<ThemeMode> onTheme;
   final VoidCallback onBackend;
+  final VoidCallback? onDirect;
   const DemoScreen({
     super.key,
     this.store,
     required this.onTheme,
     required this.onBackend,
+    this.onDirect,
   });
   @override
   State<DemoScreen> createState() => _DemoScreenState();
@@ -454,6 +456,10 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
                 },
               ),
             const Divider(),
+            if(widget.onDirect!=null) ListTile(
+              leading:const Icon(Icons.cloud_outlined),title:const Text('Alpaca مباشر من الهاتف'),
+              subtitle:const Text('Market Data وMarket Paper مستقلان عن Demo'),
+              onTap:(){Navigator.pop(context);controller.pause();widget.onDirect!();}),
             ListTile(
               leading: const Icon(Icons.dns_outlined),
               title: const Text('خادم Mock اختياري'),
