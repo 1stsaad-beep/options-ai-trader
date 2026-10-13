@@ -24,7 +24,7 @@ class AlpacaTransport(private val credentials: () -> Pair<String, String>,
         val (id, secret) = credentials()
         return Request.Builder().url(url).header("APCA-API-KEY-ID", id).header("APCA-API-SECRET-KEY", secret).get().build()
     }
-    fun bars(config: AlpacaConfig, historySymbol: String?, now: Long): Pair<Int, String> {
+    fun bars(config: AlpacaConfig, historySymbol: String?, now: Long): Triple<Int, String, Long> {
         val path = if (historySymbol == null) "/v2/stocks/bars/latest" else "/v2/stocks/bars"
         val url = (AlpacaDataPolicy.REST + path).toHttpUrl().newBuilder()
             .addQueryParameter("symbols", historySymbol ?: config.symbols.joinToString(","))
@@ -37,10 +37,15 @@ class AlpacaTransport(private val credentials: () -> Pair<String, String>,
                 .addQueryParameter("end", AlpacaDataPolicy.iso(now - if (config.feed == "sip") 960_000 else 60_000))
         }
         client.newCall(request(url.build().toString())).execute().use { response ->
-            if (response.code != 200) return response.code to "" // Never return/log provider error bodies.
+            if (response.code != 200) {
+                val seconds = response.header("Retry-After")?.toLongOrNull()?.coerceIn(0, 86_400) ?: 0
+                val reset = response.header("X-RateLimit-Reset")?.toLongOrNull()
+                val resetWait = if (reset != null && reset in (now / 1000)..(now / 1000 + 86_400)) reset * 1000 - now else 0
+                return Triple(response.code, "", maxOf(seconds * 1000, resetWait)) // No error bodies or credentials.
+            }
             val source = response.body.source()
             check(!source.request(AlpacaDataPolicy.MAX_BODY.toLong() + 1))
-            return 200 to source.readUtf8()
+            return Triple(200, source.readUtf8(), 0L)
         }
     }
     fun stream(config: AlpacaConfig, listener: WebSocketListener): WebSocket =
@@ -58,6 +63,8 @@ class AlpacaEngine(private val transport: AlpacaTransport, private val now: () -
     private var generation = 0
     private var lastRequest = 0L
     private var nextRequest = 0L
+    private var blockedUntil = 0L
+    private var socketOpened = 0L
     private var lastSuccess = 0L
     private var attempt = 0
     private var wsAttempt = 0
@@ -72,7 +79,7 @@ class AlpacaEngine(private val transport: AlpacaTransport, private val now: () -
     init { if (autoPoll) scheduler.scheduleWithFixedDelay({ poll() }, 1, 1, TimeUnit.SECONDS) }
     @Synchronized fun start(value: AlpacaConfig) {
         stop(); generation++; config = value; cache.clear(); historyIndex = 0
-        nextRequest = 0; attempt = 0; wsAttempt = 0; wsNext = 0; wsBlocked = false
+        nextRequest = blockedUntil; attempt = 0; wsAttempt = 0; wsNext = 0; wsBlocked = false
         state = "CONNECTING"; event("START_REQUESTED")
     }
     @Synchronized fun stop() {
@@ -99,6 +106,9 @@ class AlpacaEngine(private val transport: AlpacaTransport, private val now: () -
         val selected: AlpacaConfig; val epoch: Int; val history: String?
         synchronized(this) {
             selected = config ?: return; epoch = generation
+            if (socket != null && !wsAuthenticated && now() - socketOpened > 12_000) {
+                socketState = "AUTH_TIMEOUT"; closeSocket()
+            }
             if (selected.stream && socket == null && !wsBlocked && now() >= wsNext) openSocket(selected, epoch)
             if (now() < nextRequest || now() - lastRequest < 10_000) return
             lastRequest = now(); nextRequest = now() + 10_000; requestCount++
@@ -106,7 +116,7 @@ class AlpacaEngine(private val transport: AlpacaTransport, private val now: () -
             history = if (historyIndex < selected.symbols.size && requestCount % 2 == 1) selected.symbols[historyIndex] else null
         }
         try {
-            val (code, body) = transport.bars(selected, history, now())
+            val (code, body, cooldown) = transport.bars(selected, history, now())
             synchronized(this) {
                 if (epoch != generation) return
                 when (code) {
@@ -120,12 +130,13 @@ class AlpacaEngine(private val transport: AlpacaTransport, private val now: () -
                             else if (row is JSONObject) parsed.add(symbol to AlpacaBar.parse(row))
                         }
                         check(parsed.all { it.second.time <= now() - 60_000 })
-                        parsed.forEach { (symbol, bar) -> cache.merge(symbol, bar, selected, now()) }
+                        // A historical bootstrap must not overwrite streaming revisions received in flight.
+                        parsed.forEach { (symbol, bar) -> cache.merge(symbol, bar, selected, now(), history == null) }
                         if (history != null) historyIndex++
                         lastSuccess = now(); attempt = 0; state = "CONNECTED"
                     }
                     401, 403 -> { stop(); state = if (code == 401) "AUTH_REJECTED" else "FEED_NOT_ENTITLED"; event(state) }
-                    429 -> { lastSuccess = 0; state = "RATE_LIMITED"; nextRequest = now() + 300_000; event(state) }
+                    429 -> { lastSuccess = 0; state = "RATE_LIMITED"; blockedUntil = now() + maxOf(300_000, cooldown); nextRequest = blockedUntil; event(state) }
                     else -> failed()
                 }
             }
@@ -137,6 +148,7 @@ class AlpacaEngine(private val transport: AlpacaTransport, private val now: () -
     }
     private fun openSocket(c: AlpacaConfig, epoch: Int) {
         socketState = "CONNECTING"
+        socketOpened = now()
         val listener = object : WebSocketListener() {
             override fun onMessage(webSocket: WebSocket, text: String) {
                 synchronized(this@AlpacaEngine) {
@@ -147,7 +159,7 @@ class AlpacaEngine(private val transport: AlpacaTransport, private val now: () -
                         for (i in 0 until items.length()) {
                             val j = items.getJSONObject(i)
                             when (j.getString("T")) {
-                                "success" -> if (j.optString("msg") == "authenticated") {
+                                "success" -> if (j.optString("msg") == "authenticated" && !wsAuthenticated) {
                                     wsAuthenticated = true; wsAttempt = 0; socketState = "AUTHENTICATED"
                                     webSocket.send(JSONObject().put("action", "subscribe").put("bars", JSONArray(c.symbols))
                                         .put("updatedBars", JSONArray(c.symbols)).toString())

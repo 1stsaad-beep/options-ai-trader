@@ -43,6 +43,7 @@ class AlpacaTransportTest {
         assertEquals(true, engine.snapshot()["connected"])
         clock += 10_000; code = 429; engine.poll()
         assertEquals("RATE_LIMITED", engine.snapshot()["state"])
+        engine.stop(); engine.start(cfg) // Manual reconnect cannot bypass shared REST cooldown.
         engine.poll(); assertEquals(2, seen.size)
         clock += 300_000; code = 200; engine.poll()
         assertEquals("CONNECTED", engine.snapshot()["state"])

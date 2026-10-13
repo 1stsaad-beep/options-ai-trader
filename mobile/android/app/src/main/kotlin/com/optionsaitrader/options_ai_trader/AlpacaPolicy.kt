@@ -61,12 +61,12 @@ data class AlpacaBar(val time: Long, val open: Double, val high: Double, val low
 
 class AlpacaCache {
     private val data = mutableMapOf<String, TreeMap<Long, AlpacaBar>>()
-    fun merge(symbol: String, bar: AlpacaBar, config: AlpacaConfig, now: Long) {
+    fun merge(symbol: String, bar: AlpacaBar, config: AlpacaConfig, now: Long, replace: Boolean = true) {
         require(symbol in config.symbols)
         require(bar.time % 60_000 == 0L && bar.time <= now - 60_000) // Complete, aligned minutes only.
         if (!AlpacaDataPolicy.inSession(bar.time, config.extended)) return
         val series = data.getOrPut(symbol) { TreeMap() }
-        series[bar.time] = bar // updatedBars replace exactly one timestamp.
+        if (replace || !series.containsKey(bar.time)) series[bar.time] = bar
         while (series.size > AlpacaDataPolicy.BAR_LIMIT) series.pollFirstEntry()
     }
     fun series(symbol: String): List<AlpacaBar> = data[symbol]?.values?.toList() ?: emptyList()

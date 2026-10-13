@@ -38,6 +38,7 @@ class AlpacaStreamTest {
         assertEquals("stream.data.alpaca.markets", factory.socket.request().url.host)
         assertTrue(factory.socket.sent.isEmpty())
         factory.send("""[{"T":"success","msg":"authenticated"}]""")
+        factory.send("""[{"T":"success","msg":"authenticated"}]""")
         assertEquals(1, factory.socket.sent.size)
         assertTrue(factory.socket.sent.single().contains("subscribe"))
         assertFalse(factory.socket.sent.single().contains("secret"))

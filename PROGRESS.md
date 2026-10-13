@@ -531,3 +531,7 @@ Added aligned-minute rejection and deterministic mocked WebSocket coverage: auth
 ### Native dependency compatibility correction
 
 Run 38403905558 failed before native tests: OkHttp 5.5.0 requires compileSdk 37, project is SDK 36. Flutter analysis passed. Pin corrected to 5.3.2 without changing Android toolchain. Rerun targeted native tests; no success claimed until actual CI.
+
+### Connection hardening within the same acceptance batch
+
+Mock review exposed a local cooldown reset on manual reconnect. Preserve 429 cooldown across stop/start and honour numeric Retry-After/X-RateLimit-Reset within a bounded day. Historical bootstrap cannot overwrite an already observed streaming correction. Repeated authentication acknowledgements do not duplicate subscriptions; unauthenticated sockets have a 12-second timeout. These fixes require targeted native acceptance, still no UI/release claim.

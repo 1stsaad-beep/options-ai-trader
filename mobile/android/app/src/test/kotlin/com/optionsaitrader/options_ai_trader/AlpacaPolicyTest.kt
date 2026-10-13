@@ -28,6 +28,8 @@ class AlpacaPolicyTest {
         cache.merge("NVDA", b.copy(close = 102.0), cfg, time + 60_000)
         assertEquals(1, cache.series("NVDA").size)
         assertEquals(102.0, cache.series("NVDA").single().close, 0.0)
+        cache.merge("NVDA", b, cfg, time + 60_000, false)
+        assertEquals(102.0, cache.series("NVDA").single().close, 0.0)
         assertTrue(cache.series("AAPL").isEmpty())
         assertThrows(IllegalArgumentException::class.java) { cache.merge("NVDA", b, cfg, time) }
         assertThrows(IllegalArgumentException::class.java) { cache.merge("NVDA", b.copy(time = time + 1_000), cfg, time + 120_000) }
