@@ -26,6 +26,12 @@ internal class AlpacaVault(context: Context) {
         }
     }
     fun exists()=file.baseFile.exists()
+    fun present()=exists()
+    fun credentials()=read()
+    @Synchronized fun forget() {
+        file.delete()
+        KeyStore.getInstance("AndroidKeyStore").apply { load(null); deleteEntry(alias) }
+    }
     @Synchronized fun save(id:String,secret:String) {
         require(id.length in 8..128 && secret.length in 8..256 && id.none { it.isWhitespace() } && secret.none { it.isWhitespace() })
         val bytes=JSONObject().put("id",id).put("secret",secret).toString().toByteArray(Charsets.UTF_8)
