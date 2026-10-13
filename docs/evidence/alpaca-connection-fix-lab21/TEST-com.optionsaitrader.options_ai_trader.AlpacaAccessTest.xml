@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-10-13T16:30:07.799Z" hostname="runnervmmprz5" time="0.075">
+  <properties/>
+  <testcase name="invalidReplacementPreservesPreviousKeys" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.027"/>
+  <testcase name="secureStorageWriteFailureDoesNotReportSuccess" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.001"/>
+  <testcase name="saveRequiresSuccessfulEncryptedReadBack" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.0"/>
+  <testcase name="missingKeysCannotEnableOrConnect" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.007"/>
+  <testcase name="validSavedKeysAreReportedWithoutPlaintext" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.014"/>
+  <testcase name="explicitConsentAndSavedPreferenceAreBothRequired" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.003"/>
+  <testcase name="fileExistenceDoesNotClaimReadableKeys" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.0"/>
+  <testcase name="turningOffNeverRequiresDecryptableKeys" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.003"/>
+  <testcase name="settingsSurviveNewControllerWithoutStartingNetwork" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.005"/>
+  <testcase name="corruptKeysBlockPreviouslyEnabledSetting" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.001"/>
+  <testcase name="failedSettingsWritePreservesOldPreference" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.0"/>
+  <testcase name="explicitStartUsesSavedConfigurationOnce" classname="com.optionsaitrader.options_ai_trader.AlpacaAccessTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,18 @@
+{
+  "source": "7517689c41e2da7f863cb55e43a3e8ae08c0a728",
+  "run": 38429617558,
+  "status": "failed",
+  "counts": {
+    "success": 306,
+    "error": 2
+  },
+  "failed_tests": [
+    "missing keys explain why testing and enabling are refused",
+    "OFF explains prerequisite rather than a silent disabled test button"
+  ],
+  "diagnosis": "Two tap helpers targeted the lower edge behind bottom navigation in the 800x600 test viewport. Assertions were retained; helper now waits for layout, centers the target and requires hitTestable before clicking.",
+  "fix_commit": "b140b11d261032d8e1f7a21e189d1181fadb4557",
+  "artifact_id": 11830008416,
+  "artifact_sha256": "0dba8e86721a0a911c22504ab4075ba774517abf3d91f148e5d6176506865c4c",
+  "native_tests_in_this_run": "not run because earlier Flutter gate failed"
+}

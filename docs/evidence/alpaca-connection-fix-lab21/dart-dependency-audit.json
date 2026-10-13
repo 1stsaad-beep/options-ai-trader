@@ -1,0 +1,247 @@
+{
+  "status": "no_known_advisories",
+  "checked_at": "2026-10-13T16:24:38.073671+00:00",
+  "source": "OSV public API",
+  "ecosystem": "Pub",
+  "packages_checked": 43,
+  "dependencies": [
+    {
+      "name": "async",
+      "version": "2.13.1",
+      "advisories": []
+    },
+    {
+      "name": "boolean_selector",
+      "version": "2.1.2",
+      "advisories": []
+    },
+    {
+      "name": "characters",
+      "version": "1.4.1",
+      "advisories": []
+    },
+    {
+      "name": "clock",
+      "version": "1.1.3",
+      "advisories": []
+    },
+    {
+      "name": "collection",
+      "version": "1.19.1",
+      "advisories": []
+    },
+    {
+      "name": "fake_async",
+      "version": "1.3.3",
+      "advisories": []
+    },
+    {
+      "name": "ffi",
+      "version": "2.2.0",
+      "advisories": []
+    },
+    {
+      "name": "file",
+      "version": "7.0.1",
+      "advisories": []
+    },
+    {
+      "name": "flutter_lints",
+      "version": "4.0.0",
+      "advisories": []
+    },
+    {
+      "name": "http",
+      "version": "1.6.0",
+      "advisories": []
+    },
+    {
+      "name": "http_parser",
+      "version": "4.1.2",
+      "advisories": []
+    },
+    {
+      "name": "intl",
+      "version": "0.20.3",
+      "advisories": []
+    },
+    {
+      "name": "leak_tracker",
+      "version": "11.0.2",
+      "advisories": []
+    },
+    {
+      "name": "leak_tracker_flutter_testing",
+      "version": "3.0.10",
+      "advisories": []
+    },
+    {
+      "name": "leak_tracker_testing",
+      "version": "3.0.2",
+      "advisories": []
+    },
+    {
+      "name": "lints",
+      "version": "4.0.0",
+      "advisories": []
+    },
+    {
+      "name": "matcher",
+      "version": "0.12.20",
+      "advisories": []
+    },
+    {
+      "name": "material_color_utilities",
+      "version": "0.13.0",
+      "advisories": []
+    },
+    {
+      "name": "meta",
+      "version": "1.18.3",
+      "advisories": []
+    },
+    {
+      "name": "path",
+      "version": "1.9.1",
+      "advisories": []
+    },
+    {
+      "name": "path_provider_linux",
+      "version": "2.2.2",
+      "advisories": []
+    },
+    {
+      "name": "path_provider_platform_interface",
+      "version": "2.1.3",
+      "advisories": []
+    },
+    {
+      "name": "path_provider_windows",
+      "version": "2.3.0",
+      "advisories": []
+    },
+    {
+      "name": "platform",
+      "version": "3.2.0",
+      "advisories": []
+    },
+    {
+      "name": "plugin_platform_interface",
+      "version": "2.1.8",
+      "advisories": []
+    },
+    {
+      "name": "shared_preferences",
+      "version": "2.5.6",
+      "advisories": []
+    },
+    {
+      "name": "shared_preferences_android",
+      "version": "2.4.28",
+      "advisories": []
+    },
+    {
+      "name": "shared_preferences_foundation",
+      "version": "2.5.7",
+      "advisories": []
+    },
+    {
+      "name": "shared_preferences_linux",
+      "version": "2.4.1",
+      "advisories": []
+    },
+    {
+      "name": "shared_preferences_platform_interface",
+      "version": "2.4.2",
+      "advisories": []
+    },
+    {
+      "name": "shared_preferences_web",
+      "version": "2.4.3",
+      "advisories": []
+    },
+    {
+      "name": "shared_preferences_windows",
+      "version": "2.4.1",
+      "advisories": []
+    },
+    {
+      "name": "source_span",
+      "version": "1.10.2",
+      "advisories": []
+    },
+    {
+      "name": "stack_trace",
+      "version": "1.12.2",
+      "advisories": []
+    },
+    {
+      "name": "stream_channel",
+      "version": "2.1.4",
+      "advisories": []
+    },
+    {
+      "name": "string_scanner",
+      "version": "1.4.1",
+      "advisories": []
+    },
+    {
+      "name": "term_glyph",
+      "version": "1.2.2",
+      "advisories": []
+    },
+    {
+      "name": "test_api",
+      "version": "0.7.12",
+      "advisories": []
+    },
+    {
+      "name": "typed_data",
+      "version": "1.4.0",
+      "advisories": []
+    },
+    {
+      "name": "vector_math",
+      "version": "2.4.0",
+      "advisories": []
+    },
+    {
+      "name": "vm_service",
+      "version": "15.3.0",
+      "advisories": []
+    },
+    {
+      "name": "web",
+      "version": "1.1.1",
+      "advisories": []
+    },
+    {
+      "name": "xdg_directories",
+      "version": "1.1.0",
+      "advisories": []
+    }
+  ],
+  "skipped": [
+    {
+      "name": "flutter",
+      "reason": "Flutter SDK is not a hosted Pub package"
+    },
+    {
+      "name": "flutter_localizations",
+      "reason": "Flutter SDK is not a hosted Pub package"
+    },
+    {
+      "name": "flutter_test",
+      "reason": "Flutter SDK is not a hosted Pub package"
+    },
+    {
+      "name": "flutter_web_plugins",
+      "reason": "Flutter SDK is not a hosted Pub package"
+    },
+    {
+      "name": "sky_engine",
+      "reason": "Flutter SDK is not a hosted Pub package"
+    }
+  ],
+  "limitation": "No coverage guarantee; Flutter SDK and native OS dependencies are outside this query"
+}
