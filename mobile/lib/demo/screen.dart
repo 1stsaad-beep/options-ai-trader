@@ -12,12 +12,14 @@ class DemoScreen extends StatefulWidget {
   final ValueChanged<ThemeMode> onTheme;
   final VoidCallback onBackend;
   final VoidCallback? onDirect;
+  final VoidCallback? onDirectChart;
   const DemoScreen({
     super.key,
     this.store,
     required this.onTheme,
     required this.onBackend,
     this.onDirect,
+    this.onDirectChart,
   });
   @override
   State<DemoScreen> createState() => _DemoScreenState();
@@ -899,6 +901,9 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
     }
     if (page == 10) {
       return [
+        const Text('مصدر هذا الشارت: Demo Synthetic — شموع اصطناعية لحسابات Demo فقط.',key:Key('demo-chart-source')),
+        if(widget.onDirectChart!=null)FilledButton.tonal(key:const Key('select-alpaca-chart'),
+          onPressed:(){controller.pause();widget.onDirectChart!();},child:const Text('اختيار شارت Alpaca IEX / SIP — بيانات السوق الفعلية')),
         DropdownButtonFormField<String>(initialValue:chartSymbol,
           decoration:const InputDecoration(labelText:'رمز مختبر الرسم'),
           items:DemoEngine.symbols.map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(),

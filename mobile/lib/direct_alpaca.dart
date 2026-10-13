@@ -33,6 +33,10 @@ String directMessage(String code)=>const {
   'WS_ERROR_407':'WebSocket 407: تعذر مواكبة تدفق البيانات.',
   'WS_ERROR_409':'WebSocket 409: الاشتراك لا يسمح بالـFeed المختار.',
   'OTHER_APP_CONNECTION_LIMIT':'WebSocket 406: اتصال مستخدم في تطبيق آخر؛ توقفنا دون قطع اتصاله.',
+  'CONNECTION_LIMIT':'WebSocket 406: حد الجلسات لدى Alpaca. نغلق مقبس هذا التطبيق وننتظر قبل إعادة محاولة محدودة؛ لا يثبت ذلك وجود تطبيق آخر.',
+  'CONNECTION_LIMIT_EXHAUSTED':'تكرر WebSocket 406 بعد 3 محاولات استعادة. توقف الاتصال؛ انتظر المهلة ثم أعد الفحص. لا يمكننا إغلاق جلسة يملكها تطبيق آخر.',
+  'PAUSED_BACKGROUND':'توقف مؤقت عند إطفاء الشاشة أو انتقال التطبيق للخلفية دون خدمة المراقبة. تستأنف الجلسة المصرّح بها عند الرجوع.',
+  'RESUMING':'جارٍ استئناف الجلسة المصرّح بها بعد العودة للتطبيق…',
   'NETWORK_ERROR':'تعذر الوصول إلى Alpaca. تحقق من الإنترنت وDNS أو VPN؛ ستتم إعادة محاولة محدودة.',
   'DISCONNECTED':'انقطع الاتصال؛ ستتم إعادة محاولة محدودة.',
   'TIMEOUT':'انتهت مهلة طلب البيانات من Alpaca. تحقق من الشبكة ثم أعد الفحص.',
@@ -78,9 +82,12 @@ class DirectSnapshot {
   final List<String> symbols;
   final String testStatus,testCode;
   final int testAt;
+  final String state,lastError;
+  final int lastMessageAt,lastBarAt,lastErrorAt,retryAt,connectionsCreated;
   DirectSnapshot({this.connected=false,this.enabled=false,this.feed='iex',this.session='regular',
     this.source='none',this.reason='DISABLED',DateTime? received,this.series=const {},this.events=const [],this.symbols=const [],
-    this.testStatus='idle',this.testCode='NOT_TESTED',this.testAt=0})
+    this.testStatus='idle',this.testCode='NOT_TESTED',this.testAt=0,this.state='IDLE',this.lastError='',
+    this.lastMessageAt=0,this.lastBarAt=0,this.lastErrorAt=0,this.retryAt=0,this.connectionsCreated=0})
       :received=received??DateTime.fromMillisecondsSinceEpoch(0,isUtc:true);
   factory DirectSnapshot.parse(String text) {
     final j=jsonDecode(text) as Map<String,dynamic>;
@@ -96,6 +103,9 @@ class DirectSnapshot {
       received:DateTime.fromMillisecondsSinceEpoch(j['asOf'] as int,isUtc:true),series:series,
       symbols:(j['symbols'] as List? ?? []).cast<String>(),
       testStatus:j['testStatus'] as String? ?? 'idle',testCode:j['testCode'] as String? ?? 'NOT_TESTED',testAt:j['testAt'] as int? ?? 0,
+      state:j['state'] as String? ?? (j['connected']==true?'CONNECTED':'IDLE'),lastError:j['lastError'] as String? ?? '',
+      lastMessageAt:j['lastMessageAt'] as int? ?? 0,lastBarAt:j['lastBarAt'] as int? ?? 0,lastErrorAt:j['lastErrorAt'] as int? ?? 0,
+      retryAt:j['retryAt'] as int? ?? 0,connectionsCreated:j['connectionsCreated'] as int? ?? 0,
       events:(j['events'] as List).map((e)=>Map<String,dynamic>.from(e as Map)).toList());
   }
   bool live(String symbol,DateTime now) {

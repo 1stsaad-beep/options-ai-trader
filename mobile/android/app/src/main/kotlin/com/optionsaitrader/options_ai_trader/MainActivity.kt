@@ -93,7 +93,8 @@ class MainActivity : FlutterActivity() {
         super.onDestroy()
     }
     override fun onStop() {
-        if(!AlpacaMonitorService.running)AlpacaRuntime.stop()
+        AlpacaRuntime.background(AlpacaMonitorService.running)
         super.onStop()
     }
+    override fun onResume(){super.onResume();AlpacaRuntime.foreground()}
 }

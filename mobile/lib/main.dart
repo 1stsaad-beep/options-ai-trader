@@ -46,6 +46,7 @@ class _TraderAppState extends State<TraderApp> {
             )
           : DemoScreen(
               onDirect:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DirectAlpacaScreen())),
+              onDirectChart:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DirectAlpacaScreen(initialPage:1))),
               store: widget.demoStore,
               onTheme: (value) {
                 if (mode != value) setState(() => mode = value);

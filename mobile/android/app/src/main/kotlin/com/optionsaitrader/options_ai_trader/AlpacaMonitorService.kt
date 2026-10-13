@@ -24,6 +24,7 @@ class AlpacaMonitorService:Service() {
     }
     private val handler=Handler(Looper.getMainLooper())
     private var deadline=0L
+    private var owner=-1
     private val tick=object:Runnable {override fun run(){
         if(SystemClock.elapsedRealtime()>=deadline || !AlpacaRuntime.get(this@AlpacaMonitorService).enabled ||
             !getSystemService(NotificationManager::class.java).areNotificationsEnabled()){stopSelf();return}
@@ -33,6 +34,7 @@ class AlpacaMonitorService:Service() {
     override fun onStartCommand(intent:Intent?,flags:Int,startId:Int):Int {
         if(intent?.action=="STOP"){stopSelf();return START_NOT_STICKY}
         if(!AlpacaRuntime.get(this).enabled){stopSelf();return START_NOT_STICKY}
+        owner=AlpacaRuntime.get(this).ownerVersion
         val manager=getSystemService(NotificationManager::class.java)
         if(Build.VERSION.SDK_INT>=26)manager.createNotificationChannel(NotificationChannel(CHANNEL,"Alpaca: مراقبة تجريبية",NotificationManager.IMPORTANCE_LOW))
         val stop=PendingIntent.getService(this,ID,Intent(this,AlpacaMonitorService::class.java).setAction("STOP"),PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
@@ -49,5 +51,5 @@ class AlpacaMonitorService:Service() {
     }
     override fun onTimeout(startId:Int,fgsType:Int){stopSelf()}
     override fun onTaskRemoved(rootIntent:Intent?){stopSelf()}
-    override fun onDestroy(){handler.removeCallbacks(tick);running=false;AlpacaRuntime.stop();stopForeground(STOP_FOREGROUND_REMOVE);super.onDestroy()}
+    override fun onDestroy(){handler.removeCallbacks(tick);running=false;AlpacaRuntime.get(this).stopIfOwner(owner);stopForeground(STOP_FOREGROUND_REMOVE);super.onDestroy()}
 }

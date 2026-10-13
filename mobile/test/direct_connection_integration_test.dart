@@ -12,7 +12,8 @@ class NativeMock {
   String state='readable';
   DirectSettings config=const DirectSettings(real:true);
   String outcome='CONNECTED_DATA',phase='idle';
-  bool saveFails=false,settingsFail=false,active=false;
+  bool saveFails=false,settingsFail=false,active=false,snapshotFails=false;
+  Map<String,dynamic> bars={};
   int starts=0,stops=0;
   final calls=<String>[];
   Future<dynamic> handle(MethodCall call) async {
@@ -34,9 +35,9 @@ class NativeMock {
         expect(config.real,isTrue);expect(state,'readable');starts++;active=true;phase=outcome=='WAIT'?'running':outcome.startsWith('CONNECTED_')?'succeeded':'failed';return true;
       case 'stop':stops++;active=false;return true;
       case 'backgroundStatus':return false;
-      case 'snapshot':return jsonEncode({'enabled':active,'connected':active&&phase=='succeeded','feed':config.feed,'session':config.session,
+      case 'snapshot':if(snapshotFails)throw PlatformException(code:'CHANNEL_UNAVAILABLE');return jsonEncode({'enabled':active,'connected':active&&phase=='succeeded','feed':config.feed,'session':config.session,
         'source':'alpaca','reason':active?(phase=='succeeded'?'CONNECTED':outcome=='WAIT'?'CONNECTING':outcome):'DISABLED',
-        'asOf':DateTime.now().millisecondsSinceEpoch,'bars':<String,dynamic>{},'events':[],'symbols':config.symbols,
+        'asOf':DateTime.now().millisecondsSinceEpoch,'bars':bars,'events':[],'symbols':config.symbols,
         'testStatus':phase,'testCode':phase=='idle'?'NOT_TESTED':outcome=='WAIT'?'CONNECTING':outcome,'testAt':phase=='idle'?0:1});
       default:throw MissingPluginException();
     }

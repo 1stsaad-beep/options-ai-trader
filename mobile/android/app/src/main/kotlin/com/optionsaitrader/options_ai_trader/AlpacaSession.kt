@@ -11,6 +11,9 @@ import java.time.Instant
 import java.util.TreeMap
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.RejectedExecutionException
 
 /** One stream shared by all local accounts. Credentials never enter snapshots/errors/logs. */
 internal class AlpacaSession(
@@ -18,7 +21,11 @@ internal class AlpacaSession(
     private val now: () -> Long = System::currentTimeMillis,
     private val transport: OkHttpClient = client(),
     private val sockets: WebSocket.Factory = transport,
-    private val authTimeoutMs:Long = 12000L
+    private val authTimeoutMs:Long = 12000L,
+    private val retryDelay:(Int)->Long = {AlpacaPolicy.retryMs(it)},
+    private val limitDelay:(Int)->Long = {minOf(120000L,15000L shl minOf(it,3))},
+    private val closeGraceMs:Long = 2000L,
+    private val releasePauseMs:Long = 1000L
 ) {
     companion object {
         fun client()=OkHttpClient.Builder().followRedirects(false).followSslRedirects(false)
@@ -30,10 +37,48 @@ internal class AlpacaSession(
             }.build()
     }
     private val worker=Executors.newSingleThreadScheduledExecutor()
+    // Slow REST calls must not delay WebSocket authentication, close callbacks or recovery.
+    private val http=Executors.newSingleThreadScheduledExecutor()
+    private val calls=ConcurrentHashMap<Call,Int>()
+    private var connecting:ScheduledFuture<*>?=null
+    private var retiring:WebSocket?=null
+    private var openAfter=0L
+    private var releasedAfter=0L
+    private var limitUntil=0L
+    private var conflicts=0
+    private var resumePending=false
+    private var connectionState="IDLE"
+    private var connectionsCreated=0
+    private var lastMessageAt=0L
+    private var lastBarAt=0L
+    private var lastError=""
+    private var lastErrorAt=0L
+    private var retryAt=0L
+    private fun elapsed()=System.nanoTime()/1_000_000L
+    private fun dispatch(action:()->Unit){try{worker.execute(action)}catch(_:RejectedExecutionException){}}
+    @Synchronized private fun retire() {
+        val old=socket?:return
+        socket=null;retiring=old
+        if(!old.close(1000,"session ended")){old.cancel();released(old);return}
+        worker.schedule({synchronized(this){if(retiring===old){old.cancel();released(old)}}},closeGraceMs,TimeUnit.MILLISECONDS)
+    }
+    @Synchronized private fun released(ws:WebSocket){
+        if(retiring!==ws)return
+        retiring=null;releasedAfter=elapsed()+releasePauseMs
+        if(enabled)queueConnect(generation)
+    }
+    @Synchronized private fun queueConnect(g:Int){
+        if(!current(g)||socket!=null)return
+        connecting?.cancel(false)
+        val wait=maxOf(0L,openAfter-elapsed(),releasedAfter-elapsed(),blockedUntil-now(),limitUntil-elapsed(),if(retiring!=null)closeGraceMs else 0L)
+        retryAt=if(wait>0)now()+wait else 0L
+        connecting=worker.schedule({connect(g)},wait,TimeUnit.MILLISECONDS)
+    }
     private val bars=mutableMapOf<String,TreeMap<Long,JSONObject>>()
     private val events=ArrayDeque<JSONObject>()
     @Volatile private var generation=0
     @Volatile var enabled=false; private set
+    @Volatile var ownerVersion=0; private set
     @Volatile private var authenticated=false
     @Volatile private var socket: WebSocket?=null
     private var feed="iex"
@@ -42,8 +87,8 @@ internal class AlpacaSession(
     @Volatile private var reason="DISABLED"
     private var attempts=0
     @Volatile private var blockedUntil=0L
-    private var nextRequest=0L
-    private var reconnectPending=false
+    @Volatile private var nextRequest=0L
+
     private var testStatus="idle"
     private var testCode="NOT_TESTED"
     private var testAt=0L
@@ -64,78 +109,127 @@ internal class AlpacaSession(
 
     @Synchronized private fun event(code:String) {
         reason=code
+        if(code.startsWith("HTTP_")||code.startsWith("WS_ERROR_")||code in listOf("CONNECTION_LIMIT","CONNECTION_LIMIT_EXHAUSTED","NETWORK_ERROR","TIMEOUT","TLS_ERROR","AUTH_TIMEOUT","DISCONNECTED","RETRY_EXHAUSTED","INVALID_DATA","KEYSTORE_UNAVAILABLE")){
+            lastError=code;lastErrorAt=now()
+        }
         events.addLast(JSONObject().put("at",now()).put("code",code))
         while(events.size>100)events.removeFirst()
     }
     @Synchronized fun start(selectedFeed:String,selectedSession:String,watch:List<String>) {
         require(AlpacaPolicy.feed(selectedFeed) && selectedSession in listOf("regular","extended"))
         require(watch.size in 1..10 && watch.distinct().size==watch.size && watch.all { AlpacaPolicy.symbol(it) })
-        stop("RECONFIGURED");feed=selectedFeed;session=selectedSession;symbols=watch.toList()
-        bars.clear();attempts=0;enabled=true;event("CONNECTING");testResult("running","CONNECTING")
-        val g=generation;worker.execute { connect(g) }
+        val same=feed==selectedFeed&&session==selectedSession&&symbols==watch
+        if(enabled&&same)return // Navigation/repeated Test never makes a second socket.
+        stop("RECONFIGURED")
+        if(!same){bars.clear();lastBarAt=0}
+        feed=selectedFeed;session=selectedSession;symbols=watch.toList()
+        attempts=0
+        if(elapsed()>=limitUntil)conflicts=0
+        enabled=true;connectionState="CONNECTING";event("CONNECTING");testResult("running","CONNECTING")
+        queueConnect(generation)
     }
     @Synchronized fun stop(code:String="DISABLED") {
-        generation++;enabled=false;authenticated=false;socket?.cancel();socket=null;reconnectPending=false;event(code)
-        if(code !in listOf("DISABLED","RECONFIGURED"))testResult("failed",code)
+        ownerVersion++;generation++;enabled=false;resumePending=false;authenticated=false;connecting?.cancel(false);connecting=null
+        for(call in calls.keys)call.cancel()
+        retire();connectionState=if(code in listOf("DISABLED","RECONFIGURED"))"IDLE" else "ERROR";event(code)
+        if(code !in listOf("DISABLED","RECONFIGURED","PAUSED_BACKGROUND"))testResult("failed",code)
         else if(testStatus=="running")testResult("cancelled","STOPPED")
     }
+    @Synchronized fun stopIfOwner(owner:Int){if(ownerVersion==owner)stop()}
+    @Synchronized fun background(monitoring:Boolean) {
+        if(monitoring||!enabled)return
+        stop("PAUSED_BACKGROUND");resumePending=true;connectionState="PAUSED_BACKGROUND"
+    }
+    @Synchronized fun foreground(){
+        // In-memory consent resumes only a previously running session, never a cold launch or explicit Stop.
+        if(!resumePending)return
+        resumePending=false;enabled=true;connectionState="CONNECTING";event("RESUMING")
+        testResult("running","CONNECTING");queueConnect(generation)
+    }
     private fun current(g:Int)=enabled && g==generation
-    private fun connect(g:Int) {
-        if(!current(g))return
-        if(now()<blockedUntil){retry(g,"HTTP_429",blockedUntil-now());return}
+    @Synchronized private fun connect(g:Int) {
+        if(!current(g)||socket!=null)return
+        if(retiring!=null||elapsed()<maxOf(openAfter,releasedAfter,limitUntil)||now()<blockedUntil){queueConnect(g);return}
+        connecting=null;retryAt=0;connectionState="CONNECTING"
         try {
             val request=Request.Builder().url("https://stream.data.alpaca.markets/v2/$feed").get().build()
+            // Creation and generation validation share the same lock as Stop and Start.
             socket=sockets.newWebSocket(request,object:WebSocketListener(){
-                override fun onOpen(ws:WebSocket,response:Response) { worker.execute {
-                    if(!current(g)){ws.cancel();return@execute}
-                    try { val pair=credentials();ws.send(JSONObject().put("action","auth").put("key",pair.first).put("secret",pair.second).toString()) }
-                    catch(_:Exception){stop("KEYSTORE_UNAVAILABLE")}
+                override fun onOpen(ws:WebSocket,response:Response) { dispatch {
+                    synchronized(this@AlpacaSession){
+                        if(!current(g)||socket!==ws)return@dispatch
+                        try {connectionState="AUTHENTICATING";val pair=credentials()
+                            if(!ws.send(JSONObject().put("action","auth").put("key",pair.first).put("secret",pair.second).toString()))retry(g,"DISCONNECTED")
+                        }catch(_:Exception){stop("KEYSTORE_UNAVAILABLE")}
+                    }
                 } }
-                override fun onMessage(ws:WebSocket,text:String) { worker.execute {
-                    if(current(g)) try { receive(g,text) } catch(_:Exception){retry(g,"INVALID_DATA")} }
-                }
-                override fun onFailure(ws:WebSocket,t:Throwable,response:Response?) { worker.execute {
-                    if(current(g)) { val code=response?.code ?: 0
-                        if(code==429){response?.let{rateLimit(it)};retry(g,"HTTP_429",blockedUntil-now())}
-                        else if(code==406)stop("OTHER_APP_CONNECTION_LIMIT")
-                        else if(AlpacaPolicy.terminal(code))stop("HTTP_$code") else retry(g,failure(t)) }
+                override fun onMessage(ws:WebSocket,text:String) { dispatch {
+                    synchronized(this@AlpacaSession){if(current(g)&&socket===ws)try{receive(g,text)}catch(_:Exception){retry(g,"INVALID_DATA")}}
                 } }
-                override fun onClosed(ws:WebSocket,code:Int,reason:String) { worker.execute { if(current(g))retry(g,"DISCONNECTED") } }
-                override fun onClosing(ws:WebSocket,code:Int,reason:String) { ws.close(code,null) }
+                override fun onFailure(ws:WebSocket,t:Throwable,response:Response?) { dispatch {
+                    synchronized(this@AlpacaSession){
+                        released(ws)
+                        if(current(g)&&socket===ws){
+                            socket=null;releasedAfter=elapsed()+releasePauseMs
+                            val code=response?.code?:0
+                            if(code==429){response?.let{rateLimit(it)};retry(g,"HTTP_429",blockedUntil-now())}
+                            else if(code==406)retry(g,"CONNECTION_LIMIT")
+                            else if(AlpacaPolicy.terminal(code))stop("HTTP_$code") else retry(g,failure(t))
+                        }
+                    }
+                } }
+                override fun onClosed(ws:WebSocket,code:Int,reason:String) { dispatch {
+                    synchronized(this@AlpacaSession){released(ws);if(current(g)&&socket===ws){socket=null;releasedAfter=elapsed()+releasePauseMs;retry(g,"DISCONNECTED")}}
+                } }
+                override fun onClosing(ws:WebSocket,code:Int,reason:String) { dispatch {
+                    synchronized(this@AlpacaSession){
+                        if(current(g)&&socket===ws)retry(g,"DISCONNECTED") else ws.close(1000,null)
+                    }
+                } }
             })
-            worker.schedule({if(current(g)&&!authenticated)retry(g,"AUTH_TIMEOUT")},authTimeoutMs,TimeUnit.MILLISECONDS)
+            connectionsCreated++
+            worker.schedule({synchronized(this){if(current(g)&&!authenticated)retry(g,"AUTH_TIMEOUT")}},authTimeoutMs,TimeUnit.MILLISECONDS)
         }catch(e:Exception){retry(g,failure(e))}
     }
     @Synchronized internal fun receive(g:Int,text:String) {
         if(!current(g))return
         require(text.length<=2_000_000)
-        val rows=JSONArray(text)
+        val rows=JSONArray(text);lastMessageAt=now()
         for(i in 0 until rows.length()) {
             if(!current(g))break
             val r=rows.getJSONObject(i)
             when(r.optString("T")) {
-                "success" -> if(r.optString("msg")=="authenticated") {
-                    authenticated=true;attempts=0;event("CONNECTED");if(testStatus=="running")testResult("running","AUTHENTICATED_LOADING")
+                "success" -> if(r.optString("msg")=="authenticated"&&!authenticated) {
+                    authenticated=true;connectionState="CONNECTED";retryAt=0;event("CONNECTED")
+                    testResult("running","AUTHENTICATED_LOADING")
                     socket?.send(JSONObject().put("action","subscribe").put("bars",JSONArray(symbols)).put("updatedBars",JSONArray(symbols)).toString())
-                    for(symbol in symbols) worker.execute { history(g,symbol) }
+                    for(symbol in symbols)http.execute {history(g,symbol)}
+                    worker.schedule({synchronized(this){if(current(g)&&authenticated){attempts=0;conflicts=0}}},60,TimeUnit.SECONDS)
                 }
-                "error" -> { val code=r.optInt("code")
-                    if(AlpacaPolicy.terminal(code))stop(if(code==406)"OTHER_APP_CONNECTION_LIMIT" else "WS_ERROR_$code")
+                "error" -> {val code=r.optInt("code")
+                    if(code==406)retry(g,"CONNECTION_LIMIT")
+                    else if(AlpacaPolicy.terminal(code))stop("WS_ERROR_$code")
                     else retry(g,if(code==404)"AUTH_TIMEOUT" else "WS_ERROR_$code")
                 }
-                "b","u" -> if(authenticated) accept(r.optString("S"),r)
+                "b","u" -> if(authenticated)accept(r.optString("S"),r)
             }
         }
     }
     @Synchronized private fun retry(g:Int,code:String,minDelay:Long=0) {
-        if(!current(g)||reconnectPending)return
-        authenticated=false;socket?.cancel();socket=null
-        if(attempts>=8){stop("RETRY_EXHAUSTED");return}
-        reconnectPending=true;event(code);testResult("failed",code)
-        val delay=maxOf(minDelay,AlpacaPolicy.retryMs(attempts++))
-        // Invalidate callbacks from the old socket before scheduling a replacement.
-        val next=++generation
-        worker.schedule({synchronized(this){reconnectPending=false};if(current(next))connect(next)},delay,TimeUnit.MILLISECONDS)
+        if(!current(g))return
+        authenticated=false;generation++ // Invalidates all callbacks before closing the old socket.
+        for(call in calls.keys)call.cancel()
+        retire();event(code);testResult("failed",code)
+        val delay:Long
+        if(code=="CONNECTION_LIMIT"){
+            delay=limitDelay(conflicts)
+            limitUntil=maxOf(limitUntil,elapsed()+delay)
+            if(conflicts++>=3){stop("CONNECTION_LIMIT_EXHAUSTED");retryAt=now()+delay;return}
+        }else{
+            if(attempts>=8){stop("RETRY_EXHAUSTED");return}
+            delay=maxOf(minDelay,retryDelay(attempts++))
+        }
+        connectionState="RETRY_WAIT";openAfter=elapsed()+delay;queueConnect(generation)
     }
     @Synchronized private fun accept(symbol:String,r:JSONObject) {
         if(symbol !in symbols)return
@@ -145,35 +239,40 @@ internal class AlpacaSession(
         require(AlpacaPolicy.validBar(o,h,l,c,v))
         val series=bars.getOrPut(symbol){TreeMap()}
         series[time]=JSONObject().put("t",time).put("o",o).put("h",h).put("l",l).put("c",c).put("v",v)
+        lastBarAt=now()
         while(series.size>1000)series.pollFirstEntry() // bounded chart cache, not a decision archive
     }
     private fun request(g:Int,url:HttpUrl):JSONObject {
         if(!current(g)||!authenticated)throw DataFailure("DISCONNECTED")
         if(now()<blockedUntil)throw DataFailure("HTTP_429")
-        if(now()<nextRequest)throw DataFailure("REQUEST_BUDGET")
-        nextRequest=now()+4000 // <=15 REST/min across history and options in this instance
+        synchronized(this){if(now()<nextRequest)throw DataFailure("REQUEST_BUDGET")
+            nextRequest=now()+4000} // <=15 REST/min across history and options in this instance
         val pair=try{credentials()}catch(_:Exception){throw DataFailure("KEYSTORE_UNAVAILABLE")}
         val req=Request.Builder().url(url).get().header("APCA-API-KEY-ID",pair.first).header("APCA-API-SECRET-KEY",pair.second).build()
         require(AlpacaPolicy.permits(req.method,req.url.toString()))
-        transport.newCall(req).execute().use { response ->
-            if(!current(g))throw IOException("DISCONNECTED")
+        val call=transport.newCall(req)
+        synchronized(this){if(!current(g))throw DataFailure("DISCONNECTED");calls[call]=g}
+        try {call.execute().use { response ->
+            synchronized(this){
+            if(!current(g))throw DataFailure("DISCONNECTED")
             if(response.code==429) {
                 rateLimit(response);event("HTTP_429");testResult("failed","HTTP_429");throw DataFailure("HTTP_429")
             }
             if(response.code==401){stop("HTTP_401");throw DataFailure("HTTP_401")}
             if(response.code==403 && url.encodedPath=="/v2/stocks/bars"){stop("HTTP_403");throw DataFailure("HTTP_403")}
             if(response.code!=200)throw DataFailure("HTTP_${response.code}")
+            }
             val body=response.body ?: throw DataFailure("INVALID_DATA")
             val source=body.source()
             source.request(2_000_001)
             require(source.buffer.size<=2_000_000)
             return JSONObject(source.buffer.readUtf8())
-        }
+        }}finally{calls.remove(call)}
     }
     private fun history(g:Int,symbol:String) {
         if(!current(g))return
         val wait=maxOf(nextRequest,blockedUntil)-now()
-        if(wait>0){worker.schedule({history(g,symbol)},wait,TimeUnit.MILLISECONDS);return}
+        if(wait>0){http.schedule({history(g,symbol)},wait,TimeUnit.MILLISECONDS);return}
         try {
             val url="https://data.alpaca.markets/v2/stocks/bars".toHttpUrl().newBuilder()
                 .addQueryParameter("symbols",symbol).addQueryParameter("timeframe","1Min")
@@ -194,14 +293,14 @@ internal class AlpacaSession(
         }catch(e:Exception){if(current(g)){
             val code=failure(e);event(code);testResult("failed",code)
             if(code=="KEYSTORE_UNAVAILABLE")stop(code)
-            else worker.schedule({if(current(g))history(g,symbol)},maxOf(60000,blockedUntil-now()),TimeUnit.MILLISECONDS)
+            else http.schedule({if(current(g))history(g,symbol)},maxOf(60000,blockedUntil-now()),TimeUnit.MILLISECONDS)
         }}
     }
     fun quote(contract:String,done:(String?)->Unit) {
         require(AlpacaPolicy.contract(contract));val g=generation
         val delay=maxOf(nextRequest,blockedUntil)-now()
         if(delay>10000){done(null);return}
-        worker.schedule({ try {
+        http.schedule({ try {
             require(AlpacaPolicy.inSession(now(),"regular"))
             val url="https://data.alpaca.markets/v1beta1/options/snapshots".toHttpUrl().newBuilder()
                 .addQueryParameter("symbols",contract).addQueryParameter("feed","opra").build()
@@ -226,8 +325,11 @@ internal class AlpacaSession(
             .put("feed",feed).put("session",session).put("source","alpaca").put("asOf",now())
             .put("testStatus",testStatus).put("testCode",testCode).put("testAt",testAt)
             .put("symbols",JSONArray(symbols))
-            .put("bars",series).put("analysis",analysis).put("retryAt",blockedUntil)
+            .put("bars",series).put("analysis",analysis).put("retryAt",maxOf(retryAt,blockedUntil))
+            .put("state",connectionState).put("lastMessageAt",lastMessageAt).put("lastBarAt",lastBarAt)
+            .put("lastError",lastError).put("lastErrorAt",lastErrorAt).put("connectionsCreated",connectionsCreated)
+            .put("activeSockets",if(socket==null)0 else 1).put("closingSockets",if(retiring==null)0 else 1)
             .put("events",JSONArray(events.toList())).toString()
     }
-    internal fun close(){stop();worker.shutdownNow();transport.dispatcher.executorService.shutdownNow();transport.connectionPool.evictAll()}
+    internal fun close(){stop();synchronized(this){retiring?.cancel();retiring=null};worker.shutdownNow();http.shutdownNow();transport.dispatcher.executorService.shutdownNow();transport.connectionPool.evictAll()}
 }

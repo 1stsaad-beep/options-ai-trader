@@ -15,11 +15,66 @@ import okio.ByteString
 import org.json.JSONObject
 import java.time.Instant
 import java.util.concurrent.CopyOnWriteArrayList
+import androidx.test.core.app.ActivityScenario
+import java.util.concurrent.atomic.AtomicInteger
 
 /** Disposable emulator only; mock strings, no network and no provider credentials. */
 @RunWith(AndroidJUnit4::class)
 class AlpacaVaultDeviceTest {
     private val context get()=InstrumentationRegistry.getInstrumentation().targetContext
+    private fun waitFor(check:()->Boolean){
+        val until=System.nanoTime()+10_000_000_000L
+        while(!check()&&System.nanoTime()<until)Thread.sleep(30)
+        assertTrue(check())
+    }
+    @Test fun runtimeIsSharedAcrossActivityAndApplicationContexts(){
+        assertSame(AlpacaRuntime.get(context),AlpacaRuntime.get(context.applicationContext))
+    }
+    @Test fun actualActivityScreenSleepWakeResumesOneMockSession(){
+        val opened=AtomicInteger();val active=AtomicInteger();val maximum=AtomicInteger()
+        val transport=AlpacaSession.client().newBuilder().addInterceptor{chain->
+            Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(200).message("mock")
+                .body("""{"bars":{}}""".toResponseBody()).build()
+        }.build()
+        val sockets=object:WebSocket.Factory{
+            override fun newWebSocket(request:Request,listener:WebSocketListener):WebSocket{
+                opened.incrementAndGet();maximum.updateAndGet{maxOf(it,active.incrementAndGet())}
+                val socket=object:WebSocket{
+                    var ended=false
+                    override fun request()=request
+                    override fun queueSize()=0L
+                    override fun send(text:String):Boolean{if(JSONObject(text).optString("action")=="auth")listener.onMessage(this,"""[{"T":"success","msg":"authenticated"}]""");return true}
+                    override fun send(bytes:ByteString)=false
+                    @Synchronized override fun close(code:Int,reason:String?):Boolean{if(!ended){ended=true;active.decrementAndGet();listener.onClosed(this,1000,"mock")};return true}
+                    @Synchronized override fun cancel(){if(!ended){ended=true;active.decrementAndGet()}}
+                }
+                listener.onOpen(socket,Response.Builder().request(request).protocol(Protocol.HTTP_1_1).code(101).message("mock").build());return socket
+            }
+        }
+        val session=AlpacaSession({Pair("mock-public-key","mock-private-value")},transport=transport,sockets=sockets)
+        // Test APK only: replace the process singleton with an entirely intercepted transport.
+        val field=AlpacaRuntime::class.java.getDeclaredField("instance").apply{isAccessible=true}
+        val previous=field.get(null);AlpacaRuntime.stop();field.set(null,session)
+        val automation=InstrumentationRegistry.getInstrumentation().uiAutomation
+        fun shell(command:String){android.os.ParcelFileDescriptor.AutoCloseInputStream(automation.executeShellCommand(command)).use{it.readBytes()}}
+        try{
+            shell("input keyevent KEYCODE_WAKEUP");shell("wm dismiss-keyguard")
+            ActivityScenario.launch(MainActivity::class.java).use{scenario->
+                scenario.onActivity{session.start("iex","regular",listOf("NVDA"))}
+                waitFor{JSONObject(session.snapshot()).getBoolean("connected")};assertEquals(1,opened.get())
+                shell("input keyevent KEYCODE_SLEEP")
+                waitFor{JSONObject(session.snapshot()).getString("state")=="PAUSED_BACKGROUND"}
+                assertFalse(JSONObject(session.snapshot()).getBoolean("connected"))
+                shell("input keyevent KEYCODE_WAKEUP");shell("wm dismiss-keyguard")
+                waitFor{JSONObject(session.snapshot()).getBoolean("connected")&&opened.get()==2}
+                assertEquals(1,maximum.get())
+                scenario.onActivity{session.stop()}
+                shell("input keyevent KEYCODE_SLEEP");Thread.sleep(200)
+                shell("input keyevent KEYCODE_WAKEUP");shell("wm dismiss-keyguard");Thread.sleep(300)
+                assertFalse(session.enabled);assertEquals(2,opened.get())
+            }
+        }finally{shell("input keyevent KEYCODE_WAKEUP");shell("wm dismiss-keyguard");session.close();field.set(null,previous)}
+    }
     @Test fun encryptedRoundTripUsesNonExportableAndroidKey() {
         val vault=AlpacaVault(context);vault.save("mock-public-key","mock-private-value")
         assertTrue(vault.exists());assertEquals(Pair("mock-public-key","mock-private-value"),vault.read())

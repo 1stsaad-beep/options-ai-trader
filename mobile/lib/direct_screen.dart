@@ -9,7 +9,8 @@ import 'market_paper.dart';
 class DirectAlpacaScreen extends StatefulWidget {
   final DirectAlpaca? api;
   final PaperStore? paperStore;
-  const DirectAlpacaScreen({super.key,this.api,this.paperStore});
+  final int initialPage;
+  const DirectAlpacaScreen({super.key,this.api,this.paperStore,this.initialPage=0});
   @override State<DirectAlpacaScreen> createState()=>_DirectAlpacaScreenState();
 }
 class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBindingObserver {
@@ -18,7 +19,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
   final keyId=TextEditingController(),secret=TextEditingController(),symbols=TextEditingController(text:'NVDA,AAPL,TSLA');
   final accountName=TextEditingController(),contract=TextEditingController();
   DirectSnapshot snapshot=DirectSnapshot();
-  bool hasKeys=false,real=false,working=false,polling=false,background=false,visible=true,ready=false,awaitingTest=false;
+  bool hasKeys=false,real=false,working=false,polling=false,background=false,visible=true,ready=false,awaitingTest=false,snapshotKnown=false;
   String keyState='checking';
   String feed='iex',session='regular',selectedSymbol='NVDA',direction='CALL';
   String? selectedAccount,notice;
@@ -27,6 +28,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
   List<String> get watch=>symbols.text.toUpperCase().split(',').map((s)=>s.trim()).where((s)=>s.isNotEmpty).toSet().toList();
   @override void initState(){super.initState();WidgetsBinding.instance.addObserver(this);
     api=widget.api??DirectAlpaca();paper=widget.paperStore==null?MarketPaper.device:MarketPaper(widget.paperStore!);
+    page=widget.initialPage;
     paper.addListener(changed);
     initialize();timer=Timer.periodic(const Duration(seconds:1),(_){if(visible)refresh();});
     cycle=Timer.periodic(const Duration(seconds:30),(_){if(visible)paperCycle();});
@@ -54,7 +56,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     if(working||!mounted)return;setState(()=>working=true);
     try{await action().timeout(const Duration(seconds:15));}
     on PlatformException catch(e){message(directMessage(e.code));}
-    on TimeoutException {connectEpoch++;unawaited(api.stop().catchError((_){ }));message(directMessage('BRIDGE_TIMEOUT'));}
+    on TimeoutException {connectEpoch++;message(directMessage('BRIDGE_TIMEOUT'));}
     catch(_){message(directMessage('CHANNEL_UNAVAILABLE'));}
     finally{if(mounted)setState(()=>working=false);}
   }
@@ -64,13 +66,13 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
       final s=await api.snapshot().timeout(const Duration(seconds:8));
       final bg=await api.background().timeout(const Duration(seconds:8));
       if(!mounted||epoch!=refreshEpoch)return;
-      setState((){snapshot=s;background=bg;});
+      setState((){snapshot=s;background=bg;snapshotKnown=true;});
       if(awaitingTest&&['succeeded','failed','cancelled'].contains(s.testStatus)){
         awaitingTest=false;testDeadline?.cancel();message(directMessage(s.testCode));
       }
     }catch(e){
-      if(mounted&&epoch==refreshEpoch){setState(()=>snapshot=DirectSnapshot());
-        if(awaitingTest){awaitingTest=false;testDeadline?.cancel();unawaited(api.stop().catchError((_){ }));
+      if(mounted&&epoch==refreshEpoch){setState((){snapshot=DirectSnapshot();snapshotKnown=false;});
+        if(awaitingTest){awaitingTest=false;testDeadline?.cancel();
           message(directMessage(e is TimeoutException?'BRIDGE_TIMEOUT':'CHANNEL_UNAVAILABLE'));}
       }
     }finally{polling=false;}
@@ -90,6 +92,8 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     keyState=await api.keyState();hasKeys=keyState=='readable';
     if(!hasKeys){message(directMessage(keyState=='missing'?'KEYS_MISSING':'KEYSTORE_UNAVAILABLE'));return;}
     if(!real){message(directMessage('REAL_DATA_OFF'));return;}
+    await refresh();
+    if(snapshotKnown&&snapshot.enabled){message(directMessage(snapshot.reason));return;}
     if(watch.isEmpty||watch.length>10||watch.any((s)=>!RegExp(r'^[A-Z][A-Z0-9.]{0,9}$').hasMatch(s))){message(directMessage('INVALID_SETTINGS'));return;}
     message(directMessage('CONNECTING'));
     await persist();await paper.pauseAll();
@@ -97,7 +101,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     // Only this explicit button (or an already opted-in monitor button) can start transport.
     try {await api.start(feed,session,watch).timeout(const Duration(seconds:10));}
     catch(_){unawaited(api.stop().catchError((_){ }));rethrow;}
-    if(!mounted||!visible||epoch!=connectEpoch){await api.stop();return;}
+    if(!mounted||!visible||epoch!=connectEpoch)return;
     refreshEpoch++;
     selectedSymbol=watch.contains(selectedSymbol)?selectedSymbol:watch.first;
     awaitingTest=true;testDeadline?.cancel();
@@ -127,11 +131,15 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
   @override void dispose(){connectEpoch++;refreshEpoch++;timer?.cancel();cycle?.cancel();testDeadline?.cancel();WidgetsBinding.instance.removeObserver(this);
     paper.removeListener(changed);unawaited(paper.pauseAll());
     unawaited(api.secureScreen(false).catchError((_){ }));
-    if(!background)unawaited(api.stop().catchError((_){ }));
+    // Page disposal releases only UI resources. Native app lifecycle owns the shared connection.
     for(final c in [keyId,secret,symbols,accountName,contract]){c.clear();c.dispose();}
     super.dispose();
   }
   String reason(String code)=>directMessage(code);
+  String stamp(int value)=>value==0?'لم يصل بعد':DateTime.fromMillisecondsSinceEpoch(value,isUtc:true).toIso8601String();
+  String get connectionLabel=>!snapshotKnown?'جارٍ قراءة حالة الاتصال الأصلية':snapshot.connected?'Connected':
+    snapshot.state=='RETRY_WAIT'?'Reconnecting':snapshot.state=='PAUSED_BACKGROUND'?'Paused':
+    ['CONNECTING','AUTHENTICATING'].contains(snapshot.state)?'Connecting':'Disconnected';
   @override Widget build(BuildContext context)=>Scaffold(
     appBar:AppBar(title:const Text('Alpaca مباشر • Market Data'),actions:[IconButton(tooltip:'إيقاف الاتصال',onPressed:()=>run(disconnect),icon:const Icon(Icons.stop_circle_outlined))]),
     bottomNavigationBar:NavigationBar(selectedIndex:page,onDestinationSelected:(i)=>setState(()=>page=i),destinations:const [
@@ -139,7 +147,10 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
       NavigationDestination(icon:Icon(Icons.account_balance_wallet),label:'Market Paper'),NavigationDestination(icon:Icon(Icons.notifications),label:'الأحداث')]),
     body:SafeArea(child:ListView(padding:const EdgeInsets.all(16),children:[
       const Text('وضع الهاتف مستقل عن الخادم وDemo Synthetic • لا Live Trading أو IBKR'),
-      Text('${snapshot.connected?'Connected':'Disconnected'} • ${reason(snapshot.reason)}',key:const Key('direct-status')),
+      Text('$connectionLabel • ${snapshotKnown?reason(snapshot.reason):"الحالة غير مؤكدة؛ لا نستنتج انقطاع الشبكة من غياب الواجهة"}',key:const Key('direct-status')),
+      Text('آخر رسالة WebSocket UTC: ${stamp(snapshot.lastMessageAt)} • آخر استلام OHLCV: ${stamp(snapshot.lastBarAt)}',key:const Key('direct-updated')),
+      if(snapshot.lastError.isNotEmpty)Text('آخر خطأ: ${reason(snapshot.lastError)} • ${stamp(snapshot.lastErrorAt)}',key:const Key('direct-last-error')),
+      if(snapshot.retryAt>DateTime.now().millisecondsSinceEpoch)Text('إعادة المحاولة بعد UTC: ${stamp(snapshot.retryAt)}'),
       if(notice!=null)Text(notice!,key:const Key('direct-notice')),
       if(working)const LinearProgressIndicator(),
       if(page==0)...settings(),
@@ -188,11 +199,12 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     if(notice!=null)Text(notice!,key:const Key('alpaca-test-feedback')),
     Text('نتيجة آخر محاولة: ${directMessage(snapshot.testCode)}',key:const Key('alpaca-test-result')),
     if(snapshot.testAt>0)Text('وقت النتيجة UTC: ${DateTime.fromMillisecondsSinceEpoch(snapshot.testAt,isUtc:true).toIso8601String()}'),
-    Text('الاتصال الحالي: ${snapshot.connected?'Connected':'Disconnected'} • ${directMessage(snapshot.reason)}'),
-    const Text('احتمال وجود حد WebSocket واحد للحساب. عند 406 يتوقف هذا التطبيق دون إيقاف التطبيق الآخر. لا نغيّر الاشتراك أو نشتري خدمات.'),
+    Text('الاتصال الحالي: $connectionLabel • ${directMessage(snapshot.reason)}'),
+    FilledButton.tonal(key:const Key('alpaca-open-chart'),onPressed:()=>setState(()=>page=1),child:const Text('عرض شارت Alpaca — البيانات الفعلية فقط')),
+    const Text('الجلسة مشتركة داخل التطبيق وتبقى عند مغادرة هذه الصفحة. لا تُفتح جلسة إضافية عند العودة. 406 يعني بلوغ حد الجلسات، وليس دليلًا على تطبيق آخر؛ نغلق جلساتنا فقط وننتظر 15 ثم 30 ثم 60 ثانية، وبعد تكراره نتوقف. إعادة الفحص لا تتجاوز المهلة.'),
     const Divider(),
     Text('مراقبة الخلفية: ${background?'تعمل مؤقتًا':'متوقفة'}'),
-    const Text('خدمة اختيارية لمدة ≤30 دقيقة للأسعار وRSI/MACD مع إشعار دائم. قد يقيّدها توفير البطارية أو الشبكة أو Android. لا تعمل عند إطفاء الهاتف ولا تعيد تشغيل نفسها. Market Paper يتوقف عند مغادرة التطبيق؛ لا حماية مراكز مضمونة في الخلفية.'),
+    const Text('خدمة اختيارية لمدة ≤30 دقيقة للأسعار وRSI/MACD مع إشعار دائم. بدونها تتوقف الجلسة عند إطفاء الشاشة أو مغادرة التطبيق وتستأنف عند الرجوع ضمن العملية نفسها. قد يقيّدها Android والبطارية؛ لا تعمل عند إطفاء الهاتف ولا تعيد تشغيل نفسها. Market Paper يتوقف خارج التطبيق؛ لا حماية مراكز مضمونة في الخلفية.'),
     OutlinedButton(onPressed:working||!snapshot.connected?null:()=>run(()async{
       final allowed=await MarketMonitor.channel.invokeMethod<bool>('permission')??false;
       if(!allowed){notice='اسمح بالإشعارات من إعدادات Android أولًا.';return;}

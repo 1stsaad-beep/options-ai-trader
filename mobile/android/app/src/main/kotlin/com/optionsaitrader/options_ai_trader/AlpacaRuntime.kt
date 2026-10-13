@@ -9,4 +9,6 @@ internal object AlpacaRuntime {
         return instance ?: AlpacaSession({AlpacaVault(app).read()}).also {instance=it}
     }
     fun stop(){instance?.stop()}
+    fun background(monitoring:Boolean){instance?.background(monitoring)}
+    fun foreground(){instance?.foreground()}
 }
