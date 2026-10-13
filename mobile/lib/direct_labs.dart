@@ -8,15 +8,38 @@ import 'demo/wave_analysis.dart';
 class MarketSignal {
   final String direction;
   final bool confirmedReverse;
-  const MarketSignal(this.direction,this.confirmedReverse);
-  static MarketSignal analyze(List<MarketBar> rows) {
+  final String reason;
+  const MarketSignal(this.direction,this.confirmedReverse,{this.reason='QUANTITATIVE_RULE'});
+  static MarketSignal analyze(List<MarketBar> rows,{String strategy='confluence'}) {
     if(rows.length<35)return const MarketSignal('WAIT',false);
+    if(!['confluence','trend','breakout','pullback','divergence'].contains(strategy))return const MarketSignal('WAIT',false,reason:'UNSUPPORTED_STRATEGY');
     final bars=[for(var i=0;i<rows.length;i++)rows[i].candle(i)];
     final div=DemoChartAnalysis.divergenceSegments(bars).where((d)=>d.confirmedAt==bars.last.tick).toList();
-    final bull=div.any((d)=>d.kind=='صاعد عادي'),bear=div.any((d)=>d.kind=='هابط عادي');
-    if(bull!=bear)return MarketSignal(bull?'CALL':'PUT',true);
+    bool structured(ChartDivergence d) {
+      final between=bars.sublist(d.first.index+1,d.second.index);
+      if(between.isEmpty)return false;
+      return d.kind=='صاعد عادي'?bars.last.close>between.map((b)=>b.high).reduce(math.max):
+        d.kind=='هابط عادي'&&bars.last.close<between.map((b)=>b.low).reduce(math.min);
+    }
+    final bull=div.any((d)=>d.kind=='صاعد عادي'&&structured(d)),bear=div.any((d)=>d.kind=='هابط عادي'&&structured(d));
+    if(['confluence','divergence'].contains(strategy)&&bull!=bear)return MarketSignal(bull?'CALL':'PUT',true,reason:'DIVERGENCE_AND_STRUCTURE_BREAK');
+    if(strategy=='divergence')return const MarketSignal('WAIT',false,reason:'NO_CONFIRMED_DIVERGENCE_STRUCTURE');
     final s=DemoChartAnalysis.summary(bars),rsi=s['rsi14'] as double?;
     if(rsi==null||!rsi.isFinite)return const MarketSignal('WAIT',false);
+    if(strategy=='breakout') {
+      final previous=bars.sublist(bars.length-21,bars.length-1),last=bars.last;
+      final volume=previous.map((b)=>b.volume).reduce((a,b)=>a+b)/previous.length;
+      if(volume<=0||last.volume<volume*1.2)return const MarketSignal('WAIT',false,reason:'BREAKOUT_VOLUME_NOT_CONFIRMED');
+      if(last.close>previous.map((b)=>b.high).reduce(math.max))return const MarketSignal('CALL',false,reason:'UPPER_RANGE_VOLUME_BREAK');
+      if(last.close<previous.map((b)=>b.low).reduce(math.min))return const MarketSignal('PUT',false,reason:'LOWER_RANGE_VOLUME_BREAK');
+      return const MarketSignal('WAIT',false,reason:'NO_RANGE_BREAK');
+    }
+    if(strategy=='pullback') {
+      final last=bars.last,previous=bars[bars.length-2],mean=s['sma20'] as double;
+      if(s['macd']>0&&last.low<=mean&&last.close>mean&&last.close>previous.high&&rsi>=50&&rsi<=70)return const MarketSignal('CALL',false,reason:'BULLISH_MEAN_RETEST_AND_STRUCTURE');
+      if(s['macd']<0&&last.high>=mean&&last.close<mean&&last.close<previous.low&&rsi>=30&&rsi<=50)return const MarketSignal('PUT',false,reason:'BEARISH_MEAN_RETEST_AND_STRUCTURE');
+      return const MarketSignal('WAIT',false,reason:'NO_CONFIRMED_MEAN_RETEST');
+    }
     if(bars.last.close>s['sma20']&&s['macd']>0&&rsi>=50&&rsi<=70)return const MarketSignal('CALL',false);
     if(bars.last.close<s['sma20']&&s['macd']<0&&rsi>=30&&rsi<=50)return const MarketSignal('PUT',false);
     return const MarketSignal('WAIT',false);

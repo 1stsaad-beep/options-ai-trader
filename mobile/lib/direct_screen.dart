@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'direct_alpaca.dart';
 import 'direct_labs.dart';
 import 'market_monitor.dart';
 import 'market_paper.dart';
+import 'market_paper_reports.dart';
 
 class DirectAlpacaScreen extends StatefulWidget {
   final DirectAlpaca? api;
@@ -116,13 +118,22 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     for(final a in paper.accounts) {
       if(a['enabled']!=true)continue;
       if(forceClose&&a['id']!=selectedAccount)continue;
-      final targets=forceClose?[selectedSymbol]:{...watch,...(a['positions'] as Map).keys.cast<String>()}.toList();
+      final targets=forceClose?[selectedSymbol]:{...(a['watchlist'] as List? ?? watch).cast<String>(),...(a['positions'] as Map).keys.cast<String>()}.toList();
       for(final symbol in targets) {
         if(!visible||!mounted)return;
-        final rows=snapshot.series[symbol]??[],signal=MarketSignal.analyze(rows);
+        final rows=snapshot.series[symbol]??[];
+        MarketSignal readSignal(){
+          try{return MarketSignal.analyze(snapshot.series[symbol]??[],strategy:a['strategy'] as String? ?? 'confluence');}
+          catch(_){return const MarketSignal('WAIT',false,reason:'OPTIONAL_ANALYSIS_UNAVAILABLE');}
+        }
+        final signal=readSignal();
         await paper.evaluate(id:a['id'] as String,symbol:symbol,signal:signal.direction,confirmedReverse:signal.confirmedReverse,
           dataValid:()=>visible&&snapshot.validForDecision(symbol,DateTime.now()),
-          observation:rows.isEmpty?'none':rows.last.time.toIso8601String(),quotes:api.quote,forceClose:forceClose);
+          observation:rows.isEmpty?'none':rows.last.time.toIso8601String(),quotes:api.quote,forceClose:forceClose,
+          currentSignal:()=>readSignal().direction,evidence:{'source':snapshot.source=='alpaca'?'alpaca':'fixture',
+            'feed':snapshot.feed,'rule':signal.reason,'recordedAt':DateTime.now().toUtc().toIso8601String(),
+            'bars':[for(final bar in rows.skip(rows.length>120?rows.length-120:0))
+              {'at':bar.time.toUtc().toIso8601String(),'o':bar.open,'h':bar.high,'l':bar.low,'c':bar.close,'v':bar.volume}]});
       }
     }
   }
@@ -226,17 +237,36 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
   ];
   List<Widget> paperWidgets(){
     final a=selectedAccount==null?null:paper.account(selectedAccount!);
+    final report=a==null?null:paper.performance(selectedAccount!);
+    String money(Object? cents)=>cents is num?'${(cents/100).toStringAsFixed(2)} USD':'غير متاح — تنقص بيانات موثقة';
     return [
       const Text('Market Paper • أموال افتراضية مستقلة • تعبئة بحثية تقريبية فقط بعرض OPRA مؤهل (شراء ask / إغلاق bid، عمولة افتراضية 0.65 USD للعقد لكل جهة). لا تحاكي طابور السوق أو الانزلاق أو التنفيذ الفعلي.'),
       const Text('بدون OPRA حديث وصالح: إشارات فقط، لا تعبئة Call/Put. IEX/SIP للأسهم لا يمنحان بيانات الخيارات. لا استخدام للأسعار الإرشادية indicative.'),
       const Text('المحاكاة تفترض معامل عقد قياسي 100؛ لا تدعم العقود المعدلة/mini أو التمرين والتخصيص. انتهاء الصلاحية أو فقد الأسعار لا يُنشئ إغلاقًا وهميًا.'),
       if(paper.error!=null)Text(paper.error!),
+      FilledButton(key:const Key('paper-experiment'),onPressed:paper.busy||!paper.ready?null:()=>paper.createComparisonExperiment(),
+        child:const Text('تجهيز 4 حسابات مستقلة × 1,000 USD')),
+      const Text('اتجاه، اختراق، تراجع، دايفرجنس. الحسابات تبدأ متوقفة؛ لا نتائج قبل الرصد، ولا تُحسب Fixtures جلسات سوق فعلية.'),
+      OutlinedButton(key:const Key('paper-comparison'),onPressed:!paper.ready?null:()async{
+        await Clipboard.setData(ClipboardData(text:const JsonEncoder.withIndent('  ').convert(paper.comparison())));
+        message('نُسخ تقرير المقارنة وأسباب القرارات الأصلية. الجلسات غير المرصودة موسومة NOT_RUN.');
+      },child:const Text('نسخ تقرير الحسابات وثلاث جلسات بصيغة JSON')),
       TextField(controller:accountName,decoration:const InputDecoration(labelText:'اسم حساب Market Paper جديد')),
       OutlinedButton(onPressed:paper.busy||!paper.ready?null:()=>paper.add(accountName.text),child:const Text('إنشاء حساب افتراضي 10,000 USD')),
       if(a!=null)...[
         DropdownButtonFormField<String>(initialValue:selectedAccount,items:paper.accounts.map((x)=>DropdownMenuItem(value:x['id'] as String,child:Text(x['name'] as String))).toList(),
           onChanged:(v)=>setState(()=>selectedAccount=v),decoration:const InputDecoration(labelText:'الحساب المستقل')),
         Text('النقد الافتراضي: ${(a['cash']/100).toStringAsFixed(2)} USD'),
+        Text('P&L محقق: ${money(report!['realizedPnlCents'])} • غير محقق: ${money(report['unrealizedPnlCents'])}'),
+        Text('الرسوم: ${money(report['totalFeesCents'])} • الصفقات المغلقة: ${report['closedTrades']??"غير متاح"} • النجاح: ${report['winRatePercent']??"—"}%'),
+        Text('العائد: ${report['returnPercent']??"غير متاح"}% • التراجع المرصود: ${money(report['sampledMaxDrawdownCents'])}؛ لا تقدير خلال انقطاع الأسعار.'),
+        DropdownButtonFormField<String>(key:ValueKey('paper-strategy-$selectedAccount-${a['strategy']}'),
+          initialValue:a['strategy'] as String? ?? 'confluence',decoration:const InputDecoration(labelText:'استراتيجية هذا الحساب'),
+          items:paperStrategyLabels.entries.map((e)=>DropdownMenuItem(value:e.key,child:Text(e.value))).toList(),
+          onChanged:paper.busy?null:(v){if(v!=null)paper.configure(selectedAccount!,{'strategy':v});}),
+        TextFormField(key:ValueKey('paper-watchlist-$selectedAccount'),initialValue:(a['watchlist'] as List? ?? watch).join(','),
+          decoration:const InputDecoration(labelText:'قائمة هذا الحساب — Enter للحفظ',helperText:'يجب أن تكون الرموز مشمولة باتصال البيانات للحصول على أسعار.'),
+          onFieldSubmitted:(v)=>run(()async{await paper.configure(selectedAccount!,{'watchlist':v.toUpperCase().split(',').map((s)=>s.trim()).toList()});})),
         SwitchListTile(title:const Text('تشغيل تقييم هذا الحساب'),subtitle:const Text('دورة كل 30 ثانية داخل التطبيق. يتوقف عند مغادرته أو تغيير الاتصال.'),value:a['enabled']==true,
           onChanged:snapshot.connected?(v)=>paper.configure(selectedAccount!,{'enabled':v}):null),
         Text('المخاطرة القصوى للمركز ${a['riskPercent']}% • العقود ${a['quantity']} • SL ${a['stopPercent']}% • TP ${a['takePercent']}% • Trailing ${a['trailPercent']}%'),

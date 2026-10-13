@@ -13,6 +13,8 @@
 
 ## Next exact actions
 
+Experiment/reporting batch prepared: explicit idempotent creation of four new USD1,000 accounts (trend, range breakout, confirmed pullback, structurally confirmed divergence), independent watchlists and strategy controls; existing accounts remain intact. Quote-side receipts now freeze quantity/price/fee/cash/realized P&L and original rule/source/observed bars, with receipt reconciliation for newly created accounts. Legacy missing totals remain unknown. Performance uses fresh option bid minus closing fees and reports unavailable values for stale marks. Journal segmentation retains original events instead of blocking protective fills at a fixed total count. Three-session comparison is exported as JSON and labels unobserved sessions NOT_RUN; fixtures do not count. Eleven new experiment/report/causality/receipt regressions are authored, pending CI. Further aggregate/day risk and full lifecycle gaps remain open.
+
 Checkpoint `7641960d8ead0fcc140eeb9b3b8c7f450ec46f8b` published and remote HEAD read back. Original local Git commit/tree reconstructed exactly; worktree synchronized without a reset. Baseline Python JUnit is committed.
 
 Sixteen direct-paper regression cases were published at `25627f05658b83d4058e54e8edd3b55aca28f1fe`. Baseline run `38463826148` passed analyze and failed the expected Flutter reproduction gate; raw artifact `11847990715` is being inspected. Android/iOS release packaging was skipped, chart/Golden and security workflows succeeded. No failed gate is called accepted.

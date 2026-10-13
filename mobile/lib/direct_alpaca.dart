@@ -117,7 +117,11 @@ class DirectSnapshot {
     live(symbol,now)?'LIVE • Alpaca ${feed.toUpperCase()}':source=='alpaca'?'Alpaca ${feed.toUpperCase()} • تاريخية/قديمة — ليست LIVE':'لا بيانات';
   bool validForDecision(String symbol,DateTime now) {
     final rows=series[symbol]??[];
-    return live(symbol,now)&&rows.length>=35&&rows.last.time.difference(rows[rows.length-2].time).inSeconds==60;
+    if(!live(symbol,now)||rows.length<35)return false;
+    for(var i=rows.length-34;i<rows.length;i++) {
+      if(rows[i].time.difference(rows[i-1].time).inSeconds!=60)return false;
+    }
+    return true;
   }
 }
 

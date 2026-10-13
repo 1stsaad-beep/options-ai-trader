@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'direct_alpaca.dart';
+import 'market_paper_reports.dart';
 
 Map<String, dynamic> copyPaper(Map<String, dynamic> value) =>
     jsonDecode(jsonEncode(value)) as Map<String, dynamic>;
@@ -42,6 +43,23 @@ void validatePaper(Map<String, dynamic> book) {
     for (final field in ['riskPercent', 'stopPercent', 'takePercent', 'trailPercent']) {
       if (!integer(a[field], 1, 50)) invalid();
     }
+    if (a.containsKey('strategy') && !paperStrategyLabels.containsKey(a['strategy'])) invalid();
+    if (a.containsKey('watchlist')) {
+      final watch = a['watchlist'];
+      if (watch is! List || watch.isEmpty || watch.length > 10 || watch.toSet().length != watch.length ||
+          watch.any((s) => s is! String || !symbol.hasMatch(s))) {
+        invalid();
+      }
+    }
+    for (final field in ['fees', 'closedTrades', 'winningTrades', 'peakEquity', 'maxDrawdown']) {
+      if (a.containsKey(field) && !integer(a[field], 0, maxMoney)) invalid();
+    }
+    if (a['closedTrades'] is int && (a['winningTrades'] is! int || a['winningTrades'] > a['closedTrades'])) invalid();
+    if (a.containsKey('dailyRealized') && (a['dailyRealized'] is! Map ||
+        (a['dailyRealized'] as Map).entries.any((e) => e.key is! String ||
+          !RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(e.key as String) || !integer(e.value, -maxMoney, maxMoney)))) {
+      invalid();
+    }
     for (final entry in (a['contracts'] as Map).entries) {
       if (entry.key is! String || entry.value is! String) invalid();
       final match = OptionQuote.pattern.firstMatch(entry.value as String);
@@ -65,9 +83,21 @@ void validatePaper(Map<String, dynamic> book) {
           !integer(p['highBid'], 1, maxMoney) || p['added'] is! bool || !timestamp(p['opened'])) {
         invalid();
       }
+      if (p.containsKey('entryFees') && !integer(p['entryFees'], 0, maxMoney)) invalid();
+      if (p.containsKey('mark')) {
+        final m = p['mark'];
+        if (m is! Map || m['contract'] != p['contract'] || m['feed'] != 'opra' || !timestamp(m['at']) ||
+            !integer(m['bid'], 1, maxMoney) || !integer(m['ask'], 1, maxMoney) || m['ask'] < m['bid'] ||
+            !integer(m['bidSize'], 0, maxMoney) || !integer(m['askSize'], 0, maxMoney)) {
+          invalid();
+        }
+      }
     }
   }
-  for (final raw in book['journal'] as List) {
+  final archive = book['journalArchive'] ?? [];
+  if (archive is! List || archive.any((s) => s is! List)) invalid();
+  final events = [for (final segment in archive) ...(segment as List), ...(book['journal'] as List)];
+  for (final raw in events) {
     if (raw is! Map || !ids.contains(raw['account']) ||
         raw['symbol'] is! String || !symbol.hasMatch(raw['symbol'] as String) ||
         !text(raw['decision']) || !timestamp(raw['at'])) {
@@ -81,6 +111,74 @@ void validatePaper(Map<String, dynamic> book) {
           !integer(q['bid'], 1, maxMoney) || !integer(q['ask'], 1, maxMoney) || q['ask'] < q['bid']) {
         invalid();
       }
+    }
+    if (raw.containsKey('evidence')) {
+      final e = raw['evidence'];
+      if (e is! Map || !['alpaca', 'fixture'].contains(e['source']) || e['stockDataValid'] is! bool ||
+          !paperStrategyLabels.containsKey(e['strategy']) || !text(e['observation']) ||
+          (e['source'] == 'alpaca' && e['stockDataValid'] == true && !timestamp(e['observation']))) {
+        invalid();
+      }
+    }
+    if (raw.containsKey('fill')) {
+      final f = raw['fill'];
+      if (f is! Map || raw['quote'] is! Map || !['BUY', 'SELL_TO_CLOSE'].contains(f['side']) ||
+          !integer(f['quantity'], 1, 1000000) || !integer(f['price'], 1, maxMoney) ||
+          !integer(f['fee'], 0, maxMoney) || !integer(f['cashAfter'], 0, maxMoney)) {
+        invalid();
+      }
+    }
+  }
+  final experiment = book['experiment'];
+  if (experiment != null && (experiment is! Map || experiment['id'] != 'four-accounts-three-sessions-v1' ||
+      !timestamp(experiment['createdAt']) || experiment['accounts'] is! List || experiment['accounts'].length != 4 ||
+      (experiment['accounts'] as List).toSet().length != 4 || (experiment['accounts'] as List).any((id) => !ids.contains(id)))) {
+    invalid();
+  }
+  // Accounts created by this version reconcile against their original receipts.
+  // Legacy history lacks quantities; it is not silently upgraded or invented.
+  for (final a in (book['accounts'] as List).cast<Map>()) {
+    if (a['ledgerPolicy'] != 'receipt-v2') continue;
+    var cash = a['initialCash'] as int, fees = 0, closed = 0, winners = 0;
+    final held = <String, Map<String, dynamic>>{}, daily = <String, int>{};
+    for (final event in events.cast<Map>().where((e) => e['account'] == a['id'])) {
+      final f = event['fill'];
+      if (f == null) {
+        if ((event['decision'] as String).startsWith('OPENED_') ||
+            (event['decision'] as String).startsWith('CLOSED_') || event['decision'] == 'ADD_ON_OPRA') {
+          invalid();
+        }
+        continue;
+      }
+      final q = event['quote'] as Map, key = event['symbol'] as String;
+      final qty = f['quantity'] as int, price = f['price'] as int, fee = f['fee'] as int;
+      if (fee != qty * 65 || price != q[f['side'] == 'BUY' ? 'ask' : 'bid']) invalid();
+      fees += fee;
+      if (f['side'] == 'BUY') {
+        final p = held.putIfAbsent(key, () => {'contract': q['contract'], 'quantity': 0, 'cost': 0, 'entryFees': 0});
+        if (p['contract'] != q['contract']) invalid();
+        p['quantity'] = (p['quantity'] as int) + qty;
+        p['cost'] = (p['cost'] as int) + qty * price * 100;
+        p['entryFees'] = (p['entryFees'] as int) + fee;
+        cash -= qty * price * 100 + fee;
+      } else {
+        final p = held[key];
+        if (p == null || p['contract'] != q['contract'] || qty != p['quantity']) invalid();
+        final pnl = qty * price * 100 - fee - (p['cost'] as int) - (p['entryFees'] as int);
+        if (f['realizedPnl'] != pnl || f['removedCost'] != p['cost'] || f['entryFees'] != p['entryFees']) invalid();
+        cash += qty * price * 100 - fee; closed++; if (pnl > 0) winners++;
+        final day = (event['at'] as String).substring(0, 10);
+        daily[day] = (daily[day] ?? 0) + pnl;
+        held.remove(key);
+      }
+      if (cash != f['cashAfter'] || cash < 0) invalid();
+    }
+    final actual = {for (final p in (a['positions'] as Map).entries) p.key: {
+      for (final k in ['contract', 'quantity', 'cost', 'entryFees']) k: p.value[k],
+    }};
+    if (cash != a['cash'] || fees != a['fees'] || closed != a['closedTrades'] || winners != a['winningTrades'] ||
+        paperBytes(held) != paperBytes(actual) || paperBytes(daily) != paperBytes(a['dailyRealized'])) {
+      invalid();
     }
   }
 }

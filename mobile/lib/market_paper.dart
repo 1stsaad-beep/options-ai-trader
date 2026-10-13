@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'direct_alpaca.dart';
 import 'market_paper_validation.dart';
+import 'market_paper_reports.dart';
 
 typedef PaperRow=Map<String,dynamic>;
 typedef QuoteReader=Future<OptionQuote?> Function(String contract);
@@ -35,14 +36,20 @@ class MarketPaper extends ChangeNotifier {
   String? error;
   Future<void>? _loading;
   PaperRow? _durable;
+  PaperRow? _decisionEvidence;
   final _epochs=<String,int>{};
   final _paused=<String>{};
   MarketPaper(this.store,{DateTime Function()? clock}):now=clock??DateTime.now;
   List<PaperRow> _rows(String key)=>(jsonDecode(jsonEncode(_book[key])) as List).cast<PaperRow>();
   List<PaperRow> get accounts=>_rows('accounts');
-  List<PaperRow> get journal=>_rows('journal');
+  List<PaperRow> get journal=>[
+    for(final segment in (copy()['journalArchive'] as List? ?? [])) ...(segment as List).cast<PaperRow>(),
+    ..._rows('journal'),
+  ];
   PaperRow account(String id)=>accounts.singleWhere((a)=>a['id']==id);
   PaperRow copy()=>copyPaper(_book);
+  PaperRow performance(String id)=>paperPerformance(account(id),now());
+  PaperRow comparison()=>paperComparison({...copy(),'journal':journal},now());
   Future<void> load()=>_loading??=_load();
   Future<void> _load() async {try {final saved=await store.read();if(saved!=null){
     validatePaper(saved);
@@ -58,6 +65,14 @@ class MarketPaper extends ChangeNotifier {
   }
   Future<bool> _commit(PaperRow next,{bool Function()? admission}) async {
     if(!ready)return false;
+    for(final a in (next['accounts'] as List).cast<PaperRow>()) {
+      if(a['peakEquity'] is! int)continue;
+      final equity=paperPerformance(a,now())['equityCents'] as int?;
+      if(equity==null)continue;
+      if(equity>(a['peakEquity'] as int))a['peakEquity']=equity;
+      final drawdown=(a['peakEquity'] as int)-equity;
+      if(drawdown>(a['maxDrawdown'] as int))a['maxDrawdown']=drawdown;
+    }
     validatePaper(next);
     // Compare the durable preimage before writing; never overwrite a second owner.
     try {
@@ -75,18 +90,46 @@ class MarketPaper extends ChangeNotifier {
     notifyListeners();return false;
   }
   PaperRow _in(PaperRow book,String id)=>(book['accounts'] as List).cast<PaperRow>().singleWhere((a)=>a['id']==id);
-  void _log(PaperRow book,String id,String symbol,String decision,{OptionQuote? quote}) {
-    final rows=book['journal'] as List;
-    if(rows.length>=10000)throw StateError('journal capacity');
+  PaperRow _quote(OptionQuote q)=>{'contract':q.contract,'feed':q.feed,'at':q.time.toUtc().toIso8601String(),
+    'bid':q.bid,'ask':q.ask,'bidSize':q.bidSize,'askSize':q.askSize};
+  void _log(PaperRow book,String id,String symbol,String decision,{OptionQuote? quote,PaperRow? fill}) {
+    var rows=book['journal'] as List;
+    if(rows.length>=1000) {
+      final archive=(book['journalArchive']??=<dynamic>[]) as List;
+      archive.add(rows);
+      rows=<dynamic>[];book['journal']=rows;
+    }
     rows.add({'account':id,'symbol':symbol,'at':now().toUtc().toIso8601String(),'decision':decision,
-      if(quote!=null)'quote':{'contract':quote.contract,'feed':quote.feed,'at':quote.time.toIso8601String(),'bid':quote.bid,'ask':quote.ask}});
+      if(quote!=null)'quote':_quote(quote),if(fill!=null)'fill':copyPaper(fill),
+      if(_decisionEvidence!=null)'evidence':copyPaper(_decisionEvidence!)});
   }
-  Future<void> add(String name) async {
+  PaperRow _newAccount(String id,String name,int initialCash,String strategy)=>{
+    'id':id,'name':name.trim(),'cash':initialCash,'initialCash':initialCash,'enabled':false,
+    'positions':<String,dynamic>{},'contracts':<String,dynamic>{},'riskPercent':5,'quantity':1,
+    'stopPercent':20,'takePercent':40,'trailPercent':15,'addEnabled':false,'lastSignal':<String,dynamic>{},
+    'ledgerPolicy':'receipt-v2','strategy':strategy,'watchlist':['NVDA','AAPL','TSLA'],'fees':0,'closedTrades':0,'winningTrades':0,
+    'peakEquity':initialCash,'maxDrawdown':0,'dailyRealized':<String,dynamic>{},
+  };
+  Future<void> add(String name,{int initialCash=1000000,String strategy='confluence'}) async {
     if(!ready||busy||name.trim().isEmpty)return;
+    if(initialCash<10000||initialCash>100000000||!paperStrategyLabels.containsKey(strategy))throw ArgumentError('account');
     busy=true;
-    try {final next=copy();(next['accounts'] as List).add({'id':'mp-${now().microsecondsSinceEpoch}-${accounts.length}',
-      'name':name.trim(),'cash':1000000,'initialCash':1000000,'enabled':false,'positions':<String,dynamic>{},'contracts':<String,dynamic>{},
-      'riskPercent':5,'quantity':1,'stopPercent':20,'takePercent':40,'trailPercent':15,'addEnabled':false,'lastSignal':<String,dynamic>{}});
+    try {final next=copy();(next['accounts'] as List).add(_newAccount('mp-${now().microsecondsSinceEpoch}-${accounts.length}',name,initialCash,strategy));
+      await _commit(next);
+    }finally{busy=false;notifyListeners();}
+  }
+  Future<void> createComparisonExperiment() async {
+    if(!ready||busy||_book['experiment']!=null)return;
+    busy=true;
+    try {
+      final next=copy(),ids=<String>[];
+      for(final strategy in paperStrategies) {
+        final id='mp-experiment-v1-$strategy';
+        if(accounts.any((a)=>a['id']==id))throw StateError('experiment identity conflict');
+        ids.add(id);
+        (next['accounts'] as List).add(_newAccount(id,'1000 USD • ${paperStrategyLabels[strategy]}',100000,strategy));
+      }
+      next['experiment']={'id':'four-accounts-three-sessions-v1','createdAt':now().toUtc().toIso8601String(),'accounts':ids};
       await _commit(next);
     }finally{busy=false;notifyListeners();}
   }
@@ -96,7 +139,7 @@ class MarketPaper extends ChangeNotifier {
     _epochs[id]=(_epochs[id]??0)+1;
     if(values['enabled']==false)_paused.add(id);
     while(busy){await Future<void>.delayed(const Duration(milliseconds:20));}
-    final allowed={'enabled','contracts','riskPercent','quantity','stopPercent','takePercent','trailPercent','addEnabled'};
+    final allowed={'enabled','contracts','riskPercent','quantity','stopPercent','takePercent','trailPercent','addEnabled','strategy','watchlist'};
     if(values.keys.any((k)=>!allowed.contains(k)))throw ArgumentError('setting');
     for(final k in ['riskPercent','stopPercent','takePercent','trailPercent']) {
       if(values.containsKey(k)&&(values[k] is! int||values[k]<1||values[k]>50))throw ArgumentError('risk');
@@ -118,10 +161,14 @@ class MarketPaper extends ChangeNotifier {
   }
   bool _current(String id,int epoch)=>ready&&!_paused.contains(id)&&(_epochs[id]??0)==epoch&&account(id)['enabled']==true;
   Future<void> evaluate({required String id,required String symbol,required String signal,
-    required bool confirmedReverse,required bool Function() dataValid,required String observation,required QuoteReader quotes,bool forceClose=false}) async {
+    required bool confirmedReverse,required bool Function() dataValid,required String observation,required QuoteReader quotes,
+    bool forceClose=false,PaperRow? evidence,String Function()? currentSignal}) async {
     if(!ready||busy||_paused.contains(id)||account(id)['enabled']!=true)return;
     busy=true;notifyListeners();final epoch=_epochs[id]??0;
     bool stockValid(){try{return dataValid();}catch(_){return false;}}
+    bool signalCurrent(){try{return currentSignal==null||currentSignal()==signal;}catch(_){return false;}}
+    _decisionEvidence={...copyPaper(evidence??{'source':'fixture'}),'observation':observation,
+      'signal':signal,'stockDataValid':stockValid(),'strategy':account(id)['strategy']??'confluence'};
     try {
       var a=account(id);var positions=Map<String,dynamic>.from(a['positions'] as Map);
       final position=positions[symbol] as PaperRow?;
@@ -132,56 +179,72 @@ class MarketPaper extends ChangeNotifier {
         final qty=position['quantity'] as int;
         if(q==null||q.contract!=position['contract']||!q.valid(now(),quantity:qty)) {await _record(id,symbol,'CLOSE_UNCONFIRMED_NO_REVERSAL');return;}
         final average=position['cost']/(qty*100),highest=(position['highBid'] as num).toDouble();
-        final reverse=signal!=position['direction']&&['CALL','PUT'].contains(signal)&&confirmedReverse&&stockValid();
+        final reverse=signal!=position['direction']&&['CALL','PUT'].contains(signal)&&confirmedReverse&&stockValid()&&signalCurrent();
         final closeReason=forceClose?'MANUAL':q.bid<=average*(1-(a['stopPercent'] as int)/100)?'STOP_LOSS':
           q.bid>=average*(1+(a['takePercent'] as int)/100)?'TAKE_PROFIT':
           highest>average&&q.bid<=highest*(1-(a['trailPercent'] as int)/100)?'TRAILING_STOP':reverse?'CONFIRMED_DIVERGENCE':null;
         if(closeReason!=null) {
           final next=copy();final target=_in(next,id);(target['positions'] as Map).remove(symbol);
           target['cash']=(target['cash'] as int)+q.bid*qty*100-qty*65;
-          _log(next,id,symbol,'CLOSED_$closeReason',quote:q);
+          final entryFees=(position['entryFees']??qty*65) as int;
+          final pnl=q.bid*qty*100-qty*65-(position['cost'] as int)-entryFees;
+          if(target['fees'] is int)target['fees']=(target['fees'] as int)+qty*65;
+          if(target['closedTrades'] is int)target['closedTrades']=(target['closedTrades'] as int)+1;
+          if(pnl>0&&target['winningTrades'] is int)target['winningTrades']=(target['winningTrades'] as int)+1;
+          final day=now().toUtc().toIso8601String().substring(0,10);
+          final daily=(target['dailyRealized']??=<String,dynamic>{}) as Map;
+          daily[day]=((daily[day]??0) as int)+pnl;
+          _log(next,id,symbol,'CLOSED_$closeReason',quote:q,
+            fill:{'side':'SELL_TO_CLOSE','quantity':qty,'price':q.bid,'fee':qty*65,'removedCost':position['cost'],
+              'entryFees':entryFees,'realizedPnl':pnl,'cashAfter':target['cash']});
           if(!await _commit(next,admission:()=>_current(id,epoch)&&q.valid(now(),quantity:qty)))return;
-          if(forceClose||!reverse||!_current(id,epoch)||!stockValid())return;
+          if(forceClose||!reverse||!_current(id,epoch)||!stockValid()||!signalCurrent())return;
           if((account(id)['positions'] as Map).containsKey(symbol))return;
         } else {
           if(!stockValid()){await _record(id,symbol,'INVALID_OR_STALE_STOCK_DATA');return;}
           if(signal!=position['direction']&&['CALL','PUT'].contains(signal)) {await _record(id,symbol,'OPPOSITE_POSITION_BLOCKED');return;}
           final next=copy();final target=_in(next,id);final p=(target['positions'] as Map)[symbol] as PaperRow;
+          p['mark']=_quote(q);
           if(q.bid>highest)p['highBid']=q.bid;
-          if(a['addEnabled']==true&&p['added']!=true&&q.bid>=average*1.10&&signal==p['direction']) {
+          if(a['addEnabled']==true&&p['added']!=true&&q.bid>=average*1.10&&signal==p['direction']&&signalCurrent()) {
             final cost=q.ask*100+65;
             if((p['cost'] as int)+qty*65+cost<=(target['initialCash'] as int)*(target['riskPercent'] as int)/100&&cost<=(target['cash'] as int)) {
               p['quantity']=qty+1;p['cost']=(p['cost'] as int)+q.ask*100;p['added']=true;target['cash']=(target['cash'] as int)-cost;
-              _log(next,id,symbol,'ADD_ON_OPRA',quote:q);
+              p['entryFees']=((p['entryFees']??qty*65) as int)+65;
+              if(target['fees'] is int)target['fees']=(target['fees'] as int)+65;
+              _log(next,id,symbol,'ADD_ON_OPRA',quote:q,fill:{'side':'BUY','quantity':1,'price':q.ask,'fee':65,'cashAfter':target['cash']});
             } else if(journal.isEmpty||journal.last['account']!=id||journal.last['symbol']!=symbol||journal.last['decision']!='ADD_RISK_LIMIT') {
               _log(next,id,symbol,'ADD_RISK_LIMIT',quote:q);
             }
           }
-          await _commit(next,admission:()=>_current(id,epoch)&&stockValid()&&q.valid(now(),quantity:qty));return;
+          await _commit(next,admission:()=>_current(id,epoch)&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:qty));return;
         }
       }
       if(!stockValid()){await _record(id,symbol,'INVALID_OR_STALE_STOCK_DATA');return;}
       if(!['CALL','PUT'].contains(signal)||!_current(id,epoch))return;
       a=account(id);
+      if(a['watchlist'] is List&&!(a['watchlist'] as List).contains(symbol)){await _record(id,symbol,'ACCOUNT_WATCHLIST_BLOCKED');return;}
       if((a['lastSignal'] as Map)[symbol]==observation)return;
       final contract=(a['contracts'] as Map)['$symbol:$signal'] as String?;
       if(contract==null){await _record(id,symbol,'QUALIFIED_OPTION_CONTRACT_REQUIRED');return;}
       final q=await quotes(contract);
       if(!_current(id,epoch))return;
       final quantity=a['quantity'] as int;
-      if(q==null||q.contract!=contract||q.underlying!=symbol||q.direction!=signal||!q.valid(now(),quantity:quantity)||!stockValid()){
+      if(q==null||q.contract!=contract||q.underlying!=symbol||q.direction!=signal||!q.valid(now(),quantity:quantity)||!stockValid()||!signalCurrent()){
         await _record(id,symbol,'OPRA_QUOTE_REQUIRED_NO_FILL');return;
       }
       final next=copy();final target=_in(next,id);positions=Map<String,dynamic>.from(target['positions'] as Map);
       if(positions.containsKey(symbol)){await _record(id,symbol,'OPPOSITE_POSITION_BLOCKED');return;}
       final cost=q.ask*quantity*100,fee=quantity*65;
       if(cost+fee>(target['cash'] as int)||cost+fee>(target['initialCash'] as int)*(target['riskPercent'] as int)/100) {await _record(id,symbol,'RISK_LIMIT');return;}
-      positions[symbol]={'contract':contract,'direction':signal,'quantity':quantity,'cost':cost,'highBid':q.bid,'added':false,'opened':now().toUtc().toIso8601String()};
+      positions[symbol]={'contract':contract,'direction':signal,'quantity':quantity,'cost':cost,'entryFees':fee,'mark':_quote(q),
+        'highBid':q.bid,'added':false,'opened':now().toUtc().toIso8601String()};
       target['positions']=positions;target['cash']=(target['cash'] as int)-cost-fee;(target['lastSignal'] as Map)[symbol]=observation;
-      _log(next,id,symbol,'OPENED_$signal',quote:q);
-      await _commit(next,admission:()=>_current(id,epoch)&&stockValid()&&q.valid(now(),quantity:quantity));
+      if(target['fees'] is int)target['fees']=(target['fees'] as int)+fee;
+      _log(next,id,symbol,'OPENED_$signal',quote:q,fill:{'side':'BUY','quantity':quantity,'price':q.ask,'fee':fee,'cashAfter':target['cash']});
+      await _commit(next,admission:()=>_current(id,epoch)&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:quantity));
     }catch(_){error='توقفت الدورة دون فتح عكسي. راجع البيانات وسعة السجل والتخزين.';notifyListeners();}
-    finally{busy=false;notifyListeners();}
+    finally{_decisionEvidence=null;busy=false;notifyListeners();}
   }
   Future<void> _record(String id,String symbol,String reason) async {
     if(journal.isNotEmpty&&journal.last['account']==id&&journal.last['symbol']==symbol&&journal.last['decision']==reason)return;
