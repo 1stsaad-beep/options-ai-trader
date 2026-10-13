@@ -527,3 +527,9 @@ Restore exact saved source, verify artifact logs/counts/signatures and inspect r
 
 ### Direct preflight test corrections
 - CI38405189019: analyze passed; 289 Flutter passed and three new test cases failed. Failures were a typed fixture-map insertion, querying a field removed from the scroll viewport, and expecting a second quote after reuse of the same observation (correctly blocked by the engine). Corrected test fixtures/assertions; no production behavior changed. Native expanded gate was skipped because Flutter failed. Full acceptance remains pending rerun; raw log retained for the final evidence report.
+
+### Lab20 packaging and Android key acceptance
+- Corrected Flutter suite passed on CI38405793634; expanded native test stage still running when this checkpoint was prepared. Added Android 35 emulator tests for Keystore roundtrip, randomized ciphertext, tamper rejection, disabled backup, nonexported service and explicit arming. These are pending device CI, not physical-phone acceptance.
+- Added Java time desugaring for older supported Android, short quote-budget waiting (never bypass Retry-After), explicit last completed minute close labels, standard-contract simulation limitation, active-monitor settings recovery and notification-channel checks.
+- Prepared distinct .v1previewrc2b20 / Lab20 / code20. Release-mode APK is non-debuggable and retains existing private-development or explicitly reported ephemeral SDK signing fallback. Added release network policy preserving only the existing localhost/emulator HTTP paths; Alpaca remains fixed-host HTTPS. Added resolved native Maven advisory audit and full native mock regression before APK generation. No signing keys or user credentials are stored in Git.
+- Full Android, iOS, backend/PG/Compose, security, native dependency and emulator gates requested by this source; acceptance and APK checksum/signature remain pending inspection. Lab19 app/data and all server files remain preserved.

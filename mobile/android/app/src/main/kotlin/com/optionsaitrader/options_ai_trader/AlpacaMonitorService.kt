@@ -15,6 +15,9 @@ class AlpacaMonitorService:Service() {
         fun stop(context:Context){context.stopService(Intent(context,AlpacaMonitorService::class.java));AlpacaRuntime.stop();running=false}
         fun start(context:Context) {
             check(AlpacaRuntime.get(context).enabled)
+            val manager=context.getSystemService(NotificationManager::class.java)
+            check(manager.areNotificationsEnabled())
+            if(Build.VERSION.SDK_INT>=26)check(manager.getNotificationChannel(CHANNEL)?.importance!=NotificationManager.IMPORTANCE_NONE)
             val intent=Intent(context,AlpacaMonitorService::class.java)
             if(Build.VERSION.SDK_INT>=26)context.startForegroundService(intent) else context.startService(intent)
         }
@@ -22,7 +25,8 @@ class AlpacaMonitorService:Service() {
     private val handler=Handler(Looper.getMainLooper())
     private var deadline=0L
     private val tick=object:Runnable {override fun run(){
-        if(SystemClock.elapsedRealtime()>=deadline || !AlpacaRuntime.get(this@AlpacaMonitorService).enabled){stopSelf();return}
+        if(SystemClock.elapsedRealtime()>=deadline || !AlpacaRuntime.get(this@AlpacaMonitorService).enabled ||
+            !getSystemService(NotificationManager::class.java).areNotificationsEnabled()){stopSelf();return}
         handler.postDelayed(this,5000)
     }}
     override fun onBind(intent:Intent?)=null

@@ -10,6 +10,7 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -17,8 +18,8 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.optionsaitrader.options_ai_trader"
-        if (System.getenv("OAT_PREVIEW_BUILD") == "true") applicationIdSuffix = ".v1previewrc2b19"
-        manifestPlaceholders["oatLabel"] = if (System.getenv("OAT_PREVIEW_BUILD") == "true") "Options AI Trader Lab 19" else "Options AI Trader"
+        if (System.getenv("OAT_PREVIEW_BUILD") == "true") applicationIdSuffix = ".v1previewrc2b20"
+        manifestPlaceholders["oatLabel"] = if (System.getenv("OAT_PREVIEW_BUILD") == "true") "Options AI Trader Lab 20" else "Options AI Trader"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -29,6 +30,7 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     // Private development keys come only from the environment / CI Secrets.
@@ -51,7 +53,9 @@ android {
         }
         release {
             signingConfig = if (!unsignedBuild && !privateKeyPath.isNullOrBlank())
-                signingConfigs.getByName("privateDevelopment") else null
+                signingConfigs.getByName("privateDevelopment")
+                else if (!unsignedBuild && System.getenv("OAT_PREVIEW_BUILD") == "true") signingConfigs.getByName("debug")
+                else null
         }
     }
 
@@ -68,7 +72,10 @@ flutter {
 }
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20240303")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
 }

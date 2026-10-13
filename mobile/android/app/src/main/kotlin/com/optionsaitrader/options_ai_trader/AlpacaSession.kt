@@ -169,7 +169,9 @@ internal class AlpacaSession(
     }
     fun quote(contract:String,done:(String?)->Unit) {
         require(AlpacaPolicy.contract(contract));val g=generation
-        worker.execute { try {
+        val delay=maxOf(nextRequest,blockedUntil)-now()
+        if(delay>10000){done(null);return}
+        worker.schedule({ try {
             require(AlpacaPolicy.inSession(now(),"regular"))
             val url="https://data.alpaca.markets/v1beta1/options/snapshots".toHttpUrl().newBuilder()
                 .addQueryParameter("symbols",contract).addQueryParameter("feed","opra").build()
@@ -180,7 +182,7 @@ internal class AlpacaSession(
             require(current(g))
             done(JSONObject().put("contract",contract).put("feed","opra").put("t",t).put("bid",bid).put("ask",ask)
                 .put("bidSize",q.getInt("bs")).put("askSize",q.getInt("as")).toString())
-        }catch(_:Exception){done(null)} }
+        }catch(_:Exception){done(null)} },maxOf(0,delay),TimeUnit.MILLISECONDS)
     }
     @Synchronized fun snapshot():String {
         val series=JSONObject();val analysis=JSONObject()
@@ -192,6 +194,7 @@ internal class AlpacaSession(
         }
         return JSONObject().put("enabled",enabled).put("connected",authenticated&&enabled).put("reason",reason)
             .put("feed",feed).put("session",session).put("source","alpaca").put("asOf",now())
+            .put("symbols",JSONArray(symbols))
             .put("bars",series).put("analysis",analysis).put("retryAt",blockedUntil)
             .put("events",JSONArray(events.toList())).toString()
     }

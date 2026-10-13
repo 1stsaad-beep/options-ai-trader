@@ -24,8 +24,9 @@ class DirectSnapshot {
   final DateTime received;
   final Map<String,List<MarketBar>> series;
   final List<Map<String,dynamic>> events;
+  final List<String> symbols;
   DirectSnapshot({this.connected=false,this.enabled=false,this.feed='iex',this.session='regular',
-    this.source='none',this.reason='DISABLED',DateTime? received,this.series=const {},this.events=const []})
+    this.source='none',this.reason='DISABLED',DateTime? received,this.series=const {},this.events=const [],this.symbols=const []})
       :received=received??DateTime.fromMillisecondsSinceEpoch(0,isUtc:true);
   factory DirectSnapshot.parse(String text) {
     final j=jsonDecode(text) as Map<String,dynamic>;
@@ -39,6 +40,7 @@ class DirectSnapshot {
     return DirectSnapshot(connected:j['connected']==true,enabled:j['enabled']==true,feed:j['feed'] as String,
       session:j['session'] as String,source:j['source'] as String,reason:j['reason'] as String,
       received:DateTime.fromMillisecondsSinceEpoch(j['asOf'] as int,isUtc:true),series:series,
+      symbols:(j['symbols'] as List? ?? []).cast<String>(),
       events:(j['events'] as List).map((e)=>Map<String,dynamic>.from(e as Map)).toList());
   }
   bool live(String symbol,DateTime now) {

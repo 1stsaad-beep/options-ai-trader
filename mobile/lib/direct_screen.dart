@@ -29,7 +29,10 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     cycle=Timer.periodic(const Duration(seconds:30),(_){if(visible)paperCycle();});
   }
   void changed(){if(mounted)setState((){selectedAccount??=paper.accounts.isEmpty?null:paper.accounts.first['id'] as String;});}
-  Future<void> initialize() async {await paper.load();await run(()async{await api.secureScreen(true);hasKeys=await api.hasKeys();await refresh();});}
+  Future<void> initialize() async {await paper.load();await run(()async{
+    await api.secureScreen(true);hasKeys=await api.hasKeys();await refresh();
+    if(snapshot.enabled){real=true;feed=snapshot.feed;session=snapshot.session;if(snapshot.symbols.isNotEmpty)symbols.text=snapshot.symbols.join(',');}
+  });}
   Future<void> run(Future<void> Function() action) async {
     if(working||!mounted)return;setState(()=>working=true);
     try{await action();}catch(_){notice='تعذر تنفيذ العملية. راجع الإعدادات والاتصال وصلاحيات Android؛ لم تُرسل أوامر تداول.';}
@@ -138,6 +141,10 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     }),child:const Text('بدء مراقبة Android التجريبية')),
   ];
   List<Widget> market()=>[
+    const Text('الأسعار أدناه إغلاق آخر شمعة دقيقة مكتملة، وليست آخر صفقة tick.'),
+    for(final s in watch) ListTile(title:Text('$s • ${snapshot.series[s]?.lastOrNull?.close.toStringAsFixed(2)??"—"} USD'),
+      subtitle:Text('${snapshot.label(s,DateTime.now())} • ${snapshot.series[s]?.lastOrNull?.time.toIso8601String()??"لا تحديث"}'),
+      onTap:()=>setState(()=>selectedSymbol=s)),
     DropdownButtonFormField<String>(initialValue:selectedSymbol,decoration:const InputDecoration(labelText:'السهم'),
       items:{selectedSymbol,...watch,...snapshot.series.keys}.map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(),
       onChanged:(s){if(s!=null)setState(()=>selectedSymbol=s);}),
@@ -148,6 +155,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     return [
       const Text('Market Paper • أموال افتراضية مستقلة • تعبئة بحثية تقريبية فقط بعرض OPRA مؤهل (شراء ask / إغلاق bid، عمولة افتراضية 0.65 USD للعقد لكل جهة). لا تحاكي طابور السوق أو الانزلاق أو التنفيذ الفعلي.'),
       const Text('بدون OPRA حديث وصالح: إشارات فقط، لا تعبئة Call/Put. IEX/SIP للأسهم لا يمنحان بيانات الخيارات. لا استخدام للأسعار الإرشادية indicative.'),
+      const Text('المحاكاة تفترض معامل عقد قياسي 100؛ لا تدعم العقود المعدلة/mini أو التمرين والتخصيص. انتهاء الصلاحية أو فقد الأسعار لا يُنشئ إغلاقًا وهميًا.'),
       if(paper.error!=null)Text(paper.error!),
       TextField(controller:accountName,decoration:const InputDecoration(labelText:'اسم حساب Market Paper جديد')),
       OutlinedButton(onPressed:paper.busy||!paper.ready?null:()=>paper.add(accountName.text),child:const Text('إنشاء حساب افتراضي 10,000 USD')),
