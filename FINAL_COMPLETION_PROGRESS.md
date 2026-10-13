@@ -29,3 +29,9 @@ Reproduction artifact CRC/API SHA-256 verified: **318 passed /14 failed**, all f
 4. Continue remaining implementation, independent review pass and final gates. Build one final candidate only when critical requirements are closed. User phone acceptance is the final step.
 
 No new Codex/GitHub Agent automation, broker order, Live/IBKR connection, public deployment, paid service, force-push, destructive reset or data deletion. A session checkpoint is resumable work, not a promise of unattended continuation.
+
+## Accepted implementation checkpoints
+
+- Safety source `23b0fd1cbd583a58ee249f1f95b880bd8e427c18`: direct workflow `38464950537` succeeded; verified artifact `11848287610` contains **333 passed / 0 failed** Flutter results. Lost-write acknowledgement, malformed ledger, aliasing, stock-independent protection and manual-close regressions passed.
+- Experiment/report source `87088fa59d879280ca65c931555b9e4c2ab72086`: direct workflow `38465847468`, chart workflow `38465847467` and security workflow `38465847495` succeeded. Raw artifact digest is verified separately before reporting counts. No APK was produced.
+- Next bounded batch: account-level aggregate allocation, daily realized plus negative open-mark loss, total positions/contracts and conservative unavailable-mark admission. New risk applies only to additional exposure; qualified owned-position exits remain available. Every fill rechecks quote, signal, epoch and admission after asynchronous persistence reads. Eleven risk/restart/concurrency regression cases authored; CI pending. Limits cannot guarantee gap losses stay under the configured cap.

@@ -273,6 +273,11 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
         for(final entry in {'riskPercent':'نسبة حد التكلفة','quantity':'عدد العقود','stopPercent':'وقف الخسارة %','takePercent':'جني الربح %','trailPercent':'وقف متحرك %'}.entries)
           Row(children:[Expanded(child:Text(entry.value)),IconButton(onPressed:paper.busy?null:()=>paper.configure(selectedAccount!,{entry.key:((a[entry.key] as int)-1).clamp(1,entry.key=='quantity'?10:50)}),icon:const Icon(Icons.remove)),
             Text('${a[entry.key]}'),IconButton(onPressed:paper.busy?null:()=>paper.configure(selectedAccount!,{entry.key:((a[entry.key] as int)+1).clamp(1,entry.key=='quantity'?10:50)}),icon:const Icon(Icons.add))]),
+        for(final entry in {'allocationPercent':30,'dailyLossPercent':3,'maxPositions':4,'maxContracts':10}.entries)
+          Row(children:[Expanded(child:Text({'allocationPercent':'تخصيص رأس المال %','dailyLossPercent':'خسارة اليوم %','maxPositions':'عدد المراكز الأقصى','maxContracts':'إجمالي العقود الأقصى'}[entry.key]!)),
+            IconButton(onPressed:paper.busy?null:()=>paper.configure(selectedAccount!,{entry.key:((a[entry.key] as int? ?? entry.value)-1).clamp(entry.key.endsWith('Percent')?0:1,100)}),icon:const Icon(Icons.remove)),
+            Text('${a[entry.key]??entry.value}'),
+            IconButton(onPressed:paper.busy?null:()=>paper.configure(selectedAccount!,{entry.key:((a[entry.key] as int? ?? entry.value)+1).clamp(entry.key.endsWith('Percent')?0:1,100)}),icon:const Icon(Icons.add))]),
         SwitchListTile(title:const Text('تعزيز واحد بعد ربح 10% ضمن حد المخاطرة'),value:a['addEnabled']==true,onChanged:paper.busy?null:(v)=>paper.configure(selectedAccount!,{'addEnabled':v})),
         DropdownButtonFormField<String>(initialValue:direction,items:const [DropdownMenuItem(value:'CALL',child:Text('Call')),DropdownMenuItem(value:'PUT',child:Text('Put'))],onChanged:(v){if(v!=null)setState(()=>direction=v);}),
         TextField(controller:contract,decoration:InputDecoration(labelText:'عقد OCC لـ $selectedSymbol $direction',helperText:'اختر السهم من صفحة السوق؛ أدخل عقدًا تعرفه دون جلب حساب التداول')),

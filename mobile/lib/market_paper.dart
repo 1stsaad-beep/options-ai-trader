@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'direct_alpaca.dart';
 import 'market_paper_validation.dart';
 import 'market_paper_reports.dart';
+import 'market_paper_risk.dart';
 
 typedef PaperRow=Map<String,dynamic>;
 typedef QuoteReader=Future<OptionQuote?> Function(String contract);
@@ -109,6 +110,7 @@ class MarketPaper extends ChangeNotifier {
     'stopPercent':20,'takePercent':40,'trailPercent':15,'addEnabled':false,'lastSignal':<String,dynamic>{},
     'ledgerPolicy':'receipt-v2','strategy':strategy,'watchlist':['NVDA','AAPL','TSLA'],'fees':0,'closedTrades':0,'winningTrades':0,
     'peakEquity':initialCash,'maxDrawdown':0,'dailyRealized':<String,dynamic>{},
+    'allocationPercent':30,'dailyLossPercent':3,'maxPositions':4,'maxContracts':10,
   };
   Future<void> add(String name,{int initialCash=1000000,String strategy='confluence'}) async {
     if(!ready||busy||name.trim().isEmpty)return;
@@ -139,7 +141,8 @@ class MarketPaper extends ChangeNotifier {
     _epochs[id]=(_epochs[id]??0)+1;
     if(values['enabled']==false)_paused.add(id);
     while(busy){await Future<void>.delayed(const Duration(milliseconds:20));}
-    final allowed={'enabled','contracts','riskPercent','quantity','stopPercent','takePercent','trailPercent','addEnabled','strategy','watchlist'};
+    final allowed={'enabled','contracts','riskPercent','quantity','stopPercent','takePercent','trailPercent','addEnabled','strategy','watchlist',
+      'allocationPercent','dailyLossPercent','maxPositions','maxContracts'};
     if(values.keys.any((k)=>!allowed.contains(k)))throw ArgumentError('setting');
     for(final k in ['riskPercent','stopPercent','takePercent','trailPercent']) {
       if(values.containsKey(k)&&(values[k] is! int||values[k]<1||values[k]>50))throw ArgumentError('risk');
@@ -167,6 +170,19 @@ class MarketPaper extends ChangeNotifier {
     busy=true;notifyListeners();final epoch=_epochs[id]??0;
     bool stockValid(){try{return dataValid();}catch(_){return false;}}
     bool signalCurrent(){try{return currentSignal==null||currentSignal()==signal;}catch(_){return false;}}
+    final marks=<String,OptionQuote>{};
+    Future<bool> collectMarks() async {
+      for(final p in (account(id)['positions'] as Map).values) {
+        final contract=p['contract'] as String;
+        if(!marks.containsKey(contract)) {
+          final q=await quotes(contract);
+          if(!_current(id,epoch))return false;
+          if(q!=null&&q.contract==contract)marks[contract]=q;
+        }
+      }
+      return _current(id,epoch);
+    }
+    String? risk(int qty,int price,{bool adding=false})=>paperRiskReason(account(id),symbol,qty,price,marks,now(),journal:journal,adding:adding);
     _decisionEvidence={...copyPaper(evidence??{'source':'fixture'}),'observation':observation,
       'signal':signal,'stockDataValid':stockValid(),'strategy':account(id)['strategy']??'confluence'};
     try {
@@ -178,6 +194,7 @@ class MarketPaper extends ChangeNotifier {
         if(!_current(id,epoch))return;
         final qty=position['quantity'] as int;
         if(q==null||q.contract!=position['contract']||!q.valid(now(),quantity:qty)) {await _record(id,symbol,'CLOSE_UNCONFIRMED_NO_REVERSAL');return;}
+        marks[q.contract]=q;
         final average=position['cost']/(qty*100),highest=(position['highBid'] as num).toDouble();
         final reverse=signal!=position['direction']&&['CALL','PUT'].contains(signal)&&confirmedReverse&&stockValid()&&signalCurrent();
         final closeReason=forceClose?'MANUAL':q.bid<=average*(1-(a['stopPercent'] as int)/100)?'STOP_LOSS':
@@ -206,9 +223,11 @@ class MarketPaper extends ChangeNotifier {
           final next=copy();final target=_in(next,id);final p=(target['positions'] as Map)[symbol] as PaperRow;
           p['mark']=_quote(q);
           if(q.bid>highest)p['highBid']=q.bid;
-          if(a['addEnabled']==true&&p['added']!=true&&q.bid>=average*1.10&&signal==p['direction']&&signalCurrent()) {
+          if(a['addEnabled']==true&&p['added']!=true&&q.bid>=average*1.10&&signal==p['direction']&&signalCurrent()&&
+              (a['watchlist'] is! List||(a['watchlist'] as List).contains(symbol))) {
+            if(!await collectMarks())return;
             final cost=q.ask*100+65;
-            if((p['cost'] as int)+qty*65+cost<=(target['initialCash'] as int)*(target['riskPercent'] as int)/100&&cost<=(target['cash'] as int)) {
+            if(risk(1,q.ask,adding:true)==null) {
               p['quantity']=qty+1;p['cost']=(p['cost'] as int)+q.ask*100;p['added']=true;target['cash']=(target['cash'] as int)-cost;
               p['entryFees']=((p['entryFees']??qty*65) as int)+65;
               if(target['fees'] is int)target['fees']=(target['fees'] as int)+65;
@@ -217,7 +236,9 @@ class MarketPaper extends ChangeNotifier {
               _log(next,id,symbol,'ADD_RISK_LIMIT',quote:q);
             }
           }
-          await _commit(next,admission:()=>_current(id,epoch)&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:qty));return;
+          final adds=p['quantity']!=qty;
+          await _commit(next,admission:()=>_current(id,epoch)&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:qty)&&
+            (!adds||risk(1,q.ask,adding:true)==null));return;
         }
       }
       if(!stockValid()){await _record(id,symbol,'INVALID_OR_STALE_STOCK_DATA');return;}
@@ -233,6 +254,10 @@ class MarketPaper extends ChangeNotifier {
       if(q==null||q.contract!=contract||q.underlying!=symbol||q.direction!=signal||!q.valid(now(),quantity:quantity)||!stockValid()||!signalCurrent()){
         await _record(id,symbol,'OPRA_QUOTE_REQUIRED_NO_FILL');return;
       }
+      marks[q.contract]=q;
+      if(!await collectMarks())return;
+      final riskReason=risk(quantity,q.ask);
+      if(riskReason!=null){await _record(id,symbol,riskReason);return;}
       final next=copy();final target=_in(next,id);positions=Map<String,dynamic>.from(target['positions'] as Map);
       if(positions.containsKey(symbol)){await _record(id,symbol,'OPPOSITE_POSITION_BLOCKED');return;}
       final cost=q.ask*quantity*100,fee=quantity*65;
@@ -242,7 +267,7 @@ class MarketPaper extends ChangeNotifier {
       target['positions']=positions;target['cash']=(target['cash'] as int)-cost-fee;(target['lastSignal'] as Map)[symbol]=observation;
       if(target['fees'] is int)target['fees']=(target['fees'] as int)+fee;
       _log(next,id,symbol,'OPENED_$signal',quote:q,fill:{'side':'BUY','quantity':quantity,'price':q.ask,'fee':fee,'cashAfter':target['cash']});
-      await _commit(next,admission:()=>_current(id,epoch)&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:quantity));
+      await _commit(next,admission:()=>_current(id,epoch)&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:quantity)&&risk(quantity,q.ask)==null);
     }catch(_){error='توقفت الدورة دون فتح عكسي. راجع البيانات وسعة السجل والتخزين.';notifyListeners();}
     finally{_decisionEvidence=null;busy=false;notifyListeners();}
   }

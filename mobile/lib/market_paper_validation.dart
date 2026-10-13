@@ -54,6 +54,12 @@ void validatePaper(Map<String, dynamic> book) {
     for (final field in ['fees', 'closedTrades', 'winningTrades', 'peakEquity', 'maxDrawdown']) {
       if (a.containsKey(field) && !integer(a[field], 0, maxMoney)) invalid();
     }
+    for (final field in ['allocationPercent', 'dailyLossPercent']) {
+      if (a.containsKey(field) && !integer(a[field], 0, 100)) invalid();
+    }
+    for (final field in ['maxPositions', 'maxContracts']) {
+      if (a.containsKey(field) && !integer(a[field], 1, 100)) invalid();
+    }
     if (a['closedTrades'] is int && (a['winningTrades'] is! int || a['winningTrades'] > a['closedTrades'])) invalid();
     if (a.containsKey('dailyRealized') && (a['dailyRealized'] is! Map ||
         (a['dailyRealized'] as Map).entries.any((e) => e.key is! String ||
