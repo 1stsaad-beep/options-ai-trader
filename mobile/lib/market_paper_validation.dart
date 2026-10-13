@@ -60,6 +60,10 @@ void validatePaper(Map<String, dynamic> book) {
     for (final field in ['maxPositions', 'maxContracts']) {
       if (a.containsKey(field) && !integer(a[field], 1, 100)) invalid();
     }
+    if (a.containsKey('holdingMode') && !['intraday','swing'].contains(a['holdingMode'])) invalid();
+    if (a.containsKey('maxHoldingDays') && !integer(a['maxHoldingDays'],1,30)) invalid();
+    if (a.containsKey('partialPercent') && !integer(a['partialPercent'],0,100)) invalid();
+    if (a.containsKey('scenarioExit') && a['scenarioExit'] is! bool) invalid();
     if (a['closedTrades'] is int && (a['winningTrades'] is! int || a['winningTrades'] > a['closedTrades'])) invalid();
     if (a.containsKey('dailyRealized') && (a['dailyRealized'] is! Map ||
         (a['dailyRealized'] as Map).entries.any((e) => e.key is! String ||
@@ -90,6 +94,13 @@ void validatePaper(Map<String, dynamic> book) {
         invalid();
       }
       if (p.containsKey('entryFees') && !integer(p['entryFees'], 0, maxMoney)) invalid();
+      if (p.containsKey('realizedPnl') && !integer(p['realizedPnl'],-maxMoney,maxMoney)) invalid();
+      if (p.containsKey('partialTaken') && p['partialTaken'] is! bool) invalid();
+      if (p.containsKey('consumedQuote') && !text(p['consumedQuote'])) invalid();
+      if (p.containsKey('closeIntent')) {
+        final intent=p['closeIntent'];
+        if (intent is! Map || !text(intent['reason']) || !integer(intent['remaining'],1,p['quantity'] as int) || !timestamp(intent['at'])) invalid();
+      }
       if (p.containsKey('mark')) {
         final m = p['mark'];
         if (m is! Map || m['contract'] != p['contract'] || m['feed'] != 'opra' || !timestamp(m['at']) ||
@@ -151,7 +162,7 @@ void validatePaper(Map<String, dynamic> book) {
       final f = event['fill'];
       if (f == null) {
         if ((event['decision'] as String).startsWith('OPENED_') ||
-            (event['decision'] as String).startsWith('CLOSED_') || event['decision'] == 'ADD_ON_OPRA') {
+            (event['decision'] as String).startsWith('CLOSED_') || event['decision'] == 'ADD_ON_OPRA' || (event['decision'] as String).startsWith('PARTIAL_')) {
           invalid();
         }
         continue;
@@ -161,7 +172,7 @@ void validatePaper(Map<String, dynamic> book) {
       if (fee != qty * 65 || price != q[f['side'] == 'BUY' ? 'ask' : 'bid']) invalid();
       fees += fee;
       if (f['side'] == 'BUY') {
-        final p = held.putIfAbsent(key, () => {'contract': q['contract'], 'quantity': 0, 'cost': 0, 'entryFees': 0});
+        final p = held.putIfAbsent(key, () => {'contract': q['contract'], 'quantity': 0, 'cost': 0, 'entryFees': 0, 'realizedPnl': 0});
         if (p['contract'] != q['contract']) invalid();
         p['quantity'] = (p['quantity'] as int) + qty;
         p['cost'] = (p['cost'] as int) + qty * price * 100;
@@ -169,18 +180,24 @@ void validatePaper(Map<String, dynamic> book) {
         cash -= qty * price * 100 + fee;
       } else {
         final p = held[key];
-        if (p == null || p['contract'] != q['contract'] || qty != p['quantity']) invalid();
-        final pnl = qty * price * 100 - fee - (p['cost'] as int) - (p['entryFees'] as int);
-        if (f['realizedPnl'] != pnl || f['removedCost'] != p['cost'] || f['entryFees'] != p['entryFees']) invalid();
-        cash += qty * price * 100 - fee; closed++; if (pnl > 0) winners++;
+        if (p == null || p['contract'] != q['contract'] || qty > (p['quantity'] as int)) invalid();
+        final oldQty=p['quantity'] as int;
+        final cost=(p['cost'] as int)*qty~/oldQty,entry=(p['entryFees'] as int)*qty~/oldQty;
+        final pnl = qty * price * 100 - fee - cost - entry;
+        if (f['realizedPnl'] != pnl || f['removedCost'] != cost || f['entryFees'] != entry) invalid();
+        cash += qty * price * 100 - fee;
+        p['realizedPnl']=(p['realizedPnl'] as int)+pnl;
         final day = (event['at'] as String).substring(0, 10);
         daily[day] = (daily[day] ?? 0) + pnl;
-        held.remove(key);
+        if(qty==oldQty){closed++;if((p['realizedPnl'] as int)>0)winners++;held.remove(key);}
+        else{p['quantity']=oldQty-qty;p['cost']=(p['cost'] as int)-cost;p['entryFees']=(p['entryFees'] as int)-entry;}
+
       }
       if (cash != f['cashAfter'] || cash < 0) invalid();
     }
     final actual = {for (final p in (a['positions'] as Map).entries) p.key: {
       for (final k in ['contract', 'quantity', 'cost', 'entryFees']) k: p.value[k],
+      'realizedPnl':p.value['realizedPnl']??0,
     }};
     if (cash != a['cash'] || fees != a['fees'] || closed != a['closedTrades'] || winners != a['winningTrades'] ||
         paperBytes(held) != paperBytes(actual) || paperBytes(daily) != paperBytes(a['dailyRealized'])) {

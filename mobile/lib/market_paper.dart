@@ -5,6 +5,8 @@ import 'direct_alpaca.dart';
 import 'market_paper_validation.dart';
 import 'market_paper_reports.dart';
 import 'market_paper_risk.dart';
+import 'market_paper_policy.dart';
+import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
 typedef QuoteReader=Future<OptionQuote?> Function(String contract);
@@ -111,6 +113,7 @@ class MarketPaper extends ChangeNotifier {
     'ledgerPolicy':'receipt-v2','strategy':strategy,'watchlist':['NVDA','AAPL','TSLA'],'fees':0,'closedTrades':0,'winningTrades':0,
     'peakEquity':initialCash,'maxDrawdown':0,'dailyRealized':<String,dynamic>{},
     'allocationPercent':30,'dailyLossPercent':3,'maxPositions':4,'maxContracts':10,
+    'holdingMode':'intraday','maxHoldingDays':3,'partialPercent':20,'scenarioExit':false,
   };
   Future<void> add(String name,{int initialCash=1000000,String strategy='confluence'}) async {
     if(!ready||busy||name.trim().isEmpty)return;
@@ -142,7 +145,7 @@ class MarketPaper extends ChangeNotifier {
     if(values['enabled']==false)_paused.add(id);
     while(busy){await Future<void>.delayed(const Duration(milliseconds:20));}
     final allowed={'enabled','contracts','riskPercent','quantity','stopPercent','takePercent','trailPercent','addEnabled','strategy','watchlist',
-      'allocationPercent','dailyLossPercent','maxPositions','maxContracts'};
+      'allocationPercent','dailyLossPercent','maxPositions','maxContracts','holdingMode','maxHoldingDays','partialPercent','scenarioExit'};
     if(values.keys.any((k)=>!allowed.contains(k)))throw ArgumentError('setting');
     for(final k in ['riskPercent','stopPercent','takePercent','trailPercent']) {
       if(values.containsKey(k)&&(values[k] is! int||values[k]<1||values[k]>50))throw ArgumentError('risk');
@@ -182,7 +185,12 @@ class MarketPaper extends ChangeNotifier {
       }
       return _current(id,epoch);
     }
-    String? risk(int qty,int price,{bool adding=false})=>paperRiskReason(account(id),symbol,qty,price,marks,now(),journal:journal,adding:adding);
+    String? risk(int qty,int price,{bool adding=false}) {
+      if(!paperSession(now()).entry)return 'SESSION_ENTRY_BLOCKED';
+      if(!paperExpiry(marks.values.firstWhere((q)=>q.underlying==symbol&&q.direction==signal).contract,now()).entry)return 'EXPIRY_ENTRY_BLOCKED';
+      if((account(id)['positions'] as Map).values.any((p)=>p['closeIntent']!=null))return 'PENDING_CLOSE_RISK_LIMIT';
+      return paperRiskReason(account(id),symbol,qty,price,marks,now(),journal:journal,adding:adding);
+    }
     _decisionEvidence={...copyPaper(evidence??{'source':'fixture'}),'observation':observation,
       'signal':signal,'stockDataValid':stockValid(),'strategy':account(id)['strategy']??'confluence'};
     try {
@@ -190,32 +198,76 @@ class MarketPaper extends ChangeNotifier {
       final position=positions[symbol] as PaperRow?;
       if(forceClose&&position==null){await _record(id,symbol,'NO_OWNED_POSITION');return;}
       if(position!=null) {
+        final reverse=signal!=position['direction']&&['CALL','PUT'].contains(signal)&&confirmedReverse&&stockValid()&&signalCurrent();
+        final session=paperSession(now()),expiry=paperExpiry(position['contract'] as String,now());
+        final opened=DateTime.parse(position['opened'] as String),qty=position['quantity'] as int;
+        final pending=position['closeIntent'] as Map?;
+        final overdue=(a['holdingMode']??'swing')=='intraday'&&
+          (session.exitDue||paperDate(paperNewYork(opened))!=session.date);
+        String? closeReason=forceClose?'MANUAL':pending?['reason'] as String?;
+        closeReason??=!expiry.entry?'EXPIRATION_PROTECTION':overdue?'INTRADAY_EXIT':
+          now().difference(opened).inHours>=((a['maxHoldingDays']??3) as int)*24?'MAX_HOLDING_EXIT':
+          reverse?'CONFIRMED_DIVERGENCE':a['scenarioExit']==true&&stockValid()&&signalCurrent()&&signal=='WAIT'?'SCENARIO_EXIT':null;
+        Future<void> retainIntent(String reason,String event) async {
+          final next=copy();final p=(_in(next,id)['positions'] as Map)[symbol] as PaperRow;
+          // Persist only ownership/intent. No missing-price cash or inventory mutation.
+          p['closeIntent']={'reason':reason,'remaining':qty,'at':now().toUtc().toIso8601String()};
+          (_in(next,id)['positions'] as Map)[symbol]=p;
+          _log(next,id,symbol,event);await _commit(next,admission:()=>_current(id,epoch));
+        }
+        if(!session.fill||!expiry.close) {
+          if(closeReason!=null){await retainIntent(closeReason,!expiry.close?expiry.status:'SESSION_CLOSE_DEFERRED');}
+          else{await _record(id,symbol,'SESSION_CLOSED_NO_FILL');}return;
+        }
         final q=await quotes(position['contract'] as String);
         if(!_current(id,epoch))return;
-        final qty=position['quantity'] as int;
-        if(q==null||q.contract!=position['contract']||!q.valid(now(),quantity:qty)) {await _record(id,symbol,'CLOSE_UNCONFIRMED_NO_REVERSAL');return;}
+        if(q==null||q.contract!=position['contract']||!q.valid(now())) {
+          if(closeReason!=null){await retainIntent(closeReason,'CLOSE_UNCONFIRMED_NO_REVERSAL');}
+          else{await _record(id,symbol,'CLOSE_UNCONFIRMED_NO_REVERSAL');}return;
+        }
         marks[q.contract]=q;
         final average=position['cost']/(qty*100),highest=(position['highBid'] as num).toDouble();
-        final reverse=signal!=position['direction']&&['CALL','PUT'].contains(signal)&&confirmedReverse&&stockValid()&&signalCurrent();
-        final closeReason=forceClose?'MANUAL':q.bid<=average*(1-(a['stopPercent'] as int)/100)?'STOP_LOSS':
+        // Independent price protection has priority over optional analysis.
+        closeReason=forceClose?'MANUAL':
+          (q.bid<=average*(1-(a['stopPercent'] as int)/100)?'STOP_LOSS':
           q.bid>=average*(1+(a['takePercent'] as int)/100)?'TAKE_PROFIT':
-          highest>average&&q.bid<=highest*(1-(a['trailPercent'] as int)/100)?'TRAILING_STOP':reverse?'CONFIRMED_DIVERGENCE':null;
+          highest>average&&q.bid<=highest*(1-(a['trailPercent'] as int)/100)?'TRAILING_STOP':closeReason);
+        if(closeReason==null&&qty>=2&&position['partialTaken']!=true&&((a['partialPercent']??0) as int)>0&&
+          q.bid>=average*(1+((a['partialPercent']??0) as int)/100)) {
+          closeReason='PARTIAL_PROFIT';
+        }
         if(closeReason!=null) {
-          final next=copy();final target=_in(next,id);(target['positions'] as Map).remove(symbol);
-          target['cash']=(target['cash'] as int)+q.bid*qty*100-qty*65;
-          final entryFees=(position['entryFees']??qty*65) as int;
-          final pnl=q.bid*qty*100-qty*65-(position['cost'] as int)-entryFees;
-          if(target['fees'] is int)target['fees']=(target['fees'] as int)+qty*65;
-          if(target['closedTrades'] is int)target['closedTrades']=(target['closedTrades'] as int)+1;
-          if(pnl>0&&target['winningTrades'] is int)target['winningTrades']=(target['winningTrades'] as int)+1;
+          final reason=closeReason;
+          final desired=reason=='PARTIAL_PROFIT'?(pending?['remaining'] as int? ?? qty~/2):qty;
+          final quoteId='${q.contract}/${q.time.toUtc().toIso8601String()}/${q.bid}/${q.ask}/${q.bidSize}/${q.askSize}';
+          if(position['consumedQuote']==quoteId){await _record(id,symbol,'CLOSE_WAIT_NEW_QUOTE');return;}
+          final filled=math.min(desired,math.min(q.bidSize,q.askSize));
+          final remaining=qty-filled,unfilled=desired-filled;
+          final removedCost=(position['cost'] as int)*filled~/qty;
+          final entryFees=((position['entryFees']??qty*65) as int)*filled~/qty;
+          final pnl=q.bid*filled*100-filled*65-removedCost-entryFees;
+          final tradePnl=((position['realizedPnl']??0) as int)+pnl;
+          final next=copy(),target=_in(next,id),p=(target['positions'] as Map)[symbol] as PaperRow;
+          if(remaining==0){(target['positions'] as Map).remove(symbol);}else{
+            p['quantity']=remaining;p['cost']=(position['cost'] as int)-removedCost;
+            p['entryFees']=((position['entryFees']??qty*65) as int)-entryFees;p['realizedPnl']=tradePnl;
+            p['mark']=_quote(q);p['consumedQuote']=quoteId;
+            if(reason=='PARTIAL_PROFIT')p['partialTaken']=true;
+            if(unfilled>0){p['closeIntent']={'reason':reason,'remaining':unfilled,'at':pending?['at']??now().toUtc().toIso8601String()};}
+            else{p.remove('closeIntent');}
+          }
+          target['cash']=(target['cash'] as int)+q.bid*filled*100-filled*65;
+          if(target['fees'] is int)target['fees']=(target['fees'] as int)+filled*65;
+          if(remaining==0&&target['closedTrades'] is int)target['closedTrades']=(target['closedTrades'] as int)+1;
+          if(remaining==0&&tradePnl>0&&target['winningTrades'] is int)target['winningTrades']=(target['winningTrades'] as int)+1;
           final day=now().toUtc().toIso8601String().substring(0,10);
           final daily=(target['dailyRealized']??=<String,dynamic>{}) as Map;
           daily[day]=((daily[day]??0) as int)+pnl;
-          _log(next,id,symbol,'CLOSED_$closeReason',quote:q,
-            fill:{'side':'SELL_TO_CLOSE','quantity':qty,'price':q.bid,'fee':qty*65,'removedCost':position['cost'],
+          _log(next,id,symbol,'${remaining==0?'CLOSED':'PARTIAL'}_$reason',quote:q,
+            fill:{'side':'SELL_TO_CLOSE','quantity':filled,'price':q.bid,'fee':filled*65,'removedCost':removedCost,
               'entryFees':entryFees,'realizedPnl':pnl,'cashAfter':target['cash']});
-          if(!await _commit(next,admission:()=>_current(id,epoch)&&q.valid(now(),quantity:qty)))return;
-          if(forceClose||!reverse||!_current(id,epoch)||!stockValid()||!signalCurrent())return;
+          if(!await _commit(next,admission:()=>_current(id,epoch)&&q.valid(now(),quantity:filled)&&paperSession(now()).fill&&paperExpiry(q.contract,now()).close))return;
+          if(remaining>0||forceClose||!reverse||!_current(id,epoch)||!stockValid()||!signalCurrent())return;
           if((account(id)['positions'] as Map).containsKey(symbol))return;
         } else {
           if(!stockValid()){await _record(id,symbol,'INVALID_OR_STALE_STOCK_DATA');return;}
@@ -246,8 +298,10 @@ class MarketPaper extends ChangeNotifier {
       a=account(id);
       if(a['watchlist'] is List&&!(a['watchlist'] as List).contains(symbol)){await _record(id,symbol,'ACCOUNT_WATCHLIST_BLOCKED');return;}
       if((a['lastSignal'] as Map)[symbol]==observation)return;
+      if(!paperSession(now()).entry){await _record(id,symbol,'SESSION_ENTRY_BLOCKED');return;}
       final contract=(a['contracts'] as Map)['$symbol:$signal'] as String?;
       if(contract==null){await _record(id,symbol,'QUALIFIED_OPTION_CONTRACT_REQUIRED');return;}
+      if(!paperExpiry(contract,now()).entry){await _record(id,symbol,'EXPIRY_ENTRY_BLOCKED');return;}
       final q=await quotes(contract);
       if(!_current(id,epoch))return;
       final quantity=a['quantity'] as int;
@@ -263,7 +317,7 @@ class MarketPaper extends ChangeNotifier {
       final cost=q.ask*quantity*100,fee=quantity*65;
       if(cost+fee>(target['cash'] as int)||cost+fee>(target['initialCash'] as int)*(target['riskPercent'] as int)/100) {await _record(id,symbol,'RISK_LIMIT');return;}
       positions[symbol]={'contract':contract,'direction':signal,'quantity':quantity,'cost':cost,'entryFees':fee,'mark':_quote(q),
-        'highBid':q.bid,'added':false,'opened':now().toUtc().toIso8601String()};
+        'highBid':q.bid,'added':false,'realizedPnl':0,'partialTaken':false,'opened':now().toUtc().toIso8601String()};
       target['positions']=positions;target['cash']=(target['cash'] as int)-cost-fee;(target['lastSignal'] as Map)[symbol]=observation;
       if(target['fees'] is int)target['fees']=(target['fees'] as int)+fee;
       _log(next,id,symbol,'OPENED_$signal',quote:q,fill:{'side':'BUY','quantity':quantity,'price':q.ask,'fee':fee,'cashAfter':target['cash']});
