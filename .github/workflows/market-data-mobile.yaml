@@ -24,6 +24,8 @@ jobs:
           cache: true
       - name: Native monitor policy without network
         run: python3 mobile/scripts/test_monitor_policy.py
+      - name: Direct Alpaca data-only boundary without network
+        run: python3 mobile/scripts/test_alpaca_policy.py
       - run: flutter pub get
         working-directory: mobile
       - run: flutter analyze
