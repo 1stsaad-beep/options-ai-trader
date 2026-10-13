@@ -33,7 +33,7 @@ void main(){
     await evaluate(signal:'PUT',reverse:true,reader:(c)async{reads++;return quote(c);});expect(reads,1);expect((paper.account(id)['positions'] as Map)['NVDA']['direction'],'CALL');});
   test('failed quote cannot close or reverse',()async{await evaluate();await evaluate(signal:'PUT',reverse:true,reader:(_)async=>null);
     expect((paper.account(id)['positions'] as Map)['NVDA']['direction'],'CALL');expect(paper.journal.last['decision'],'CLOSE_UNCONFIRMED_NO_REVERSAL');});
-  test('successful close does not force opposite with missing quote',()async{await evaluate();await evaluate(signal:'PUT',reverse:true,reader:(c)async=>c==call?quote(c):null);
+  test('successful close does not force opposite with missing quote',()async{await evaluate();await evaluate(signal:'PUT',reverse:true,observation:'bar2',reader:(c)async=>c==call?quote(c):null);
     expect(paper.account(id)['positions'],isEmpty);expect(paper.journal.last['decision'],'OPRA_QUOTE_REQUIRED_NO_FILL');});
   test('account disable invalidates in-flight quote',()async{final pending=Completer<OptionQuote?>();final run=evaluate(reader:(_)async=>pending.future);
     final pause=paper.configure(id,{'enabled':false});pending.complete(quote(call));await run;await pause;

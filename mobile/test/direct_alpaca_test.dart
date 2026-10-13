@@ -15,7 +15,7 @@ void main(){
     expect(DirectSnapshot.parse(jsonEncode(sample())).live('AAPL',time),isFalse);
   });
   test('out of order bars merge and duplicate correction wins',(){final j=sample();final list=(j['bars'] as Map)['NVDA'] as List;
-    list.add({...list.first as Map,'c':102});list.add({...list.first as Map,'t':DateTime.utc(2026,10,13,14,59).millisecondsSinceEpoch});
+    list.add({...Map<String,int>.from(list.first as Map),'c':102});list.add({...Map<String,int>.from(list.first as Map),'t':DateTime.utc(2026,10,13,14,59).millisecondsSinceEpoch});
     final rows=DirectSnapshot.parse(jsonEncode(j)).series['NVDA']!;expect(rows.length,2);expect(rows.last.close,102);expect(rows.first.time,DateTime.utc(2026,10,13,14,59));});
   test('invalid OHLCV and unknown feed rejected',(){final j=sample();((j['bars'] as Map)['NVDA'] as List).first['h']=90;expect(()=>DirectSnapshot.parse(jsonEncode(j)),throwsFormatException);
     expect(()=>DirectSnapshot.parse(jsonEncode(sample()..['feed']='invented')),throwsFormatException);});
