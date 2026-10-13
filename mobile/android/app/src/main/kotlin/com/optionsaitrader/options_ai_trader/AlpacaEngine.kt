@@ -9,7 +9,8 @@ import java.util.concurrent.TimeUnit
 
 /** Only these two reads exist. Credentials are loaded at request time, not in UI state. */
 class AlpacaTransport(private val credentials: () -> Pair<String, String>,
-                      private val client: OkHttpClient = safeClient()) {
+                      private val client: OkHttpClient = safeClient(),
+                      private val sockets: WebSocket.Factory = client) {
     companion object {
         fun safeClient() = OkHttpClient.Builder().followRedirects(false).followSslRedirects(false)
             .retryOnConnectionFailure(false).connectTimeout(8, TimeUnit.SECONDS)
@@ -43,7 +44,7 @@ class AlpacaTransport(private val credentials: () -> Pair<String, String>,
         }
     }
     fun stream(config: AlpacaConfig, listener: WebSocketListener): WebSocket =
-        client.newWebSocket(request(AlpacaDataPolicy.SOCKET + config.feed, true), listener)
+        sockets.newWebSocket(request(AlpacaDataPolicy.SOCKET + config.feed, true), listener)
     fun cancel() { client.dispatcher.cancelAll() }
 }
 

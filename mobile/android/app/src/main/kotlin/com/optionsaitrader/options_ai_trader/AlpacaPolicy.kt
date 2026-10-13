@@ -63,7 +63,7 @@ class AlpacaCache {
     private val data = mutableMapOf<String, TreeMap<Long, AlpacaBar>>()
     fun merge(symbol: String, bar: AlpacaBar, config: AlpacaConfig, now: Long) {
         require(symbol in config.symbols)
-        require(bar.time <= now - 60_000) // Never analyse an unfinished/future minute.
+        require(bar.time % 60_000 == 0L && bar.time <= now - 60_000) // Complete, aligned minutes only.
         if (!AlpacaDataPolicy.inSession(bar.time, config.extended)) return
         val series = data.getOrPut(symbol) { TreeMap() }
         series[bar.time] = bar // updatedBars replace exactly one timestamp.

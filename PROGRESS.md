@@ -523,3 +523,7 @@ Recovered actual Lab19 head `67995126bd095e3e3bbbae2d74e9d19e0e2c8207`; previous
 ## Direct Alpaca concurrent-write recovery checkpoint
 
 Both target-ref lease checks safely refused to replace newly advanced source. Work saved on recovery/direct-alpaca-lab20-20261013 at a96d35f47a989271d0ee9d5839f3e881e65a17f3. Isolated native acceptance enabled there; not an accepted Lab20 APK. Target source is concurrently adding another transport/service. Do not merge overlapping transports without review. No provider account connected.
+
+### Isolated acceptance hardening
+
+Added aligned-minute rejection and deterministic mocked WebSocket coverage: authentication before subscription, one timestamp on correction, connection-limit 406 falls back to REST without replacing the other application stream, no stream when disabled, and late authentication after stop cannot revive connectivity. Native CI still running for the previous checkpoint; these additions require the next targeted run. Main recovery branch is left untouched while concurrent development is active.

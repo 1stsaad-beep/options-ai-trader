@@ -30,6 +30,7 @@ class AlpacaPolicyTest {
         assertEquals(102.0, cache.series("NVDA").single().close, 0.0)
         assertTrue(cache.series("AAPL").isEmpty())
         assertThrows(IllegalArgumentException::class.java) { cache.merge("NVDA", b, cfg, time) }
+        assertThrows(IllegalArgumentException::class.java) { cache.merge("NVDA", b.copy(time = time + 1_000), cfg, time + 120_000) }
         assertThrows(IllegalArgumentException::class.java) { cache.merge("TSLA", b, cfg, time + 60_000) }
         assertThrows(IllegalArgumentException::class.java) { b.copy(close = Double.NaN) }
         assertThrows(IllegalArgumentException::class.java) { b.copy(high = 98.0) }
