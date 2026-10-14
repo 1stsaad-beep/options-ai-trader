@@ -18,7 +18,9 @@ Map<String,dynamic> projectPaperSettlement(Map? position,Map? delivery,int cash,
     Map<String,dynamic> request,DateTime now) {
   const fields={'id','action','contract','quantity','feeCents','underlyingCents','effectiveAt','recordedAt','source','reference'};
   if(request.keys.toSet().difference(fields).isNotEmpty||fields.difference(request.keys.toSet()).isNotEmpty||
-    !['manual_paper','fixture'].contains(request['source']))throw const FormatException('Strict paper receipt required');
+    !['manual_paper','fixture'].contains(request['source'])) {
+    throw const FormatException('Strict paper receipt required');
+  }
   for(final key in ['id','reference']) {
     if(request[key] is! String||(request[key] as String).trim().isEmpty||(request[key] as String).length>120)throw const FormatException('Receipt identity required');
   }
