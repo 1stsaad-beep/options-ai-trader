@@ -35,14 +35,16 @@ void main() {
         }
       }
     });
-    if(bars.length>=35)test('saved Direct snapshot uses canonical indicator values: ${c['name']}',() {
+    if(bars.length>=35) {
+      test('saved Direct snapshot uses canonical indicator values: ${c['name']}',() {
       final snapshot=directResearchSnapshot(bars),expected=c['expected'] as Map;
       expect(snapshot['version'],'direct-research-v3');expect(snapshot['indicatorContract'],marketIndicatorContract);
       closeTree(snapshot['indicators']['rsi14'],expected['rsi14'].last);
       closeTree(snapshot['indicators']['atr14'],expected['atr14'].last);
       closeTree(snapshot['indicators']['ema20'],expected['ema20'].last);
       closeTree(snapshot['indicators']['vwap'],expected['vwap_utc_day'].last);
-    });
+      });
+    }
   }
   test('known seed, flat RSI and zero-volume availability',() {
     expect(MarketIndicators.ema([1,2,3,4],3),[null,null,2,3]);
