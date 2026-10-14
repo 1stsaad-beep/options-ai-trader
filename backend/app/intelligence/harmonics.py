@@ -7,6 +7,8 @@ from typing import Iterable
 
 from .pivots import Pivot, alternating, validate_pivots
 
+GEOMETRY_CONTRACT_VERSION = 'confirmed-geometry-v1'
+
 
 def _between(value: float, lower: float, upper: float, tolerance: float) -> bool:
     return lower - tolerance <= value <= upper + tolerance

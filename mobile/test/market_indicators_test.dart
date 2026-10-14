@@ -38,7 +38,7 @@ void main() {
     if(bars.length>=35) {
       test('saved Direct snapshot uses canonical indicator values: ${c['name']}',() {
       final snapshot=directResearchSnapshot(bars),expected=c['expected'] as Map;
-      expect(snapshot['version'],'direct-research-v3');expect(snapshot['indicatorContract'],marketIndicatorContract);
+      expect(snapshot['version'],'direct-research-v4');expect(snapshot['indicatorContract'],marketIndicatorContract);
       closeTree(snapshot['indicators']['rsi14'],expected['rsi14'].last);
       closeTree(snapshot['indicators']['atr14'],expected['atr14'].last);
       closeTree(snapshot['indicators']['ema20'],expected['ema20'].last);

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:convert';
 import 'direct_replay.dart';
 import 'market_indicators.dart';
+import 'market_geometry.dart';
 import 'package:flutter/material.dart';
 import 'direct_alpaca.dart';
 import 'demo/chart_analysis.dart';
@@ -83,7 +84,7 @@ class _DirectLabsState extends State<DirectLabs> {
         painter:DemoCandlePainter(bars,{},[],markers,Theme.of(context).colorScheme,0,false,false,[],
           priceLabel:'STOCK • ${widget.source}',timeLabels:{for(var i=0;i<rows.length;i++)i:rows[i].time.toIso8601String().substring(11,16)})))),
     ]);}
-    final pivots=DemoChartAnalysis.pivots(bars),summary=MarketIndicators.summary(rows);
+    final pivots=MarketGeometry.confirmedPivots(rows),summary=MarketIndicators.summary(rows);
     final epoch=widget.waveEpoch;
     final archived=minutes==1&&epoch!=null&&(epoch['times'] as List).last==rows.last.time.millisecondsSinceEpoch;
     if(archived) {
@@ -104,7 +105,7 @@ class _DirectLabsState extends State<DirectLabs> {
     final patterns=lab==0?<ChartPattern>[
       if(wave.primary!=null)drawing(wave.primary!),
       if(showAlternate&&wave.alternate!=null)drawing(wave.alternate!,alternate:true),
-    ]:lab==2?DemoChartAnalysis.harmonics(pivots):<ChartPattern>[];
+    ]:lab==2?MarketGeometry.harmonics(pivots).map(MarketGeometry.drawing).toList():<ChartPattern>[];
     final div=MarketIndicators.divergences(rows),closes=bars.map((b)=>b.close).toList();
     final macd=MarketIndicators.macd(closes),offset=math.max(0,bars.length-180);
     final signal=MarketSignal.analyze(rows);
@@ -130,8 +131,15 @@ class _DirectLabsState extends State<DirectLabs> {
           'السجل سببي داخل هذه النافذة فقط؛ لا أرشيف متحقق مطابق لهذا الفاصل والمصدر.'),
         Text('أحداث الرصد والإلغاء: ${wave.events.length}',key:const Key('direct-wave-events')),
       ],
-      if(lab==1) Text('الدعم ${number(summary['support'])} • المقاومة ${number(summary['resistance'])}\nFib 38.2% / 61.8% • ${summary['candle']}\nالكشف الكامل للنماذج الكلاسيكية ما زال تجريبيًا.'),
-      if(lab==2) Text(patterns.isEmpty?'لا نموذج Harmonic مؤكد.':patterns.map((p)=>'${p.name} • PRZ ${number(p.przLow)}–${number(p.przHigh)}').join('\n')),
+      if(lab==1)...[
+        Text('الدعم ${number(summary['support'])} • المقاومة ${number(summary['resistance'])}\nFib 38.2% / 61.8% • ${summary['candle']}'),
+        const Text('بحث هندسي بقواعد الخادم: قمم/قيعان مزدوجة، رأس وكتفين، مثلث متقارب. التأكيد يتطلب كسرًا بالسعر، ولا يجيز التداول.'),
+        for(final p in MarketGeometry.classicPatterns(pivots,bars.last.close))Text('${p['kind']} • ${p['confirmed']==true?"كسر مؤكد":"مرشح لم يتأكد"} • خط العنق ${number(p['neckline'])}'),
+      ],
+      if(lab==2)...[
+        const Text('هندسة XABCD مؤكدة بثلاث شموع • سماحية نسب 0.03 • PRZ تقاطع XA وBC؛ Cypher يعتمد XC. مرشحات بحثية.'),
+        Text(patterns.isEmpty?'لا نموذج Harmonic مستوفٍ للهندسة.':patterns.map((p)=>'${p.name} • PRZ ${number(p.przLow)}–${number(p.przHigh)}').join('\n')),
+      ],
       if(lab==3) Text('SMA20 ${number(summary['sma20'])} • EMA20 ${number(summary['ema20'])}\nRSI14 Wilder ${number(summary['rsi14'])}\nMACD 12/26/9 ${number(summary['macd'])}\nATR14 ${number(summary['atr14'])} • VWAP يوم UTC ${number(summary['vwap'])}'),
       if(lab==4) Text('توافق قواعد محلية: ${signal.direction} • ${signal.confirmedReverse?'دايفرجنس جديد مؤكد':'لا عكس مؤكد جديد'}\nAI Confluence اسم المختبر؛ لا نموذج لغوي أو توقع ربحية. إشارة السهم لا تُسعّر الخيار.'),
       if(markers.isNotEmpty)const Text('علامات Market Paper مثبتة على شمعة الإشارة؛ المحور لسعر السهم. سعر العقد والرسوم في القرار الأصلي.'),

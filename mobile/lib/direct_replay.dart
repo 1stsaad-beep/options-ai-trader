@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'dart:convert';
 import 'direct_alpaca.dart';
 import 'market_indicators.dart';
-import 'demo/chart_analysis.dart';
+import 'market_geometry.dart';
 import 'demo/wave_analysis.dart';
 
 /// The entire bounded source used by the decision, including indicator warmup.
@@ -86,17 +86,18 @@ ChartWaveView directWaveView(List<MarketBar> rows) {
 
 Map<String,dynamic> directResearchSnapshot(List<MarketBar> rows,{ChartWaveView? archivedWaves,Map<String,dynamic>? archiveOrigin}) {
   final bars=[for(var i=0;i<rows.length;i++)rows[i].candle(i)];
-  if(bars.length<35)return {'version':'direct-research-v3','indicatorContract':marketIndicatorContract,'status':'INSUFFICIENT_OBSERVED_BARS','executable':false};
+  if(bars.length<35)return {'version':'direct-research-v4','indicatorContract':marketIndicatorContract,'geometryContract':marketGeometryContract,'status':'INSUFFICIENT_OBSERVED_BARS','executable':false};
   final waves=archivedWaves??directWaveView(rows);
-  return {'version':'direct-research-v3','indicatorContract':marketIndicatorContract,'status':'OBSERVED_SHADOW','executable':false,
+  final geometry=MarketGeometry.confirmedPivots(rows);
+  return {'version':'direct-research-v4','indicatorContract':marketIndicatorContract,'geometryContract':marketGeometryContract,'status':'OBSERVED_SHADOW','executable':false,
     'firstObservedAt':rows.first.time.toUtc().toIso8601String(),'lastObservedAt':rows.last.time.toUtc().toIso8601String(),
     if(archiveOrigin!=null)'waveArchiveOrigin':archiveOrigin,
     'waveCandidates':[for(final s in waves.active)s.toJson()],
     'waveEvents':[for(final e in waves.events)e.toJson()],
     'primaryWaveId':waves.primary?.id,'alternateWaveId':waves.alternate?.id,
     'indicators':MarketIndicators.summary(rows),
-    'harmonics':[for(final h in DemoChartAnalysis.harmonics(DemoChartAnalysis.pivots(bars)))
-      {'name':h.name,'points':[for(final p in h.points)[p.index,p.confirmedAt,p.price]],'przLow':h.przLow,'przHigh':h.przHigh,'invalidation':h.invalidation}],
+    'harmonics':MarketGeometry.harmonics(geometry),
+    'classicalPatterns':MarketGeometry.classicPatterns(geometry,rows.last.close),
     'divergences':[for(final minutes in [1,5,15]) ...(() {
       final frame=directTimeframe(rows,minutes);
       return [for(final d in MarketIndicators.divergences(frame))

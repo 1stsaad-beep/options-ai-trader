@@ -78,4 +78,12 @@ Fixed readiness incorrectly allowing trading_ready with a fresh analysis-only wo
 
 Four new real-process local tests cover DB initially unavailable then recovering, restart preserving balances/disarming stale knowledge, read-only healthchecks, fast graceful shutdown during a60-second wait and sanitized one-shot/live-lock failure. The complete local backend suite passed1144 tests after these changes. PostgreSQL/Compose and final-source security remain pending publication; no deployed uptime or independent reviewer claim.
 
+Source2a297436 passed backend/PostgreSQL/Compose38546730107 and security38546730336. Flutter reruns on ee7517e3 were cancelled while later checkpoints were published; those are not accepted final-source gates. A complete final mobile/JVM run is still required after the next code checkpoint.
+
+## Batch 10 — Direct/server harmonic and classic geometry (acceptance pending)
+
+Direct now uses the server facade's strict three-left/three-right confirmed pivots for XABCD and classic geometry. Canonical Gartley/Bat/Butterfly/Crab/Cypher ratios,0.03 tolerance, XA/BC PRZ intersection (XC for Cypher), direction, activation, invalidation and both targets are matched, including Butterfly's1.272–1.618 extension range. Double top/bottom, head-and-shoulders/inverse and converging-triangle detection/confirmation are displayed as research and saved. The Direct research schema is v4; original v2/v3 decisions and Demo Golden images are unchanged. Wave journals retain their original plateau convention; this is deliberately not full wave/Demo/divergence/strategy parity.
+
+18 harmonic/mirror/negative cases,10 classic cases and3 strict-pivot source/prefix fixtures compare Python and Dart with1e-9 tolerance. Local Python geometry plus existing intelligence tests:74 passed. Await Flutter integration/gates before claiming acceptance. Broad classic pattern drawing and independent visual review remain open.
+
 Open software work remains distinct from external evidence: actual OPRA entitlement and three recorded sessions, secure stable signing material, independently deployed uptime, signed iOS/device acceptance cannot be manufactured. The software gaps above remain authorized work, not requests for user testing.
