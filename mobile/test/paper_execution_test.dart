@@ -14,7 +14,7 @@ void main() {
   }
   test('Replay retains new actual entry costs and rejects modified model',() {
     final query=Map<String,dynamic>.from(jsonDecode(File('test/fixtures/observed_option_replay_v1.json').readAsStringSync())['cases'][0]['query'] as Map);
-    final original=replayObservedOption(query),entry=query['entry'] as Map,fill=entry['fill'] as Map;
+    final original=replayObservedOption(query),entry=query['entry'] as Map,fill=entry['fill'] as Map<String,dynamic>;
     final model=projectOptionExecution(entry['quote'] as Map,'BUY',fill['quantity'] as int,0,DateTime.parse(entry['at'] as String));
     fill.addAll({'execution':model,'price':model['priceCents'],'fee':model['feeCents']});
     final next=replayObservedOption(query);expect(next['pnlCents'],(original['pnlCents'] as int)-105*(fill['quantity'] as int));
