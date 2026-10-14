@@ -30,7 +30,9 @@ Map<String,dynamic> valueDeliveries(Map deliveries,Map observations,DateTime now
         status='INVALID';
         if(observation is! Map||observation.keys.toSet().difference(fields).isNotEmpty||fields.difference(observation.keys.toSet()).isNotEmpty||
             observation['version']!=deliveryValuationVersion||observation['symbol']!=symbol||symbol is! String||
-            !RegExp(r'^[A-Z]{1,6}$').hasMatch(symbol)||!['iex','sip'].contains(observation['feed']))throw const FormatException();
+            !RegExp(r'^[A-Z]{1,6}$').hasMatch(symbol)||!['iex','sip'].contains(observation['feed'])) {
+          throw const FormatException();
+        }
         final bid=_integer(observation['bidCents'],1),ask=_integer(observation['askCents'],1);
         if(ask>100000000||bid>ask||(ask-bid)*5>ask)throw const FormatException();
         final at=observationStamp(observation['at']),captured=observationStamp(observation['capturedAt']);

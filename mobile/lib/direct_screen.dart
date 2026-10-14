@@ -170,8 +170,10 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
       await paper.observeRecentOptions(source:snapshot.source=='alpaca'?'alpaca':'fixture',quotes:observedQuote,
         active:()=>visible&&mounted&&snapshot.enabled);
       // Owned option protection above takes priority over optional share marks.
-      if(snapshot.source=='alpaca')await paper.observeDeliveries(source:'alpaca',quotes:api.stockQuote,
-        active:()=>visible&&mounted&&snapshot.enabled&&snapshot.source=='alpaca');
+      if(snapshot.source=='alpaca') {
+        await paper.observeDeliveries(source:'alpaca',quotes:api.stockQuote,
+          active:()=>visible&&mounted&&snapshot.enabled&&snapshot.source=='alpaca');
+      }
     }
   }
   @override void didChangeAppLifecycleState(AppLifecycleState state){visible=state==AppLifecycleState.resumed;
