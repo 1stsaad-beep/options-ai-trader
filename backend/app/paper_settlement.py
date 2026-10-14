@@ -72,6 +72,18 @@ def project(position, delivery, cash, request, now):
         stock_delta = -qty
         cash_delta = integer(spot * qty) - fee
         pnl = cash_delta + basis_delta
+    elif action == 'BUY_FOR_PUT':
+        if right != 'P' or not position or position['contract'] != request['contract']:
+            raise ValueError('Only shares needed for an already owned Put may be acquired')
+        needed = integer(integer(position['quantity'], 1) * 100) - stock_qty
+        if qty > needed or effective < stamp(position['opened']):
+            raise ValueError('Put acquisition exceeds delivery need or predates ownership')
+        cutoff = evaluate_expiration(expiry, effective).get('cutoff_at')
+        if cutoff is None or effective > stamp(cutoff):
+            raise ValueError('Known unexpired Put cutoff required')
+        stock_delta = qty
+        basis_delta = integer(spot * qty) + fee
+        cash_delta = -basis_delta
     elif action in ('EXERCISE', 'EXPIRE_WORTHLESS'):
         if not position or position['contract'] != request['contract'] or qty > integer(position['quantity'], 1):
             raise ValueError('Owned option quantity required')

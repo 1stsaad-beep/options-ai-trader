@@ -1034,6 +1034,224 @@
         "externalOrder": false,
         "source": "paper_receipt"
       }
+    },
+    {
+      "name": "funded_put_delivery_shares",
+      "position": {
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "BUY_FOR_PUT",
+        "contract": "NVDA261016P00200000",
+        "quantity": 100,
+        "feeCents": 100,
+        "underlyingCents": 19000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": -1900100,
+        "optionQuantity": 0,
+        "removedCost": 0,
+        "removedEntryFees": 0,
+        "shareDelta": 100,
+        "shareBasisDelta": 1900100,
+        "realizedPnl": 0,
+        "feeCents": 100,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
+    },
+    {
+      "name": "put_delivery_excess",
+      "position": {
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "BUY_FOR_PUT",
+        "contract": "NVDA261016P00200000",
+        "quantity": 201,
+        "feeCents": 100,
+        "underlyingCents": 19000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "put_delivery_after_cutoff",
+      "position": {
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "BUY_FOR_PUT",
+        "contract": "NVDA261016P00200000",
+        "quantity": 100,
+        "feeCents": 100,
+        "underlyingCents": 19000,
+        "effectiveAt": "2026-10-17T14:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "put_delivery_before_ownership",
+      "position": {
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "BUY_FOR_PUT",
+        "contract": "NVDA261016P00200000",
+        "quantity": 100,
+        "feeCents": 100,
+        "underlyingCents": 19000,
+        "effectiveAt": "2026-10-13T14:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "put_delivery_insufficient_cash",
+      "position": {
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 1900099,
+      "request": {
+        "id": "call_partial",
+        "action": "BUY_FOR_PUT",
+        "contract": "NVDA261016P00200000",
+        "quantity": 100,
+        "feeCents": 100,
+        "underlyingCents": 19000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "put_delivery_already_owned",
+      "position": {
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": {
+        "quantity": 200,
+        "cost": 3900000
+      },
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "BUY_FOR_PUT",
+        "contract": "NVDA261016P00200000",
+        "quantity": 100,
+        "feeCents": 100,
+        "underlyingCents": 19000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "put_delivery_unowned",
+      "position": null,
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "BUY_FOR_PUT",
+        "contract": "NVDA261016P00200000",
+        "quantity": 100,
+        "feeCents": 100,
+        "underlyingCents": 19000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "call_share_purchase_prohibited",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "BUY_FOR_PUT",
+        "contract": "NVDA261016C00200000",
+        "quantity": 100,
+        "feeCents": 100,
+        "underlyingCents": 19000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
     }
   ]
 }

@@ -10,7 +10,7 @@ from app.service import TradingService, Rejected
 
 
 @pytest.fixture
-def world(tmp_path):
+def world(tmp_path,request):
     class World:
         path = tmp_path / 'settlement.db'
         now = datetime(2026, 10, 13, 15, 1, 15, tzinfo=timezone.utc)
@@ -27,11 +27,13 @@ def world(tmp_path):
             self.s = TradingService(self.repo, now=lambda:self.now, today=lambda:self.now.date())
             self.s.reconcile(self.a)
     w = World(); w.repo = Repository(f'sqlite:///{w.path}')
+    right=getattr(request,'param','CALL')
+    if right=='PUT':w.contract='NVDA261016P00200000'
     w.s = TradingService(w.repo, now=lambda:w.now, today=lambda:w.now.date())
     w.a = w.s.create_account('delivery', 10000000)['id']
     w.s.configure(w.a, {'session_policy':'us_equity_options_2026_2027', 'commission_cents':65, 'holding':'swing'})
     w.s.watch(w.a, 'NVDA', True)
-    order = w.s.submit(w.a, w.order()); w.s.fill(w.a, order['id'], 'buy-fill', 2, 210)
+    order = w.s.submit(w.a, w.order(right=right)); w.s.fill(w.a, order['id'], 'buy-fill', 2, 210)
     w.now += timedelta(seconds=1)
     yield w
     w.repo.close()
@@ -51,6 +53,20 @@ def test_partial_exercise_recovery_and_exact_retry(world):
     assert len(w.s.rows(w.a, 'paper_settlement_receipts')) == 1
     with pytest.raises(Rejected, match='identity conflict'):
         w.s.settle_paper(w.a, req | {'quantity':2})
+
+
+@pytest.mark.parametrize('world',['PUT'],indirect=True)
+def test_funded_put_share_acquisition_then_physical_delivery_is_reachable(world):
+    w=world
+    with pytest.raises(Rejected,match='owned underlying'):w.s.settle_paper(w.a,w.receipt())
+    w.s.settle_paper(w.a,w.receipt(id='acquire',action='BUY_FOR_PUT',quantity=100,underlyingCents=19000))
+    assert w.s.performance(w.a)['realized_pnl_cents']==0
+    assert w.s.performance(w.a)['simulated_cash_cents']==8057770
+    w.restart();w.s.settle_paper(w.a,w.receipt())
+    p=w.s.performance(w.a)
+    assert p['simulated_cash_cents']==10057670 and p['realized_pnl_cents']==78735
+    assert p['delivered_shares']==[] and w.s.rows(w.a,'positions')[0]['quantity']==1
+    w.restart()
 
 
 def test_full_delivery_and_fractional_basis_disposal(world):

@@ -24,6 +24,14 @@ int _product(int a,int b) {
   return result.toInt();
 }
 int _portion(int cost,int quantity,int total)=>(BigInt.from(cost)*BigInt.from(quantity)~/BigInt.from(total)).toInt();
+DateTime? _cutoff(DateTime expiry) {
+  for(var back=0;back<8;back++) {
+    final session=paperSession(DateTime.utc(expiry.year,expiry.month,expiry.day,12).subtract(Duration(days:back)));
+    if(session.status=='NO_SESSION')continue;
+    return session.closes;
+  }
+  return null;
+}
 
 /// Explicit virtual receipts only. No network, option-price substitution or
 /// automatic exercise. Result must commit atomically with original evidence.
@@ -54,15 +62,17 @@ Map<String,dynamic> projectPaperSettlement(Map? position,Map? delivery,int cash,
   if(action=='SELL_DELIVERY') {
     if(qty>stockQty)throw const FormatException('Owned shares required; no short stock');
     basisDelta=-_portion(stockCost,qty,stockQty);stockDelta=-qty;cashDelta=_product(spot,qty)-fee;pnl=cashDelta+basisDelta;
+  }else if(action=='BUY_FOR_PUT') {
+    if(right!='P'||position==null||position['contract']!=request['contract'])throw const FormatException('Already owned Put required');
+    final needed=_product(_integer(position['quantity'],1),100)-stockQty;
+    if(qty>needed||effective.isBefore(_stamp(position['opened'])))throw const FormatException('Quantity exceeds Put delivery need or predates ownership');
+    final cutoff=_cutoff(expiry);
+    if(cutoff==null||effective.isAfter(cutoff))throw const FormatException('Known unexpired Put cutoff required');
+    stockDelta=qty;basisDelta=_product(spot,qty)+fee;cashDelta=-basisDelta;
   }else if(['EXERCISE','EXPIRE_WORTHLESS'].contains(action)) {
     if(position==null||position['contract']!=request['contract']||qty>_integer(position['quantity'],1))throw const FormatException('Owned option quantity required');
     if(effective.isBefore(_stamp(position['opened'])))throw const FormatException('Receipt predates ownership');
-    DateTime? cutoff;
-    for(var back=0;back<8;back++) {
-      final s=paperSession(DateTime.utc(expiry.year,expiry.month,expiry.day,12).subtract(Duration(days:back)));
-      if(s.status=='NO_SESSION')continue;
-      cutoff=s.closes;break;
-    }
+    final cutoff=_cutoff(expiry);
     if(cutoff==null)throw const FormatException('Known contract calendar required');
     optionQty=qty;removedCost=_portion(_integer(position['cost'],1),qty,position['quantity'] as int);
     removedFees=_portion(_integer(position['entryFees']??0),qty,position['quantity'] as int);

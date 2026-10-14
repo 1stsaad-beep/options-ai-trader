@@ -227,8 +227,8 @@ def test_secret_patterns_are_redacted_even_in_test_files(name, value, rule):
     assert name != serialized
 
 
-def test_exact_fixture_exception_is_scoped_not_blanket():
-    fixture = "test-token-at-least-32-characters-long"
+@pytest.mark.parametrize('fixture', ['test-token-at-least-32-characters-long', 'fixture-only-token-not-a-secret'])
+def test_exact_fixture_exception_is_scoped_not_blanket(fixture):
     content = "TOKEN = '" + fixture + "'"
     assert scanner.scan_text("backend/tests/test_api.py", content) == []
     assert scanner.scan_text("app/config.py", content)

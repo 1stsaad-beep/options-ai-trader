@@ -67,11 +67,12 @@ class _PaperSettlementDialogState extends State<PaperSettlementDialog> {
       Text(widget.contract),
       const Text('تسجيل محاسبي افتراضي يدوي، وليس تأكيد وسيط أو سعر OPRA أو أمر تداول. لا ممارسة تلقائية. الأسهم المستلمة بلا تقييم سوقي وتمنع دخول خيارات جديدة حتى تصفيتها ورقيًا.'),
       DropdownButtonFormField<String>(key:const Key('settlement-action'),initialValue:action,isExpanded:true,
-        items:widget.delivery?const [DropdownMenuItem(value:'SELL_DELIVERY',child:Text('بيع الأسهم المستلمة ورقيًا'))]:const [
-          DropdownMenuItem(value:'EXERCISE',child:Text('ممارسة وتحويل إلى أسهم / نقد')),
-          DropdownMenuItem(value:'EXPIRE_WORTHLESS',child:Text('انتهاء بلا قيمة — رصد عند الإقفال'))],
+        items:widget.delivery?const [DropdownMenuItem(value:'SELL_DELIVERY',child:Text('بيع الأسهم المستلمة ورقيًا'))]:[
+          const DropdownMenuItem(value:'EXERCISE',child:Text('ممارسة وتحويل إلى أسهم / نقد')),
+          const DropdownMenuItem(value:'EXPIRE_WORTHLESS',child:Text('انتهاء بلا قيمة — رصد عند الإقفال')),
+          if(RegExp(r'P\d{8}$').hasMatch(widget.contract))const DropdownMenuItem(value:'BUY_FOR_PUT',child:Text('اقتناء ورقي لأسهم تسليم Put المملوك'))],
         onChanged:saving?null:(v){if(v!=null){action=v;changed('');}}),
-      field(quantity,widget.delivery?'عدد الأسهم':'عدد العقود','settlement-quantity',numeric:true),
+      field(quantity,widget.delivery||action=='BUY_FOR_PUT'?'عدد الأسهم':'عدد العقود','settlement-quantity',numeric:true),
       field(price,'سعر السهم في الرصد (USD)','settlement-price',numeric:true),
       field(fee,'رسوم الإيصال الإجمالية (USD)','settlement-fee',numeric:true),
       field(effective,'وقت الحدث ISO مع منطقة زمنية؛ الانتهاء عند إقفال الجلسة','settlement-effective'),

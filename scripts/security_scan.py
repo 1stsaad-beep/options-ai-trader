@@ -31,6 +31,9 @@ ARCHIVE_SUFFIXES = {".zip", ".gz", ".tgz", ".tar", ".7z", ".bundle", ".apk", ".i
 # Exact non-production fixtures are exempt only in tests or workflow fixtures.
 # Never exempt all strings in test files, and never exempt real token prefixes.
 FIXTURE_TOKENS = frozenset({
+    # Literal introduced in e579947's in-process TestClient; never a provider key.
+    # Exact-value, test-path exemption also covers that reachable historical blob.
+    "fixture-only-token-not-a-secret",
     "test-token-at-least-32-characters-long",
     "v03-token-longer-than-32-characters",
     "independent-review-token-32-characters",

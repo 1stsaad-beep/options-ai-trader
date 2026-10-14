@@ -87,6 +87,22 @@ void main() {
     request['effectiveAt']=DateTime.utc(2026,10,13,15).toIso8601String();
     await expectLater(paper.settle(id,request),throwsFormatException);expect(jsonEncode(store.value),before);
   });
+  test('owned Put can acquire only needed shares with cash, then deliver them on exercise',()async {
+    await paper.add('Put settlement',initialCash:10000000);id=paper.accounts.last['id'] as String;
+    const put='NVDA261016P00200000';
+    await paper.configure(id,{'enabled':true,'contracts':{'NVDA:PUT':put},'quantity':2});
+    await paper.evaluate(id:id,symbol:'NVDA',signal:'PUT',confirmedReverse:false,dataValid:()=>true,
+      observation:clock.toIso8601String(),quotes:(c)async=>OptionQuote(c,'opra',clock,200,210,10,10));
+    await paper.configure(id,{'enabled':false});
+    final acquire={...receipt(action:'BUY_FOR_PUT',key:'acquire',quantity:100,price:19000),'contract':put};
+    await paper.settle(id,acquire);
+    expect(paper.account(id)['cash'],8057770);expect(paper.performance(id)['realizedPnlCents'],0);
+    final recovered=MarketPaper(store,clock:()=>clock);await recovered.load();
+    await recovered.settle(id,{...receipt(),'contract':put});
+    expect(recovered.account(id)['cash'],10057670);expect(recovered.performance(id)['realizedPnlCents'],78735);
+    expect(recovered.account(id)['deliveryPositions'],isEmpty);
+    expect(recovered.account(id)['positions']['NVDA']['quantity'],1);validatePaper(recovered.copy());
+  });
   test('insufficient cash rejects exercise with original ownership intact',()async {
     await paper.add('Small',initialCash:1000000);id=paper.accounts.last['id'] as String;
     await paper.configure(id,{'enabled':true,'contracts':{'NVDA:CALL':contract}});await open();
