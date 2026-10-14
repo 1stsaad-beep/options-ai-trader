@@ -2,7 +2,7 @@
   "format_version": 1,
   "source": "6a71afff6109c15a9d193ab67a0f1c136a7cb147",
   "branch": "recovery/v1.0-20261011",
-  "checked_at": "2026-10-14T11:16:23.760Z",
+  "checked_at": "2026-10-14T11:20:56.770Z",
   "scope": "GITHUB_METADATA_ONLY_ORIGINAL_ARTIFACTS_NOT_DOWNLOADED_OR_RECOUNTED",
   "independent_review": false,
   "new_apk_produced": false,
@@ -126,104 +126,6 @@
               "status": "completed",
               "conclusion": "success",
               "number": 17
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 38554751700,
-      "name": "Direct Alpaca mock acceptance",
-      "head_sha": "6a71afff6109c15a9d193ab67a0f1c136a7cb147",
-      "status": "in_progress",
-      "conclusion": null,
-      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38554751700",
-      "jobs": [
-        {
-          "id": 115821174508,
-          "name": "mock",
-          "status": "in_progress",
-          "conclusion": null,
-          "run_id": 38554751700,
-          "logs_url": null,
-          "steps": [
-            {
-              "name": "Set up job",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 1
-            },
-            {
-              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 2
-            },
-            {
-              "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 3
-            },
-            {
-              "name": "Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 4
-            },
-            {
-              "name": "Run python3 mobile/scripts/test_alpaca_policy.py > alpaca-policy.txt",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 5
-            },
-            {
-              "name": "Run bash scripts/bootstrap.sh",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 6
-            },
-            {
-              "name": "Run flutter analyze",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 7
-            },
-            {
-              "name": "Run flutter test --exclude-tags=golden --machine > direct-flutter-tests.json",
-              "status": "completed",
-              "conclusion": "success",
-              "number": 8
-            },
-            {
-              "name": "Native HTTP and WebSocket mock tests (no provider network)",
-              "status": "in_progress",
-              "conclusion": null,
-              "number": 9
-            },
-            {
-              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
-              "status": "pending",
-              "conclusion": null,
-              "number": 10
-            },
-            {
-              "name": "Post Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
-              "status": "pending",
-              "conclusion": null,
-              "number": 18
-            },
-            {
-              "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
-              "status": "pending",
-              "conclusion": null,
-              "number": 19
-            },
-            {
-              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
-              "status": "pending",
-              "conclusion": null,
-              "number": 20
             }
           ]
         }
@@ -512,6 +414,110 @@
           ]
         }
       ]
+    },
+    {
+      "id": 38554751700,
+      "name": "Direct Alpaca mock acceptance",
+      "head_sha": "6a71afff6109c15a9d193ab67a0f1c136a7cb147",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/1stsaad-beep/options-ai-trader/actions/runs/38554751700",
+      "jobs": [
+        {
+          "id": 115821174508,
+          "name": "mock",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 38554751700,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Run python3 mobile/scripts/test_alpaca_policy.py > alpaca-policy.txt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Run bash scripts/bootstrap.sh",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run flutter analyze",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Run flutter test --exclude-tags=golden --machine > direct-flutter-tests.json",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Native HTTP and WebSocket mock tests (no provider network)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Post Run subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18
+            },
+            {
+              "name": "Post Run actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            }
+          ]
+        }
+      ]
     }
   ],
   "artifacts": [
@@ -554,6 +560,16 @@
       "size_in_bytes": 170751,
       "expired": false,
       "expires_at": "2026-10-28T11:12:24Z"
+    },
+    {
+      "id": 11890645811,
+      "name": "direct-alpaca-mock-results",
+      "run_id": 38554751700,
+      "source": "6a71afff6109c15a9d193ab67a0f1c136a7cb147",
+      "sha256": "sha256:694b1cba5cd93b1500d6c0c3c6bd7138fde327f9fc47970ea71f24339e039eed",
+      "size_in_bytes": 201880,
+      "expired": false,
+      "expires_at": "2026-10-28T11:17:32Z"
     }
   ],
   "log_summaries": [
