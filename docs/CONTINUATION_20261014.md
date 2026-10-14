@@ -52,6 +52,14 @@ Added source-specific wave history to the atomic device ledger/backup, separate 
 
 The initial capacity is explicit:10000 observations/8MiB, no silent eviction or auto-reset. This does not close unbounded archive/soak/performance work; segmentation outside the live ledger and incremental checkpoint optimization remain open. The archive is optional research: corrupted research is retained and unavailable, but cannot veto qualified owned protection. Failed CAS/readback never claims a new archived observation. Tests cover rolling windows, restore, revision/source/gap boundaries, corruption, capacity and original events.
 
-NEXT: collect/fix batch6 CI and archive source-linked evidence. Qualify delivery marks/risk and option cost/liquidity model; complete remaining analysis parity, scalable wave archival, observed option Replay and runtime recovery above. R09 and overall assignments remain partial. No final readiness or independent review claim.
+Sourceb2d1d651 stopped at two redundant null-assertion analyzer warnings; corrected inc2e2793d. Chart/golden38544279560 and security38544279376 passed; collect full Direct/JVM38544279503 results before claiming batch acceptance.
+
+## Batch 7 — observed option counterfactual contract (integration pending)
+
+Added a shared Python/Dart read-only model with34 hand-authored expected cases: original ask/quantity/entry fee, latest qualified OPRA bid received by a fixed horizon, explicit adverse cents and exit commission, observed size and source/account/contract isolation. Missing/stale/future/indicative/revised-ambiguous observations never acquire a fabricated price. Original decisions are not recomputed or changed; results have executionAllowed=false and cannot become fills. Session/expiry checks and exact bounded integer arithmetic apply. A late-arriving quote cannot become information known at the horizon. Fixture/alpaca provenance is retained but not authenticated by this arithmetic.
+
+Python targeted tests:37 passed. One initially mis-timed closure fixture was corrected to place asOf after its target; production policy was not weakened. Device durable observation capture/UI and server exposure remain the next integration step. No actual OPRA access occurred; queue/Greeks valuation are explicitly not modeled by this counterfactual.
+
+NEXT: collect/fix batch7 CI and archive source-linked evidence. Integrate durable option observations and read-only Replay. Qualify delivery marks/risk and option cost/liquidity model; complete remaining analysis parity, scalable wave archival and runtime recovery above. R09 and overall assignments remain partial. No final readiness or independent review claim.
 
 Open software work remains distinct from external evidence: actual OPRA entitlement and three recorded sessions, secure stable signing material, independently deployed uptime, signed iOS/device acceptance cannot be manufactured. The software gaps above remain authorized work, not requests for user testing.

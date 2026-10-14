@@ -1,0 +1,1895 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "name": "bid exit with both original and exit fees",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": 7740,
+        "status": "OBSERVED_COUNTERFACTUAL",
+        "source": "fixture",
+        "account": "a",
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "targetAt": "2026-10-13T15:06:00.000Z",
+        "quoteAt": "2026-10-13T15:05:59.000Z",
+        "capturedAt": "2026-10-13T15:06:00.000Z",
+        "entryCostCents": 42130,
+        "entryFeeCents": 130,
+        "exitBidCents": 250,
+        "slippageCents": 0,
+        "exitPriceCents": 250,
+        "exitFeeCents": 130,
+        "exitProceedsCents": 49870,
+        "model": "observed-bid-minus-adverse-cents",
+        "queueModeled": false,
+        "greeksUsedForPricing": false
+      }
+    },
+    {
+      "name": "adverse execution cost is explicit",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z",
+        "slippageCents": 5,
+        "feePerContractCents": 80
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": 6710,
+        "status": "OBSERVED_COUNTERFACTUAL",
+        "source": "fixture",
+        "account": "a",
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "targetAt": "2026-10-13T15:06:00.000Z",
+        "quoteAt": "2026-10-13T15:05:59.000Z",
+        "capturedAt": "2026-10-13T15:06:00.000Z",
+        "entryCostCents": 42130,
+        "entryFeeCents": 130,
+        "exitBidCents": 250,
+        "slippageCents": 5,
+        "exitPriceCents": 245,
+        "exitFeeCents": 160,
+        "exitProceedsCents": 48840,
+        "model": "observed-bid-minus-adverse-cents",
+        "queueModeled": false,
+        "greeksUsedForPricing": false
+      }
+    },
+    {
+      "name": "no observed options means no invented price",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INSUFFICIENT_OBSERVED_DATA"
+      }
+    },
+    {
+      "name": "horizon not yet known",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:05:59.999Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "HORIZON_NOT_OBSERVED"
+      }
+    },
+    {
+      "name": "late receipt cannot leak into horizon",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.001Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INSUFFICIENT_OBSERVED_DATA"
+      }
+    },
+    {
+      "name": "quote older than horizon freshness cannot fill",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:05:30.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:29.999Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INSUFFICIENT_OBSERVED_DATA"
+      }
+    },
+    {
+      "name": "exact thirty second horizon boundary",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:30.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": 7740,
+        "status": "OBSERVED_COUNTERFACTUAL",
+        "source": "fixture",
+        "account": "a",
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "targetAt": "2026-10-13T15:06:00.000Z",
+        "quoteAt": "2026-10-13T15:05:30.000Z",
+        "capturedAt": "2026-10-13T15:06:00.000Z",
+        "entryCostCents": 42130,
+        "entryFeeCents": 130,
+        "exitBidCents": 250,
+        "slippageCents": 0,
+        "exitPriceCents": 250,
+        "exitFeeCents": 130,
+        "exitProceedsCents": 49870,
+        "model": "observed-bid-minus-adverse-cents",
+        "queueModeled": false,
+        "greeksUsedForPricing": false
+      }
+    },
+    {
+      "name": "same contract another account is not usable",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "b",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INSUFFICIENT_OBSERVED_DATA"
+      }
+    },
+    {
+      "name": "fixture cannot stand in for alpaca",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "alpaca"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INSUFFICIENT_OBSERVED_DATA"
+      }
+    },
+    {
+      "name": "qualified imported alpaca observations keep source",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "alpaca"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "alpaca",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": 7740,
+        "status": "OBSERVED_COUNTERFACTUAL",
+        "source": "alpaca",
+        "account": "a",
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "targetAt": "2026-10-13T15:06:00.000Z",
+        "quoteAt": "2026-10-13T15:05:59.000Z",
+        "capturedAt": "2026-10-13T15:06:00.000Z",
+        "entryCostCents": 42130,
+        "entryFeeCents": 130,
+        "exitBidCents": 250,
+        "slippageCents": 0,
+        "exitPriceCents": 250,
+        "exitFeeCents": 130,
+        "exitProceedsCents": 49870,
+        "model": "observed-bid-minus-adverse-cents",
+        "queueModeled": false,
+        "greeksUsedForPricing": false
+      }
+    },
+    {
+      "name": "future quote is unqualified",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:06:00.001Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_OBSERVATION"
+      }
+    },
+    {
+      "name": "indicative is never OPRA",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "indicative",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_OBSERVATION"
+      }
+    },
+    {
+      "name": "wide spread rejected",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 100,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_OBSERVATION"
+      }
+    },
+    {
+      "name": "crossed spread rejected",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 249,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_OBSERVATION"
+      }
+    },
+    {
+      "name": "visible quantity cannot fill whole counterfactual",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 1,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INSUFFICIENT_OBSERVED_LIQUIDITY"
+      }
+    },
+    {
+      "name": "stress cannot produce zero or negative bid",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z",
+        "slippageCents": 250
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "NO_POSITIVE_STRESSED_BID"
+      }
+    },
+    {
+      "name": "duplicates preserve first known capture",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          },
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:05:59.500Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": 7740,
+        "status": "OBSERVED_COUNTERFACTUAL",
+        "source": "fixture",
+        "account": "a",
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "targetAt": "2026-10-13T15:06:00.000Z",
+        "quoteAt": "2026-10-13T15:05:59.000Z",
+        "capturedAt": "2026-10-13T15:05:59.500Z",
+        "entryCostCents": 42130,
+        "entryFeeCents": 130,
+        "exitBidCents": 250,
+        "slippageCents": 0,
+        "exitPriceCents": 250,
+        "exitFeeCents": 130,
+        "exitProceedsCents": 49870,
+        "model": "observed-bid-minus-adverse-cents",
+        "queueModeled": false,
+        "greeksUsedForPricing": false
+      }
+    },
+    {
+      "name": "conflicting identical quote clock is ambiguous",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          },
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 249,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "AMBIGUOUS_OBSERVATION"
+      }
+    },
+    {
+      "name": "original fill must have actual quoted ask",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 205,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_ORIGINAL_RECEIPT"
+      }
+    },
+    {
+      "name": "original commission must be known",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": null
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_ORIGINAL_RECEIPT"
+      }
+    },
+    {
+      "name": "original quantity exceeds observed liquidity",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 11,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_ORIGINAL_RECEIPT"
+      }
+    },
+    {
+      "name": "original receipt stale",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:00:29.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_ORIGINAL_RECEIPT"
+      }
+    },
+    {
+      "name": "not an opening receipt",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "SELL_TO_CLOSE",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_ORIGINAL_RECEIPT"
+      }
+    },
+    {
+      "name": "unknown source never promoted",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "none"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_ORIGINAL_RECEIPT"
+      }
+    },
+    {
+      "name": "no horizon across market closure",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-14T15:10:00.000Z",
+        "horizonSeconds": 20000
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "HORIZON_OUTSIDE_OPTION_SESSION"
+      }
+    },
+    {
+      "name": "fractional option cents rejected",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250.5,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_OBSERVATION"
+      }
+    },
+    {
+      "name": "boolean size rejected",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": true,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_OBSERVATION"
+      }
+    },
+    {
+      "name": "invalid date is not normalized",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-02-30T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_QUERY"
+      }
+    },
+    {
+      "name": "timestamp requires zone",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_QUERY"
+      }
+    },
+    {
+      "name": "null cost is not default zero",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z",
+        "slippageCents": null
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_QUERY"
+      }
+    },
+    {
+      "name": "negative cost cannot boost performance",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z",
+        "slippageCents": -1
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_QUERY"
+      }
+    },
+    {
+      "name": "negative fee cannot boost performance",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z",
+        "feePerContractCents": -1
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INVALID_QUERY"
+      }
+    },
+    {
+      "name": "other contract never substituted",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016P00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": null,
+        "status": "INSUFFICIENT_OBSERVED_DATA"
+      }
+    },
+    {
+      "name": "offset clock comparison is UTC",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T11:06:00.000-04:00",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": 7740,
+        "status": "OBSERVED_COUNTERFACTUAL",
+        "source": "fixture",
+        "account": "a",
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "targetAt": "2026-10-13T15:06:00.000Z",
+        "quoteAt": "2026-10-13T15:05:59.000Z",
+        "capturedAt": "2026-10-13T15:06:00.000Z",
+        "entryCostCents": 42130,
+        "entryFeeCents": 130,
+        "exitBidCents": 250,
+        "slippageCents": 0,
+        "exitPriceCents": 250,
+        "exitFeeCents": 130,
+        "exitProceedsCents": 49870,
+        "model": "observed-bid-minus-adverse-cents",
+        "queueModeled": false,
+        "greeksUsedForPricing": false
+      }
+    }
+  ]
+}
