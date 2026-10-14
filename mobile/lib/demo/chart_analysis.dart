@@ -47,6 +47,8 @@ class ChartClassic {
   final List<ChartPivot> points;
   final List<String> labels;
   final bool confirmed;
+  // Conservative detector break threshold; for five-point H&S geometry the
+  // observed neckline is the segment between points[1] and points[3].
   final double? neckline;
   const ChartClassic(this.kind,this.points,this.labels,this.confirmed,{this.neckline});
   bool get triangle=>kind=='CONVERGING_TRIANGLE';

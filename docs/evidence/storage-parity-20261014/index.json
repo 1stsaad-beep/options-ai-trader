@@ -1,0 +1,73 @@
+{
+  "source_sha": "6a71afff6109c15a9d193ab67a0f1c136a7cb147",
+  "scope": "ORIGINAL_ARTIFACTS_SHA256_CRC_AND_RAW_RECEIPTS_VERIFIED",
+  "bundle_sha256": "1454ff05e4dc3be5dbaf856fb691c7f462c753cd4306f9550bd0f304dbb1ea4b",
+  "artifacts": [
+    {
+      "path": "direct-6a71afff.zip",
+      "sha256": "694b1cba5cd93b1500d6c0c3c6bd7138fde327f9fc47970ea71f24339e039eed",
+      "bytes": 201880
+    },
+    {
+      "path": "chart-6a71afff.zip",
+      "sha256": "3526c08b7c0e7b044bf403a11c92d576f141fe03a07c7bd2731b1795c56e4e01",
+      "bytes": 170751
+    },
+    {
+      "path": "backend-6a71afff.zip",
+      "sha256": "560d5c67c737ed1a04b0c0f097a562204537e578860357f74561026c9645929f",
+      "bytes": 26522
+    },
+    {
+      "path": "compose-6a71afff.zip",
+      "sha256": "ba41984b0efb7bfd08fa101c036b234718acb7804e62576754a62c18ee368552",
+      "bytes": 690
+    },
+    {
+      "path": "security-6a71afff.zip",
+      "sha256": "a990fb6c052b6bc7f9c1c9cc0234f5c247105fdad7c565ea1dad948b1229a286",
+      "bytes": 2624
+    }
+  ],
+  "results": {
+    "flutter": 674,
+    "jvm": 41,
+    "chart_semantic": 23,
+    "golden": 6,
+    "python": 1192,
+    "postgres_execution": 22,
+    "postgres_journal": 6,
+    "postgres_runtime": 8,
+    "postgres_settlement": 5,
+    "postgres_backup_restore": 17,
+    "compose": 17
+  },
+  "source_scan": {
+    "findings": 0,
+    "files": 979,
+    "history_blobs": 1751,
+    "history_commits": 162
+  },
+  "dependencies": {
+    "python": 24,
+    "pub": 44,
+    "known_advisories": 0
+  },
+  "decoded_evidence_scan": {
+    "text_members": 20,
+    "findings": 0,
+    "binary_coverage": false
+  },
+  "visual_review": {
+    "six_classic_pngs_inspected": true,
+    "accepted": false,
+    "findings": [
+      "H&S LS overlaps resistance annotation",
+      "N1/N2 unequal but drawing flattened neckline to conservative break threshold"
+    ],
+    "scope": "Three fixture patterns x light/dark, 780x440. Does not accept all UI designs."
+  },
+  "external_market_tested": false,
+  "independent_review": false,
+  "apk_produced": false
+}

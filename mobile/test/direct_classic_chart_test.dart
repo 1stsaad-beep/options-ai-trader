@@ -49,6 +49,11 @@ void main() {
       if(shape.triangle) {
         expect(shape.neckline,isNull);expect(painter().layerLabels,containsAll(['Upper boundary','Lower boundary']));
       }else{expect(shape.neckline,isNotNull);expect(painter().layerLabels,contains('Neckline'));}
+      if(shape.points.length==5) {
+        expect(painter().layerLabels,contains('Conservative break threshold'));
+        expect(painter().paintedLabelBounds.where((v)=>v.label=='NECK'),hasLength(1));
+        expect(painter().paintedLabelBounds.where((v)=>v.label.startsWith('BREAK ')),hasLength(1));
+      }
       expect(painter().layerLabels,contains('${c.kind}: ${c.confirmed?"BREAK_CONFIRMED":"CANDIDATE"}'));
       // Models, price levels and oscillator panels are independent controls.
       await tester.ensureVisible(find.byKey(const Key('direct-models')));await tester.tap(find.byKey(const Key('direct-models')));await tester.pumpAndSettle();
@@ -72,6 +77,15 @@ void main() {
             priceLabel:'FIXTURE STOCK • ${c.kind} • ${c.confirmed?"BREAK_CONFIRMED":"CANDIDATE"}',
             timeLabels:{for(var i=0;i<rows.length;i++)i:rows[i].time.toIso8601String().substring(11,16)})))))));
         await tester.pumpAndSettle();
+        final painter=tester.widget<CustomPaint>(find.descendant(of:find.byKey(const Key('classic-preview')),matching:find.byType(CustomPaint))).painter! as DemoCandlePainter;
+        // Actual paint/font bounds: each observed vertex label must be legible
+        // beside the price levels. This caught LS/R and NECK/S in the old PNG.
+        final names=painter.classicalPatterns.expand((p)=>p.labels).toSet();
+        final labels=painter.paintedLabelBounds;
+        for(final label in labels.where((v)=>names.contains(v.label))) {
+          expect(labels.where((other)=>other!=label&&other.bounds.overlaps(label.bounds)),isEmpty,
+            reason:'${c.kind}: ${label.label} must not overlap another annotation');
+        }
         final boundary=tester.renderObject<RenderRepaintBoundary>(find.byKey(const Key('classic-preview')));
         await tester.runAsync(()async {
           final image=await boundary.toImage(),data=await image.toByteData(format:ui.ImageByteFormat.png);

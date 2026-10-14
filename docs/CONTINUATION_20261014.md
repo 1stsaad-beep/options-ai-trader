@@ -128,3 +128,8 @@ Resume from docs/RESUME_POST_BUILD23_20261014_AR.md. First finish CI, download r
 ## Final remote checkpoint after runtime outage
 
 All applicable gates for code6a71afff6109c15a9d193ab67a0f1c136a7cb147 completed successfully: Direct38554751700 (analyze, Flutter and native JVM), chart38554751668, backend/PostgreSQL/backup/Compose38554751899, security38554751764. Android38554751894 and iOS38554751917 skipped. This supersedes the pending CI status above. Five source-matched artifact metadata records and all job/step receipts are preserved in docs/evidence/storage-parity-20261014/metadata-only.json. Python log1192 passed; Pub44 packages no known advisories. The local runtime still did not recover on a final bounded attempt. Raw ZIP SHA/CRC/recounts, visual inspection of6 classic PNGs, a new offline evidence bundle and local synchronization remain explicitly incomplete. The reports and metadata are committed directly on GitHub; application code is unchanged after6a71afff. No independent reviewer, new APK or phone-test request. Resume the outstanding software and acceptance work, not a release build.
+
+
+## Batch16 — recovered artifacts and visual defect correction
+
+See FINAL_COMPLETION_PROGRESS.md and docs/evidence/storage-parity-20261014/index.json. Existing6a71afff results are now verified from original bytes, not metadata alone. Visual inspection found real annotation/neckline issues; the source fix preserves detector confirmation policy, source pivots and historical snapshots. Await new CI and review of corrected previews; old Golden images remain unchanged.

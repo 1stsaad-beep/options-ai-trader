@@ -38,13 +38,19 @@ class DemoCandlePainter extends CustomPainter {
         if(p.przLow!=null && p.przHigh!=null) 'PRZ'],
       if(lab==1)for(final p in classicalPatterns)...[
         '${p.kind}: ${p.confirmed?"BREAK_CONFIRMED":"CANDIDATE"}',...p.labels,
-        if(p.neckline!=null)'Neckline',if(p.triangle)...['Upper boundary','Lower boundary']],
+        if(p.neckline!=null)'Neckline',if(p.neckline!=null&&p.points.length==5)'Conservative break threshold',if(p.triangle)...['Upper boundary','Lower boundary']],
       if(lab==3 || lab==4) for(final d in divergences) d.label],
     if(indicators) ...[wilderRsi?'RSI 14 (Wilder)':'RSI 14 (rolling)','MACD 12/26','Signal 9','Histogram'],
   ];
 
+  /// Bounds from the last paint allow visual acceptance to check the actual
+  /// font metrics at narrow widths; these are not analysis/execution inputs.
+  final _paintedLabels = <({String label,Rect bounds})>[];
+  List<({String label,Rect bounds})> get paintedLabelBounds => List.unmodifiable(_paintedLabels);
+
   @override
   void paint(Canvas canvas,Size size) {
+    _paintedLabels.clear();
     if(bars.isEmpty)return;
     canvas.drawRect(Offset.zero&size,Paint()..color=colors.surfaceContainerLow);
     final plot=Rect.fromLTRB(48,30,size.width-10,indicators?size.height*.53:size.height-35);
@@ -67,11 +73,24 @@ class DemoCandlePainter extends CustomPainter {
     final indices={for(var i=0;i<bars.length;i++) bars[i].tick:i};
     double x(int tick)=>plot.left+(indices[tick]!+.5)*dx;
     double y(double price)=>plot.top+(high-price)/(high-low)*plot.height;
-    void text(String value,Offset at,Color color,{double fontSize=10}) {
+    void text(String value,Offset at,Color color,{double fontSize=10,bool avoidOverlap=false}) {
       final p=TextPainter(text:TextSpan(text:value,style:TextStyle(color:color,fontSize:fontSize,fontFamily:fontFamily)),
         textDirection:TextDirection.ltr)..layout(maxWidth:math.max(1,size.width-6));
-      p.paint(canvas,Offset(at.dx.clamp(2,math.max(2,size.width-p.width-2)).toDouble(),
-        at.dy.clamp(1,math.max(1,size.height-p.height-1)).toDouble()));
+      Offset clamp(Offset a)=>Offset(a.dx.clamp(2,math.max(2,size.width-p.width-2)).toDouble(),
+        a.dy.clamp(1,math.max(1,size.height-p.height-1)).toDouble());
+      var placed=clamp(at);
+      if(avoidOverlap) {
+        // Keep the preferred anchor when clear. Move only its annotation, never
+        // the observed vertex or price level. Golden paths without classical
+        // overlays retain their original placement.
+        for(final dy in [0.0,-16.0,16.0,-32.0,32.0,-48.0,48.0]) {
+          final candidate=clamp(at+Offset(0,dy)),bounds=candidate&p.size;
+          if(!_paintedLabels.any((v)=>v.bounds.inflate(2).overlaps(bounds))) {
+            placed=candidate;break;
+          }
+        }
+      }
+      p.paint(canvas,placed);_paintedLabels.add((label:value,bounds:placed&p.size));
     }
     void line(Offset a,Offset b,Color color,[double width=1]) =>
       canvas.drawLine(a,b,Paint()..color=color..strokeWidth=width);
@@ -95,7 +114,8 @@ class DemoCandlePainter extends CustomPainter {
       void level(double price,String label,Color color) {
         if(price<low || price>high)return;
         line(Offset(plot.left,y(price)),Offset(plot.right,y(price)),color,.8);
-        text('$label ${price.toStringAsFixed(2)}',Offset(plot.left+2,y(price)-12),color);
+        text('$label ${price.toStringAsFixed(2)}',Offset(plot.left+2,y(price)-12),color,
+          avoidOverlap:lab==1&&classicalPatterns.isNotEmpty);
       }
       if(levelOverlays) {
         level((summary['support'] as num).toDouble(),'S',colors.primary);
@@ -142,9 +162,21 @@ class DemoCandlePainter extends CustomPainter {
         for(var i=0;i<p.points.length;i++) {
           final point=p.points[i];if(!indices.containsKey(point.index))continue;
           final at=Offset(x(point.index),y(point.price));canvas.drawCircle(at,3,Paint()..color=color);
-          text(p.labels[i],at+Offset(-6,point.high?-18:8),color,fontSize:11);
+          text(p.labels[i],at+Offset(-6,point.high?-18:8),color,fontSize:11,avoidOverlap:true);
         }
-        if(p.neckline!=null)level(p.neckline!,'NECK',color);
+        if(p.neckline!=null) {
+          if(p.points.length==5) {
+            // The detector's conservative min/max break threshold is distinct
+            // from the observed neckline through N1 and N2. Do not flatten an
+            // unequal neckline or extrapolate unobserved future geometry.
+            final a=p.points[1],b=p.points[3];path([a,b]);
+            if(indices.containsKey(a.index)&&indices.containsKey(b.index)) {
+              text('NECK',Offset((x(a.index)+x(b.index))/2,(y(a.price)+y(b.price))/2-14),
+                color,avoidOverlap:true);
+            }
+            level(p.neckline!,'BREAK',color);
+          }else{level(p.neckline!,'NECK',color);}
+        }
       }}
     }
     for(final m in markers) {
