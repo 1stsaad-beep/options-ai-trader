@@ -1,8 +1,8 @@
-> أحدث تسليم: [RC2 Lab 17 / Alpaca Basic data-only](docs/ALPACA_BUILD17_DELIVERY.md). اتصال الحساب غير مفعّل، وخيارات Basic للمراقبة فقط. [دليل الاتصال الآمن](docs/ALPACA_DATA_V1.md).
+> أحدث حالة: [استكمال ما بعد Build23 والجاهزية الصريحة](docs/CONTINUATION_ACCEPTANCE_20261014_AR.md) و[سجل الدفعات والاستئناف](docs/CONTINUATION_20261014.md). المشروع جزئي؛ لا APK جديد أو اختبار هاتف نهائي حتى إغلاق النواقص. تقارير Lab17–Build23 أدناه تاريخية مرتبطة بمصادرها.
 
 # Options AI Trader — V1.0 RC2 Recovery (محاكاة وبحث)
 
-التسليم الحالي ونقطة الاستئناف: [FINAL_DELIVERY.md](FINAL_DELIVERY.md). الإصدار **غير مكتمل لجميع متطلبات V1.0**؛ راجع [مصفوفة المتطلبات والنواقص](docs/RECOVERY_REQUIREMENTS_V1.md)، [الاختبارات](docs/RECOVERY_TEST_REPORT_V1.md)، [الأمان](docs/RECOVERY_SECURITY_REPORT_V1.md)، [Backtesting](docs/RECOVERY_BACKTEST_REPORT_V1.md)، و[التشغيل](docs/RECOVERY_RUN_GUIDE_V1.md). تقارير RC1 وV0.x أدناه محفوظة كتاريخ ولا تمثل نتائج التسليم الحالي.
+التسليم التاريخي: [FINAL_DELIVERY.md](FINAL_DELIVERY.md). أحدث [مصفوفة المتطلبات والنواقص](REQUIREMENTS_TRACEABILITY.md) تميز الوظائف المختبرة عن اكتمال V1.0. تقارير [الاختبارات السابقة](docs/RECOVERY_TEST_REPORT_V1.md)، [الأمان](docs/RECOVERY_SECURITY_REPORT_V1.md)، [Backtesting](docs/RECOVERY_BACKTEST_REPORT_V1.md)، و[التشغيل](docs/RECOVERY_RUN_GUIDE_V1.md) تبقى أدلة تاريخية؛ نتائج المصدر الجديد في تقرير الاستكمال أعلاه.
 
 استكمال V0.5 داخل المستودع نفسه، مع الحفاظ على التاريخ في Git و`repository/`. هذا إصدار مرشح للمراجعة، وليس تصريحًا بالتداول الحقيقي.
 

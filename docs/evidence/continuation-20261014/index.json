@@ -1,0 +1,191 @@
+{
+  "format_version": 1,
+  "tested_source": "432222b8f6274ec047ce607ce5ecb69e443f1cf1",
+  "branch": "recovery/v1.0-20261011",
+  "review": "IMPLEMENTER_ONLY_NO_INDEPENDENT_REVIEWER",
+  "new_apk_produced": false,
+  "provider_connection_or_external_orders_performed": false,
+  "artifacts": [
+    {
+      "id": 11886180885,
+      "name": "v1-security-results",
+      "run_id": 38548953545,
+      "source": "432222b8f6274ec047ce607ce5ecb69e443f1cf1",
+      "sha256": "0d4b6b8ab554a087b65df88a1a3c037224a703d440101dfe348db13aa576b4fb",
+      "bytes": 2606,
+      "file": "artifacts/v1-security-results.zip",
+      "zip_crc": "passed"
+    },
+    {
+      "id": 11885916690,
+      "name": "chart-repair-evidence",
+      "run_id": 38548953574,
+      "source": "432222b8f6274ec047ce607ce5ecb69e443f1cf1",
+      "sha256": "abef9f3dfda4f9ce6ed68e94a9cb5359f7fcc9bb55072cd0df3e639b60afda22",
+      "bytes": 170584,
+      "file": "artifacts/chart-repair-evidence.zip",
+      "zip_crc": "passed"
+    },
+    {
+      "id": 11886270640,
+      "name": "compose-runtime-result",
+      "run_id": 38548953575,
+      "source": "432222b8f6274ec047ce607ce5ecb69e443f1cf1",
+      "sha256": "6994b600a6467493322a19d1506cafab7f0918ee8aa50cec823effa369f7ef9c",
+      "bytes": 689,
+      "file": "artifacts/compose-runtime-result.zip",
+      "zip_crc": "passed"
+    },
+    {
+      "id": 11885837056,
+      "name": "backend-test-results",
+      "run_id": 38548953575,
+      "source": "432222b8f6274ec047ce607ce5ecb69e443f1cf1",
+      "sha256": "9c825ea0eaff540ceb2a3ade4cba4e77991bdc7a81a4e4936c877493beef4b3f",
+      "bytes": 26278,
+      "file": "artifacts/backend-test-results.zip",
+      "zip_crc": "passed"
+    },
+    {
+      "id": 11885449241,
+      "name": "direct-alpaca-mock-results",
+      "run_id": 38548953555,
+      "source": "432222b8f6274ec047ce607ce5ecb69e443f1cf1",
+      "sha256": "7ac148d34373f35211a1f0976c580abb7327888e997337168ceceb08e2bf5daf",
+      "bytes": 34032,
+      "file": "artifacts/direct-alpaca-mock-results.zip",
+      "zip_crc": "passed"
+    }
+  ],
+  "results": {
+    "source_scan": {
+      "files_scanned": 967,
+      "history_blobs_scanned": 1700,
+      "history_commits": 154,
+      "finding_count": 0,
+      "scope": "tracked_working_tree_and_all_reachable_history"
+    },
+    "dependencies": {
+      "python_packages": 24,
+      "pub_packages": 43,
+      "known_advisories": 0,
+      "pub_checked_at": "2026-10-14T10:21:35.673595+00:00"
+    },
+    "chart_semantic": {
+      "success": 23,
+      "failure": 0,
+      "error": 0,
+      "skipped": 0,
+      "error_events": 0,
+      "non_json_lines": 11,
+      "dependency_preamble": [
+        "Resolving dependencies...",
+        "Downloading packages...",
+        "  flutter_lints 4.0.0 (6.0.0 available)",
+        "  lints 4.0.0 (6.1.0 available)",
+        "  material_color_utilities 0.13.0 (0.13.1 available)",
+        "  meta 1.18.3 (1.19.0 available)",
+        "  test_api 0.7.12 (0.7.15 available)",
+        "  vector_math 2.4.0 (2.4.3 available)",
+        "Got dependencies!",
+        "6 packages have newer versions incompatible with dependency constraints.",
+        "Try `flutter pub outdated` for more information."
+      ]
+    },
+    "golden": {
+      "success": 6,
+      "failure": 0,
+      "error": 0,
+      "skipped": 0,
+      "error_events": 0,
+      "non_json_lines": 11,
+      "dependency_preamble": [
+        "Resolving dependencies...",
+        "Downloading packages...",
+        "  flutter_lints 4.0.0 (6.0.0 available)",
+        "  lints 4.0.0 (6.1.0 available)",
+        "  material_color_utilities 0.13.0 (0.13.1 available)",
+        "  meta 1.18.3 (1.19.0 available)",
+        "  test_api 0.7.12 (0.7.15 available)",
+        "  vector_math 2.4.0 (2.4.3 available)",
+        "Got dependencies!",
+        "6 packages have newer versions incompatible with dependency constraints.",
+        "Try `flutter pub outdated` for more information."
+      ]
+    },
+    "compose": {
+      "status": "passed",
+      "checks": 17
+    },
+    "python": {
+      "tests": 1146,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "postgres_execution": {
+      "status": "passed",
+      "checks": 22
+    },
+    "postgres_journal": {
+      "status": "passed",
+      "checks": 6
+    },
+    "postgres_runtime": {
+      "status": "passed",
+      "checks": 8
+    },
+    "postgres_settlement": {
+      "status": "passed",
+      "checks": 5
+    },
+    "postgres_backup_restore": {
+      "status": "passed",
+      "checks": 17
+    },
+    "flutter": {
+      "success": 591,
+      "failure": 0,
+      "error": 0,
+      "skipped": 0,
+      "error_events": 0,
+      "non_json_lines": 0,
+      "dependency_preamble": []
+    },
+    "jvm": {
+      "tests": 41,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "limitations": [
+    "Test success is not complete design acceptance.",
+    "No real OPRA, three-session, deployment, signing or physical-device acceptance.",
+    "Archive and source scans are pattern checks, not proof of absent vulnerabilities."
+  ],
+  "artifact_text_scan": {
+    "scope": "decoded_original_ci_text_members",
+    "files_scanned": 20,
+    "finding_count": 0,
+    "findings": [],
+    "opaque_members": [
+      "chart-repair-evidence/test/goldens/abc-dark.png",
+      "chart-repair-evidence/test/goldens/abc-light.png",
+      "chart-repair-evidence/test/goldens/bat-dark.png",
+      "chart-repair-evidence/test/goldens/bat-light.png",
+      "chart-repair-evidence/test/goldens/divergence-dark.png",
+      "chart-repair-evidence/test/goldens/divergence-light.png",
+      "direct-alpaca-mock-results/mobile/build/app/test-results/testDebugUnitTest/binary/results-generic.bin"
+    ],
+    "limitations": [
+      "Binary member contents cannot be proven secret-free by this text-pattern pass.",
+      "No credential use or remote credential validation."
+    ]
+  },
+  "bundle": {
+    "file": "evidence.zip",
+    "sha256": "d8120678d58e014074fc5903e1d2e818b3438abd803667efcf920598ba894bec",
+    "bytes": 236841
+  }
+}
