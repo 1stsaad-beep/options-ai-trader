@@ -5,8 +5,8 @@ must be explicitly reconciled by the caller, never silently repaired by a scan.
 """
 import argparse
 import json
-import logging
 import os
+import signal
 import threading
 from datetime import datetime, timedelta, timezone
 from .engines import AnalysisPipeline, Bar, MarketDataUnavailable
@@ -129,31 +129,83 @@ def opportunities_for(service, account_id):
     return [json.loads(row['payload']) for row in stored] if stored else scan_account(service, account_id)
 
 
-def main():
+def heartbeat_ok(repo, now):
+    """Process liveness only; never repairs a ledger or grants entry authority."""
+    try:
+        with repo.transaction() as db:
+            row = db.one("SELECT * FROM runtime_health WHERE name='worker'")
+        return (row is not None and json.loads(row['payload'])['status'] == 'OK' and
+                0 <= (now - datetime.fromisoformat(row['updated_at'])).total_seconds() <= 120)
+    except (KeyError, TypeError, ValueError):
+        return False
+
+
+def main(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--once', action='store_true')
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument('--once', action='store_true')
+    modes.add_argument('--healthcheck', action='store_true')
     parser.add_argument('--execute-mock', action='store_true', help='Execute only explicitly opted-in paper/mock accounts')
     parser.add_argument('--interval', type=int, default=30)
-    args = parser.parse_args()
-    if args.interval < 1:
-        parser.error('interval must be positive')
+    args = parser.parse_args(argv)
+    if not 1 <= args.interval <= 60:
+        parser.error('interval must be between 1 and 60 seconds')
     if os.getenv('TRADING_MODE', 'paper') != 'paper' or os.getenv('ENABLE_LIVE', 'false').lower() != 'false':
         raise RuntimeError('Live is hard locked')
-    repo = Repository(os.getenv('DATABASE_URL', 'sqlite:///options_demo.db'))
-    service = TradingService(repo)
-    logging.basicConfig(level=logging.INFO)
     stop = threading.Event()
+    previous = {name:signal.signal(name, lambda *_:stop.set()) for name in (signal.SIGINT, signal.SIGTERM)}
+    repo = None
     try:
-        while True:
-            logging.info('worker_tick %s', tick(service, execute_mock=args.execute_mock))
-            if args.once:
-                break
-            stop.wait(args.interval)
-    except KeyboardInterrupt:
-        stop.set()
+        while not stop.is_set():
+            try:
+                if repo is None:
+                    # Real process recovery preserves receipts but disarms stale
+                    # account knowledge. Health probes never invalidate accounts.
+                    repo = Repository(os.getenv('DATABASE_URL', 'sqlite:///options_demo.db'),
+                                      invalidate_accounts=not args.healthcheck)
+                if args.healthcheck:
+                    return 0 if heartbeat_ok(repo, datetime.now(timezone.utc)) else 1
+                result = tick(TradingService(repo), execute_mock=args.execute_mock)
+                print(json.dumps({'component':'synthetic_worker', 'status':'OK',
+                    'source':'synthetic_fixture', 'execute_mock':args.execute_mock,
+                    'orders_submitted':result['orders_submitted'], 'external_orders_enabled':False}), flush=True)
+                if args.once:
+                    return 0
+                stop.wait(args.interval)
+            except Exception:
+                # Never emit exception/HTTP/DB text, account data or credentials.
+                print(json.dumps({'component':'synthetic_worker', 'status':'WORKER_UNAVAILABLE',
+                    'execute_mock':args.execute_mock, 'external_orders_enabled':False}), flush=True)
+                if repo is not None:
+                    try:
+                        with repo.transaction() as db:
+                            db.execute("UPDATE runtime_health SET payload=? WHERE name='worker'",
+                                (json.dumps({'status':'UNAVAILABLE','execute_mock':args.execute_mock}),))
+                    except Exception:
+                        pass
+                    try:
+                        repo.close()
+                    except Exception:
+                        pass
+                repo = None
+                if args.once or args.healthcheck:
+                    return 1
+                stop.wait(min(args.interval, 5))
     finally:
-        repo.close()
+        if repo is not None:
+            if stop.is_set():
+                try:
+                    with repo.transaction() as db:
+                        db.execute("UPDATE runtime_health SET updated_at=?,payload=? WHERE name='worker'",
+                            (datetime.now(timezone.utc).isoformat(), json.dumps({'status':'STOPPED',
+                                'execute_mock':args.execute_mock, 'source':'synthetic_fixture'})))
+                except Exception:
+                    pass
+            repo.close()
+        for name, handler in previous.items():
+            signal.signal(name, handler)
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

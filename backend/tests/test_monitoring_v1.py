@@ -19,6 +19,16 @@ def test_readiness_observation_never_repairs_account_and_heartbeat_expires():
         assert before['api_ready'] and not before['trading_ready']
         tick(service)
         assert readiness(service)['worker']['fresh']
+        service.reconcile(account)
+        assert readiness(service)['accounts'][0]['new_entries_allowed']
+        assert readiness(service)['worker']['execute_mock'] is False
+        assert readiness(service)['trading_ready'] is False  # Analysis-only process is not execution readiness.
+        with repo.transaction() as db:
+            import json
+            payload = json.loads(db.one("SELECT payload FROM runtime_health WHERE name='worker'")['payload'])
+            payload['execute_mock'] = True
+            db.execute("UPDATE runtime_health SET payload=? WHERE name='worker'", (json.dumps(payload),))
+        assert readiness(service)['trading_ready'] is True
         service.disconnect(account)
         result = readiness(service)
         assert not result['trading_ready']

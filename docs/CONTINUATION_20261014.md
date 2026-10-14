@@ -70,4 +70,12 @@ The original decision view offers a separate optional1/5-minute hold comparison 
 
 35 cross-language fixture cases now include equivalent timezone representations without false ambiguity. Added device segment/hold/closed-receipt/restart/backup/dropped-write/corrupt-protection/capacity/UI tests and server authenticated no-write/no-network tests. Await full CI; independent review and continuous virtual runtime remain open.
 
+Source6d95fa9d passed backend/PostgreSQL/Compose38546065017, chart/golden38546065007 and security38546065031. Full Flutter38546065000 reached all tests with one UI-test failure: its generic scroll helper matched both the outer list and selectable-text scrollables. Correctionee7517e3 explicitly targets the outer list; the financial result assertion remains unchanged. Archive and counterfactual arithmetic tests passed in that run; do not call the whole gate passed until the rerun completes.
+
+## Batch 9 — worker recovery and truthful readiness (acceptance pending)
+
+Fixed readiness incorrectly allowing trading_ready with a fresh analysis-only worker: the observed heartbeat must explicitly report execute_mock=true in addition to trusted opted-in accounts and all previous admission checks. Added SIGTERM/SIGINT handling, bounded DB outage retries, sanitized process status, a healthcheck that never invalidates accounts, immediate STOPPED state on graceful shutdown and Compose health/grace settings. Actual recovery still invalidates stale account knowledge and never silently reconciles or resumes financial execution; explicit ledger reconciliation remains required. This preserves the original safety boundary and is not unattended Market Paper execution.
+
+Four new real-process local tests cover DB initially unavailable then recovering, restart preserving balances/disarming stale knowledge, read-only healthchecks, fast graceful shutdown during a60-second wait and sanitized one-shot/live-lock failure. The complete local backend suite passed1144 tests after these changes. PostgreSQL/Compose and final-source security remain pending publication; no deployed uptime or independent reviewer claim.
+
 Open software work remains distinct from external evidence: actual OPRA entitlement and three recorded sessions, secure stable signing material, independently deployed uptime, signed iOS/device acceptance cannot be manufactured. The software gaps above remain authorized work, not requests for user testing.
