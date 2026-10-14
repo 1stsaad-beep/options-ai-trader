@@ -94,8 +94,8 @@ def test_actual_process_restart_and_heartbeat_without_phone_or_network(tmp_path)
             assert json.loads(run.stdout)['state'] == 'DISABLED'
         check = subprocess.run([sys.executable, '-m', 'app.market_runtime_worker', '--healthcheck'],
             cwd=backend, env=env, capture_output=True, text=True, timeout=10)
-        assert check.returncode == 0
-        assert worker.heartbeat_ok(repo, datetime.now(timezone.utc))
+        assert check.returncode == 1
+        assert not worker.heartbeat_ok(repo, datetime.now(timezone.utc))
         with repo.transaction() as db:
             assert db.one('SELECT * FROM accounts WHERE id=?', (account,)) == before
             assert db.all('SELECT * FROM orders') == []

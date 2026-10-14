@@ -126,7 +126,7 @@ def main(argv=None):
     finally:
         if collector is not None:
             try:
-                collector.release(mark_stopped=stop.is_set())
+                collector.release(mark_stopped=stop.is_set() or args.once)
             except Exception:
                 pass
         if repo is not None:

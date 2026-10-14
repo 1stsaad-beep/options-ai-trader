@@ -35,3 +35,8 @@ Four distinct modes: Demo Synthetic (offline generated observations), Direct Alp
 ## Current gate correction — 2026-10-14
 
 The user explicitly requests an honest post-Build23 audit and continued feasible repairs. No new APK before software gaps are closed, and no phone test now. Build23 is a historical verified engineering artifact; it does not fulfill the final V1.0 delivery gate. An independent review requires a distinct reviewer and a documented report; another pass by the implementer is not sufficient. See docs/POST_BUILD23_AUDIT_20261014_AR.md.
+
+
+## Versioned observation and liveness contracts
+
+Current source uses explicit virtual settlement receipts, content-bound observed-bar references and captured option comparisons. Direct researchv6 records its wave contract: journalv2 uses strict3/1 confirmation while restoredv1 remains legacy4/2. Engine changes start new captured epochs rather than relabel history. Geometric neckline and conservative break threshold remain distinct. Runtime health is bounded read-only process evidence; stopped/finished work is not a live daemon, and neither process liveness nor a green test authorizes market execution. These implementation contracts preserve the original R01–R15 scope; they do not remove remaining acceptance obligations.

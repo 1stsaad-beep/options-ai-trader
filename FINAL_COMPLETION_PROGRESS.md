@@ -106,3 +106,8 @@ Reproduced2 failures: both health commands created an absent database. Replaced 
 ## Batch18 — versioned Direct/server wave pivot and event parity
 
 Corrected Direct4/2 vs server3/1 confirmation and ambiguous/equal-extremum handling using journalv2. Six stored sources/415 prefixes cover geometry, nested confirmation and causal detection/invalidation;7 Python checks pass, Flutter pending. Old journalv1/Demo preserved; ENGINE_CHANGED starts a separate captured epoch; researchv6 names actual contract. Identifier/ranking/window semantics and full strategy parity remain open. See docs/WAVE_PARITY_20261014.md.
+
+
+## Batch19 — follow-up visual legibility and one-shot liveness
+
+Actual f43f77e5 preview inspection confirmed the sloping neckline correction but exposed text crossing the vertex/line. Defer classical labels until geometry is complete, use a surface backplate and avoid the observed vertex; add360px previews beside780px in both themes. Golden baselines remain untouched. Completed --once workers now mark STOPPED, preserving tick receipts without claiming a running daemon.56 affected Python tests pass locally; new Flutter/visual gates pending. Updated stale KNOWN_GAPS settlement claims and traceability without marking full V1.0 complete.

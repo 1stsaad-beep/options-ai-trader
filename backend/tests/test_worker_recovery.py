@@ -80,7 +80,7 @@ def test_process_restart_preserves_ledger_and_readonly_healthcheck_does_not_disa
                 before = db.one('SELECT * FROM accounts WHERE id=?',(account,))
             health = subprocess.run([sys.executable,'-m','app.worker','--healthcheck'],cwd=BACKEND,
                 env=environment(path),capture_output=True,text=True,timeout=10)
-            assert health.returncode == 0 and not health.stdout and not health.stderr
+            assert health.returncode == 1 and not health.stdout and not health.stderr
             with repo.transaction() as db:
                 assert db.one('SELECT * FROM accounts WHERE id=?',(account,)) == before
     finally:

@@ -68,10 +68,10 @@ void main() {
   testWidgets('export deterministic classical research chart previews for visual inspection',(tester)async {
     for(final c in [cases[0],cases[3],cases[5]]) {
       final rows=classicSource(c.prices,c.high,c.close),pivots=MarketGeometry.confirmedPivots(rows);
-      for(final dark in [false,true]) {
+      for(final dark in [false,true]) {for(final width in [360.0,780.0]) {
         final scheme=ColorScheme.fromSeed(seedColor:Colors.blue,brightness:dark?Brightness.dark:Brightness.light);
         await tester.pumpWidget(MaterialApp(home:Center(child:RepaintBoundary(key:const Key('classic-preview'),
-          child:SizedBox(width:780,height:440,child:CustomPaint(painter:DemoCandlePainter(
+          child:SizedBox(width:width,height:440,child:CustomPaint(painter:DemoCandlePainter(
             [for(var i=0;i<rows.length;i++)rows[i].candle(i)],MarketIndicators.summary(rows),[],[],scheme,1,true,false,[],
             classicalPatterns:MarketGeometry.classicDrawings(pivots,rows.last.close),fontFamily:'ClassicPreview',
             priceLabel:'FIXTURE STOCK • ${c.kind} • ${c.confirmed?"BREAK_CONFIRMED":"CANDIDATE"}',
@@ -89,10 +89,10 @@ void main() {
         final boundary=tester.renderObject<RenderRepaintBoundary>(find.byKey(const Key('classic-preview')));
         await tester.runAsync(()async {
           final image=await boundary.toImage(),data=await image.toByteData(format:ui.ImageByteFormat.png);
-          await File('classic-preview-${c.kind}-${dark?"dark":"light"}.png').writeAsBytes(data!.buffer.asUint8List());image.dispose();
+          await File('classic-preview-${c.kind}-${dark?"dark":"light"}${width==360?"-phone":""}.png').writeAsBytes(data!.buffer.asUint8List());image.dispose();
         });
         expect(tester.takeException(),isNull);
-      }
+      }}
     }
   });
 }

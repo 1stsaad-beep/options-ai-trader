@@ -73,7 +73,9 @@ class DemoCandlePainter extends CustomPainter {
     final indices={for(var i=0;i<bars.length;i++) bars[i].tick:i};
     double x(int tick)=>plot.left+(indices[tick]!+.5)*dx;
     double y(double price)=>plot.top+(high-price)/(high-low)*plot.height;
-    void text(String value,Offset at,Color color,{double fontSize=10,bool avoidOverlap=false}) {
+    final deferredLabels=<void Function()>[];
+    final deferLabels=overlays&&lab==1&&classicalPatterns.isNotEmpty;
+    void text(String value,Offset at,Color color,{double fontSize=10,bool avoidOverlap=false,Offset? anchor}) {
       final p=TextPainter(text:TextSpan(text:value,style:TextStyle(color:color,fontSize:fontSize,fontFamily:fontFamily)),
         textDirection:TextDirection.ltr)..layout(maxWidth:math.max(1,size.width-6));
       Offset clamp(Offset a)=>Offset(a.dx.clamp(2,math.max(2,size.width-p.width-2)).toDouble(),
@@ -85,12 +87,18 @@ class DemoCandlePainter extends CustomPainter {
         // overlays retain their original placement.
         for(final dy in [0.0,-16.0,16.0,-32.0,32.0,-48.0,48.0]) {
           final candidate=clamp(at+Offset(0,dy)),bounds=candidate&p.size;
-          if(!_paintedLabels.any((v)=>v.bounds.inflate(2).overlaps(bounds))) {
+          if((anchor==null||!Rect.fromCircle(center:anchor,radius:6).overlaps(bounds.inflate(1)))&&
+              !_paintedLabels.any((v)=>v.bounds.inflate(2).overlaps(bounds))) {
             placed=candidate;break;
           }
         }
       }
-      p.paint(canvas,placed);_paintedLabels.add((label:value,bounds:placed&p.size));
+      void drawLabel() {
+        if(avoidOverlap)canvas.drawRect((placed&p.size).inflate(1),Paint()..color=colors.surfaceContainerLow);
+        p.paint(canvas,placed);
+      }
+      if(deferLabels){deferredLabels.add(drawLabel);}else{drawLabel();}
+      _paintedLabels.add((label:value,bounds:placed&p.size));
     }
     void line(Offset a,Offset b,Color color,[double width=1]) =>
       canvas.drawLine(a,b,Paint()..color=color..strokeWidth=width);
@@ -162,7 +170,7 @@ class DemoCandlePainter extends CustomPainter {
         for(var i=0;i<p.points.length;i++) {
           final point=p.points[i];if(!indices.containsKey(point.index))continue;
           final at=Offset(x(point.index),y(point.price));canvas.drawCircle(at,3,Paint()..color=color);
-          text(p.labels[i],at+Offset(-6,point.high?-18:8),color,fontSize:11,avoidOverlap:true);
+          text(p.labels[i],at+Offset(-6,point.high?-22:10),color,fontSize:11,avoidOverlap:true,anchor:at);
         }
         if(p.neckline!=null) {
           if(p.points.length==5) {
@@ -236,6 +244,9 @@ class DemoCandlePainter extends CustomPainter {
         text('${d.indicator} DIV',Offset(b.dx-48,sy(d.secondValue)-14),Colors.pinkAccent);
       }
     } }
+    // Classical annotations are painted last so later geometry cannot strike
+    // through their text. Observed vertices remain unobscured by label bounds.
+    for(final draw in deferredLabels){draw();}
   }
 
   @override

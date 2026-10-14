@@ -191,7 +191,7 @@ def main(argv=None):
                 stop.wait(min(args.interval, 5))
     finally:
         if repo is not None:
-            if stop.is_set():
+            if stop.is_set() or args.once:
                 try:
                     with repo.transaction() as db:
                         db.execute("UPDATE runtime_health SET updated_at=?,payload=? WHERE name='worker'",
