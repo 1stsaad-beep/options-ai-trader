@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:convert';
 import 'direct_alpaca.dart';
+import 'market_indicators.dart';
 import 'demo/chart_analysis.dart';
 import 'demo/wave_analysis.dart';
 
@@ -85,20 +86,19 @@ ChartWaveView directWaveView(List<MarketBar> rows) {
 
 Map<String,dynamic> directResearchSnapshot(List<MarketBar> rows) {
   final bars=[for(var i=0;i<rows.length;i++)rows[i].candle(i)];
-  if(bars.length<35)return {'version':'direct-research-v2','status':'INSUFFICIENT_OBSERVED_BARS','executable':false};
+  if(bars.length<35)return {'version':'direct-research-v3','indicatorContract':marketIndicatorContract,'status':'INSUFFICIENT_OBSERVED_BARS','executable':false};
   final waves=directWaveView(rows);
-  return {'version':'direct-research-v2','status':'OBSERVED_SHADOW','executable':false,
+  return {'version':'direct-research-v3','indicatorContract':marketIndicatorContract,'status':'OBSERVED_SHADOW','executable':false,
     'firstObservedAt':rows.first.time.toUtc().toIso8601String(),'lastObservedAt':rows.last.time.toUtc().toIso8601String(),
     'waveCandidates':[for(final s in waves.active)s.toJson()],
     'waveEvents':[for(final e in waves.events)e.toJson()],
     'primaryWaveId':waves.primary?.id,'alternateWaveId':waves.alternate?.id,
-    'indicators':DemoChartAnalysis.summary(bars),
+    'indicators':MarketIndicators.summary(rows),
     'harmonics':[for(final h in DemoChartAnalysis.harmonics(DemoChartAnalysis.pivots(bars)))
       {'name':h.name,'points':[for(final p in h.points)[p.index,p.confirmedAt,p.price]],'przLow':h.przLow,'przHigh':h.przHigh,'invalidation':h.invalidation}],
     'divergences':[for(final minutes in [1,5,15]) ...(() {
       final frame=directTimeframe(rows,minutes);
-      final candles=[for(var i=0;i<frame.length;i++)frame[i].candle(i)];
-      return [for(final d in DemoChartAnalysis.divergenceSegments(candles))
+      return [for(final d in MarketIndicators.divergences(frame))
         {'timeframeMinutes':minutes,'label':d.label,'knownAt':frame[d.confirmedAt].time.toUtc().toIso8601String(),
           'first':[frame[d.first.index].time.toUtc().toIso8601String(),d.first.price,d.firstValue],
           'second':[frame[d.second.index].time.toUtc().toIso8601String(),d.second.price,d.secondValue]}];

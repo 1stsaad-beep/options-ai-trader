@@ -8,6 +8,8 @@ from typing import Iterable, Sequence
 
 from ..engines import Bar, aware, validate_bars
 
+INDICATOR_CONTRACT_VERSION = 'completed-bar-indicators-v1'
+
 
 def checked_bars(bars: Iterable[Bar], *, as_of: datetime | None = None,
                  max_age: timedelta | None = None,

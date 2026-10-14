@@ -38,6 +38,12 @@ Sourcee579947c passed backend/PostgreSQL/backup/Compose run38540705745, includin
 
 Added BUY_FOR_PUT: an explicit manual/fixture receipt may acquire only the missing number of shares needed for an already owned, unexpired Put, using available virtual cash and capitalizing the purchase fee. It is not an unrestricted stock entry or automatic purchase. The next explicit exercise consumes those shares and realizes the full option/share/fee result. The phone UI exposes this action only for Put holdings.43 shared arithmetic cases and one new end-to-end ledger test per runtime cover this path, including restart, excess-quantity, already-owned, insufficient-cash and invalid chronology rejection.
 
-NEXT: collect/fix batch4 CI and archive source-linked evidence. Qualify delivery marks/risk and option cost/liquidity model; then complete analysis parity, persistent wave archive, observed Replay and runtime recovery above. R09 remains partial; the rest of the software backlog remains open. No final readiness or independent review claim.
+Source7dd7f5b: backend/PostgreSQL/Compose38541301569, security38541301573 and chart/golden38541301588 passed. Flutter analysis/tests passed; native JVM gate was still running at the next checkpoint. The exact test-token exception is regression-tested to remain flagged outside test paths.
+
+## Batch 5 — Direct/server indicator contract (acceptance pending)
+
+Introduced completed-bar-indicators-v1: SMA-seeded EMA, Wilder RSI/ATR, 12/26/9 MACD with null warmup, population Bollinger bands, and UTC-calendar-day VWAP with null zero-volume availability. Six checked-in cases compare every Python/Dart series value with1e-9 tolerance and every observed prefix; Direct strategy input, divergence input, displayed plots and saved research v3 now use this contract. Original v2 decisions remain unchanged. Existing synthetic Demo uses its explicitly labeled legacy rolling/first-close indicator convention; its reviewed Golden images are not silently regenerated. This closes the identified Direct arithmetic mismatch, not full engine/strategy/Demo parity.
+
+NEXT: collect/fix batch5 CI and archive source-linked evidence. Qualify delivery marks/risk and option cost/liquidity model; complete remaining analysis parity, persistent wave archive, observed Replay and runtime recovery above. R09 and overall assignments remain partial. No final readiness or independent review claim.
 
 Open software work remains distinct from external evidence: actual OPRA entitlement and three recorded sessions, secure stable signing material, independently deployed uptime, signed iOS/device acceptance cannot be manufactured. The software gaps above remain authorized work, not requests for user testing.

@@ -48,6 +48,11 @@ void main(){
       expect(find.byKey(const Key('direct-series-source')),findsOneWidget);
     }
     expect(find.textContaining('اصطناعية • Shadow'),findsNothing);
+    final plotted=tester.widget<CustomPaint>(find.byKey(const Key('direct-chart'))).painter! as DemoCandlePainter;
+    expect(plotted.wilderRsi,true);expect(plotted.layerLabels,contains('RSI 14 (Wilder)'));
+    expect(plotted.summary['indicator_contract'],'completed-bar-indicators-v1');
+    expect(plotted.macdValues!.line.last,closeTo(7,1e-9));
+    expect(plotted.macdValues!.signal.last,closeTo(7,1e-9));
   });
   testWidgets('four independent accounts and controls fit a narrow RTL phone',(tester)async{
     tester.view.physicalSize=const Size(360,800);tester.view.devicePixelRatio=1;

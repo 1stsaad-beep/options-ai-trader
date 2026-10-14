@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:convert';
 import 'direct_replay.dart';
+import 'market_indicators.dart';
 import 'package:flutter/material.dart';
 import 'direct_alpaca.dart';
 import 'demo/chart_analysis.dart';
@@ -15,7 +16,7 @@ class MarketSignal {
     if(rows.length<35)return const MarketSignal('WAIT',false);
     if(!['confluence','trend','breakout','pullback','divergence'].contains(strategy))return const MarketSignal('WAIT',false,reason:'UNSUPPORTED_STRATEGY');
     final bars=[for(var i=0;i<rows.length;i++)rows[i].candle(i)];
-    final div=DemoChartAnalysis.divergenceSegments(bars).where((d)=>d.confirmedAt==bars.last.tick).toList();
+    final div=MarketIndicators.divergences(rows).where((d)=>d.confirmedAt==bars.last.tick).toList();
     bool structured(ChartDivergence d) {
       final between=bars.sublist(d.first.index+1,d.second.index);
       if(between.isEmpty)return false;
@@ -25,7 +26,7 @@ class MarketSignal {
     final bull=div.any((d)=>d.kind=='صاعد عادي'&&structured(d)),bear=div.any((d)=>d.kind=='هابط عادي'&&structured(d));
     if(['confluence','divergence'].contains(strategy)&&bull!=bear)return MarketSignal(bull?'CALL':'PUT',true,reason:'DIVERGENCE_AND_STRUCTURE_BREAK');
     if(strategy=='divergence')return const MarketSignal('WAIT',false,reason:'NO_CONFIRMED_DIVERGENCE_STRUCTURE');
-    final s=DemoChartAnalysis.summary(bars),rsi=s['rsi14'] as double?;
+    final s=MarketIndicators.summary(rows),rsi=s['rsi14'] as double?;
     if(rsi==null||!rsi.isFinite)return const MarketSignal('WAIT',false);
     if(strategy=='breakout') {
       final previous=bars.sublist(bars.length-21,bars.length-1),last=bars.last;
@@ -78,14 +79,14 @@ class _DirectLabsState extends State<DirectLabs> {
         painter:DemoCandlePainter(bars,{},[],markers,Theme.of(context).colorScheme,0,false,false,[],
           priceLabel:'STOCK • ${widget.source}',timeLabels:{for(var i=0;i<rows.length;i++)i:rows[i].time.toIso8601String().substring(11,16)})))),
     ]);}
-    final pivots=DemoChartAnalysis.pivots(bars),summary=DemoChartAnalysis.summary(bars);
+    final pivots=DemoChartAnalysis.pivots(bars),summary=MarketIndicators.summary(rows);
     final wave=directWaveView(rows);
     final patterns=lab==0?<ChartPattern>[
       if(wave.primary!=null)wave.primary!.drawing(),
       if(showAlternate&&wave.alternate!=null)wave.alternate!.drawing(alternate:true),
     ]:lab==2?DemoChartAnalysis.harmonics(pivots):<ChartPattern>[];
-    final div=DemoChartAnalysis.divergenceSegments(bars),closes=bars.map((b)=>b.close).toList();
-    final macd=DemoChartAnalysis.macdSeries(closes),offset=math.max(0,bars.length-180);
+    final div=MarketIndicators.divergences(rows),closes=bars.map((b)=>b.close).toList();
+    final macd=MarketIndicators.macd(closes),offset=math.max(0,bars.length-180);
     final signal=MarketSignal.analyze(rows);
     return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[...controls(),
       Text('${widget.symbol} • ${widget.source}',key:const Key('direct-series-source')),
@@ -95,9 +96,9 @@ class _DirectLabsState extends State<DirectLabs> {
         Padding(padding:const EdgeInsets.all(4),child:ChoiceChip(label:Text(names[i]),selected:lab==i,onSelected:(_)=>setState(()=>lab=i)))])),
       SizedBox(height:440,child:LayoutBuilder(builder:(context,c)=>InteractiveViewer(minScale:1,maxScale:4,
         child:CustomPaint(key:const Key('direct-chart'),size:Size(c.maxWidth,440),painter:DemoCandlePainter(bars.skip(offset).toList(),summary,patterns,markers,
-          Theme.of(context).colorScheme,lab,levels,models,DemoChartAnalysis.rsi(closes).skip(offset).toList(),
+          Theme.of(context).colorScheme,lab,levels,models,MarketIndicators.rsi(closes).skip(offset).toList(),
           macdValues:ChartMacd(macd.line.skip(offset).toList(),macd.signal.skip(offset).toList(),macd.histogram.skip(offset).toList()),
-          divergences:div,priceLabel:'STOCK • ${widget.source}',
+          divergences:div,wilderRsi:true,priceLabel:'STOCK • ${widget.source}',
           timeLabels:{for(var i=0;i<rows.length;i++)i:rows[i].time.toIso8601String().substring(11,16)}))))),
       if(lab==0)...[
         Text(wave.primary==null?'لا ترقيم موجي نشط مستوفٍ للقواعد.':'مرشحات موجية نشطة: ${wave.active.length}',key:const Key('direct-wave-status')),
@@ -110,7 +111,7 @@ class _DirectLabsState extends State<DirectLabs> {
       ],
       if(lab==1) Text('الدعم ${number(summary['support'])} • المقاومة ${number(summary['resistance'])}\nFib 38.2% / 61.8% • ${summary['candle']}\nالكشف الكامل للنماذج الكلاسيكية ما زال تجريبيًا.'),
       if(lab==2) Text(patterns.isEmpty?'لا نموذج Harmonic مؤكد.':patterns.map((p)=>'${p.name} • PRZ ${number(p.przLow)}–${number(p.przHigh)}').join('\n')),
-      if(lab==3) Text('SMA20 ${number(summary['sma20'])} • EMA20 ${number(summary['ema20'])}\nRSI14 rolling ${number(summary['rsi14'])}\nMACD 12/26/9 ${number(summary['macd'])}\nATR14 ${number(summary['atr14'])} • VWAP للعينة ${number(summary['vwap'])}'),
+      if(lab==3) Text('SMA20 ${number(summary['sma20'])} • EMA20 ${number(summary['ema20'])}\nRSI14 Wilder ${number(summary['rsi14'])}\nMACD 12/26/9 ${number(summary['macd'])}\nATR14 ${number(summary['atr14'])} • VWAP يوم UTC ${number(summary['vwap'])}'),
       if(lab==4) Text('توافق قواعد محلية: ${signal.direction} • ${signal.confirmedReverse?'دايفرجنس جديد مؤكد':'لا عكس مؤكد جديد'}\nAI Confluence اسم المختبر؛ لا نموذج لغوي أو توقع ربحية. إشارة السهم لا تُسعّر الخيار.'),
       if(markers.isNotEmpty)const Text('علامات Market Paper مثبتة على شمعة الإشارة؛ المحور لسعر السهم. سعر العقد والرسوم في القرار الأصلي.'),
       for(final m in markers.reversed.take(20))ListTile(title:Text('${m['label']} • ${m['decision']}'),subtitle:Text('سعر الخيار ${(m['optionPriceCents']/100).toStringAsFixed(2)} USD'),

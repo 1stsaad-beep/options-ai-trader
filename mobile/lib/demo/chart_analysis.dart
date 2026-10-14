@@ -197,9 +197,10 @@ class DemoChartAnalysis {
   static List<String> divergences(List<DemoCandle> bars) =>
       divergenceSegments(bars).map((d) => d.label).toList();
 
-  static List<ChartDivergence> divergenceSegments(List<DemoCandle> bars) {
+  static List<ChartDivergence> divergenceSegments(List<DemoCandle> bars,{Map<String,List<double?>>? indicatorValues}) {
     final p=pivots(bars), closes=bars.map((b)=>b.close).toList();
-    final indicators={'RSI':rsi(closes),'MACD':macdSeries(closes).line};
+    final indicators=indicatorValues??{'RSI':rsi(closes),'MACD':macdSeries(closes).line};
+    if(indicators.values.any((v)=>v.length!=bars.length))throw const FormatException('Indicator/bar length mismatch');
     final indices={for(var i=0;i<bars.length;i++) bars[i].tick:i};
     final out=<ChartDivergence>[];
     for(final high in [false,true]) {

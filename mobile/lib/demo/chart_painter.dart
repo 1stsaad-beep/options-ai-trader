@@ -19,11 +19,12 @@ class DemoCandlePainter extends CustomPainter {
   final List<ChartDivergence> divergences;
   final String? fontFamily;
   final String priceLabel;
+  final bool wilderRsi;
   final Map<int,String>? timeLabels;
   DemoCandlePainter(this.bars,this.summary,this.patterns,this.markers,this.colors,
     this.lab,this.overlays,this.indicators,this.rsiValues,
     {this.macdValues,this.divergences=const [],this.fontFamily,
-    this.priceLabel='PRICE • synthetic',this.timeLabels});
+    this.priceLabel='PRICE • synthetic',this.timeLabels,this.wilderRsi=false});
 
   List<String> get layerLabels => [
     'Candles ${bars.length}', 'Observation axis',
@@ -34,7 +35,7 @@ class DemoCandlePainter extends CustomPainter {
         ...(p.labels.isNotEmpty?p.labels:lab==2?['X','A','B','C','D']:[]),
         if(p.przLow!=null && p.przHigh!=null) 'PRZ'],
       if(lab==3 || lab==4) for(final d in divergences) d.label],
-    if(indicators) ...['RSI 14 (rolling)','MACD 12/26','Signal 9','Histogram'],
+    if(indicators) ...[wilderRsi?'RSI 14 (Wilder)':'RSI 14 (rolling)','MACD 12/26','Signal 9','Histogram'],
   ];
 
   @override
@@ -137,7 +138,7 @@ class DemoCandlePainter extends CustomPainter {
       canvas.drawPath(path,Paint()..color=color..style=PaintingStyle.stroke..strokeWidth=1.5);
     }
     if(indicators) {
-      text('RSI 14 rolling • 0–100',Offset(plot.left,rsiRect.top-21),colors.tertiary);
+      text('RSI 14 ${wilderRsi?'Wilder':'rolling'} • 0–100',Offset(plot.left,rsiRect.top-21),colors.tertiary);
       for(final v in [0.0,30.0,70.0,100.0]) {
         line(Offset(plot.left,ry(v)),Offset(plot.right,ry(v)),colors.outlineVariant,.5);
         text('${v.toInt()}',Offset(12,ry(v)-5),colors.onSurfaceVariant);
