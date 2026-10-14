@@ -148,3 +148,8 @@ Corrected Direct4/2 vs server3/1 confirmation and ambiguous/equal-extremum handl
 ## Batch19 — follow-up visual legibility and one-shot liveness
 
 Actual f43f77e5 preview inspection confirmed the sloping neckline correction but exposed text crossing the vertex/line. Defer classical labels until geometry is complete, use a surface backplate and avoid the observed vertex; add360px previews beside780px in both themes. Golden baselines remain untouched. Completed --once workers now mark STOPPED, preserving tick receipts without claiming a running daemon.56 affected Python tests pass locally; new Flutter/visual gates pending. Updated stale KNOWN_GAPS settlement claims and traceability without marking full V1.0 complete.
+
+
+## Final source-bound acceptance for batches16–19
+
+Code8c9089e769ec83437666dd2d09551830fd42dca1: all applicable CI complete and successful. Original ZIP SHA/CRC and raw counts verified:683 Flutter,41 JVM,1218 Python,23 chart semantic and6 unchanged Golden; PostgreSQL22 execution/6 journal/10 runtime/5 settlement/17 backup;17 Compose. Security0 pattern findings across991 files/1800 blobs/168 commits,24 Python and44 Pub without known advisories at scan time.12 classical360/780px previews actually viewed and accepted for the scoped geometry/label fixes only. Sourcefa24ebbf Direct run was superseded/cancelled, not counted as a pass. New artifact bundle SHA256 d3ba89ff0860ff9940e68803fe237e1ec9c96ee28394b8f014c0bfb0812838b2; docs/evidence/resume-wave-runtime-20261014/index.json and verify.py. All remaining software gaps and unavailable independent review are explicitly retained in the latest Arabic resume. No APK/phone request/provider credentials/external trades/Oracle or other-project changes.

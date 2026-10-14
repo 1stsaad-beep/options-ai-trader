@@ -1,0 +1,111 @@
+{
+  "source_sha": "8c9089e769ec83437666dd2d09551830fd42dca1",
+  "scope": "ORIGINAL_ARTIFACTS_SHA256_CRC_RAW_COUNTS_AND_SCOPED_VISUAL_REVIEW",
+  "bundle_sha256": "d3ba89ff0860ff9940e68803fe237e1ec9c96ee28394b8f014c0bfb0812838b2",
+  "artifacts": [
+    {
+      "path": "compose-8c9089e7.zip",
+      "sha256": "66148347e975ecb20ae392a7bd758afa7181c0847644cd52e17527a8dcfff54d",
+      "bytes": 688,
+      "artifact_id": 11908310202,
+      "run_id": 38591368571
+    },
+    {
+      "path": "backend-8c9089e7.zip",
+      "sha256": "baa508bc2e11979aeb0a5f206c6db75108bcc0df0c9ce751cd1f94a8f115d3b7",
+      "bytes": 27208,
+      "artifact_id": 11906904511,
+      "run_id": 38591368571
+    },
+    {
+      "path": "security-8c9089e7.zip",
+      "sha256": "291ff322b204a15445336abdff65f7b907eeedf3b4ba5d2acee0d0b2bd1d01fa",
+      "bytes": 2648,
+      "artifact_id": 11906749552,
+      "run_id": 38591368877
+    },
+    {
+      "path": "chart-8c9089e7.zip",
+      "sha256": "975be3d4c271d846202bbc87ab7e3e0c4f52ac9fba7aaad308e52741353ccf80",
+      "bytes": 170792,
+      "artifact_id": 11906869539,
+      "run_id": 38591368653
+    },
+    {
+      "path": "direct-8c9089e7.zip",
+      "sha256": "cfb7cd3a08e606dd21b46981b4a8e7479fa6430f12c74cd00522ab63972c53f5",
+      "bytes": 345156,
+      "artifact_id": 11908296537,
+      "run_id": 38591368556
+    }
+  ],
+  "results": {
+    "flutter": 683,
+    "jvm": 41,
+    "chart_semantic": 23,
+    "golden": 6,
+    "python": 1218,
+    "postgres_execution": 22,
+    "postgres_journal": 6,
+    "postgres_runtime": 10,
+    "postgres_settlement": 5,
+    "postgres_backup_restore": 17,
+    "compose": 17
+  },
+  "source_scan": {
+    "files_scanned": 991,
+    "history_blobs_scanned": 1800,
+    "history_commits": 168,
+    "finding_count": 0
+  },
+  "dependencies": {
+    "python": 24,
+    "pub": 44,
+    "known_advisories": 0
+  },
+  "decoded_evidence_scan": {
+    "text_members": 20,
+    "findings": 0,
+    "binary_coverage": false
+  },
+  "visual_review": {
+    "source_sha": "8c9089e769ec83437666dd2d09551830fd42dca1",
+    "reviewer": "implementing_agent_visual_inspection_NOT_independent",
+    "preview_count": 12,
+    "widths": [
+      360,
+      780
+    ],
+    "height": 440,
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "patterns": [
+      "DOUBLE_TOP",
+      "HEAD_AND_SHOULDERS",
+      "CONVERGING_TRIANGLE"
+    ],
+    "scope_accepted": true,
+    "whole_design_accepted": false,
+    "findings_closed": [
+      "LS/resistance and neckline/support text overlap",
+      "Unequal N1/N2 flattened to conservative break level",
+      "Text obscured by later geometry or observed vertices"
+    ],
+    "observations": [
+      "Actual original PNGs were opened and inspected at both widths and themes",
+      "Observed sloping N1\u2013N2 neckline and separately labeled conservative BREAK threshold",
+      "Vertex labels legible, original points visible, axes/time labels inside bounds",
+      "No Golden baseline replacement"
+    ],
+    "limits": [
+      "Painter fixtures only, not complete application screenshots or physical-phone acceptance",
+      "Fixtures use thin OHLCV bodies; not a market connection or all candle/zoom/overlay cases",
+      "Model IDs/ranking, full wave/strategy parity, storage/market-worker and independent review remain open"
+    ]
+  },
+  "independent_review": false,
+  "external_market_tested": false,
+  "apk_produced": false
+}
