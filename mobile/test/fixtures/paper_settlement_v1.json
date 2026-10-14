@@ -1,0 +1,824 @@
+{
+  "version": "paper-equity-delivery-v1",
+  "cases": [
+    {
+      "name": "call_partial",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": -2000100,
+        "optionQuantity": 1,
+        "removedCost": 21000,
+        "removedEntryFees": 65,
+        "shareDelta": 100,
+        "shareBasisDelta": 2021165,
+        "realizedPnl": 0,
+        "feeCents": 100,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
+    },
+    {
+      "name": "call_full",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 5000000,
+      "request": {
+        "id": "call_full",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": -4000100,
+        "optionQuantity": 2,
+        "removedCost": 42000,
+        "removedEntryFees": 130,
+        "shareDelta": 200,
+        "shareBasisDelta": 4042230,
+        "realizedPnl": 0,
+        "feeCents": 100,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
+    },
+    {
+      "name": "put_partial",
+      "position": {
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": {
+        "quantity": 200,
+        "cost": 3800000
+      },
+      "cash": 3000000,
+      "request": {
+        "id": "put_partial",
+        "action": "EXERCISE",
+        "contract": "NVDA261016P00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": 1999900,
+        "optionQuantity": 1,
+        "removedCost": 21000,
+        "removedEntryFees": 65,
+        "shareDelta": -100,
+        "shareBasisDelta": -1900000,
+        "realizedPnl": 78835,
+        "feeCents": 100,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
+    },
+    {
+      "name": "put_full",
+      "position": {
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": {
+        "quantity": 200,
+        "cost": 3800001
+      },
+      "cash": 3000000,
+      "request": {
+        "id": "put_full",
+        "action": "EXERCISE",
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": 3999900,
+        "optionQuantity": 2,
+        "removedCost": 42000,
+        "removedEntryFees": 130,
+        "shareDelta": -200,
+        "shareBasisDelta": -3800001,
+        "realizedPnl": 157769,
+        "feeCents": 100,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
+    },
+    {
+      "name": "stock_sale_1",
+      "position": null,
+      "delivery": {
+        "quantity": 100,
+        "cost": 2021165
+      },
+      "cash": 3000000,
+      "request": {
+        "id": "stock_sale_1",
+        "action": "SELL_DELIVERY",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": 19900,
+        "optionQuantity": 0,
+        "removedCost": 0,
+        "removedEntryFees": 0,
+        "shareDelta": -1,
+        "shareBasisDelta": -20211,
+        "realizedPnl": -311,
+        "feeCents": 100,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
+    },
+    {
+      "name": "stock_sale_33",
+      "position": null,
+      "delivery": {
+        "quantity": 100,
+        "cost": 2021165
+      },
+      "cash": 3000000,
+      "request": {
+        "id": "stock_sale_33",
+        "action": "SELL_DELIVERY",
+        "contract": "NVDA261016C00200000",
+        "quantity": 33,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": 659900,
+        "optionQuantity": 0,
+        "removedCost": 0,
+        "removedEntryFees": 0,
+        "shareDelta": -33,
+        "shareBasisDelta": -666984,
+        "realizedPnl": -7084,
+        "feeCents": 100,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
+    },
+    {
+      "name": "stock_sale_100",
+      "position": null,
+      "delivery": {
+        "quantity": 100,
+        "cost": 2021165
+      },
+      "cash": 3000000,
+      "request": {
+        "id": "stock_sale_100",
+        "action": "SELL_DELIVERY",
+        "contract": "NVDA261016C00200000",
+        "quantity": 100,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": 1999900,
+        "optionQuantity": 0,
+        "removedCost": 0,
+        "removedEntryFees": 0,
+        "shareDelta": -100,
+        "shareBasisDelta": -2021165,
+        "realizedPnl": -21265,
+        "feeCents": 100,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
+    },
+    {
+      "name": "worthless_C",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "worthless_C",
+        "action": "EXPIRE_WORTHLESS",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": -100,
+        "optionQuantity": 1,
+        "removedCost": 21000,
+        "removedEntryFees": 65,
+        "shareDelta": 0,
+        "shareBasisDelta": 0,
+        "realizedPnl": -21165,
+        "feeCents": 100,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
+    },
+    {
+      "name": "worthless_P",
+      "position": {
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "worthless_P",
+        "action": "EXPIRE_WORTHLESS",
+        "contract": "NVDA261016P00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": -100,
+        "optionQuantity": 1,
+        "removedCost": 21000,
+        "removedEntryFees": 65,
+        "shareDelta": 0,
+        "shareBasisDelta": 0,
+        "realizedPnl": -21165,
+        "feeCents": 100,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
+    },
+    {
+      "name": "insufficient_cash",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 2000099,
+      "request": {
+        "id": "insufficient_cash",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "no_put_shares",
+      "position": {
+        "contract": "NVDA261016P00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "no_put_shares",
+        "action": "EXERCISE",
+        "contract": "NVDA261016P00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "oversell_stock",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": {
+        "quantity": 100,
+        "cost": 2021165
+      },
+      "cash": 3000000,
+      "request": {
+        "id": "oversell_stock",
+        "action": "SELL_DELIVERY",
+        "contract": "NVDA261016C00200000",
+        "quantity": 101,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_12",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_12",
+        "action": "ASSIGNMENT",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_13",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_13",
+        "action": "CASH_SETTLEMENT",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_14",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_14",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": true,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_15",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_15",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 0,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_16",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_16",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 3,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_17",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_17",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": -1,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_18",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_18",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "broker",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_19",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_19",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 0,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_20",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_20",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:01Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_21",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_21",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-12T12:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_22",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_22",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-18T12:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_23",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_23",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200001",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "reject_24",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "reject_24",
+        "action": "EXERCISE",
+        "contract": "NVDA261332C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "itm_not_worthless",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "itm_not_worthless",
+        "action": "EXPIRE_WORTHLESS",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20001,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "early_not_expired",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "early_not_expired",
+        "action": "EXPIRE_WORTHLESS",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T19:59:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    }
+  ]
+}
