@@ -31,3 +31,7 @@ Delivered-stock valuation now has a shared Python/Dart contract,26 hand-expected
 ### Batch21 continuation: R02/R08/R09/R13/R14
 
 Versioned conservative option policy is integrated into Direct entry/add/close, receipt reconciliation, portfolio costs and Replay. Shared27 hand-expected fixtures;97 affected Python tests pass. New UI accounts use the policy; legacy originals retain their original basis/fees. Actual queue/latency, Greek/deliverable risk, continuous server engine and independent review remain open. See docs/PAPER_EXECUTION_20261014.md; new-source CI pending.
+
+### Batch22 continuation: R08/R14
+
+Device physical archive chunks are now outside the AtomicFile root; content hashes, directory fsync, immutable original migration anchor and uncached logical CAS preserve exact bytes. Eight JVM tests added; source-specific result pending. Existing logical64MiB/archive8MiB/export16MiB limits and full-memory validation remain; instrumentation, storage-pressure safety and continuous soak are not complete. See docs/SEGMENTED_DEVICE_STORAGE_20261014.md.

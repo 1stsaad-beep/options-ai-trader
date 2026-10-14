@@ -161,3 +161,7 @@ Python/Dart paper-delivery-valuation-v1 with26 hand-expected shared cases; integ
 ## Batch21 — explicit conservative option fills and immutable policy receipts
 
 Shared paper-option-execution-v2,27 hand-expected cases. Direct entries/additions/partial closes now support adverse1¢,70¢ total modeled per-contract cost and25% displayed-size participation; consumption is reconstructed from account receipts. New UI-created accounts select the model; old accounts/receipts remain legacy unless changed while stopped. Risk, performance, backup/reconciliation and observed Replay include actual modeled costs.97 affected Python checks passed; Flutter/native CI pending. See PAPER_EXECUTION_20261014.md. No claim of real queue priority, Greek risk, adjusted deliverable eligibility or continuous server execution.
+
+## Batch22 — immutable physical device segments
+
+Android now stages content-addressed32–128KiB chunks, verifies original logical bytes, retains legacy anchors and publishes an AtomicFile manifest only after chunk/directory durability. CAS and Dart receipts are unchanged. Eight new JVM cases and one deferred instrumentation migration case cover corruption/interruption/history/deduplication; awaiting source-specific CI. This does not remove full-book memory/bridge validation, backup/capacity limits or close financial-vs-optional-archive recovery. See SEGMENTED_DEVICE_STORAGE_20261014.md. No compaction/deletion of user evidence, Oracle access or release package.

@@ -52,6 +52,21 @@ class AlpacaVaultDeviceTest {
             assertEquals(first,PaperDiskStore(file).read())
         }finally{dir.deleteRecursively()}
     }
+    @Test fun paperLegacyMigrationPreservesOriginalAndDetectsMissingSegment(){
+        val dir=File(context.cacheDir,"paper-segment-migration-fixture").apply{mkdirs()}
+        val file=File(dir,"ledger.json");val old="""{"version":1,"accounts":[],"journal":[]}"""
+        val next="""{"version":1,"accounts":[],"journal":[],"journalArchive":[]}"""
+        try {
+            file.writeText(old);val store=PaperDiskStore(file);assertEquals(old,store.read());assertTrue(store.write(old,next))
+            val manifest=JSONObject(file.readText());assertEquals(PaperSegments.FORMAT,manifest.getString("storageFormat"))
+            assertEquals(next,PaperDiskStore(file).read())
+            val directory=File(file.path+".segments")
+            assertTrue(directory.listFiles()!!.any{it.name.startsWith("legacy-")})
+            val sha=manifest.getJSONArray("segments").getJSONObject(0).getString("sha256")
+            assertTrue(File(directory,"$sha.bin").delete()) // Disposable fixture only.
+            try{PaperDiskStore(file).read();fail("missing segment became empty ledger")}catch(_:IllegalStateException){}
+        }finally{dir.deleteRecursively()}
+    }
     @Test fun runtimeIsSharedAcrossActivityAndApplicationContexts(){
         assertSame(AlpacaRuntime.get(context),AlpacaRuntime.get(context.applicationContext))
     }
