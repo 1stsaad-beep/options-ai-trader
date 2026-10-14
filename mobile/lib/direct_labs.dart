@@ -96,7 +96,7 @@ class _DirectLabsState extends State<DirectLabs> {
     final wave=archived?_archiveView!:directWaveView(rows);
     ChartPattern drawing(ChartWaveScenario scenario,{bool alternate=false}) {
       final p=scenario.drawing(alternate:alternate);if(!archived)return p;
-      final times=epoch!['times'] as List,indices={for(var i=0;i<rows.length;i++)rows[i].time.millisecondsSinceEpoch:i};
+      final times=epoch['times'] as List,indices={for(var i=0;i<rows.length;i++)rows[i].time.millisecondsSinceEpoch:i};
       return ChartPattern(p.name,[for(final q in p.points)ChartPivot(indices[times[q.index]]??-1,
         indices[times[q.confirmedAt]]??-1,q.price,q.high)],p.invalidation,p.target,
         labels:p.labels,alternate:p.alternate,przLow:p.przLow,przHigh:p.przHigh);
@@ -126,7 +126,7 @@ class _DirectLabsState extends State<DirectLabs> {
           if(entry.value!=null)Text('${entry.key}: ${entry.value!.name} • ${entry.value!.degree}\n'
             '${entry.value!.labels.join(' → ')} • التفعيل ${number(entry.value!.activation)} • الإلغاء ${number(entry.value!.invalidation)}\n'
             'أهداف Fib: ${entry.value!.targets.map(number).join(' / ')}'),
-        Text(archived?'موجات من أرشيف محفوظ عبر نوافذ المصدر • ${(epoch!['times'] as List).length} شمعة • حد المصدر: ${epoch['boundary']}. قد تقع بعض نقاط النموذج قبل النافذة المعروضة.':
+        Text(archived?'موجات من أرشيف محفوظ عبر نوافذ المصدر • ${(epoch['times'] as List).length} شمعة • حد المصدر: ${epoch['boundary']}. قد تقع بعض نقاط النموذج قبل النافذة المعروضة.':
           'السجل سببي داخل هذه النافذة فقط؛ لا أرشيف متحقق مطابق لهذا الفاصل والمصدر.'),
         Text('أحداث الرصد والإلغاء: ${wave.events.length}',key:const Key('direct-wave-events')),
       ],
