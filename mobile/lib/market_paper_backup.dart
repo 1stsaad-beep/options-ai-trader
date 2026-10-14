@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'market_paper_validation.dart';
 import 'direct_wave_archive.dart';
+import 'option_observation_archive.dart';
 
 /// Manual, unsigned local ledger portability. No keys, transport settings or
 /// execution permission are exported. Validation is not proof of provenance.
@@ -14,7 +15,7 @@ class PaperBackup {
       throw const FormatException('Not a Market Paper backup');
     }
     final book=envelope['ledger'] as Map<String,dynamic>;
-    const rootKeys={'version','accounts','journal','journalArchive','experiment','waveArchive'};
+    const rootKeys={'version','accounts','journal','journalArchive','experiment','waveArchive','optionArchive'};
     if(book.keys.any((k)=>!rootKeys.contains(k)))throw const FormatException('Unknown ledger fields');
     const accountKeys={'id','name','cash','initialCash','enabled','positions','contracts','riskPercent','quantity',
       'stopPercent','takePercent','trailPercent','addEnabled','lastSignal','ledgerPolicy','strategy','watchlist','fees',
@@ -23,6 +24,10 @@ class PaperBackup {
       'deliveryPositions','settlementCount','settlementRealizedPnl'};
     validatePaper(book);
     if(book.containsKey('waveArchive'))DirectWaveArchive.read(book['waveArchive']);
+    if(book.containsKey('optionArchive')) {
+      final ids={for(final a in book['accounts'] as List)a['id']};
+      if(OptionObservationArchive.read(book['optionArchive']).observations.any((o)=>!ids.contains(o['account'])))throw const FormatException('Unknown option observation account');
+    }
     for(final a in book['accounts'] as List) {
       if((a as Map).keys.any((k)=>!accountKeys.contains(k)))throw const FormatException('Unknown account fields');
     }

@@ -1890,6 +1890,89 @@
         "queueModeled": false,
         "greeksUsedForPricing": false
       }
+    },
+    {
+      "name": "equivalent quote offset is not a conflicting market price",
+      "query": {
+        "entry": {
+          "account": "a",
+          "at": "2026-10-13T15:01:00.000Z",
+          "quote": {
+            "contract": "NVDA261016C00200000",
+            "feed": "opra",
+            "at": "2026-10-13T15:01:00.000Z",
+            "bid": 200,
+            "ask": 210,
+            "bidSize": 10,
+            "askSize": 10
+          },
+          "fill": {
+            "side": "BUY",
+            "quantity": 2,
+            "price": 210,
+            "fee": 130
+          },
+          "evidence": {
+            "source": "fixture"
+          }
+        },
+        "observations": [
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T15:05:59.000Z",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          },
+          {
+            "account": "a",
+            "source": "fixture",
+            "capturedAt": "2026-10-13T15:06:00.000Z",
+            "quote": {
+              "contract": "NVDA261016C00200000",
+              "feed": "opra",
+              "at": "2026-10-13T11:05:59.000-04:00",
+              "bid": 250,
+              "ask": 260,
+              "bidSize": 10,
+              "askSize": 10
+            }
+          }
+        ],
+        "asOf": "2026-10-13T15:10:00.000Z"
+      },
+      "expected": {
+        "version": "observed-option-counterfactual-v1",
+        "counterfactual": true,
+        "executionAllowed": false,
+        "externalOrder": false,
+        "pnlCents": 7740,
+        "status": "OBSERVED_COUNTERFACTUAL",
+        "source": "fixture",
+        "account": "a",
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "targetAt": "2026-10-13T15:06:00.000Z",
+        "quoteAt": "2026-10-13T15:05:59.000Z",
+        "capturedAt": "2026-10-13T15:06:00.000Z",
+        "entryCostCents": 42130,
+        "entryFeeCents": 130,
+        "exitBidCents": 250,
+        "slippageCents": 0,
+        "exitPriceCents": 250,
+        "exitFeeCents": 130,
+        "exitProceedsCents": 49870,
+        "model": "observed-bid-minus-adverse-cents",
+        "queueModeled": false,
+        "greeksUsedForPricing": false
+      }
     }
   ]
 }

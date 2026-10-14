@@ -39,3 +39,33 @@ def test_latest_known_quote_wins_without_future_peeking():
     old['quote'].update(bid=1000, ask=1100)
     q['observations'].insert(0, old)
     assert replay_option(q)['pnlCents'] == 7740
+
+
+def test_authenticated_portable_replay_never_reads_provider_or_writes_ledger(monkeypatch):
+    from fastapi.testclient import TestClient
+    from unittest.mock import Mock
+    from app.main import create_app
+    from app.repository import Repository
+    from app.service import TradingService
+    from test_alpaca_market_api import TOKEN, HEADERS
+    repo = Repository()
+    provider = Mock(side_effect=AssertionError('No provider access'))
+    for method in ('submit', 'fill', 'settle_paper', 'record_option_mark'):
+        monkeypatch.setattr(TradingService, method, Mock(side_effect=AssertionError('No execution')))
+    try:
+        with TestClient(create_app(repo, TOKEN, provider)) as client:
+            before = list(repo.connection.iterdump())
+            path = '/api/research/observed-option-replay'
+            assert client.post(path, json=FIXTURES[0]['query']).status_code == 401
+            response = client.post(path, headers=HEADERS, json=FIXTURES[0]['query'])
+            assert response.status_code == 200
+            assert response.json() == {'provenance':'client_supplied_unverified',
+                                      'persisted':False, 'result':FIXTURES[0]['expected']}
+            assert response.headers['cache-control'] == 'no-store'
+            invalid = client.post(path, headers=HEADERS, json={'executionAllowed':True})
+            assert invalid.json()['result']['status'] == 'INVALID_QUERY'
+            assert client.post(path, headers=HEADERS, json={'oversize':'x'*131072}).status_code == 413
+            assert list(repo.connection.iterdump()) == before
+            assert not provider.mock_calls
+    finally:
+        repo.close()

@@ -106,7 +106,7 @@ def replay_option(query):
     latest = max(c[0] for c in candidates)
     at_latest = sorted((c for c in candidates if c[0] == latest), key=lambda c:c[1])
     exit_quote = at_latest[0][2]
-    if any(c[2] != exit_quote for c in at_latest):
+    if any(any(c[2][key] != exit_quote[key] for key in QUOTE_KEYS - {'at'}) for c in at_latest):
         return unavailable('AMBIGUOUS_OBSERVATION')
     if quantity > min(exit_quote['bidSize'], exit_quote['askSize']):
         return unavailable('INSUFFICIENT_OBSERVED_LIQUIDITY')

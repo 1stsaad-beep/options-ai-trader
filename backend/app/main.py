@@ -91,6 +91,13 @@ def create_app(repository=None, token=None, market_data_provider=None):
     install_market_data_routes(app, secured, service, lambda: app.state.market_data)
     from .market_runtime_api import install_market_runtime_routes
     install_market_runtime_routes(app, secured, service)
+    @app.post('/api/research/observed-option-replay',dependencies=secured)
+    def observed_option_replay(body: dict):
+        # Portable device evidence is inspected without importing balances or
+        # mapping its account ID to a server account. No DB/provider/order access.
+        from .observed_option_replay import replay_option
+        return {'provenance':'client_supplied_unverified', 'persisted':False,
+                'result':replay_option(body)}
     @app.get('/api/readiness',dependencies=secured)
     def readiness(s=Depends(service)):
         from .monitoring import readiness as inspect

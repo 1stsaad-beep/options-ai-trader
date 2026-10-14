@@ -74,7 +74,7 @@ Map<String,dynamic> replayObservedOption(Map<String,dynamic> query) {
   if(candidates.isEmpty)return unavailable('INSUFFICIENT_OBSERVED_DATA');
   candidates.sort((a,b){final byQuote=b.quoted.compareTo(a.quoted);return byQuote==0?a.captured.compareTo(b.captured):byQuote;});
   final selected=candidates.first,exitQuote=selected.quote;
-  if(candidates.where((c)=>c.quoted==selected.quoted).any((c)=>exitQuote.keys.any((k)=>c.quote[k]!=exitQuote[k])))return unavailable('AMBIGUOUS_OBSERVATION');
+  if(candidates.where((c)=>c.quoted==selected.quoted).any((c)=>exitQuote.keys.where((k)=>k!='at').any((k)=>c.quote[k]!=exitQuote[k])))return unavailable('AMBIGUOUS_OBSERVATION');
   if(quantity>exitQuote['bidSize']||quantity>exitQuote['askSize'])return unavailable('INSUFFICIENT_OBSERVED_LIQUIDITY');
   final price=(exitQuote['bid'] as int)-slippage;if(price<=0)return unavailable('NO_POSITIVE_STRESSED_BID');
   final entryCost=(q['ask'] as int)*quantity*100+entryFee,exitFee=fee*quantity,proceeds=price*quantity*100-exitFee;

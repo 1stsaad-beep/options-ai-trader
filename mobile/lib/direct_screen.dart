@@ -126,6 +126,11 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
   }
   Future<void> paperCycle({bool forceClose=false,String? closeAccount,String? closeSymbol}) async {
     if(!visible||!snapshot.enabled||paper.busy)return;
+    final quoteCache=<String,OptionQuote?>{};
+    Future<OptionQuote?> observedQuote(String contract) async {
+      if(!quoteCache.containsKey(contract))quoteCache[contract]=await api.quote(contract);
+      return quoteCache[contract];
+    }
     for(final a in paper.accounts) {
       if(!forceClose&&a['enabled']!=true)continue;
       if(forceClose&&a['id']!=closeAccount)continue;
@@ -150,7 +155,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
         catch(_){research={'version':'direct-research-v3','indicatorContract':marketIndicatorContract,'status':'OPTIONAL_RESEARCH_UNAVAILABLE','executable':false};}
         await paper.evaluate(id:a['id'] as String,symbol:symbol,signal:signal.direction,confirmedReverse:signal.confirmedReverse,
           dataValid:()=>visible&&snapshot.validForDecision(symbol,DateTime.now()),
-          observation:rows.isEmpty?'none':rows.last.time.toIso8601String(),quotes:api.quote,forceClose:forceClose,
+          observation:rows.isEmpty?'none':rows.last.time.toIso8601String(),quotes:observedQuote,forceClose:forceClose,
           currentSignal:()=>readSignal().direction,currentReverse:()=>readSignal().confirmedReverse,
           scenarioInvalidated:(){final p=paper.account(a['id'] as String)['positions'][symbol];final price=snapshot.series[symbol]?.lastOrNull?.close;
             if(p==null||p['scenarioLevel'] is! num||price==null)return false;
@@ -159,6 +164,10 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
             'scenarioLevel':research['indicators']?[signal.direction=='CALL'?'support':'resistance'],'recordedAt':DateTime.now().toUtc().toIso8601String(),
             ...directBarEvidence(rows)});
       }
+    }
+    if(!forceClose&&visible&&mounted&&['alpaca','mock'].contains(snapshot.source)) {
+      await paper.observeRecentOptions(source:snapshot.source=='alpaca'?'alpaca':'fixture',quotes:observedQuote,
+        active:()=>visible&&mounted&&snapshot.enabled);
     }
   }
   @override void didChangeAppLifecycleState(AppLifecycleState state){visible=state==AppLifecycleState.resumed;
@@ -385,10 +394,12 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
         ],
         const Text('الإغلاق اليدوي يعمل للحساب المتوقف أيضًا، دون تشغيل التقييم أو فتح مركز جديد. يحتاج اتصال بيانات وعرض خيار مؤهلًا.'),
         const Text('آخر القرارات — دفتر هذا الحساب فقط'),
+        const Text('أثناء اتصال الواجهة تُحفظ عروض الخيار لخمس دقائق بعد الدخول، حتى بعد الإغلاق، لإعادة حساب بحثية منفصلة عن الرصيد. لا رصد عند إغلاق التطبيق.'),
+        if(paper.optionArchiveError!=null)Text(paper.optionArchiveError!),
         for(final e in paper.journal.where((e)=>e['account']==selectedAccount).toList().reversed.take(30))ListTile(
           title:Text('${e['symbol']} • ${e['decision']}'),subtitle:Text('${e['at']}'),
           trailing:const Icon(Icons.history),onTap:()=>Navigator.push(context,MaterialPageRoute<void>(
-            builder:(_)=>DirectDecisionView(event:e)))),
+            builder:(_)=>DirectDecisionView(event:e,observations:paper.optionObservations(a['id'] as String))))),
       ],
     ];
   }

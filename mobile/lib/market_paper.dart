@@ -10,6 +10,8 @@ import 'market_paper_policy.dart';
 import 'market_paper_backup.dart';
 import 'market_paper_settlement.dart';
 import 'direct_wave_archive.dart';
+import 'observed_option_replay.dart';
+import 'option_observation_archive.dart';
 import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
@@ -69,6 +71,8 @@ class MarketPaper extends ChangeNotifier {
   bool ready=false,busy=false;
   String? error;
   String? waveArchiveError;
+  String? optionArchiveError;
+  final _pendingOptionObservations=<PaperRow>[];
   Future<void>? _loading;
   PaperRow? _durable;
   PaperRow? _decisionEvidence;
@@ -85,6 +89,59 @@ class MarketPaper extends ChangeNotifier {
   PaperRow copy()=>copyPaper(_book);
   PaperRow performance(String id)=>paperPerformance(account(id),now());
   PaperRow comparison()=>paperComparison({...copy(),'journal':journal},now());
+  List<PaperRow> optionObservations(String id) {
+    final result=<PaperRow>[];
+    try{result.addAll(OptionObservationArchive.read(_book['optionArchive']).observations.where((o)=>o['account']==id));}
+    catch(_){optionArchiveError='أرشيف عروض الخيارات غير متحقق؛ احتُفظ بالأصل، ولا يُستبدل بأسعار السهم.';}
+    // Original journal receipts already have contemporaneous capture/source
+    // facts; old unqualified records are not relabeled or backfilled.
+    for(final e in journal.where((e)=>e['account']==id&&e['quote'] is Map)) {
+      final o={'account':id,'source':e['evidence']?['source'],'capturedAt':e['at'],'quote':e['quote']};
+      try{readOptionObservation(o);result.add(o);}catch(_){ /* Explicitly unavailable legacy evidence. */ }
+    }
+    final unique=<String,PaperRow>{};
+    for(final o in result) {
+      final key=paperBytes([o['account'],o['source'],o['quote']]),prior=unique[key];
+      if(prior==null||observationStamp(o['capturedAt']).isBefore(observationStamp(prior['capturedAt'])))unique[key]=o;
+    }
+    return unique.values.toList();
+  }
+  bool _appendOptionObservations(PaperRow next) {
+    if(_pendingOptionObservations.isEmpty)return false;
+    try {
+      final updated=OptionObservationArchive.read(next['optionArchive']).append(_pendingOptionObservations);
+      if(updated==null)return false;
+      next['optionArchive']=updated;return true;
+    }catch(_){optionArchiveError='تعذر حفظ عروض الخيارات أو بلغ الأرشيف سعته؛ التاريخ السابق محفوظ. إعادة الحساب جزئية.';return false;}
+  }
+  void _rememberOption(String id,String? source,OptionQuote q) {
+    final observation=<String,dynamic>{'account':id,'source':source,'capturedAt':now().toUtc().toIso8601String(),'quote':_quote(q)};
+    try{readOptionObservation(observation);_pendingOptionObservations.add(observation);}catch(_){ /* Unqualified observations never enter replay. */ }
+  }
+  /// Foreground, read-only follow-up for five minutes after an original BUY.
+  /// It continues observing a closed position without reopening or rearming it.
+  Future<void> observeRecentOptions({required String source,required QuoteReader quotes,required bool Function() active}) async {
+    if(!ready||busy||!['alpaca','fixture'].contains(source)||!active())return;
+    final targets=<String,Set<String>>{},at=now();
+    for(final e in journal) {
+      if(e['fill']?['side']!='BUY'||e['evidence']?['source']!=source||e['quote']?['contract'] is! String)continue;
+      final age=at.difference(DateTime.parse(e['at'] as String));
+      if(age.isNegative||age>const Duration(minutes:5,seconds:30))continue;
+      (targets[e['quote']['contract'] as String]??=<String>{}).add(e['account'] as String);
+    }
+    if(targets.isEmpty)return;
+    busy=true;
+    try {
+      for(final entry in targets.entries.take(20)) {
+        if(!ready||!active())return;
+        OptionQuote? q;try{q=await quotes(entry.key);}catch(_){continue;}
+        if(!ready||!active())return;
+        if(q!=null&&q.contract==entry.key){for(final id in entry.value){_rememberOption(id,source,q);}}
+      }
+      final next=copy();
+      if(_appendOptionObservations(next))await _commit(next,admission:()=>ready&&active());
+    }finally{_pendingOptionObservations.clear();busy=false;notifyListeners();}
+  }
   DirectWaveArchive? get waveArchive {
     try{return DirectWaveArchive.read(_book['waveArchive']);}
     catch(_){waveArchiveError='أرشيف الموجات غير متحقق؛ احتُفظ بأصله دون إعادة كتابة. دفتر التداول مستقل عنه.';return null;}
@@ -109,7 +166,7 @@ class MarketPaper extends ChangeNotifier {
     if(!ready||busy)throw StateError('Ledger is not stable');
     // Import is allowed only into an empty device ledger. Existing data is never
     // replaced, merged, deleted or silently renamed by a backup operation.
-    if(accounts.isNotEmpty||journal.isNotEmpty||_book['waveArchive']!=null)throw StateError('Restore requires an empty Market Paper ledger and archive');
+    if(accounts.isNotEmpty||journal.isNotEmpty||_book['waveArchive']!=null||_book['optionArchive']!=null)throw StateError('Restore requires an empty Market Paper ledger and archive');
     final restored=PaperBackup.prepare(text);
     busy=true;notifyListeners();
     try{if(!await _commit(restored))throw StateError('Restore was not confirmed');}
@@ -130,6 +187,8 @@ class MarketPaper extends ChangeNotifier {
   }
   Future<bool> _commit(PaperRow next,{bool Function()? admission}) async {
     if(!ready)return false;
+    _appendOptionObservations(next);
+    final optionCapture=_pendingOptionObservations.isNotEmpty&&paperBytes(next['optionArchive'])!=paperBytes(_book['optionArchive']);
     for(final a in (next['accounts'] as List).cast<PaperRow>()) {
       if(a['peakEquity'] is! int)continue;
       final equity=paperPerformance(a,now())['equityCents'] as int?;
@@ -148,10 +207,13 @@ class MarketPaper extends ChangeNotifier {
     PaperRow? observed;
     try {observed=await store.read();}catch(_){_uncertain();return false;}
     if(paperBytes(observed)==paperBytes(next)) {
-      _durable=copyPaper(next);_book=copyPaper(next);error=null;notifyListeners();return true;
+      _durable=copyPaper(next);_book=copyPaper(next);error=null;
+      if(optionCapture)optionArchiveError=null;
+      notifyListeners();return true;
     }
     if(paperBytes(observed)!=paperBytes(_durable)){_uncertain();return false;}
     error='لم يُحفظ التغيير؛ بقي الدفتر السابق مؤكدًا. لم تُعتمد تعبئة أو عملية عكس.';
+    if(optionCapture)optionArchiveError='لم يتأكد حفظ عروض الخيارات؛ لم يُعتمد تاريخ جديد.';
     notifyListeners();return false;
   }
   PaperRow _in(PaperRow book,String id)=>(book['accounts'] as List).cast<PaperRow>().singleWhere((a)=>a['id']==id);
@@ -273,12 +335,17 @@ class MarketPaper extends ChangeNotifier {
     bool signalCurrent(){try{return currentSignal==null||currentSignal()==signal;}catch(_){return false;}}
     bool scenarioBroken(){try{return scenarioInvalidated?.call()==true;}catch(_){return false;}}
     bool reverseCurrent(){try{return confirmedReverse&&(currentReverse?.call()??true)&&stockValid()&&signalCurrent();}catch(_){return false;}}
+    Future<OptionQuote?> readQuote(String contract) async {
+      final q=await quotes(contract);
+      if(current()&&q!=null&&q.contract==contract)_rememberOption(id,_decisionEvidence?['source'] as String?,q);
+      return q;
+    }
     final marks=<String,OptionQuote>{};
     Future<bool> collectMarks() async {
       for(final p in (account(id)['positions'] as Map).values) {
         final contract=p['contract'] as String;
         if(!marks.containsKey(contract)) {
-          final q=await quotes(contract);
+          final q=await readQuote(contract);
           if(!current())return false;
           if(q!=null&&q.contract==contract)marks[contract]=q;
         }
@@ -321,7 +388,7 @@ class MarketPaper extends ChangeNotifier {
           if(closeReason!=null){await retainIntent(closeReason,!expiry.close?expiry.status:'SESSION_CLOSE_DEFERRED');}
           else{await _record(id,symbol,'SESSION_CLOSED_NO_FILL');}return;
         }
-        final q=await quotes(position['contract'] as String);
+        final q=await readQuote(position['contract'] as String);
         if(!current())return;
         if(q==null||q.contract!=position['contract']||!q.valid(now())) {
           if(closeReason!=null){await retainIntent(closeReason,'CLOSE_UNCONFIRMED_NO_REVERSAL');}
@@ -408,7 +475,7 @@ class MarketPaper extends ChangeNotifier {
       final contract=(a['contracts'] as Map)['$symbol:$signal'] as String?;
       if(contract==null){await _record(id,symbol,'QUALIFIED_OPTION_CONTRACT_REQUIRED');return;}
       if(!paperExpiry(contract,now()).entry){await _record(id,symbol,'EXPIRY_ENTRY_BLOCKED');return;}
-      final q=await quotes(contract);
+      final q=await readQuote(contract);
       if(!current())return;
       final quantity=a['quantity'] as int;
       if(q==null||q.contract!=contract||q.underlying!=symbol||q.direction!=signal||!q.valid(now(),quantity:quantity)||!stockValid()||!signalCurrent()){
@@ -431,10 +498,12 @@ class MarketPaper extends ChangeNotifier {
       _log(next,id,symbol,'OPENED_$signal',quote:q,fill:{'side':'BUY','quantity':quantity,'price':q.ask,'fee':fee,'cashAfter':target['cash']});
       await _commit(next,admission:()=>current()&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:quantity)&&risk(quantity,q.ask)==null);
     }catch(_){error='توقفت الدورة دون فتح عكسي. راجع البيانات وسعة السجل والتخزين.';notifyListeners();}
-    finally{_decisionEvidence=null;busy=false;notifyListeners();}
+    finally{_decisionEvidence=null;_pendingOptionObservations.clear();busy=false;notifyListeners();}
   }
   Future<void> _record(String id,String symbol,String reason) async {
-    if(journal.isNotEmpty&&journal.last['account']==id&&journal.last['symbol']==symbol&&journal.last['decision']==reason)return;
+    if(journal.isNotEmpty&&journal.last['account']==id&&journal.last['symbol']==symbol&&journal.last['decision']==reason) {
+      final next=copy();if(_appendOptionObservations(next))await _commit(next);return;
+    }
     final next=copy();_log(next,id,symbol,reason);await _commit(next);
   }
 }
