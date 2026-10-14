@@ -21,17 +21,17 @@ DateTime observationStamp(dynamic value) {
 ({DateTime captured,DateTime quoted}) readOptionObservation(dynamic value) {
   if(value is! Map||value.length!=4||!value.keys.toSet().containsAll({'account','source','capturedAt','quote'})||
       value['account'] is! String||(value['account'] as String).trim().isEmpty||(value['account'] as String).length>120||
-      !['fixture','alpaca'].contains(value['source']))throw const FormatException('Invalid observation');
+      !['fixture','alpaca'].contains(value['source'])){throw const FormatException('Invalid observation');}
   final q=value['quote'];
   if(q is! Map||q.length!=7||!q.keys.toSet().containsAll({'contract','feed','at','bid','ask','bidSize','askSize'})||
-      q['contract'] is! String)throw const FormatException('Invalid quote');
+      q['contract'] is! String){throw const FormatException('Invalid quote');}
   final m=OptionQuote.pattern.firstMatch(q['contract'] as String);
   if(m==null||int.parse(m[6]!)<=0||int.parse(m[6]!)%10!=0)throw const FormatException('Nonstandard contract');
   final captured=observationStamp(value['capturedAt']),quoted=observationStamp(q['at']);
   final bid=_integer(q['bid'],1),ask=_integer(q['ask'],1);
   _integer(q['bidSize'],1,1000000000);_integer(q['askSize'],1,1000000000);
   if(q['feed']!='opra'||ask<bid||(ask-bid)*5>ask||captured.isBefore(quoted)||captured.difference(quoted)>const Duration(seconds:30)||
-      !paperSession(captured).fill||!paperExpiry(q['contract'] as String,captured).close)throw const FormatException('Unqualified quote');
+      !paperSession(captured).fill||!paperExpiry(q['contract'] as String,captured).close){throw const FormatException('Unqualified quote');}
   return (captured:captured,quoted:quoted);
 }
 
@@ -56,7 +56,7 @@ Map<String,dynamic> replayObservedOption(Map<String,dynamic> query) {
     entered=readOptionObservation(origin).captured;
     quantity=_integer(f['quantity'],1,100000);entryFee=_integer(f['fee'],0,1000000000);
     if(f['side']!='BUY'||f['price'] is! int||f['price']!=q['ask']||quantity>q['bidSize']||quantity>q['askSize']||
-        !paperSession(entered).entry||!paperExpiry(q['contract'] as String,entered).entry)throw const FormatException('Invalid original receipt');
+        !paperSession(entered).entry||!paperExpiry(q['contract'] as String,entered).entry){throw const FormatException('Invalid original receipt');}
   }catch(_){return unavailable('INVALID_ORIGINAL_RECEIPT');}
   final target=entered.add(Duration(seconds:horizon));
   if(asOf.isBefore(target))return unavailable('HORIZON_NOT_OBSERVED');
