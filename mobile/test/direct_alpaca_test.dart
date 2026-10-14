@@ -31,4 +31,25 @@ void main(){
     expect(q('NVDA270231C00200000','opra',time,200,210).valid(time),isFalse);
     expect(q('NVDA261012C00200000','opra',time,200,210).valid(time),isFalse);
   });
+  test('sub-cent prices are rejected rather than rounded into a different fill',() {
+    Map<String,dynamic> value()=>{'contract':'NVDA261016C00200000','feed':'opra','t':time.millisecondsSinceEpoch,
+      'bid':2.0,'ask':2.1,'bidSize':10,'askSize':10};
+    expect(OptionQuote.parse(jsonEncode(value())).ask,210);
+    for(final invalid in [2.005,2.00001,-1,1000001]) {
+      expect(()=>OptionQuote.parse(jsonEncode(value()..['bid']=invalid)),throwsFormatException);
+    }
+  });
+  test('microsecond future/stale observations and unsupported strike precision cannot fill',() {
+    OptionQuote q(String c,DateTime at)=>OptionQuote(c,'opra',at,200,210,10,10);
+    expect(q('NVDA261016C00200000',time.add(const Duration(microseconds:1))).valid(time),false);
+    expect(q('NVDA261016C00200000',time.subtract(const Duration(seconds:30,microseconds:1))).valid(time),false);
+    expect(q('NVDA261016C00200000',time.subtract(const Duration(seconds:30))).valid(time),true);
+    expect(q('NVDA261016C00200001',time).valid(time),false);
+  });
+  test('quote integer products remain within exact ledger range',() {
+    final q=OptionQuote('NVDA261016C00200000','opra',time,100000000,100000000,1000000000,1000000000);
+    expect(q.valid(time),true);expect(q.valid(time,quantity:1000000),false);
+    expect(OptionQuote(q.contract,'opra',time,100000001,100000001,10,10).valid(time),false);
+    expect(OptionQuote(q.contract,'opra',time,200,210,1000000001,10).valid(time),false);
+  });
 }

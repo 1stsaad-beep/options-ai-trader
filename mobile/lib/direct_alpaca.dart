@@ -131,19 +131,26 @@ class OptionQuote {
   final int bid,ask,bidSize,askSize;
   const OptionQuote(this.contract,this.feed,this.time,this.bid,this.ask,this.bidSize,this.askSize);
   factory OptionQuote.parse(String text){final j=jsonDecode(text) as Map<String,dynamic>;
+    int cents(dynamic value) {
+      if(value is! num||!value.isFinite||value<=0||value>1000000)throw const FormatException('Unsupported option price');
+      final scaled=value*100,rounded=scaled.round();
+      if((scaled-rounded).abs()>1e-7)throw const FormatException('Option price requires exact cents');
+      return rounded;
+    }
     return OptionQuote(j['contract'] as String,j['feed'] as String,DateTime.fromMillisecondsSinceEpoch(j['t'] as int,isUtc:true),
-      ((j['bid'] as num)*100).round(),((j['ask'] as num)*100).round(),j['bidSize'] as int,j['askSize'] as int);}
+      cents(j['bid']),cents(j['ask']),j['bidSize'] as int,j['askSize'] as int);}
   static final pattern=RegExp(r'^([A-Z]{1,6})(\d{2})(\d{2})(\d{2})([CP])(\d{8})$');
   String get underlying=>pattern.firstMatch(contract)?.group(1)??'';
   String get direction=>pattern.firstMatch(contract)?.group(5)=='C'?'CALL':'PUT';
   bool valid(DateTime now,{int quantity=1}) {
     final match=pattern.firstMatch(contract);if(match==null)return false;
     final expiry=DateTime.utc(2000+int.parse(match[2]!),int.parse(match[3]!),int.parse(match[4]!));
-    final today=DateTime.utc(now.year,now.month,now.day);
-    final age=now.difference(time).inMilliseconds;
-    return int.parse(match[3]!)==expiry.month&&int.parse(match[4]!)==expiry.day&&int.parse(match[6]!)>0&&
-      feed=='opra'&&expiry.compareTo(today)>=0&&age>=0&&age<=30000&&bid>0&&ask>=bid&&
-      ask-bid<=ask*.2&&quantity>0&&bidSize>=quantity&&askSize>=quantity;
+    final utc=now.toUtc(),today=DateTime.utc(now.toUtc().year,now.toUtc().month,now.toUtc().day);
+    final age=utc.difference(time).inMicroseconds,strike=int.parse(match[6]!);
+    return int.parse(match[3]!)==expiry.month&&int.parse(match[4]!)==expiry.day&&strike>0&&strike%10==0&&
+      feed=='opra'&&expiry.compareTo(today)>=0&&age>=0&&age<=30000000&&bid>0&&ask>=bid&&ask<=100000000&&
+      (ask-bid)*5<=ask&&quantity>0&&quantity<=1000000&&ask<=9007199254740991~/(quantity*100)&&
+      bidSize>=quantity&&askSize>=quantity&&bidSize<=1000000000&&askSize<=1000000000;
   }
 }
 

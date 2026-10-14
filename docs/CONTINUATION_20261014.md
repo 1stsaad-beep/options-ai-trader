@@ -86,4 +86,10 @@ Direct now uses the server facade's strict three-left/three-right confirmed pivo
 
 18 harmonic/mirror/negative cases,10 classic cases and3 strict-pivot source/prefix fixtures compare Python and Dart with1e-9 tolerance. Local Python geometry plus existing intelligence tests:74 passed. Await Flutter integration/gates before claiming acceptance. Broad classic pattern drawing and independent visual review remain open.
 
+## Batch 11 — exact option quote boundaries (acceptance pending)
+
+Parser now rejects sub-cent/oversize prices instead of rounding a provider quote into a different fill. Qualification uses exact integer spread comparison, microsecond freshness/future boundaries, explicit exact-money product bounds and whole-cent strikes consistent with the settlement model. Added regression tests for fractional cents, one-microsecond future/stale quotes, oversized sizes/prices and overflowing quantity products. Unsupported adjusted/fractional-strike contracts remain unavailable; these checks do not authenticate the actual multiplier/deliverable. Replay view normalizes its supplied asOf to UTC.
+
+NEXT: finish final applicable CI without interrupting native JVM jobs; inspect raw artifact counts/digests and save evidence. Update requirements with accepted source scopes. Remaining code includes full wave/divergence/strategy/Demo parity, scalable storage outside the rewritten live ledger, richer Direct execution/Greeks and adjusted-deliverable modeling, legacy lot reconstruction, delivered-stock qualified marks and a durable actual-market virtual execution worker. Read-only collector and synthetic recovery are not that worker. Independent review is still unavailable; no APK or phone request.
+
 Open software work remains distinct from external evidence: actual OPRA entitlement and three recorded sessions, secure stable signing material, independently deployed uptime, signed iOS/device acceptance cannot be manufactured. The software gaps above remain authorized work, not requests for user testing.

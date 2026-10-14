@@ -26,7 +26,7 @@ class _DirectDecisionViewState extends State<DirectDecisionView> {
     super.initState();raw=const JsonEncoder.withIndent('  ').convert(widget.event);
     original=jsonDecode(raw) as Map<String,dynamic>;
     observations=(jsonDecode(jsonEncode(widget.observations)) as List).cast<Map<String,dynamic>>();
-    asOf=widget.asOf??DateTime.now().toUtc();
+    asOf=(widget.asOf??DateTime.now()).toUtc();
     try{record=DirectDecisionRecord.read(widget.event);cursor=record!.bars.length-1;}
     on FormatException {record=null;}
   }
