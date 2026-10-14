@@ -89,10 +89,10 @@ ChartWaveView directWaveView(List<MarketBar> rows) {
 
 Map<String,dynamic> directResearchSnapshot(List<MarketBar> rows,{ChartWaveView? archivedWaves,Map<String,dynamic>? archiveOrigin}) {
   final bars=[for(var i=0;i<rows.length;i++)rows[i].candle(i)];
-  if(bars.length<35)return {'version':'direct-research-v4','indicatorContract':marketIndicatorContract,'geometryContract':marketGeometryContract,'status':'INSUFFICIENT_OBSERVED_BARS','executable':false};
+  if(bars.length<35)return {'version':'direct-research-v5','indicatorContract':marketIndicatorContract,'geometryContract':marketGeometryContract,'divergenceContract':marketDivergenceContract,'status':'INSUFFICIENT_OBSERVED_BARS','executable':false};
   final waves=archivedWaves??directWaveView(rows);
   final geometry=MarketGeometry.confirmedPivots(rows);
-  return {'version':'direct-research-v4','indicatorContract':marketIndicatorContract,'geometryContract':marketGeometryContract,'status':'OBSERVED_SHADOW','executable':false,
+  return {'version':'direct-research-v5','indicatorContract':marketIndicatorContract,'geometryContract':marketGeometryContract,'divergenceContract':marketDivergenceContract,'status':'OBSERVED_SHADOW','executable':false,
     'firstObservedAt':rows.first.time.toUtc().toIso8601String(),'lastObservedAt':rows.last.time.toUtc().toIso8601String(),
     if(archiveOrigin!=null)'waveArchiveOrigin':archiveOrigin,
     'waveCandidates':[for(final s in waves.active)s.toJson()],

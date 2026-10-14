@@ -6,6 +6,8 @@ from typing import Iterable, Sequence
 
 from .pivots import Pivot, validate_pivots
 
+DIVERGENCE_CONTRACT_VERSION = 'confirmed-divergence-v1'
+
 
 def divergences(pivots: Iterable[Pivot], oscillator: Sequence[float | None], *,
                 name: str = "RSI", min_distance: int = 3, max_distance: int = 60,

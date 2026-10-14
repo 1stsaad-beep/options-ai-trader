@@ -1,10 +1,14 @@
 import 'dart:math' as math;
 import 'direct_alpaca.dart';
 import 'demo/chart_analysis.dart';
+import 'market_geometry.dart';
 
 /// Matches backend intelligence/indicators.py. No warm-up backfill, no future
 /// input, SMA-seeded EMA, Wilder RSI/ATR and UTC-date VWAP resets.
 const marketIndicatorContract='completed-bar-indicators-v1';
+const marketDivergenceContract='confirmed-divergence-v1';
+const marketDivergenceLabels={'REGULAR_BULLISH':'صاعد عادي','HIDDEN_BULLISH':'صاعد خفي',
+  'REGULAR_BEARISH':'هابط عادي','HIDDEN_BEARISH':'هابط خفي'};
 class MarketIndicators {
   static void values(List<double> values,int period) {
     if(period<1||values.any((v)=>!v.isFinite))throw const FormatException('Finite values and positive period required');
@@ -89,8 +93,40 @@ class MarketIndicators {
   }
   static List<ChartDivergence> divergences(List<MarketBar> rows) {
     if(rows.isEmpty)return [];
-    final s=series(rows);
-    return DemoChartAnalysis.divergenceSegments([for(var i=0;i<rows.length;i++)rows[i].candle(i)],
-      indicatorValues:{'RSI':s['rsi14'] as List<double?>,'MACD':s['macd']['line'] as List<double?>});
+    final s=series(rows),p=MarketGeometry.confirmedPivots(rows);
+    return [...confirmedDivergences(p,s['rsi14'] as List<double?>),
+      ...confirmedDivergences(p,s['macd']['line'] as List<double?>,name:'MACD')];
+  }
+  /// Same adjacent same-kind pairs, strict confirmation, distance and epsilon
+  /// rules as the server. Old Demo and saved research versions stay unchanged.
+  static List<ChartDivergence> confirmedDivergences(List<ChartPivot> points,List<double?> oscillator,
+    {String name='RSI',int minDistance=3,int maxDistance=60,double minimumMomentumChange=1e-9}) {
+    if(!['RSI','MACD'].contains(name)||minDistance<1||maxDistance<minDistance||
+      !minimumMomentumChange.isFinite||minimumMomentumChange<0||oscillator.any((v)=>v!=null&&!v.isFinite)) {
+      throw const FormatException('Invalid divergence configuration or oscillator');
+    }
+    for(var i=0;i<points.length;i++) {
+      final p=points[i];
+      if(!p.price.isFinite||p.price<=0||p.index<0||p.confirmedAt<=p.index||p.confirmedAt>=oscillator.length||
+        (i>0&&(p.index<=points[i-1].index||p.confirmedAt<=points[i-1].confirmedAt))) {
+        throw const FormatException('Invalid confirmed divergence pivots');
+      }
+    }
+    final result=<ChartDivergence>[];
+    for(final high in [false,true]) {
+      final same=points.where((p)=>p.high==high).toList();
+      for(var i=1;i<same.length;i++) {
+        final a=same[i-1],b=same[i],old=oscillator[a.index],value=oscillator[b.index];
+        if(old==null||value==null||b.index-a.index<minDistance||b.index-a.index>maxDistance)continue;
+        final priceChange=b.price-a.price,momentumChange=value-old;
+        if(momentumChange.abs()<=minimumMomentumChange||priceChange.abs()<=math.max(a.price,b.price)*1e-9)continue;
+        final kind=!high&&priceChange<0&&momentumChange>0?'REGULAR_BULLISH':
+          !high&&priceChange>0&&momentumChange<0?'HIDDEN_BULLISH':
+          high&&priceChange>0&&momentumChange<0?'REGULAR_BEARISH':
+          high&&priceChange<0&&momentumChange>0?'HIDDEN_BEARISH':null;
+        if(kind!=null)result.add(ChartDivergence(name,marketDivergenceLabels[kind]!,a,b,old,value));
+      }
+    }
+    return result;
   }
 }

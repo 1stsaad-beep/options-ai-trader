@@ -153,7 +153,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
               'firstAt':DateTime.fromMillisecondsSinceEpoch((epoch['times'] as List).first as int,isUtc:true).toIso8601String(),
               'observations':(epoch['times'] as List).length}:null);
         }
-        catch(_){research={'version':'direct-research-v4','indicatorContract':marketIndicatorContract,'geometryContract':marketGeometryContract,'status':'OPTIONAL_RESEARCH_UNAVAILABLE','executable':false};}
+        catch(_){research={'version':'direct-research-v5','indicatorContract':marketIndicatorContract,'geometryContract':marketGeometryContract,'divergenceContract':marketDivergenceContract,'status':'OPTIONAL_RESEARCH_UNAVAILABLE','executable':false};}
         await paper.evaluate(id:a['id'] as String,symbol:symbol,signal:signal.direction,confirmedReverse:signal.confirmedReverse,
           dataValid:()=>visible&&snapshot.validForDecision(symbol,DateTime.now()),
           observation:rows.isEmpty?'none':rows.last.time.toIso8601String(),quotes:observedQuote,forceClose:forceClose,
