@@ -96,7 +96,7 @@ void main() {
       observations:paper.optionObservations(id),asOf:DateTime.utc(2026,10,13,15,6))));
     expect(find.byKey(const Key('option-replay-result')),findsNothing);
     await tester.ensureVisible(find.byKey(const Key('option-replay-toggle')));await tester.tap(find.byKey(const Key('option-replay-toggle')));await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.byKey(const Key('option-replay-result')),200);
+    await tester.scrollUntilVisible(find.byKey(const Key('option-replay-result')),200,scrollable:find.byType(Scrollable).first);
     expect(find.textContaining('38.70 USD'),findsOneWidget);
     expect(paper.account(id),before);expect(jsonEncode(paper.journal),original);expect(tester.takeException(),isNull);
   });
