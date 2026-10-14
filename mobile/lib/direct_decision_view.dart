@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'demo/chart_painter.dart';
 import 'direct_replay.dart';
 import 'observed_option_replay.dart';
+import 'observed_bar_archive.dart';
 
 /// An offline view of one account-scoped event supplied by its ledger.
 /// At an earlier cursor the final decision snapshot is deliberately hidden.
@@ -10,7 +11,8 @@ class DirectDecisionView extends StatefulWidget {
   final Map<String,dynamic> event;
   final List<Map<String,dynamic>> observations;
   final DateTime? asOf;
-  const DirectDecisionView({super.key,required this.event,this.observations=const [],this.asOf});
+  final ObservedBarArchive? barArchive;
+  const DirectDecisionView({super.key,required this.event,this.observations=const [],this.asOf,this.barArchive});
   @override State<DirectDecisionView> createState()=>_DirectDecisionViewState();
 }
 class _DirectDecisionViewState extends State<DirectDecisionView> {
@@ -27,7 +29,7 @@ class _DirectDecisionViewState extends State<DirectDecisionView> {
     original=jsonDecode(raw) as Map<String,dynamic>;
     observations=(jsonDecode(jsonEncode(widget.observations)) as List).cast<Map<String,dynamic>>();
     asOf=(widget.asOf??DateTime.now()).toUtc();
-    try{record=DirectDecisionRecord.read(widget.event);cursor=record!.bars.length-1;}
+    try{record=DirectDecisionRecord.read(widget.event,archive:widget.barArchive);cursor=record!.bars.length-1;}
     on FormatException {record=null;}
   }
   @override Widget build(BuildContext context) {

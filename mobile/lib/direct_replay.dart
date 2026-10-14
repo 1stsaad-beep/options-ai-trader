@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'direct_alpaca.dart';
 import 'market_indicators.dart';
 import 'market_geometry.dart';
+import 'observed_bar_archive.dart';
 import 'demo/wave_analysis.dart';
 
 /// The entire bounded source used by the decision, including indicator warmup.
@@ -23,13 +24,15 @@ class DirectDecisionRecord {
   final bool completeSource;
   const DirectDecisionRecord._(this.originalJson,this.bars,this.completeSource);
   Map<String,dynamic> get original=>jsonDecode(originalJson) as Map<String,dynamic>;
-  factory DirectDecisionRecord.read(Map<String,dynamic> event) {
+  factory DirectDecisionRecord.read(Map<String,dynamic> event,{ObservedBarArchive? archive}) {
     try {
       final frozen=jsonEncode(event),copy=jsonDecode(frozen) as Map<String,dynamic>;
       final evidence=copy['evidence'] as Map? ?? {};
-      final raw=evidence['bars'] as List? ?? [];
-      if(raw.length>1000)throw const FormatException('Source window exceeds limit');
       final at=DateTime.parse(copy['at'] as String);
+      final raw=evidence.containsKey('barReference')?
+        (archive??(throw const FormatException('Referenced source is unavailable'))).resolve(copy['symbol'] as String,Map<String,dynamic>.from(evidence),at):
+        evidence['bars'] as List? ?? [];
+      if(raw.length>1000)throw const FormatException('Source window exceeds limit');
       final recorded=evidence['recordedAt']==null?at:DateTime.parse(evidence['recordedAt'] as String);
       if(recorded.isAfter(at))throw const FormatException('Evidence after decision');
       final bars=<MarketBar>[];

@@ -161,7 +161,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
           scenarioInvalidated:(){final p=paper.account(a['id'] as String)['positions'][symbol];final price=snapshot.series[symbol]?.lastOrNull?.close;
             if(p==null||p['scenarioLevel'] is! num||price==null)return false;
             return p['direction']=='CALL'?price<p['scenarioLevel']:price>p['scenarioLevel'];},evidence:{'source':snapshot.source=='alpaca'?'alpaca':'fixture',
-            'feed':snapshot.feed,'rule':signal.reason,'research':research,
+            'feed':snapshot.feed,'session':snapshot.session,'rule':signal.reason,'research':research,
             'scenarioLevel':research['indicators']?[signal.direction=='CALL'?'support':'resistance'],'recordedAt':DateTime.now().toUtc().toIso8601String(),
             ...directBarEvidence(rows)});
       }
@@ -397,10 +397,11 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
         const Text('آخر القرارات — دفتر هذا الحساب فقط'),
         const Text('أثناء اتصال الواجهة تُحفظ عروض الخيار لخمس دقائق بعد الدخول، حتى بعد الإغلاق، لإعادة حساب بحثية منفصلة عن الرصيد. لا رصد عند إغلاق التطبيق.'),
         if(paper.optionArchiveError!=null)Text(paper.optionArchiveError!),
+        if(paper.barArchiveError!=null)Text(paper.barArchiveError!),
         for(final e in paper.journal.where((e)=>e['account']==selectedAccount).toList().reversed.take(30))ListTile(
           title:Text('${e['symbol']} • ${e['decision']}'),subtitle:Text('${e['at']}'),
           trailing:const Icon(Icons.history),onTap:()=>Navigator.push(context,MaterialPageRoute<void>(
-            builder:(_)=>DirectDecisionView(event:e,observations:paper.optionObservations(a['id'] as String))))),
+            builder:(_)=>DirectDecisionView(event:e,observations:paper.optionObservations(a['id'] as String),barArchive:paper.barArchive)))),
       ],
     ];
   }

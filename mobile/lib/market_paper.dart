@@ -12,6 +12,7 @@ import 'market_paper_settlement.dart';
 import 'direct_wave_archive.dart';
 import 'observed_option_replay.dart';
 import 'option_observation_archive.dart';
+import 'observed_bar_archive.dart';
 import 'paper_money.dart';
 import 'dart:math' as math;
 
@@ -73,6 +74,7 @@ class MarketPaper extends ChangeNotifier {
   String? error;
   String? waveArchiveError;
   String? optionArchiveError;
+  String? barArchiveError;
   final _pendingOptionObservations=<PaperRow>[];
   Future<void>? _loading;
   PaperRow? _durable;
@@ -82,14 +84,18 @@ class MarketPaper extends ChangeNotifier {
   MarketPaper(this.store,{DateTime Function()? clock}):now=clock??DateTime.now;
   List<PaperRow> _rows(String key)=>(jsonDecode(jsonEncode(_book[key])) as List).cast<PaperRow>();
   List<PaperRow> get accounts=>_rows('accounts');
-  List<PaperRow> get journal=>[
-    for(final segment in (copy()['journalArchive'] as List? ?? [])) ...(segment as List).cast<PaperRow>(),
-    ..._rows('journal'),
-  ];
+  List<PaperRow> get journal=>(jsonDecode(jsonEncode([
+    for(final segment in (_book['journalArchive'] as List? ?? [])) ...(segment as List),
+    ...(_book['journal'] as List),
+  ])) as List).cast<PaperRow>();
   PaperRow account(String id)=>accounts.singleWhere((a)=>a['id']==id);
   PaperRow copy()=>copyPaper(_book);
   PaperRow performance(String id)=>paperPerformance(account(id),now());
   PaperRow comparison()=>paperComparison({...copy(),'journal':journal},now());
+  ObservedBarArchive? get barArchive {
+    try{return ObservedBarArchive.read(_book['barArchive']);}
+    catch(_){barArchiveError='أرشيف شموع القرارات غير متحقق؛ احتُفظ بالأصل. عرض الشارت غير متاح، ودفتر الأموال مستقل عنه.';return null;}
+  }
   List<PaperRow> optionObservations(String id) {
     final result=<PaperRow>[];
     try{result.addAll(OptionObservationArchive.read(_book['optionArchive']).observations.where((o)=>o['account']==id));}
@@ -167,7 +173,7 @@ class MarketPaper extends ChangeNotifier {
     if(!ready||busy)throw StateError('Ledger is not stable');
     // Import is allowed only into an empty device ledger. Existing data is never
     // replaced, merged, deleted or silently renamed by a backup operation.
-    if(accounts.isNotEmpty||journal.isNotEmpty||_book['waveArchive']!=null||_book['optionArchive']!=null)throw StateError('Restore requires an empty Market Paper ledger and archive');
+    if(accounts.isNotEmpty||journal.isNotEmpty||_book['waveArchive']!=null||_book['optionArchive']!=null||_book['barArchive']!=null)throw StateError('Restore requires an empty Market Paper ledger and archive');
     final restored=PaperBackup.prepare(text);
     busy=true;notifyListeners();
     try{if(!await _commit(restored))throw StateError('Restore was not confirmed');}
@@ -190,6 +196,7 @@ class MarketPaper extends ChangeNotifier {
     if(!ready)return false;
     _appendOptionObservations(next);
     final optionCapture=_pendingOptionObservations.isNotEmpty&&paperBytes(next['optionArchive'])!=paperBytes(_book['optionArchive']);
+    final barCapture=paperBytes(next['barArchive'])!=paperBytes(_book['barArchive']);
     for(final a in (next['accounts'] as List).cast<PaperRow>()) {
       if(a['peakEquity'] is! int)continue;
       final equity=paperPerformance(a,now())['equityCents'] as int?;
@@ -210,26 +217,36 @@ class MarketPaper extends ChangeNotifier {
     if(paperBytes(observed)==paperBytes(next)) {
       _durable=copyPaper(next);_book=copyPaper(next);error=null;
       if(optionCapture)optionArchiveError=null;
+      if(barCapture)barArchiveError=null;
       notifyListeners();return true;
     }
     if(paperBytes(observed)!=paperBytes(_durable)){_uncertain();return false;}
     error='لم يُحفظ التغيير؛ بقي الدفتر السابق مؤكدًا. لم تُعتمد تعبئة أو عملية عكس.';
     if(optionCapture)optionArchiveError='لم يتأكد حفظ عروض الخيارات؛ لم يُعتمد تاريخ جديد.';
+    if(barCapture)barArchiveError='لم يتأكد حفظ شموع القرار؛ لم يُعتمد مرجع جديد.';
     notifyListeners();return false;
   }
   PaperRow _in(PaperRow book,String id)=>(book['accounts'] as List).cast<PaperRow>().singleWhere((a)=>a['id']==id);
   PaperRow _quote(OptionQuote q)=>{'contract':q.contract,'feed':q.feed,'at':q.time.toUtc().toIso8601String(),
     'bid':q.bid,'ask':q.ask,'bidSize':q.bidSize,'askSize':q.askSize};
   void _log(PaperRow book,String id,String symbol,String decision,{OptionQuote? quote,PaperRow? fill,DateTime? at}) {
+    final eventAt=at??now(),evidence=_decisionEvidence==null?null:copyPaper(_decisionEvidence!);
+    if(evidence!=null&&evidence['bars'] is List&&(evidence['bars'] as List).isNotEmpty) {
+      try {
+        final captured=ObservedBarArchive.read(book['barArchive']).capture(symbol,evidence,eventAt);
+        book['barArchive']=captured.archive.toJson();
+        evidence.remove('bars');evidence['barReference']=captured.reference;
+      }catch(_){barArchiveError='تعذر أرشفة مصدر الشارت أو بلغ سعته؛ حُفظت الشموع المتاحة داخل القرار دون حذف التاريخ السابق.';}
+    }
     var rows=book['journal'] as List;
     if(rows.length>=1000) {
       final archive=(book['journalArchive']??=<dynamic>[]) as List;
       archive.add(rows);
       rows=<dynamic>[];book['journal']=rows;
     }
-    rows.add({'account':id,'symbol':symbol,'at':(at??now()).toUtc().toIso8601String(),'decision':decision,
+    rows.add({'account':id,'symbol':symbol,'at':eventAt.toUtc().toIso8601String(),'decision':decision,
       if(quote!=null)'quote':_quote(quote),if(fill!=null)'fill':copyPaper(fill),
-      if(_decisionEvidence!=null)'evidence':copyPaper(_decisionEvidence!)});
+      if(evidence!=null)'evidence':evidence});
   }
   PaperRow _newAccount(String id,String name,int initialCash,String strategy)=>{
     'id':id,'name':name.trim(),'cash':initialCash,'initialCash':initialCash,'enabled':false,
