@@ -36,7 +36,7 @@ void main() {
         closeTree(portableDivergences(MarketIndicators.divergences(rows.take(end).toList())),expected.where((d)=>d['to'][1]<end).toList());
       }
       final snapshot=directResearchSnapshot(rows);
-      expect(snapshot['version'],'direct-research-v5');expect(snapshot['divergenceContract'],marketDivergenceContract);
+      expect(snapshot['version'],'direct-research-v6');expect(snapshot['divergenceContract'],marketDivergenceContract);
       final minute=(snapshot['divergences'] as List).where((d)=>d['timeframeMinutes']==1).toList();
       expect(minute.length,expected.length);
       for(var i=0;i<minute.length;i++) {

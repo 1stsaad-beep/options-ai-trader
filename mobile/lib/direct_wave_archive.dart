@@ -23,7 +23,7 @@ class DirectWaveArchive {
         var sequence=0;
         for(final raw in entry.value as List) {
           final e=raw as Map<String,dynamic>,times=e['times'] as List;
-          if(e['sequence']!=++sequence||!['INITIAL','SOURCE_CHANGED','SOURCE_REVISED','OBSERVATION_GAP'].contains(e['boundary'])||
+          if(e['sequence']!=++sequence||!['INITIAL','SOURCE_CHANGED','SOURCE_REVISED','OBSERVATION_GAP','ENGINE_CHANGED'].contains(e['boundary'])||
               e['source'] is! String||!RegExp(r'^(alpaca|fixture)\|(iex|sip)\|(regular|extended)$').hasMatch(e['source'] as String)||
               times.isEmpty||times.any((t)=>t is! int||t%60000!=0)) {
             throw const FormatException('Invalid archive epoch');
@@ -88,6 +88,10 @@ class DirectWaveArchive {
     final history=(symbols[symbol]??=<dynamic>[]) as List;
     Map<String,dynamic>? current=history.isEmpty?null:history.last as Map<String,dynamic>;
     String? boundary=current==null?'INITIAL':current['source']!=source?'SOURCE_CHANGED':null;
+    if(current!=null&&captured.isBefore(DateTime.parse(current['capturedAt'] as String))) {
+      throw const FormatException('Wave capture clock moved backwards');
+    }
+    if(boundary==null&&(current!['journal'] as Map)['version']!=2)boundary='ENGINE_CHANGED';
     if(boundary==null) {
       final epoch=current!,times=epoch['times'] as List,old=(epoch['journal']['source'] as List);
       final byTime={for(var i=0;i<times.length;i++)times[i]:old[i]};
@@ -108,7 +112,7 @@ class DirectWaveArchive {
       }
       if(boundary!=null) {
         current={'sequence':history.length+1,'source':source,'boundary':boundary,'times':<int>[],
-          'capturedAt':captured.toUtc().toIso8601String(),'captures':<dynamic>[],'journal':ChartWaveJournal().toJson()};
+          'capturedAt':captured.toUtc().toIso8601String(),'captures':<dynamic>[],'journal':ChartWaveJournal(strictMarket:true).toJson()};
         history.add(current);boundary=null;
       }
       var end=start+1;

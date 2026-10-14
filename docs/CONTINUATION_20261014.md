@@ -138,3 +138,8 @@ See FINAL_COMPLETION_PROGRESS.md and docs/evidence/storage-parity-20261014/index
 ## Batch17 — read-only health probes and collector shutdown recovery
 
 Reproduced2 failures: both health commands created an absent database. Replaced repository initialization with bounded read-only probes, no financial/advisory writer lock or migrations. Collector SIGTERM now records STOPPED only for its current lease owner; stale-owner shutdown cannot overwrite the successor. Actual process outage/recovery and account preservation verified.56 targeted Python checks passed; PostgreSQL adds2 acceptance checks and awaits CI. See docs/RUNTIME_HEALTH_RECOVERY_20261014.md. This does not close durable market-priced execution or long soak.
+
+
+## Batch18 — versioned Direct/server wave pivot and event parity
+
+Corrected Direct4/2 vs server3/1 confirmation and ambiguous/equal-extremum handling using journalv2. Six stored sources/415 prefixes cover geometry, nested confirmation and causal detection/invalidation;7 Python checks pass, Flutter pending. Old journalv1/Demo preserved; ENGINE_CHANGED starts a separate captured epoch; researchv6 names actual contract. Identifier/ranking/window semantics and full strategy parity remain open. See docs/WAVE_PARITY_20261014.md.

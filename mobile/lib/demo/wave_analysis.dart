@@ -4,6 +4,9 @@ import 'dart:math' as math;
 
 import 'chart_analysis.dart';
 
+const legacyWaveContract='demo-wave-pivots-4-2-v1';
+const marketWaveContract='confirmed-wave-pivots-3-1-v1';
+
 class ChartWaveScenario {
   final String id, kind, degree;
   final bool bullish;
@@ -177,7 +180,8 @@ class ChartWaveView {
   final int asOf;
   final List<ChartWaveScenario> active;
   final List<ChartWaveEvent> events;
-  ChartWaveView(this.asOf, this.active, this.events);
+  final String contract;
+  ChartWaveView(this.asOf, this.active, this.events,{this.contract=legacyWaveContract});
   ChartWaveScenario? get primary => active.isEmpty ? null : active.first;
   ChartWaveScenario? get alternate => active.length < 2 ? null : active[1];
 }
@@ -187,7 +191,8 @@ class ChartWaveView {
 /// The JSON checkpoint is semantically checked by replay, not a signed audit log.
 class ChartWaveJournal {
   final int factor;
-  ChartWaveJournal({this.factor=1}) {
+  final bool strictMarket;
+  ChartWaveJournal({this.factor=1,this.strictMarket=false}) {
     if(factor<1)throw const FormatException('Invalid wave journal observation factor');
   }
   final List<DemoCandle> _source = [];
@@ -215,13 +220,23 @@ class ChartWaveJournal {
       bool confirmed(List<ChartPivot> pivots, int radius) {
         if (_source.length < radius * 2 + 1) return false;
         final window = _source.sublist(_source.length - radius * 2 - 1);
-        final fresh = DemoChartAnalysis.pivots(window, radius: radius);
-        if (fresh.isEmpty) return false;
-        pivots.add(fresh.single);
+        if(strictMarket) {
+          final center=window[radius];
+          final others=[...window.take(radius),...window.skip(radius+1)];
+          final high=others.every((b)=>center.high>b.high);
+          final low=others.every((b)=>center.low<b.low);
+          // Equal extrema and outside bars have no ordered, unique pivot.
+          if(high==low)return false;
+          pivots.add(ChartPivot(center.tick,window.last.tick,high?center.high:center.low,high));
+        }else{
+          final fresh=DemoChartAnalysis.pivots(window,radius:radius);
+          if(fresh.isEmpty)return false;
+          pivots.add(fresh.single);
+        }
         return true;
       }
-      final mainChanged = confirmed(_mainPivots, 4);
-      final internalChanged = confirmed(_internalPivots, 2);
+      final mainChanged = confirmed(_mainPivots, strictMarket?3:4);
+      final internalChanged = confirmed(_internalPivots, strictMarket?1:2);
       if (mainChanged) _main = ChartWaveAnalysis.candidates(_mainPivots);
       if (internalChanged) {
         _internal = ChartWaveAnalysis.candidates(_internalPivots, degree: 'internal');
@@ -270,15 +285,20 @@ class ChartWaveJournal {
       final score = b.evidence.compareTo(a.evidence);
       return score != 0 ? score : a.id.compareTo(b.id);
     });
-    return ChartWaveView(asOf, List.unmodifiable(active), List.unmodifiable(visible));
+    return ChartWaveView(asOf, List.unmodifiable(active), List.unmodifiable(visible),
+      contract:strictMarket?marketWaveContract:legacyWaveContract);
   }
 
-  Map<String, dynamic> toJson() => {'version': 1, 'factor':factor,
+  Map<String, dynamic> toJson() => {'version': strictMarket?2:1, 'factor':factor,
+    if(strictMarket)'contract':marketWaveContract,
     'source': _source.map(_bar).toList(),
     'events': _events.map((e) => e.toJson()).toList()};
 
   static ChartWaveJournal restore(Map<String, dynamic> value) {
-    if (value['version'] != 1 || value['source'] is! List || value['events'] is! List) {
+    if (![1,2].contains(value['version']) ||
+        (value['version']==2&&value['contract']!=marketWaveContract)||
+        (value['version']==1&&value.containsKey('contract'))||
+        value['source'] is! List || value['events'] is! List) {
       throw const FormatException('Invalid wave journal checkpoint');
     }
     try {
@@ -291,7 +311,7 @@ class ChartWaveJournal {
           (row[2] as num).toDouble(), (row[3] as num).toDouble(),
           (row[4] as num).toDouble(), (row[5] as num).toDouble());
       }).toList();
-      final journal = ChartWaveJournal(factor:value['factor'] as int? ?? 1)..append(bars);
+      final journal = ChartWaveJournal(factor:value['factor'] as int? ?? 1,strictMarket:value['version']==2)..append(bars);
       if (jsonEncode(journal.toJson()['events']) != jsonEncode(value['events'])) {
         throw const FormatException('Wave journal disagrees with causal replay');
       }
