@@ -35,6 +35,17 @@ class FillCreate(StrictModel):
     fill_id: str
     quantity: StrictInt
     price_cents: StrictInt
+class PaperSettlementCreate(StrictModel):
+    id: str
+    action: str
+    contract: str
+    quantity: StrictInt
+    feeCents: StrictInt
+    underlyingCents: StrictInt
+    effectiveAt: str
+    recordedAt: str
+    source: str
+    reference: str
 class StopCreate(StrictModel):
     account_id: Optional[str] = None
 class LifecycleRequest(StrictModel):
@@ -158,6 +169,15 @@ def create_app(repository=None, token=None, market_data_provider=None):
     @app.get('/api/accounts/{account_id}/positions',dependencies=secured)
     def positions(account_id: str,s=Depends(service)):
         return s.rows(account_id,'positions')
+    @app.post('/api/accounts/{account_id}/paper-settlements',dependencies=secured)
+    def paper_settlement(account_id: str,body: PaperSettlementCreate,s=Depends(service)):
+        return s.settle_paper(account_id,body.model_dump())
+    @app.get('/api/accounts/{account_id}/paper-settlements',dependencies=secured)
+    def paper_settlements(account_id: str,s=Depends(service)):
+        return s.rows(account_id,'paper_settlement_receipts')
+    @app.get('/api/accounts/{account_id}/paper-deliveries',dependencies=secured)
+    def paper_deliveries(account_id: str,s=Depends(service)):
+        return s.rows(account_id,'paper_delivery_positions')
     @app.get('/api/accounts/{account_id}/audit',dependencies=secured)
     def audit(account_id: str,s=Depends(service)):
         return s.rows(account_id,'audit')

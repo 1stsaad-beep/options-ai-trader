@@ -55,6 +55,11 @@ jobs:
         env:
           TEST_DATABASE_ALLOW_DISPOSABLE: "1"
           TEST_DATABASE_URL: postgresql://trader:ci_ephemeral_demo@localhost:5432/options_test
+      - name: Paper settlement receipts across PostgreSQL connections
+        run: python scripts/paper_settlement_check.py > paper-settlement-postgres.json
+        env:
+          TEST_DATABASE_ALLOW_DISPOSABLE: "1"
+          TEST_DATABASE_URL: postgresql://trader:ci_ephemeral_demo@localhost:5432/options_test
       - name: Select matching PostgreSQL 16 backup client
         # Runtime acceptance also shares this disposable server, never a user account.
         run: |
@@ -86,6 +91,7 @@ jobs:
             postgres-v1-results.json
             market-data-journal-postgres.json
             market-runtime-postgres.json
+            paper-settlement-postgres.json
   compose-runtime:
     runs-on: ubuntu-latest
     timeout-minutes: 25

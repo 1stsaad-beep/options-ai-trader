@@ -155,6 +155,7 @@ class TradingService:
             validate_config(config)
             if config['session_policy'] != account['config']['session_policy']:
                 outstanding = db.one('SELECT account_id FROM positions WHERE account_id=?', (account_id,))
+                outstanding = outstanding or db.one('SELECT account_id FROM paper_delivery_positions WHERE account_id=?', (account_id,))
                 outstanding = outstanding or db.one("SELECT id FROM orders WHERE account_id=? AND status IN ('PENDING','PARTIAL')", (account_id,))
                 outstanding = outstanding or db.one("SELECT id FROM lifecycle_intents WHERE account_id=? AND state NOT IN ('COMPLETE','EXPIRED','CANCELLED')", (account_id,))
                 if outstanding:
@@ -274,7 +275,7 @@ class TradingService:
             db.execute('DELETE FROM watchlist WHERE account_id=? AND symbol=?', (account_id, symbol.upper()))
             self.audit(db, account_id, 'WATCHLIST_REMOVED', {'symbol': symbol.upper()})
     def rows(self, account_id, table):
-        if table not in {'watchlist', 'orders', 'positions', 'audit', 'decision_snapshots', 'lifecycle_intents'}:
+        if table not in {'watchlist', 'orders', 'positions', 'audit', 'decision_snapshots', 'lifecycle_intents', 'paper_settlement_receipts', 'paper_delivery_positions'}:
             raise Rejected('Unsupported resource')
         with self.repo.transaction() as db:
             self.account(db, account_id)
@@ -326,6 +327,7 @@ class TradingService:
             raise Rejected('Malformed trading ledger; account remains locked') from None
 
     def _validate_ledger_data(self, db, account_id):
+        from .settlement_ledger import Replay, acquisition_time
         account=self.account(db,account_id)
         integer(account['equity'],'equity_cents',10000)
         creation=db.one("SELECT detail FROM audit WHERE account_id=? AND event='ACCOUNT_CREATED'",(account_id,))
@@ -339,6 +341,7 @@ class TradingService:
         inventory = {}
         realized = 0
         daily_ledger = {}
+        settlements = Replay(db, account_id, initial, inventory, daily_ledger)
         by_id = {order['id']:order for order in orders}
         for order in orders:
             payload=dict(request_key=order['request_key'],symbol=order['symbol'],right=order['right_kind'],expiry=order['expiry'],strike_cents=order['strike'],side=order['side'],quantity=order['quantity'],limit_cents=order['limit_cents'])
@@ -354,8 +357,9 @@ class TradingService:
                 raise Rejected('Invalid pending status')
             if order['status']=='PARTIAL' and not 0 < total < order['quantity']:
                 raise Rejected('Invalid partial status')
-        ledger=db.all('SELECT f.* FROM fills f JOIN orders o ON o.id=f.order_id WHERE o.account_id=? ORDER BY f.sequence',(account_id,))
+        ledger=db.all('SELECT f.*,t.recorded_at FROM fills f JOIN orders o ON o.id=f.order_id LEFT JOIN fill_receipt_times t ON t.fill_id=f.id WHERE o.account_id=? ORDER BY f.sequence',(account_id,))
         for fill in ledger:
+            realized = settlements.through(fill['sequence'], realized)
             order=by_id[fill['order_id']]
             quantity,price=fill['quantity'],fill['price_cents']
             if quantity<=0 or price<=0 or (order['side']=='BUY' and price>order['limit_cents']) or (order['side']=='SELL_TO_CLOSE' and price<order['limit_cents']):
@@ -364,6 +368,7 @@ class TradingService:
             held,cost=inventory.get(key,(0,0))
             if order['side']=='BUY':
                 inventory[key]=(held+quantity,cost+quantity*(price*100+self._fee(db,order['id'])))
+                settlements.acquired[key] = acquisition_time(fill)
             else:
                 if held<quantity:
                     raise Rejected('Short inventory in fill ledger')
@@ -372,6 +377,8 @@ class TradingService:
                 realized+=pnl
                 daily_ledger[fill['day']]=daily_ledger.get(fill['day'],0)+pnl
                 inventory[key]=(held-quantity,cost-removed)
+            settlements.cursor = fill['sequence']
+        realized = settlements.through(None, realized)
         expired=db.all("SELECT detail FROM audit WHERE account_id=? AND event='MOCK_EXPIRY_WRITEOFF'",(account_id,))
         for event in expired:
             position=json.loads(event['detail'])
@@ -389,6 +396,14 @@ class TradingService:
             raise Rejected('Daily risk ledger mismatch; account remains locked')
         if expected!=actual or realized!=self.account(db,account_id)['realized']:
             raise Rejected('Position/P&L ledger mismatch; account remains locked')
+        actual_deliveries = {p['symbol']: {'quantity': p['quantity'], 'cost': p['cost']} for p in
+            db.all('SELECT * FROM paper_delivery_positions WHERE account_id=?', (account_id,))}
+        if actual_deliveries != settlements.deliveries:
+            raise Rejected('Delivered share ledger mismatch; account remains locked')
+
+    def settle_paper(self, account_id, request):
+        from .settlement_ledger import settle
+        return settle(self, account_id, request)
 
     def decision(self, db, account_id, action, facts, order_id=None, intent_id=None):
         if order_id is not None and not db.one('SELECT id FROM orders WHERE account_id=? AND id=?',(account_id,order_id)):
@@ -413,6 +428,8 @@ class TradingService:
         return (order['quantity']-order['filled'])*(order['limit_cents']*100+self._fee(db,order['id']))
 
     def _direction_and_quantity(self, db, account, symbol, right, additional=0):
+        if db.one('SELECT symbol FROM paper_delivery_positions WHERE account_id=?', (account['id'],)):
+            raise Rejected('Delivered stock valuation unavailable; new option exposure blocked')
         positions = db.all('SELECT * FROM positions WHERE account_id=?', (account['id'],))
         pending = db.all("SELECT * FROM orders WHERE account_id=? AND side='BUY' AND status IN ('PENDING','PARTIAL')", (account['id'],))
         if any(p['symbol']==symbol and p['right_kind']!=right and p['quantity']>0 for p in positions):
@@ -555,6 +572,8 @@ class TradingService:
         return sum((o['quantity']-o['filled'])*self._fee(db,o['id']) for o in closes)+(position['quantity']-reserved)*account['config']['commission_cents']
 
     def _open_loss(self, db, account):
+        if db.one('SELECT symbol FROM paper_delivery_positions WHERE account_id=?', (account['id'],)):
+            raise Rejected('Delivered stock valuation unavailable; open-loss risk unknown')
         if self.expiration_reviews(db, account):
             raise Rejected('Unresolved option expiration; open-loss valuation unavailable')
         loss=0
@@ -776,6 +795,7 @@ class TradingService:
             status = 'FILLED' if filled==order['quantity'] else 'PARTIAL'
             sequence=db.one('SELECT COALESCE(MAX(sequence),0) AS n FROM fills')['n']+1
             db.execute('INSERT INTO fills VALUES(?,?,?,?,?,?)', (fill_id,order_id,quantity,price_cents,sequence,self.today().isoformat()))
+            db.execute('INSERT INTO fill_receipt_times VALUES(?,?)', (fill_id,self.now().isoformat()))
             db.execute('UPDATE orders SET filled=?,status=? WHERE id=?', (filled,status,order_id))
             if status == 'FILLED':
                 db.execute("UPDATE lifecycle_intents SET state='COMPLETE',updated=? WHERE account_id=? AND order_id=?",(self.now().isoformat(),account_id,order_id))
@@ -900,10 +920,15 @@ class TradingService:
         with self.repo.transaction() as db:
             account = self.account(db, account_id)
             positions = db.all('SELECT * FROM positions WHERE account_id=?', (account_id,))
+            deliveries = db.all('SELECT symbol,quantity,cost FROM paper_delivery_positions WHERE account_id=?', (account_id,))
+            receipts = db.all('SELECT * FROM paper_settlement_receipts WHERE account_id=? ORDER BY sequence', (account_id,))
+            from .settlement_ledger import decode
+            settled = [decode(r)['result'] for r in receipts]
             premium=sum(p['cost'] for p in positions)
-            cash=account['equity']+account['realized']-premium
+            delivery_basis=sum(p['cost'] for p in deliveries)
+            cash=account['equity']+account['realized']-premium-delivery_basis
             unrealized=0
-            complete=self.snapshot_valid(account) and not self.expiration_reviews(db, account)
+            complete=self.snapshot_valid(account) and not self.expiration_reviews(db, account) and not bool(deliveries)
             for position in positions:
                 key=(account_id,position['symbol'],position['right_kind'],position['expiry'],position['strike'])
                 mark=db.one('SELECT * FROM option_marks WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?',key)
@@ -913,4 +938,5 @@ class TradingService:
                     unrealized+=mark['bid']*100*position['quantity']-position['cost']-self._projected_close_fee(db,account,position)
             reserved=sum(self._pending_cost(db,o) for o in db.all("SELECT * FROM orders WHERE account_id=? AND side='BUY' AND status IN ('PENDING','PARTIAL')",(account_id,)))
             fees=sum(f['quantity']*self._fee(db,f['order_id']) for f in db.all('SELECT f.* FROM fills f JOIN orders o ON o.id=f.order_id WHERE o.account_id=?',(account_id,)))
-            return {'source':'synthetic_mock','equity_cents':account['equity'],'realized_pnl_cents':account['realized'],'open_premium_cents':premium,'open_positions':len(positions),'live_enabled':False,'unrealized_pnl_cents':unrealized if complete else None,'valuation_complete':complete,'simulated_cash_cents':cash,'available_after_reservations_cents':cash-reserved,'total_commissions_cents':fees,'net_liquidation_cents':account['equity']+account['realized']+unrealized if complete else None,'valuation_policy':'fresh_synthetic_bid_minus_owned_basis_and_projected_close_fees'}
+            fees+=sum(r['feeCents'] for r in settled)
+            return {'source':'synthetic_mock','equity_cents':account['equity'],'realized_pnl_cents':account['realized'],'open_premium_cents':premium,'open_positions':len(positions),'live_enabled':False,'unrealized_pnl_cents':unrealized if complete else None,'valuation_complete':complete,'simulated_cash_cents':cash,'available_after_reservations_cents':cash-reserved,'total_commissions_cents':fees,'net_liquidation_cents':account['equity']+account['realized']+unrealized if complete else None,'valuation_policy':'fresh_synthetic_bid_minus_owned_basis_and_projected_close_fees','delivered_shares':deliveries,'delivered_share_basis_cents':delivery_basis,'settlement_events':len(settled),'settlement_realized_pnl_cents':sum(r['realizedPnl'] for r in settled),'settlement_source':'explicit_paper_receipts_not_broker_confirmation'}

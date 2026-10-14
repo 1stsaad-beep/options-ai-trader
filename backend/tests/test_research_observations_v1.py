@@ -133,7 +133,16 @@ def test_upgrade_from_v4_preserves_decision_and_allows_new_observations(tmp_path
     service = TradingService(repo, now=lambda: NOW, today=lambda: NOW.date())
     account = service.create_account('existing')['id']
     service.watch(account, 'NVDA', True)
-    saved = snapshot_workbench(service, account, 'NVDA')
+    # Seed a V4 decision directly. The current trading ledger validator requires
+    # V9 tables and must not be weakened to run on this intentionally old schema.
+    from app.research_workbench import _project
+    with repo.transaction() as db:
+        workbench = _project({'account':service.account(db, account), 'exposures':{},
+            'account_known':True, 'balances_fresh':True, 'orders_reconciled':True,
+            'market_fresh':True, 'emergency_stop':False, 'owned_close_quantity_known':False}, 'NVDA', NOW)
+        key = service.decision(db, account, 'SHADOW_RESEARCH', {'symbol':'NVDA',
+            'source':'synthetic_fixture', 'workbench':workbench})
+    saved = {'snapshot_id':key, 'workbench':workbench}
     before = service.rows(account, 'decision_snapshots')
     repo.close()
     monkeypatch.setattr(migrations, 'MIGRATIONS', all_migrations)

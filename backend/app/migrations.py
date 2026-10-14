@@ -153,7 +153,19 @@ def market_segments_schema(db, postgres):
         db.execute("CREATE TRIGGER guard_market_segment_delete BEFORE DELETE ON market_journal_segments BEGIN SELECT RAISE(ABORT, 'segments are immutable'); END")
 
 
-MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema), (7, 'v1_market_runtime', market_runtime_schema), (8, 'v1_market_segments', market_segments_schema)]
+def paper_settlement_schema(db, postgres):
+    db.execute('CREATE TABLE paper_delivery_positions (account_id TEXT NOT NULL REFERENCES accounts(id), symbol TEXT NOT NULL, quantity BIGINT NOT NULL CHECK(quantity>0), cost BIGINT NOT NULL CHECK(cost>0), PRIMARY KEY(account_id,symbol))')
+    db.execute('CREATE TABLE paper_settlement_receipts (account_id TEXT NOT NULL REFERENCES accounts(id), sequence BIGINT NOT NULL CHECK(sequence>0), receipt_id TEXT NOT NULL, fill_cursor BIGINT NOT NULL CHECK(fill_cursor>=0), recorded_at TEXT NOT NULL, payload TEXT NOT NULL, digest TEXT NOT NULL, PRIMARY KEY(account_id,sequence), UNIQUE(account_id,receipt_id))')
+    db.execute('CREATE TABLE fill_receipt_times (fill_id TEXT PRIMARY KEY REFERENCES fills(id), recorded_at TEXT NOT NULL)')
+    for table in ('paper_settlement_receipts', 'fill_receipt_times'):
+        if postgres:
+            db.execute(f'CREATE TRIGGER immutable_{table} BEFORE UPDATE OR DELETE ON {table} FOR EACH ROW EXECUTE FUNCTION immutable_decision_v1()')
+        else:
+            for action in ('UPDATE', 'DELETE'):
+                db.execute(f"CREATE TRIGGER immutable_{table}_{action.lower()} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT, 'receipts are immutable'); END")
+
+
+MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema), (7, 'v1_market_runtime', market_runtime_schema), (8, 'v1_market_segments', market_segments_schema), (9, 'v1_paper_settlement', paper_settlement_schema)]
 
 
 def migrate(db, postgres):

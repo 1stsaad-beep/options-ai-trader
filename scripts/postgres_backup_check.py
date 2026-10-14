@@ -53,7 +53,7 @@ def run():
     checks = []
     password = secrets.token_urlsafe(36)
     fixture = snapshots.Connection(admin.host, admin.port, role, password, source_name, admin.sslmode, admin.sslrootcert)
-    now = datetime.now(timezone.utc)
+    now = datetime(2026,10,13,15,5,tzinfo=timezone.utc)  # Deterministic US option session fixture.
     expiry = now.date() + timedelta(days=14)
     expiry += timedelta(days=(4 - expiry.weekday()) % 7)
     accounts, orders = [], []
@@ -72,7 +72,9 @@ def run():
             repository = Repository(_url(fixture, source_name))
             service = TradingService(repository, today=lambda: now.date(), now=lambda: now)
             for index in range(4):
-                account = service.create_account("restore-fixture-" + str(index))["id"]
+                account = service.create_account("restore-fixture-" + str(index),3000000 if index==3 else 1000000)["id"]
+                if index==3:
+                    service.configure(account,{'session_policy':'us_equity_options_2026_2027'})
                 service.watch(account, "NVDA", True)
                 with repository.transaction() as db:
                     service.record_option_mark(db, account, "NVDA", "CALL", expiry.isoformat(), 15000, 50, 55, now)
@@ -82,6 +84,10 @@ def run():
                 service.fill(account, order["id"], "restore-fill-" + str(index), 1, 50)
                 accounts.append(account)
                 orders.append(order["id"])
+            settlement_request=dict(id='backup-exercise',action='EXERCISE',
+                contract='NVDA'+expiry.strftime('%y%m%d')+'C00150000',quantity=1,feeCents=0,underlyingCents=15500,
+                effectiveAt=now.isoformat(),recordedAt=now.isoformat(),source='fixture',reference='backup-fixture')
+            settlement_result=service.settle_paper(accounts[3],settlement_request)
             from market_data_journal_check import fixture as market_journal_fixture
             from app import market_data_journal as journal
             from unittest.mock import patch
@@ -139,8 +145,11 @@ def run():
                 with psycopg.connect(**fixture.kwargs(restored_name)) as restored:
                     assert {row[0] for row in restored.execute("SELECT id FROM accounts")} == set(accounts)
                     assert {row[0] for row in restored.execute("SELECT id FROM orders")} == set(orders)
-                    assert restored.execute("SELECT COUNT(*) FROM positions WHERE quantity=1").fetchone()[0] == 4
+                    assert restored.execute("SELECT COUNT(*) FROM positions WHERE quantity=1").fetchone()[0] == 3
                     assert restored.execute("SELECT COUNT(*) FROM fills").fetchone()[0] == 4
+                    assert restored.execute("SELECT COUNT(*) FROM fill_receipt_times").fetchone()[0] == 4
+                    assert restored.execute("SELECT quantity,cost FROM paper_delivery_positions").fetchone() == (100,1505000)
+                    assert restored.execute("SELECT COUNT(*) FROM paper_settlement_receipts").fetchone()[0] == 1
                     assert restored.execute("SELECT COUNT(*) FROM schema_migrations").fetchone()[0] >= 4
                     assert restored.execute("SELECT COUNT(*) FROM pg_constraint WHERE contype='f' AND NOT convalidated").fetchone()[0] == 0
                     checks.append("four_account_ledger_fills_positions_migrations_and_validated_constraints_restored")
@@ -209,6 +218,9 @@ def run():
                         assert recovered.reconcile(account)["resubmitted"] == 0
                         assert len(recovered.rows(account, "orders")) == 1
                     checks.append("application_invalidates_account_trust_and_reconciles_without_resubmission")
+                    assert recovered.settle_paper(accounts[3],settlement_request)==settlement_result
+                    assert recovered.performance(accounts[3])['simulated_cash_cents']==1495000
+                    checks.append('settlement_receipt_clock_delivery_and_exact_retry_survive_backup_restore')
                 finally:
                     recovered_repository.close()
                 archive.write_bytes(archive.read_bytes() + b"tampered")
