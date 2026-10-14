@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'direct_alpaca.dart';
 import 'observed_option_replay.dart' show observationStamp;
 
@@ -27,6 +28,7 @@ class ObservedBarArchive {
     return MarketBar.parse({'t':value[0],'o':value[1],'h':value[2],'l':value[3],'c':value[4],'v':value[5]});
   }
   static List<num> _compact(MarketBar b)=>[b.time.millisecondsSinceEpoch,b.open,b.high,b.low,b.close,b.volume];
+  static String _digest(List rows)=>sha256.convert(utf8.encode(jsonEncode([for(final row in rows)_compact(_bar(row))]))).toString();
   static bool _same(List a,List b) {
     for(var i=0;i<6;i++){if(a[i]!=b[i])return false;}return true;
   }
@@ -113,7 +115,7 @@ class ObservedBarArchive {
       (epoch['captures'] as List).add({'through':rows.length,'at':at.toIso8601String()});
     }
     final archive=ObservedBarArchive.read(next);
-    final reference=<String,dynamic>{'version':1,'symbol':symbol,'source':source,
+    final reference=<String,dynamic>{'version':2,'symbol':symbol,'source':source,'sha256':_digest(incoming),
       'epoch':epoch['sequence'],'start':start,'count':incoming.length,'knownAt':at.toIso8601String()};
     archive.resolve(symbol,{...evidence,'barReference':reference}..remove('bars'),eventAt);
     return (archive:archive,reference:reference);
@@ -127,9 +129,10 @@ class ObservedBarArchive {
       observationStamp(value['lastAt']).microsecondsSinceEpoch%60000000!=0){throw const FormatException('Source window mismatch');}
   }
   List<Map<String,dynamic>> resolve(String symbol,Map<String,dynamic> evidence,DateTime eventAt) {
-    final ref=evidence['barReference'];_keys(ref,{'version','symbol','source','epoch','start','count','knownAt'});
+    final ref=evidence['barReference'];_keys(ref,{'version','symbol','source','epoch','start','count','knownAt','sha256'});
     final at=observationStamp(evidence['recordedAt']);
-    if(evidence.containsKey('bars')||ref['version']!=1||ref['symbol']!=symbol||ref['source']!=_source(evidence)||
+    if(evidence.containsKey('bars')||ref['version']!=2||ref['sha256'] is! String||!RegExp(r'^[a-f0-9]{64}$').hasMatch(ref['sha256'] as String)||
+      ref['symbol']!=symbol||ref['source']!=_source(evidence)||
       ref['epoch'] is! int||ref['epoch']<1||ref['epoch']>maxBars||ref['start'] is! int||ref['start']<0||ref['start']>maxBars||ref['count'] is! int||ref['count']<1||ref['count']>1000||
       !observationStamp(ref['knownAt']).isAtSameMomentAs(at)||at.isAfter(eventAt)){throw const FormatException('Invalid source reference');}
     final epochs=_state['epochs'] as List,index=(ref['epoch'] as int)-1;
@@ -142,6 +145,7 @@ class ObservedBarArchive {
       prior=c['through'] as int;
     }
     final selected=rows.sublist(start,end);_window(evidence['sourceWindow'],selected);
+    if(_digest(selected)!=ref['sha256'])throw const FormatException('Source content digest mismatch');
     return [for(final row in selected){'at':_bar(row).time.toIso8601String(),'o':row[1],'h':row[2],'l':row[3],'c':row[4],'v':row[5]}];
   }
 }

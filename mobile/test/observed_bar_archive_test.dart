@@ -99,6 +99,19 @@ void main() {
     ]){final bad=first.archive.toJson();corrupt(bad);expect(()=>ObservedBarArchive.read(bad),throwsFormatException);}
     first.archive.toJson()['epochs'].clear();expect(jsonEncode(first.archive.toJson()),original);
   });
+  test('valid-looking revised source cannot satisfy an original content digest',(){
+    final evidence=archivedTestEvidence(0,5,at),first=ObservedBarArchive.read(null).capture('NVDA',evidence,at);
+    // Independent Python hashlib vector over canonical compact numeric rows.
+    expect(first.reference['sha256'],'097913325611e64fd38cc767bbf5149de495b1164ec8b9252079d59b447d95ac');
+    final altered=first.archive.toJson();altered['epochs'][0]['rows'][2][4]=109.0;
+    final imported=ObservedBarArchive.read(altered),stored={...evidence,'barReference':first.reference}..remove('bars');
+    expect(()=>imported.resolve('NVDA',stored,at),throwsFormatException);
+    expect(()=>first.archive.resolve('NVDA',{...stored,'barReference':{...first.reference,'sha256':'0'*64}},at),throwsFormatException);
+    // An obsolete pre-release pointer is retained as unavailable, never
+    // silently promoted to a content-bound reference.
+    final old={...first.reference,'version':1}..remove('sha256');
+    expect(()=>first.archive.resolve('NVDA',{...stored,'barReference':old},at),throwsFormatException);
+  });
   test('capacity never evicts original observations',(){
     final first=ObservedBarArchive.read(null).capture('NVDA',archivedTestEvidence(0,5,at),at),original=jsonEncode(first.archive.toJson());
     final tooMany=first.archive.toJson();tooMany['epochs'][0]['rows']=List.filled(ObservedBarArchive.maxBars+1,[0,100,110,90,100,100]);

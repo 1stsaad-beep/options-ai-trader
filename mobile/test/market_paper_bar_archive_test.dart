@@ -83,12 +83,22 @@ void main() {
       (book)=>book.remove('barArchive'),
       (book)=>book['journal'][0]['evidence']['barReference']['symbol']='AAPL',
       (book)=>book['journal'][0]['evidence']['barReference']['count']=999,
+      (book)=>book['barArchive']['epochs'][0]['rows'][2][4]=109.0,
       (book)=>book['barArchive']['epochs'][0]['captures'][0]['at']=now.add(const Duration(seconds:1)).toIso8601String(),
     ]) {
       final envelope=jsonDecode(original) as Map<String,dynamic>;corrupt(envelope['ledger'] as Map<String,dynamic>);
       expect(()=>PaperBackup.inspect(jsonEncode(envelope)),throwsFormatException);
     }
     expect(paper.exportBackup(),original);
+  });
+  test('archived journal segments keep source bindings and detect a broken join',()async {
+    await evaluate();final source=paper.journal.single;
+    store.value!['journalArchive']=[store.value!['journal']];store.value!['journal']=<dynamic>[];
+    paper=MarketPaper(store,clock:()=>now);await paper.load();expect(paper.ready,true);
+    expect(paper.journal.single,source);expect(DirectDecisionRecord.read(source,archive:paper.barArchive).completeSource,true);
+    final envelope=jsonDecode(paper.exportBackup());
+    envelope['ledger']['journalArchive'][0][0]['evidence']['barReference']['sha256']='0'*64;
+    expect(()=>PaperBackup.inspect(jsonEncode(envelope)),throwsFormatException);
   });
   test('archive-only destination is not overwritten by a backup',()async {
     await evaluate();final target=FaultPaperStore()..value={'version':1,'accounts':<dynamic>[],'journal':<dynamic>[],

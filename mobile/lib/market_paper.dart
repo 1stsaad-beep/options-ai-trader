@@ -236,7 +236,7 @@ class MarketPaper extends ChangeNotifier {
         final captured=ObservedBarArchive.read(book['barArchive']).capture(symbol,evidence,eventAt);
         book['barArchive']=captured.archive.toJson();
         evidence.remove('bars');evidence['barReference']=captured.reference;
-      }catch(_){barArchiveError='تعذر أرشفة مصدر الشارت أو بلغ سعته؛ حُفظت الشموع المتاحة داخل القرار دون حذف التاريخ السابق.';}
+      }catch(_){barArchiveError='تعذر أرشفة مصدر الشارت أو بلغ سعته؛ المصدر المتاح ضمن القرار بدل مرجع جديد، ويُعتمد فقط بعد تأكيد حفظ الدفتر.';}
     }
     var rows=book['journal'] as List;
     if(rows.length>=1000) {
