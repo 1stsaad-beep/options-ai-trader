@@ -3,6 +3,7 @@ import 'direct_alpaca.dart';
 import 'market_paper_reports.dart';
 import 'paper_settlement.dart';
 import 'paper_money.dart';
+import 'paper_execution.dart';
 
 Map<String, dynamic> copyPaper(Map<String, dynamic> value) =>
     jsonDecode(jsonEncode(value)) as Map<String, dynamic>;
@@ -62,6 +63,7 @@ void validatePaper(Map<String, dynamic> book) {
     // Each mark is validated at valuation/admission time, including its source and age.
     if(a.containsKey('deliveryMarks')&&a['deliveryMarks'] is! Map)invalid();
     if(a.containsKey('deliveryMarkSource')&&!['fixture','alpaca'].contains(a['deliveryMarkSource']))invalid();
+    if(a.containsKey('executionPolicy')&&![legacyExecution,conservativeExecution].contains(a['executionPolicy']))invalid();
     if (a.containsKey('strategy') && !paperStrategyLabels.containsKey(a['strategy'])) invalid();
     if (a.containsKey('watchlist')) {
       final watch = a['watchlist'];
@@ -192,6 +194,7 @@ void validatePaper(Map<String, dynamic> book) {
     final held = <String, Map<String, dynamic>>{}, daily = <String, int>{};
     final deliveries = <String, Map<String,dynamic>>{}, acquired = <String,String>{}, receipts = <String>{};
     var settlementCount = 0, settlementPnl = 0;
+    final priorExecutions=<Map>[];
     for (final event in events.cast<Map>().where((e) => e['account'] == a['id'])) {
       if (event['settlement'] is Map) {
         final receipt=event['settlement'] as Map, request=receipt['request'] as Map<String,dynamic>;
@@ -228,7 +231,14 @@ void validatePaper(Map<String, dynamic> book) {
       }
       final q = event['quote'] as Map, key = event['symbol'] as String;
       final qty = f['quantity'] as int, price = f['price'] as int, fee = f['fee'] as int;
-      if (fee != qty * 65 || price != q[f['side'] == 'BUY' ? 'ask' : 'bid']) invalid();
+      if(f.containsKey('execution')) {
+        final execution=f['execution'];if(execution is! Map||execution['requestedQuantity'] is! int)invalid();
+        final used=optionConsumption(priorExecutions,a['id'] as String,q);
+        if(used.blocked)invalid();
+        final expected=projectOptionExecution(q,f['side'] as String,execution['requestedQuantity'] as int,used.consumed,DateTime.parse(event['at'] as String));
+        if(expected['quantity']!=qty||expected['priceCents']!=price||expected['feeCents']!=fee||paperBytes(expected)!=paperBytes(execution))invalid();
+      }else if (fee != qty * 65 || price != q[f['side'] == 'BUY' ? 'ask' : 'bid']) {invalid();}
+      priorExecutions.add(event);
       fees = paperSum(fees,fee);
       final gross=paperProduct(paperProduct(qty,price),100);
       if (f['side'] == 'BUY') {

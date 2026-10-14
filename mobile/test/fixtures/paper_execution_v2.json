@@ -1,0 +1,1003 @@
+{
+  "cases": [
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "partial buy under quarter displayed liquidity",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": 211,
+        "feeCents": 140,
+        "cashDeltaCents": -42340,
+        "quantity": 2,
+        "status": "PARTIAL",
+        "unfilledQuantity": 1
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 1,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "full buy fee includes additional five cents",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 1,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": 211,
+        "feeCents": 70,
+        "cashDeltaCents": -21170,
+        "quantity": 1,
+        "status": "FILLED",
+        "unfilledQuantity": 0
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "SELL_TO_CLOSE",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "partial owned close on adverse bid",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "SELL_TO_CLOSE",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": 199,
+        "feeCents": 140,
+        "cashDeltaCents": 39660,
+        "quantity": 2,
+        "status": "PARTIAL",
+        "unfilledQuantity": 1
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 1,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "prior fills consume capacity",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 1,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": 211,
+        "feeCents": 70,
+        "cashDeltaCents": -21170,
+        "quantity": 1,
+        "status": "PARTIAL",
+        "unfilledQuantity": 2
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 4,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "smaller opposite quote side bounds liquidity",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": 211,
+        "feeCents": 70,
+        "cashDeltaCents": -21170,
+        "quantity": 1,
+        "status": "PARTIAL",
+        "unfilledQuantity": 2
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:30Z",
+      "name": "exact 30 second observation",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": 211,
+        "feeCents": 140,
+        "cashDeltaCents": -42340,
+        "quantity": 2,
+        "status": "PARTIAL",
+        "unfilledQuantity": 1
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T18:00:01+03:00",
+      "name": "equivalent timezone compares in UTC",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": 211,
+        "feeCents": 140,
+        "cashDeltaCents": -42340,
+        "quantity": 2,
+        "status": "PARTIAL",
+        "unfilledQuantity": 1
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 2,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "capacity exhausted",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 2,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "NO_MODELED_LIQUIDITY",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 3
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "small size rounds down not up",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "NO_MODELED_LIQUIDITY",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 1,
+        "ask": 1,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "SELL_TO_CLOSE",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "no positive stressed bid",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "SELL_TO_CLOSE",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "NO_POSITIVE_STRESSED_PRICE",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:30.000001Z",
+      "name": "stale microsecond",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "UNQUALIFIED_QUOTE",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:01.000001Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "future event",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "UNQUALIFIED_QUOTE",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "indicative",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "indicative cannot fill",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "UNQUALIFIED_QUOTE",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA1261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "adjusted root not assumed standard",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "UNQUALIFIED_QUOTE",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261332C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "invalid calendar",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "UNQUALIFIED_QUOTE",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200001",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "subcent strike",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "UNQUALIFIED_QUOTE",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-17T15:00:01Z",
+      "name": "expired contract",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "UNQUALIFIED_QUOTE",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 211,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "crossed quote",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "UNQUALIFIED_QUOTE",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 100,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "wide spread",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "UNQUALIFIED_QUOTE",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "missing size",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "INVALID_REQUEST",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200.1,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "fractional price",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "INVALID_REQUEST",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": true,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "bool price",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "INVALID_REQUEST",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 0,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "zero requested",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 0,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "INVALID_REQUEST",
+        "unfilledQuantity": 0
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": -1,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "negative consumption",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": -1,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "INVALID_REQUEST",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10
+      },
+      "side": "SELL_SHORT",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "unknown side",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "SELL_SHORT",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "INVALID_REQUEST",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 200,
+        "ask": 210,
+        "bidSize": 10,
+        "askSize": 10,
+        "approved": true
+      },
+      "side": "BUY",
+      "requested": 3,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "unknown quote authority",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 3,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "INVALID_REQUEST",
+        "unfilledQuantity": 3
+      }
+    },
+    {
+      "quote": {
+        "contract": "NVDA261016C00200000",
+        "feed": "opra",
+        "at": "2026-10-13T15:00:00Z",
+        "bid": 100000000,
+        "ask": 100000000,
+        "bidSize": 1000000000,
+        "askSize": 1000000000
+      },
+      "side": "BUY",
+      "requested": 1000000,
+      "consumed": 0,
+      "at": "2026-10-13T15:00:01Z",
+      "name": "unbounded product rejected",
+      "expected": {
+        "version": "paper-option-execution-v2",
+        "policy": {
+          "commissionCents": 65,
+          "additionalFeeCents": 5,
+          "adverseSlippageCents": 1,
+          "participationBps": 2500,
+          "liquidityPolicy": "minimum_displayed_sides_once_per_quote"
+        },
+        "requestedQuantity": 1000000,
+        "consumedQuantity": 0,
+        "side": "BUY",
+        "externalOrder": false,
+        "queuePositionKnown": false,
+        "priceCents": null,
+        "feeCents": null,
+        "cashDeltaCents": null,
+        "quantity": 0,
+        "status": "INVALID_REQUEST",
+        "unfilledQuantity": 1000000
+      }
+    }
+  ]
+}

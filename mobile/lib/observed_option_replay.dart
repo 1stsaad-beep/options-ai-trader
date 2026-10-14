@@ -1,3 +1,6 @@
+import 'paper_time.dart';
+export 'paper_time.dart' show observationStamp;
+import 'paper_execution.dart';
 import 'direct_alpaca.dart';
 import 'market_paper_policy.dart';
 
@@ -5,16 +8,6 @@ const observedOptionReplayVersion='observed-option-counterfactual-v1';
 int _integer(dynamic value,[int min=0,int max=100000000]) {
   if(value is! int||value<min||value>max)throw const FormatException('Invalid integer');
   return value;
-}
-DateTime observationStamp(dynamic value) {
-  if(value is! String||!RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}:\d{2})$').hasMatch(value))throw const FormatException('Invalid timestamp');
-  final local=value.substring(0,19),parsed=DateTime.parse('${local}Z');
-  if(parsed.year<1||parsed.toIso8601String().substring(0,19)!=local)throw const FormatException('Invalid calendar timestamp');
-  if(!value.endsWith('Z')) {
-    final offset=value.substring(value.length-5);
-    if(int.parse(offset.substring(0,2))>23||int.parse(offset.substring(3))>59)throw const FormatException('Invalid offset');
-  }
-  return DateTime.parse(value).toUtc();
 }
 
 /// Semantic validation is not independent authentication of an imported source.
@@ -49,13 +42,23 @@ Map<String,dynamic> replayObservedOption(Map<String,dynamic> query) {
     fee=_integer(query.containsKey('feePerContractCents')?query['feePerContractCents']:65,0,10000);
     observations=query['observations'] as List;if(observations.length>20000)throw const FormatException('Too many observations');
   }catch(_){return unavailable('INVALID_QUERY');}
-  late Map origin,q;late int quantity,entryFee;late DateTime entered;
+  late Map origin,q;late int quantity,entryFee,entryPrice;late DateTime entered;
   try {
     final e=query['entry'] as Map,f=e['fill'] as Map;q=e['quote'] as Map;
     origin={'account':e['account'],'source':e['evidence']['source'],'capturedAt':e['at'],'quote':q};
     entered=readOptionObservation(origin).captured;
     quantity=_integer(f['quantity'],1,100000);entryFee=_integer(f['fee'],0,1000000000);
-    if(f['side']!='BUY'||f['price'] is! int||f['price']!=q['ask']||quantity>q['bidSize']||quantity>q['askSize']||
+    entryPrice=_integer(f['price'],1,100000001);
+    if(f.containsKey('execution')) {
+      final model=f['execution'] as Map;
+      final expected=projectOptionExecution(q,'BUY',model['requestedQuantity'] as int,model['consumedQuantity'] as int,entered);
+      bool same(dynamic a,dynamic b) {
+        if(a is Map&&b is Map)return a.length==b.length&&a.keys.every((k)=>b.containsKey(k)&&same(a[k],b[k]));
+        return a==b;
+      }
+      if(!same(model,expected)||expected['quantity']!=quantity||expected['priceCents']!=entryPrice||expected['feeCents']!=entryFee)throw const FormatException('Invalid modeled receipt');
+    }else if(entryPrice!=q['ask']){throw const FormatException('Invalid legacy entry');}
+    if(f['side']!='BUY'||quantity>q['bidSize']||quantity>q['askSize']||
         !paperSession(entered).entry||!paperExpiry(q['contract'] as String,entered).entry){throw const FormatException('Invalid original receipt');}
   }catch(_){return unavailable('INVALID_ORIGINAL_RECEIPT');}
   final target=entered.add(Duration(seconds:horizon));
@@ -77,7 +80,7 @@ Map<String,dynamic> replayObservedOption(Map<String,dynamic> query) {
   if(candidates.where((c)=>c.quoted==selected.quoted).any((c)=>exitQuote.keys.where((k)=>k!='at').any((k)=>c.quote[k]!=exitQuote[k])))return unavailable('AMBIGUOUS_OBSERVATION');
   if(quantity>exitQuote['bidSize']||quantity>exitQuote['askSize'])return unavailable('INSUFFICIENT_OBSERVED_LIQUIDITY');
   final price=(exitQuote['bid'] as int)-slippage;if(price<=0)return unavailable('NO_POSITIVE_STRESSED_BID');
-  final entryCost=(q['ask'] as int)*quantity*100+entryFee,exitFee=fee*quantity,proceeds=price*quantity*100-exitFee;
+  final entryCost=entryPrice*quantity*100+entryFee,exitFee=fee*quantity,proceeds=price*quantity*100-exitFee;
   return {...base,'status':'OBSERVED_COUNTERFACTUAL','source':origin['source'],'account':origin['account'],
     'contract':q['contract'],'quantity':quantity,'targetAt':target.toIso8601String(),'quoteAt':selected.quoted.toIso8601String(),
     'capturedAt':selected.captured.toIso8601String(),'entryCostCents':entryCost,'entryFeeCents':entryFee,

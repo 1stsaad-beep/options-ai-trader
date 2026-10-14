@@ -27,3 +27,7 @@ SCOPED_IMPLEMENTED/COMPLETE_SCOPED describes the explicitly tested simulator or 
 ### Batch20 continuation: R02/R07/R09/R14
 
 Delivered-stock valuation now has a shared Python/Dart contract,26 hand-expected cases and account integration. Source/capture time/age/cent arithmetic are mandatory; IEX is a partial display mark, SIP is required for device risk admission with delivery allocation/open loss included. Server reads verified saved IEX observations and keeps new-risk blocking.94 affected Python checks passed; Flutter/native/full CI pending. See docs/DELIVERY_VALUATION_20261014.md. Broader settlement eligibility/legacy lots, execution model, storage, continuous worker, full parity and independent review remain partial.
+
+### Batch21 continuation: R02/R08/R09/R13/R14
+
+Versioned conservative option policy is integrated into Direct entry/add/close, receipt reconciliation, portfolio costs and Replay. Shared27 hand-expected fixtures;97 affected Python tests pass. New UI accounts use the policy; legacy originals retain their original basis/fees. Actual queue/latency, Greek/deliverable risk, continuous server engine and independent review remain open. See docs/PAPER_EXECUTION_20261014.md; new-source CI pending.

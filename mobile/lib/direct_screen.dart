@@ -6,6 +6,7 @@ import 'direct_alpaca.dart';
 import 'direct_labs.dart';
 import 'market_monitor.dart';
 import 'market_paper.dart';
+import 'paper_execution.dart';
 import 'market_paper_reports.dart';
 import 'market_paper_backup.dart';
 import 'direct_replay.dart';
@@ -307,13 +308,13 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     final report=a==null?null:paper.performance(selectedAccount!);
     String money(Object? cents)=>cents is num?'${(cents/100).toStringAsFixed(2)} USD':'غير متاح — تنقص بيانات موثقة';
     return [
-      const Text('Market Paper • أموال افتراضية مستقلة • تعبئة بحثية تقريبية فقط بعرض OPRA مؤهل (شراء ask / إغلاق bid، عمولة افتراضية 0.65 USD للعقد لكل جهة). لا تحاكي طابور السوق أو الانزلاق أو التنفيذ الفعلي.'),
+      const Text('Market Paper • أموال افتراضية مستقلة • OPRA مؤهل فقط. النموذج المحافظ: Ask + سنت للشراء وBid − سنت للإغلاق؛ رسوم مفترضة 0.70 USD للعقد لكل جهة، وحد أقصى 25% من أصغر حجم معروض. لا يحاكي موضعًا حقيقيًا في طابور السوق أو يضمن التنفيذ.'),
       const Text('بدون OPRA حديث وصالح: إشارات فقط، لا تعبئة Call/Put. IEX/SIP للأسهم لا يمنحان بيانات الخيارات. لا استخدام للأسعار الإرشادية indicative.'),
       const Text('معامل العقد القياسي 100 فقط. لا ممارسة أو تخصيص تلقائي؛ بعد الانتهاء يبقى التعرض للمراجعة دون تسوية مختلقة. التعبئات ضمن جلسات الخيارات المحافظة 2026–2027 فقط، مع منع دخول يوم الانتهاء وإغلاق Intraday قبل نهاية الجلسة بـ15 دقيقة.'),
       const Text('يمكن للحساب المتوقف تسجيل إيصال ورقي يدوي للممارسة أو الانتهاء أو بيع أسهم التسليم. هذه الإيصالات لا تُحسب تنفيذًا سوقيًا موثقًا أو رصد OPRA.'),
       if(paper.error!=null)Text(paper.error!),
       if(paper.waveArchiveError!=null)Text(paper.waveArchiveError!),
-      FilledButton(key:const Key('paper-experiment'),onPressed:paper.busy||!paper.ready?null:()=>paper.createComparisonExperiment(),
+      FilledButton(key:const Key('paper-experiment'),onPressed:paper.busy||!paper.ready?null:()=>paper.createComparisonExperiment(executionPolicy:conservativeExecution),
         child:const Text('تجهيز 4 حسابات مستقلة × 1,000 USD')),
       const Text('اتجاه، اختراق، تراجع، دايفرجنس. الحسابات تبدأ متوقفة؛ لا نتائج قبل الرصد، ولا تُحسب Fixtures جلسات سوق فعلية.'),
       OutlinedButton(key:const Key('paper-comparison'),onPressed:!paper.ready?null:()async{
@@ -329,10 +330,16 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
           child:const Text('استعادة إلى دفتر فارغ')),
       ]),
       TextField(controller:accountName,decoration:const InputDecoration(labelText:'اسم حساب Market Paper جديد')),
-      OutlinedButton(onPressed:paper.busy||!paper.ready?null:()=>paper.add(accountName.text),child:const Text('إنشاء حساب افتراضي 10,000 USD')),
+      OutlinedButton(onPressed:paper.busy||!paper.ready?null:()=>paper.add(accountName.text,executionPolicy:conservativeExecution),child:const Text('إنشاء حساب افتراضي 10,000 USD')),
       if(a!=null)...[
         DropdownButtonFormField<String>(isExpanded:true,initialValue:selectedAccount,items:paper.accounts.map((x)=>DropdownMenuItem(value:x['id'] as String,child:Text(x['name'] as String))).toList(),
           onChanged:(v)=>setState(()=>selectedAccount=v),decoration:const InputDecoration(labelText:'الحساب المستقل')),
+        DropdownButtonFormField<String>(key:ValueKey('execution-policy-${a['id']}-${a['executionPolicy']}'),
+          initialValue:a['executionPolicy'] as String? ?? legacyExecution,isExpanded:true,
+          decoration:const InputDecoration(labelText:'نموذج التعبئة اللاحقة — التغيير للحساب المتوقف'),
+          items:const [DropdownMenuItem(value:conservativeExecution,child:Text('محافظ: انزلاق ورسوم وحد سيولة')),
+            DropdownMenuItem(value:legacyExecution,child:Text('سابق: سعر العرض وعمولة 0.65 USD'))],
+          onChanged:paper.busy||a['enabled']==true?null:(v)=>paper.configure(a['id'] as String,{'executionPolicy':v})),
         Text('النقد الافتراضي: ${(a['cash']/100).toStringAsFixed(2)} USD'),
         Text('P&L محقق: ${money(report!['realizedPnlCents'])} • غير محقق: ${money(report['unrealizedPnlCents'])}'),
         Text('الرسوم: ${money(report['totalFeesCents'])} • الصفقات المغلقة: ${report['closedTrades']??"غير متاح"} • النجاح: ${report['winRatePercent']??"—"}%'),

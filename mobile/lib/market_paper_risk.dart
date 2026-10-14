@@ -1,14 +1,15 @@
 import 'direct_alpaca.dart';
 import 'delivery_valuation.dart';
+import 'paper_execution.dart';
 
 /// Pure admission over current account truth and qualified observed option marks.
 /// Research labels, confidence scores and caller narratives cannot override it.
 String? paperRiskReason(Map<String, dynamic> account, String symbol, int quantity,
     int price, Map<String, OptionQuote> marks, DateTime now,
-    {required Iterable<Map<String, dynamic>> journal, bool adding = false, String source = 'fixture'}) {
+    {required Iterable<Map<String, dynamic>> journal, bool adding = false, String source = 'fixture', int feePerContract = 65}) {
   final positions = account['positions'] as Map;
   final initial = account['initialCash'] as int;
-  final additional = quantity * (price * 100 + 65);
+  final additional = quantity * (price * 100 + feePerContract);
   final existing = positions[symbol] as Map?;
   final currentCost = existing == null ? 0 : (existing['cost'] as int) +
       ((existing['entryFees'] ?? (existing['quantity'] as int) * 65) as int);
@@ -26,7 +27,9 @@ String? paperRiskReason(Map<String, dynamic> account, String symbol, int quantit
     exposure += cost; contracts += qty;
     final q = marks[p['contract']];
     if (q == null || q.contract != p['contract'] || !q.valid(now, quantity: qty)) return 'RISK_UNAVAILABLE_OPTION_MARK';
-    final pnl = q.bid * qty * 100 - qty * 65 - cost;
+    final stressedBid=q.bid-executionSlippage(account);
+    if(stressedBid<=0)return 'RISK_UNAVAILABLE_OPTION_MARK';
+    final pnl = stressedBid * qty * 100 - qty * executionFee(account) - cost;
     if (pnl < 0) openLoss -= pnl;
   }
   if (exposure + additional > initial * ((account['allocationPercent'] ?? 30) as int) / 100) return 'ALLOCATION_RISK_LIMIT';

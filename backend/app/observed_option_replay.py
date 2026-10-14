@@ -10,6 +10,7 @@ import re
 from .market_sessions import evaluate_session, US_EQUITY_OPTIONS_POLICY
 from .option_expiration import evaluate_expiration
 from .paper_settlement import stamp
+from .paper_execution import project_execution
 
 VERSION = 'observed-option-counterfactual-v1'
 PATTERN = re.compile(r'^([A-Z]{1,6})(\d{2})(\d{2})(\d{2})([CP])(\d{8})$')
@@ -78,7 +79,15 @@ def replay_option(query):
         entered, _, expiry = read_observation(origin)
         quantity = integer(f['quantity'], 1, 100000)
         entry_fee = integer(f['fee'], 0, 1000000000)
-        if (f['side'] != 'BUY' or type(f['price']) is not int or f['price'] != q['ask'] or
+        entry_price=integer(f['price'],1,100000001)
+        if 'execution' in f:
+            model=f['execution']
+            expected=project_execution(q,'BUY',model['requestedQuantity'],model['consumedQuantity'],entered)
+            if model!=expected or expected['quantity']!=quantity or expected['priceCents']!=entry_price or expected['feeCents']!=entry_fee:
+                raise ValueError()
+        elif entry_price!=q['ask']:
+            raise ValueError()
+        if (f['side'] != 'BUY' or
                 quantity > min(q['bidSize'], q['askSize']) or
                 not evaluate_session(entered, US_EQUITY_OPTIONS_POLICY).entry_allowed or
                 not evaluate_expiration(expiry, entered)['entry_allowed']):
@@ -113,7 +122,7 @@ def replay_option(query):
     price = exit_quote['bid'] - slippage
     if price <= 0:
         return unavailable('NO_POSITIVE_STRESSED_BID')
-    entry_cost = q['ask'] * quantity * 100 + entry_fee
+    entry_cost = entry_price * quantity * 100 + entry_fee
     exit_fee = fee * quantity
     proceeds = price * quantity * 100 - exit_fee
     return base | {'status': 'OBSERVED_COUNTERFACTUAL', 'source': origin['source'],

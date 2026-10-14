@@ -1,5 +1,6 @@
 import 'direct_alpaca.dart';
 import 'delivery_valuation.dart';
+import 'paper_execution.dart';
 
 const paperStrategies = ['trend', 'breakout', 'pullback', 'divergence'];
 const paperStrategyLabels = {
@@ -24,7 +25,9 @@ Map<String, dynamic> paperPerformance(Map<String, dynamic> account, DateTime now
       DateTime.parse(mark['at'] as String), mark['bid'] as int, mark['ask'] as int,
       mark['bidSize'] as int, mark['askSize'] as int);
     if (!quote.valid(now, quantity: quantity)) { complete = false; continue; }
-    liquidation += quote.bid * quantity * 100 - quantity * 65;
+    final price=quote.bid-executionSlippage(account);
+    if(price<=0){complete=false;continue;}
+    liquidation += price * quantity * 100 - quantity * executionFee(account);
   }
   final deliveries=account['deliveryPositions'] as Map? ?? {};
   final deliveryBasis=deliveries.values.fold<int>(0,(sum,p)=>sum+(p['cost'] as int));
@@ -39,7 +42,7 @@ Map<String, dynamic> paperPerformance(Map<String, dynamic> account, DateTime now
   final settled=(account['settlementCount']??0) as int;
   final trades = settled>0?null:account['closedTrades'] as int?;
   return {
-    'source': 'independent_market_paper', 'executionModel': 'approximate_quote_side',
+    'source': 'independent_market_paper', 'executionModel': account['executionPolicy']==conservativeExecution?executionVersion:'approximate_quote_side',
     'initialCashCents': initial, 'cashCents': cash, 'realizedPnlCents': realized,
     'unrealizedPnlCents': complete ? liquidation - basis - entryFees - deliveryBasis : null,
     'equityCents': equity, 'returnPercent': equity == null ? null : (equity - initial) * 100 / initial,

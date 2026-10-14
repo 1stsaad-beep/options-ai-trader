@@ -15,6 +15,7 @@ import 'option_observation_archive.dart';
 import 'observed_bar_archive.dart';
 import 'paper_money.dart';
 import 'delivery_valuation.dart';
+import 'paper_execution.dart';
 import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
@@ -258,11 +259,12 @@ class MarketPaper extends ChangeNotifier {
     'allocationPercent':30,'dailyLossPercent':3,'maxPositions':4,'maxContracts':10,
     'holdingMode':'intraday','maxHoldingDays':3,'partialPercent':20,'scenarioExit':false,
   };
-  Future<void> add(String name,{int initialCash=1000000,String strategy='confluence'}) async {
+  Future<void> add(String name,{int initialCash=1000000,String strategy='confluence',String executionPolicy=legacyExecution}) async {
     if(!ready||busy||name.trim().isEmpty)return;
+    if(![legacyExecution,conservativeExecution].contains(executionPolicy))throw ArgumentError('executionPolicy');
     if(initialCash<10000||initialCash>100000000||!paperStrategyLabels.containsKey(strategy))throw ArgumentError('account');
     busy=true;
-    try {final next=copy();(next['accounts'] as List).add(_newAccount('mp-${now().microsecondsSinceEpoch}-${accounts.length}',name,initialCash,strategy));
+    try {final next=copy();(next['accounts'] as List).add(_newAccount('mp-${now().microsecondsSinceEpoch}-${accounts.length}',name,initialCash,strategy)..['executionPolicy']=executionPolicy);
       await _commit(next);
     }finally{busy=false;notifyListeners();}
   }
@@ -333,7 +335,8 @@ class MarketPaper extends ChangeNotifier {
       if(changed)await _commit(next,admission:()=>ready&&active());
     }finally{busy=false;notifyListeners();}
   }
-  Future<void> createComparisonExperiment() async {
+  Future<void> createComparisonExperiment({String executionPolicy=legacyExecution}) async {
+    if(![legacyExecution,conservativeExecution].contains(executionPolicy))throw ArgumentError('executionPolicy');
     if(!ready||busy||_book['experiment']!=null)return;
     busy=true;
     try {
@@ -342,7 +345,7 @@ class MarketPaper extends ChangeNotifier {
         final id='mp-experiment-v1-$strategy';
         if(accounts.any((a)=>a['id']==id))throw StateError('experiment identity conflict');
         ids.add(id);
-        (next['accounts'] as List).add(_newAccount(id,'1000 USD • ${paperStrategyLabels[strategy]}',100000,strategy));
+        (next['accounts'] as List).add(_newAccount(id,'1000 USD • ${paperStrategyLabels[strategy]}',100000,strategy)..['executionPolicy']=executionPolicy);
       }
       next['experiment']={'id':'four-accounts-three-sessions-v1','createdAt':now().toUtc().toIso8601String(),'accounts':ids};
       await _commit(next);
@@ -354,7 +357,8 @@ class MarketPaper extends ChangeNotifier {
     _epochs[id]=(_epochs[id]??0)+1;
     if(values['enabled']==false)_paused.add(id);
     while(busy){await Future<void>.delayed(const Duration(milliseconds:20));}
-    final allowed={'enabled','contracts','riskPercent','quantity','stopPercent','takePercent','trailPercent','addEnabled','strategy','watchlist',
+    if(values.containsKey('executionPolicy')&&(account(id)['enabled']==true||values['enabled']==true))throw ArgumentError('Stop before changing execution policy');
+    final allowed={'executionPolicy','enabled','contracts','riskPercent','quantity','stopPercent','takePercent','trailPercent','addEnabled','strategy','watchlist',
       'allocationPercent','dailyLossPercent','maxPositions','maxContracts','holdingMode','maxHoldingDays','partialPercent','scenarioExit'};
     if(values.keys.any((k)=>!allowed.contains(k)))throw ArgumentError('setting');
     for(final k in ['riskPercent','stopPercent','takePercent','trailPercent']) {
@@ -395,6 +399,12 @@ class MarketPaper extends ChangeNotifier {
       if(current()&&q!=null&&q.contract==contract)_rememberOption(id,_decisionEvidence?['source'] as String?,q);
       return q;
     }
+    PaperRow? execution(OptionQuote q,String side,int quantity) {
+      if(account(id)['executionPolicy']!=conservativeExecution)return null;
+      final used=optionConsumption(journal,id,_quote(q));
+      if(used.blocked)return {'quantity':0,'status':'QUOTE_ALREADY_CONSUMED_OR_REVISED'};
+      return projectOptionExecution(_quote(q),side,quantity,used.consumed,now());
+    }
     final marks=<String,OptionQuote>{};
     Future<bool> collectMarks() async {
       for(final p in (account(id)['positions'] as Map).values) {
@@ -411,7 +421,7 @@ class MarketPaper extends ChangeNotifier {
       if(!paperSession(now()).entry)return 'SESSION_ENTRY_BLOCKED';
       if(!paperExpiry(marks.values.firstWhere((q)=>q.underlying==symbol&&q.direction==signal).contract,now()).entry)return 'EXPIRY_ENTRY_BLOCKED';
       if((account(id)['positions'] as Map).values.any((p)=>p['closeIntent']!=null))return 'PENDING_CLOSE_RISK_LIMIT';
-      return paperRiskReason(account(id),symbol,qty,price,marks,now(),journal:journal,adding:adding,source:_decisionEvidence?['source'] as String? ?? 'fixture');
+      return paperRiskReason(account(id),symbol,qty,price,marks,now(),journal:journal,adding:adding,source:_decisionEvidence?['source'] as String? ?? 'fixture',feePerContract:executionFee(account(id)));
     }
     _decisionEvidence={...copyPaper(evidence??{'source':'fixture'}),'observation':observation,
       'signal':signal,'stockDataValid':stockValid(),'strategy':account(id)['strategy']??'confluence'};
@@ -464,12 +474,15 @@ class MarketPaper extends ChangeNotifier {
           final desired=reason=='PARTIAL_PROFIT'?(pending?['remaining'] as int? ?? qty~/2):qty;
           final quoteId='${q.contract}/${q.time.toUtc().toIso8601String()}/${q.bid}/${q.ask}/${q.bidSize}/${q.askSize}';
           if(position['consumedQuote']==quoteId||(position['lastCloseQuoteAt'] is String&&!q.time.isAfter(DateTime.parse(position['lastCloseQuoteAt'] as String)))){await _record(id,symbol,'CLOSE_WAIT_NEW_QUOTE');return;}
-          final filled=math.min(desired,math.min(q.bidSize,q.askSize));
+          final modeled=execution(q,'SELL_TO_CLOSE',desired);
+          if(modeled!=null&&modeled['quantity']==0){await retainIntent(reason,'CLOSE_${modeled['status']}');return;}
+          final filled=modeled?['quantity'] as int? ?? math.min(desired,math.min(q.bidSize,q.askSize));
+          final fillPrice=modeled?['priceCents'] as int? ?? q.bid,fee=modeled?['feeCents'] as int? ?? filled*65;
           final remaining=qty-filled,unfilled=desired-filled;
           final removedCost=paperPortion(position['cost'] as int,filled,qty);
           final entryFees=paperPortion((position['entryFees']??qty*65) as int,filled,qty);
-          final gross=paperProduct(paperProduct(q.bid,filled),100);
-          final pnl=gross-filled*65-removedCost-entryFees;
+          final gross=paperProduct(paperProduct(fillPrice,filled),100);
+          final pnl=gross-fee-removedCost-entryFees;
           final tradePnl=((position['realizedPnl']??0) as int)+pnl;
           final next=copy(),target=_in(next,id),p=(target['positions'] as Map)[symbol] as PaperRow;
           if(remaining==0){(target['positions'] as Map).remove(symbol);}else{
@@ -480,15 +493,15 @@ class MarketPaper extends ChangeNotifier {
             if(unfilled>0){p['closeIntent']={'reason':reason,'remaining':unfilled,'at':pending?['at']??now().toUtc().toIso8601String()};}
             else{p.remove('closeIntent');}
           }
-          target['cash']=paperSum(target['cash'] as int,gross-filled*65);
-          if(target['fees'] is int)target['fees']=(target['fees'] as int)+filled*65;
+          target['cash']=paperSum(target['cash'] as int,gross-fee);
+          if(target['fees'] is int)target['fees']=(target['fees'] as int)+fee;
           if(remaining==0&&target['closedTrades'] is int)target['closedTrades']=(target['closedTrades'] as int)+1;
           if(remaining==0&&tradePnl>0&&target['winningTrades'] is int)target['winningTrades']=(target['winningTrades'] as int)+1;
           final day=now().toUtc().toIso8601String().substring(0,10);
           final daily=(target['dailyRealized']??=<String,dynamic>{}) as Map;
           daily[day]=((daily[day]??0) as int)+pnl;
           _log(next,id,symbol,'${remaining==0?'CLOSED':'PARTIAL'}_$reason',quote:q,
-            fill:{'side':'SELL_TO_CLOSE','quantity':filled,'price':q.bid,'fee':filled*65,'removedCost':removedCost,
+            fill:{'side':'SELL_TO_CLOSE','quantity':filled,'price':fillPrice,'fee':fee,if(modeled!=null)'execution':modeled,'removedCost':removedCost,
               'entryFees':entryFees,'realizedPnl':pnl,'cashAfter':target['cash']});
           if(!await _commit(next,admission:()=>current()&&q.valid(now(),quantity:filled)&&paperSession(now()).fill&&paperExpiry(q.contract,now()).close&&
             (pending!=null||reason!='CONFIRMED_DIVERGENCE'||reverseCurrent())&&
@@ -506,19 +519,20 @@ class MarketPaper extends ChangeNotifier {
           if(a['addEnabled']==true&&p['added']!=true&&q.bid>=average*1.10&&signal==p['direction']&&signalCurrent()&&
               (a['watchlist'] is! List||(a['watchlist'] as List).contains(symbol))) {
             if(!await collectMarks())return;
-            final cost=q.ask*100+65;
-            if(risk(1,q.ask,adding:true)==null) {
-              p['quantity']=qty+1;p['cost']=(p['cost'] as int)+q.ask*100;p['added']=true;target['cash']=(target['cash'] as int)-cost;
-              p['entryFees']=((p['entryFees']??qty*65) as int)+65;
-              if(target['fees'] is int)target['fees']=(target['fees'] as int)+65;
-              _log(next,id,symbol,'ADD_ON_OPRA',quote:q,fill:{'side':'BUY','quantity':1,'price':q.ask,'fee':65,'cashAfter':target['cash']});
+            final modeled=execution(q,'BUY',1),fillPrice=q.ask+executionSlippage(a),fee=executionFee(a);
+            final cost=fillPrice*100+fee;
+            if((modeled==null||modeled['quantity']==1)&&risk(1,fillPrice,adding:true)==null) {
+              p['quantity']=qty+1;p['cost']=(p['cost'] as int)+fillPrice*100;p['added']=true;target['cash']=(target['cash'] as int)-cost;
+              p['entryFees']=((p['entryFees']??qty*65) as int)+fee;
+              if(target['fees'] is int)target['fees']=(target['fees'] as int)+fee;
+              _log(next,id,symbol,'ADD_ON_OPRA',quote:q,fill:{'side':'BUY','quantity':1,'price':fillPrice,'fee':fee,if(modeled!=null)'execution':modeled,'cashAfter':target['cash']});
             } else if(journal.isEmpty||journal.last['account']!=id||journal.last['symbol']!=symbol||journal.last['decision']!='ADD_RISK_LIMIT') {
               _log(next,id,symbol,'ADD_RISK_LIMIT',quote:q);
             }
           }
           final adds=p['quantity']!=qty;
           await _commit(next,admission:()=>current()&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:qty)&&
-            (!adds||risk(1,q.ask,adding:true)==null));return;
+            (!adds||risk(1,q.ask+executionSlippage(a),adding:true)==null));return;
         }
       }
       if(!stockValid()){await _record(id,symbol,'INVALID_OR_STALE_STOCK_DATA');return;}
@@ -532,17 +546,20 @@ class MarketPaper extends ChangeNotifier {
       if(!paperExpiry(contract,now()).entry){await _record(id,symbol,'EXPIRY_ENTRY_BLOCKED');return;}
       final q=await readQuote(contract);
       if(!current())return;
-      final quantity=a['quantity'] as int;
-      if(q==null||q.contract!=contract||q.underlying!=symbol||q.direction!=signal||!q.valid(now(),quantity:quantity)||!stockValid()||!signalCurrent()){
+      final requested=a['quantity'] as int;
+      if(q==null||q.contract!=contract||q.underlying!=symbol||q.direction!=signal||!q.valid(now(),quantity:a['executionPolicy']==conservativeExecution?1:requested)||!stockValid()||!signalCurrent()){
         await _record(id,symbol,'OPRA_QUOTE_REQUIRED_NO_FILL');return;
       }
       marks[q.contract]=q;
       if(!await collectMarks())return;
-      final riskReason=risk(quantity,q.ask);
+      final modeled=execution(q,'BUY',requested);
+      if(modeled!=null&&modeled['quantity']==0){await _record(id,symbol,'ENTRY_${modeled['status']}');return;}
+      final quantity=modeled?['quantity'] as int? ?? requested,fillPrice=modeled?['priceCents'] as int? ?? q.ask;
+      final riskReason=risk(quantity,fillPrice);
       if(riskReason!=null){await _record(id,symbol,riskReason);return;}
       final next=copy();final target=_in(next,id);positions=Map<String,dynamic>.from(target['positions'] as Map);
       if(positions.containsKey(symbol)){await _record(id,symbol,'OPPOSITE_POSITION_BLOCKED');return;}
-      final cost=q.ask*quantity*100,fee=quantity*65;
+      final cost=fillPrice*quantity*100,fee=modeled?['feeCents'] as int? ?? quantity*65;
       if(cost+fee>(target['cash'] as int)||cost+fee>(target['initialCash'] as int)*(target['riskPercent'] as int)/100) {await _record(id,symbol,'RISK_LIMIT');return;}
       final scenarioLevel=evidence?['scenarioLevel'];
       positions[symbol]={'contract':contract,'direction':signal,'quantity':quantity,'cost':cost,'entryFees':fee,'mark':_quote(q),
@@ -550,8 +567,8 @@ class MarketPaper extends ChangeNotifier {
         'highBid':q.bid,'added':false,'realizedPnl':0,'partialTaken':false,'opened':now().toUtc().toIso8601String()};
       target['positions']=positions;target['cash']=(target['cash'] as int)-cost-fee;(target['lastSignal'] as Map)[symbol]=observation;
       if(target['fees'] is int)target['fees']=(target['fees'] as int)+fee;
-      _log(next,id,symbol,'OPENED_$signal',quote:q,fill:{'side':'BUY','quantity':quantity,'price':q.ask,'fee':fee,'cashAfter':target['cash']});
-      await _commit(next,admission:()=>current()&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:quantity)&&risk(quantity,q.ask)==null);
+      _log(next,id,symbol,'OPENED_$signal',quote:q,fill:{'side':'BUY','quantity':quantity,'price':fillPrice,'fee':fee,if(modeled!=null)'execution':modeled,'cashAfter':target['cash']});
+      await _commit(next,admission:()=>current()&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:quantity)&&risk(quantity,fillPrice)==null);
     }catch(_){error='توقفت الدورة دون فتح عكسي. راجع البيانات وسعة السجل والتخزين.';notifyListeners();}
     finally{_decisionEvidence=null;_pendingOptionObservations.clear();busy=false;notifyListeners();}
   }

@@ -157,3 +157,7 @@ Code8c9089e769ec83437666dd2d09551830fd42dca1: all applicable CI complete and suc
 ## Batch20 — delivered-share marks and risk accounting
 
 Python/Dart paper-delivery-valuation-v1 with26 hand-expected shared cases; integrated mobile CAS/backup/performance/admission and Android data-only GET. Server performance uses existing immutable account-scoped stock journal, never network during valuation. IEX display-only; SIP required for device new-risk admission along with account limits.94 affected Python tests passed; source-specific CI pending. See DELIVERY_VALUATION_20261014.md. All six work streams remain under development; independent review unavailable, packaging deferred.
+
+## Batch21 — explicit conservative option fills and immutable policy receipts
+
+Shared paper-option-execution-v2,27 hand-expected cases. Direct entries/additions/partial closes now support adverse1¢,70¢ total modeled per-contract cost and25% displayed-size participation; consumption is reconstructed from account receipts. New UI-created accounts select the model; old accounts/receipts remain legacy unless changed while stopped. Risk, performance, backup/reconciliation and observed Replay include actual modeled costs.97 affected Python checks passed; Flutter/native CI pending. See PAPER_EXECUTION_20261014.md. No claim of real queue priority, Greek risk, adjusted deliverable eligibility or continuous server execution.

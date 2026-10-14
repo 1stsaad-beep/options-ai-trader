@@ -23,7 +23,7 @@ class PaperBackup {
       'stopPercent','takePercent','trailPercent','addEnabled','lastSignal','ledgerPolicy','strategy','watchlist','fees',
       'closedTrades','winningTrades','peakEquity','maxDrawdown','dailyRealized','allocationPercent','dailyLossPercent',
       'maxPositions','maxContracts','holdingMode','maxHoldingDays','partialPercent','scenarioExit',
-      'deliveryMarks','deliveryMarkSource','deliveryPositions','settlementCount','settlementRealizedPnl'};
+      'executionPolicy','deliveryMarks','deliveryMarkSource','deliveryPositions','settlementCount','settlementRealizedPnl'};
     validatePaper(book);
     final bars=ObservedBarArchive.read(book['barArchive']);
     for(final event in [for(final segment in book['journalArchive'] as List? ?? [])...(segment as List),...(book['journal'] as List)]) {
