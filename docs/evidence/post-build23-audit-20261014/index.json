@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-14",
+  "code_source": "8519816aab4953ebb1e855132c444d76d8f503db",
+  "artifact_workflows": [
+    {
+      "name": "initial-direct",
+      "source": "f2caedca1b4e989a8a64d9f94752a546cb6e7ed5",
+      "run": 38530066762,
+      "artifact": 11878375048,
+      "sha256": "3efdb25c999e6040717fc2a37fa790945fa3763646ff85ea0ab7b6884360d000",
+      "conclusion": "success"
+    },
+    {
+      "name": "final-direct",
+      "source": "8519816aab4953ebb1e855132c444d76d8f503db",
+      "run": 38530899352,
+      "artifact": 11877508577,
+      "sha256": "15a88f042237c48b774350e0540a2af8f50416c3a0fa03480f0a6e7b6e31c0ef",
+      "conclusion": "success"
+    },
+    {
+      "name": "final-chart",
+      "source": "8519816aab4953ebb1e855132c444d76d8f503db",
+      "run": 38530899279,
+      "artifact": 11877967793,
+      "sha256": "46fff2788b7820613fa03f5a06f8a08b042d4c955bbfda97abfbbdc7dd2ecbaf",
+      "conclusion": "success"
+    },
+    {
+      "name": "final-security",
+      "source": "8519816aab4953ebb1e855132c444d76d8f503db",
+      "run": 38530899356,
+      "artifact": 11878156584,
+      "sha256": "641883e3c0c489e6bf054c1b391877a8b4091927b9508ae8da6b538b52e6ae26",
+      "conclusion": "success"
+    }
+  ],
+  "assignment_status": [
+    "partial",
+    "partial",
+    "partial"
+  ],
+  "independent_second_review_completed": false,
+  "new_apk": false,
+  "skipped_build_workflows": {
+    "initial_android": 38530066763,
+    "initial_ios": 38530066749,
+    "final_android": 38530899410,
+    "final_ios": 38530899325
+  },
+  "tests": {
+    "initial_flutter": {
+      "success": 400
+    },
+    "final_flutter": {
+      "success": 403
+    },
+    "initial_jvm": {
+      "tests": 41,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "final_jvm": {
+      "tests": 41,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "chart_semantic_subset": {
+      "success": 23
+    },
+    "golden": {
+      "success": 6
+    }
+  },
+  "security": {
+    "files_scanned": 930,
+    "finding_count": 0,
+    "history_blobs_scanned": 1568,
+    "history_commits": 134,
+    "python_packages_without_known_advisories": 24,
+    "pub_packages_without_known_advisories": 43
+  },
+  "evidence_archive": {
+    "file": "evidence.zip",
+    "bytes": 226903,
+    "sha256": "b33b36c2f15c16f6d2d8ad2a4a01d5b7687a8a3b9de26cd8dc4d734bb7f10feb"
+  }
+}
