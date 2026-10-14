@@ -16,7 +16,7 @@ class ObservedBarArchive {
   }
   static String _source(Map evidence) {
     if(!['fixture','alpaca'].contains(evidence['source'])||!['iex','sip'].contains(evidence['feed'])||
-      !['regular','extended'].contains(evidence['session']))throw const FormatException('Unknown bar source');
+      !['regular','extended'].contains(evidence['session'])){throw const FormatException('Unknown bar source');}
     return '${evidence['source']}|${evidence['feed']}|${evidence['session']}';
   }
   static void _symbol(dynamic symbol) {
@@ -42,7 +42,7 @@ class ObservedBarArchive {
         _keys(e,{'sequence','symbol','source','rows','captures'});_symbol(e['symbol']);
         if(e['sequence'] is! int||e['sequence']!=++sequence||e['source'] is! String||
           !RegExp(r'^(fixture|alpaca)\|(iex|sip)\|(regular|extended)$').hasMatch(e['source'] as String)||
-          e['rows'] is! List||e['captures'] is! List)throw const FormatException('Invalid bar epoch');
+          e['rows'] is! List||e['captures'] is! List){throw const FormatException('Invalid bar epoch');}
         final rows=e['rows'] as List,captures=e['captures'] as List;
         if(rows.isEmpty||captures.isEmpty||(count+=rows.length)>maxBars)throw const FormatException('Bar archive capacity exceeded');
         DateTime? prior;
@@ -124,14 +124,14 @@ class ObservedBarArchive {
       observationStamp(value['firstAt']).millisecondsSinceEpoch!=rows.first[0]||
       observationStamp(value['lastAt']).millisecondsSinceEpoch!=rows.last[0]||
       observationStamp(value['firstAt']).microsecondsSinceEpoch%60000000!=0||
-      observationStamp(value['lastAt']).microsecondsSinceEpoch%60000000!=0)throw const FormatException('Source window mismatch');
+      observationStamp(value['lastAt']).microsecondsSinceEpoch%60000000!=0){throw const FormatException('Source window mismatch');}
   }
   List<Map<String,dynamic>> resolve(String symbol,Map<String,dynamic> evidence,DateTime eventAt) {
     final ref=evidence['barReference'];_keys(ref,{'version','symbol','source','epoch','start','count','knownAt'});
     final at=observationStamp(evidence['recordedAt']);
     if(evidence.containsKey('bars')||ref['version']!=1||ref['symbol']!=symbol||ref['source']!=_source(evidence)||
       ref['epoch'] is! int||ref['epoch']<1||ref['epoch']>maxBars||ref['start'] is! int||ref['start']<0||ref['start']>maxBars||ref['count'] is! int||ref['count']<1||ref['count']>1000||
-      !observationStamp(ref['knownAt']).isAtSameMomentAs(at)||at.isAfter(eventAt))throw const FormatException('Invalid source reference');
+      !observationStamp(ref['knownAt']).isAtSameMomentAs(at)||at.isAfter(eventAt)){throw const FormatException('Invalid source reference');}
     final epochs=_state['epochs'] as List,index=(ref['epoch'] as int)-1;
     if(index<0||index>=epochs.length)throw const FormatException('Missing source epoch');
     final e=epochs[index] as Map,rows=e['rows'] as List,start=ref['start'] as int,end=start+(ref['count'] as int);

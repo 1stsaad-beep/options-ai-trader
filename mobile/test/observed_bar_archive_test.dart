@@ -44,7 +44,7 @@ void main() {
   });
   test('source symbol feed and session cannot silently share another origin',(){
     var archive=ObservedBarArchive.read(null);var sequence=0;
-    for(final settings in [<String,dynamic>{},{'feed':'sip'},{'session':'extended'},{'source':'alpaca'},{}]) {
+    for(final settings in <Map<String,dynamic>>[{},{'feed':'sip'},{'session':'extended'},{'source':'alpaca'},{}]) {
       final evidence={...archivedTestEvidence(0,5,at),...settings};
       final next=archive.capture('NVDA',evidence,at);archive=next.archive;
       expect(next.reference['epoch'],++sequence);
