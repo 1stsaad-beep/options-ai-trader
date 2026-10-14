@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'direct_alpaca.dart';
 import 'demo/chart_analysis.dart';
 import 'demo/chart_painter.dart';
-import 'demo/wave_analysis.dart';
 
 class MarketSignal {
   final String direction;
@@ -57,11 +56,13 @@ class DirectLabs extends StatefulWidget {
 }
 class _DirectLabsState extends State<DirectLabs> {
   int lab=0,minutes=1;
-  bool levels=true,models=true;
+  bool levels=true,models=true,showAlternate=true;
   List<Widget> controls()=>[
     Wrap(spacing:6,children:[for(final frame in [1,5,15,60])ChoiceChip(label:Text('$frame دقيقة'),selected:minutes==frame,onSelected:(_)=>setState(()=>minutes=frame))]),
     Wrap(children:[FilterChip(label:const Text('المستويات'),selected:levels,onSelected:(v)=>setState(()=>levels=v)),
-      FilterChip(label:const Text('النماذج'),selected:models,onSelected:(v)=>setState(()=>models=v))]),
+      FilterChip(label:const Text('النماذج'),selected:models,onSelected:(v)=>setState(()=>models=v)),
+      if(lab==0)FilterChip(key:const Key('direct-wave-alternate'),label:const Text('الترقيم البديل'),
+        selected:showAlternate,onSelected:(v)=>setState(()=>showAlternate=v))]),
   ];
   static const names=['Wave Lab','Classic Chart Lab','Harmonic Lab','Indicator Lab','AI Confluence Lab'];
   String number(dynamic v)=>v is num&&v.isFinite?v.toStringAsFixed(2):'غير متاح';
@@ -78,8 +79,11 @@ class _DirectLabsState extends State<DirectLabs> {
           priceLabel:'STOCK • ${widget.source}',timeLabels:{for(var i=0;i<rows.length;i++)i:rows[i].time.toIso8601String().substring(11,16)})))),
     ]);}
     final pivots=DemoChartAnalysis.pivots(bars),summary=DemoChartAnalysis.summary(bars);
-    final wave=ChartWaveAnalysis.candidates(pivots,degree:'internal');
-    final patterns=lab==0?wave.map((s)=>s.drawing()).toList():lab==2?DemoChartAnalysis.harmonics(pivots):<ChartPattern>[];
+    final wave=directWaveView(rows);
+    final patterns=lab==0?<ChartPattern>[
+      if(wave.primary!=null)wave.primary!.drawing(),
+      if(showAlternate&&wave.alternate!=null)wave.alternate!.drawing(alternate:true),
+    ]:lab==2?DemoChartAnalysis.harmonics(pivots):<ChartPattern>[];
     final div=DemoChartAnalysis.divergenceSegments(bars),closes=bars.map((b)=>b.close).toList();
     final macd=DemoChartAnalysis.macdSeries(closes),offset=math.max(0,bars.length-180);
     final signal=MarketSignal.analyze(rows);
@@ -95,7 +99,15 @@ class _DirectLabsState extends State<DirectLabs> {
           macdValues:ChartMacd(macd.line.skip(offset).toList(),macd.signal.skip(offset).toList(),macd.histogram.skip(offset).toList()),
           divergences:div,priceLabel:'STOCK • ${widget.source}',
           timeLabels:{for(var i=0;i<rows.length;i++)i:rows[i].time.toIso8601String().substring(11,16)}))))),
-      if(lab==0) Text(wave.isEmpty?'لا ترقيم موجي مستوفٍ للقواعد.':'مرشحات موجية مؤكدة: ${wave.length} • ${wave.last.labels.join(' → ')}'),
+      if(lab==0)...[
+        Text(wave.primary==null?'لا ترقيم موجي نشط مستوفٍ للقواعد.':'مرشحات موجية نشطة: ${wave.active.length}',key:const Key('direct-wave-status')),
+        for(final entry in {'الأساسي':wave.primary,'البديل':showAlternate?wave.alternate:null}.entries)
+          if(entry.value!=null)Text('${entry.key}: ${entry.value!.name} • ${entry.value!.degree}\n'
+            '${entry.value!.labels.join(' → ')} • التفعيل ${number(entry.value!.activation)} • الإلغاء ${number(entry.value!.invalidation)}\n'
+            'أهداف Fib: ${entry.value!.targets.map(number).join(' / ')}'),
+        const Text('السجل سببي داخل نافذة البيانات المحفوظة؛ المرشح الملغى لا يعود عند تعافي السعر داخل النافذة. لا أرشيف موجي مستمر بين النوافذ.'),
+        Text('أحداث الرصد والإلغاء: ${wave.events.length}',key:const Key('direct-wave-events')),
+      ],
       if(lab==1) Text('الدعم ${number(summary['support'])} • المقاومة ${number(summary['resistance'])}\nFib 38.2% / 61.8% • ${summary['candle']}\nالكشف الكامل للنماذج الكلاسيكية ما زال تجريبيًا.'),
       if(lab==2) Text(patterns.isEmpty?'لا نموذج Harmonic مؤكد.':patterns.map((p)=>'${p.name} • PRZ ${number(p.przLow)}–${number(p.przHigh)}').join('\n')),
       if(lab==3) Text('SMA20 ${number(summary['sma20'])} • EMA20 ${number(summary['ema20'])}\nRSI14 rolling ${number(summary['rsi14'])}\nMACD 12/26/9 ${number(summary['macd'])}\nATR14 ${number(summary['atr14'])} • VWAP للعينة ${number(summary['vwap'])}'),

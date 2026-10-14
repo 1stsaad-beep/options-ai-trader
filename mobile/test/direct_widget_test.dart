@@ -5,6 +5,8 @@ import 'package:options_ai_trader/direct_screen.dart';
 import 'package:options_ai_trader/direct_labs.dart';
 import 'package:options_ai_trader/market_paper.dart';
 import 'market_paper_test.dart' show MemoryPaperStore;
+import 'wave_analysis_test.dart' show observations;
+import 'package:options_ai_trader/demo/chart_painter.dart';
 
 class MockDirect extends DirectAlpaca {
   bool saved=false;int starts=0,stops=0;bool secure=false;DirectSettings config=const DirectSettings();
@@ -77,6 +79,21 @@ void main(){
     final selector=tester.widget<DropdownButtonFormField<String>>(find.byKey(const ValueKey('market-symbol-QQQ')));
     expect(selector.initialValue,'QQQ');expect(api.starts,0);expect(tester.takeException(),isNull);
     await tester.pumpWidget(const SizedBox());await tester.pumpAndSettle();
+  });
+
+  testWidgets('Direct Wave Lab shows primary alternate and original invalidation levels',(tester)async{
+    final rows=[for(final b in observations().take(40))
+      MarketBar(DateTime.utc(2026,10,13,14,b.tick),b.open,b.high,b.low,b.close,b.volume)];
+    await tester.pumpWidget(MaterialApp(home:Scaffold(body:SingleChildScrollView(
+      child:DirectLabs(rows:rows,symbol:'NVDA',source:'Mock')))));
+    await tester.pumpAndSettle();
+    var painter=tester.widget<CustomPaint>(find.byKey(const Key('direct-chart'))).painter! as DemoCandlePainter;
+    expect(painter.patterns.length,2);expect(painter.patterns.last.alternate,true);
+    expect(find.textContaining('أهداف Fib:'),findsNWidgets(2));
+    await tester.ensureVisible(find.byKey(const Key('direct-wave-alternate')));
+    await tester.tap(find.byKey(const Key('direct-wave-alternate')));await tester.pump();
+    painter=tester.widget<CustomPaint>(find.byKey(const Key('direct-chart'))).painter! as DemoCandlePainter;
+    expect(painter.patterns.length,1);expect(tester.takeException(),isNull);
   });
 
 }

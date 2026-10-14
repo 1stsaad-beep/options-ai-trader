@@ -4,7 +4,7 @@ The user's post-Build23 audit supersedes the historical next-action statements b
 
 Audit baseline: remote and local HEAD `5654069651fdfb783e34166baf9d5145ae79ccdc`; APK source `63a6d646d86f75c322751b3e791c66a204e75f2b`. New source fixes (pending CI): manual owned-position close while automation is stopped, account/symbol-specific close controls for holdings outside watchlists, entire bounded analysis source retained with decision receipts, and offline original-decision candle replay with earlier-cursor withholding. Configuration/background epochs still cancel in-flight manual requests; none can arm automation or open an opposite position. New regressions cover disabled/restart/partial/uncertain persistence, source completeness and future-data rejection, offline replay and removed-symbol UI access.
 
-No independent second reviewer has reviewed this patch. Green unit/golden/mock tests do not imply that settlement, full design parity, real OPRA access, three sessions, stable signing or continuous execution is implemented/accepted. Detailed requirement reassessment is in progress. All new code commits use `[chart-check]` to skip release packaging.
+No independent second reviewer has reviewed this patch. Green unit/golden/mock tests do not imply that settlement, full design parity, real OPRA access, three sessions, stable signing or continuous execution is implemented/accepted. Initial repair source `f2caedca1b4e989a8a64d9f94752a546cb6e7ed5` passed direct workflow38530066762, chart38530066514 and security38530066617; raw counts are being verified. Android38530066763 and iOS38530066749 were skipped. Additional audit found Direct waves bypassed the causal invalidation journal and only rendered internal candidates. A follow-up patch shares the main/internal/nested scenario journal, preserves invalidation events in v2 research snapshots and exposes primary/alternate activation/invalidation/Fibonacci levels. Three additional causal/UI regressions are pending CI. All new code commits use `[chart-check]` to skip release packaging.
 
 ---
 
@@ -12,7 +12,7 @@ No independent second reviewer has reviewed this patch. Green unit/golden/mock t
 
 ## Mission and current gate
 
-2026-10-13: full attached master prompt read. Working branch `recovery/v1.0-20261011`, latest observed HEAD `9ff7b6084c5a874dd3621748346bf0692f5bc962` (Lab22 reports). **Phase 3 complete: Build23 APK verified and delivered for final acceptance; V1.0 completeness not claimed.** No intermediate phone test requested.
+2026-10-13: full attached master prompt read. Working branch `recovery/v1.0-20261011`, latest observed HEAD `9ff7b6084c5a874dd3621748346bf0692f5bc962` (Lab22 reports). **Historical artifact delivery only; the 2026-10-14 audit supersedes the premature Phase 3 completion/phone-readiness claim.** No intermediate phone test requested.
 
 ## Recovered and inspected
 
@@ -56,7 +56,7 @@ Added bounded, strictly mode-separated Market Paper export/import; import requir
 
 Added completed UTC-anchored 1/5/15/60-minute Direct charts, layers, account-scoped original trade markers and receipt inspection. At each decision the current Shadow wave/harmonic/indicator/multiple-timeframe divergence snapshot is retained with original bars and a version; later bars never replace recorded reasons. Three causal/replay tests and a narrow RTL account-screen test added. Still no real OPRA collection, calibrated strategy claim, full-session evidence, or modeled exercise/stock settlement. Research never promotes itself to execution authority.
 
-## Independent review pass: disk durability and scenario authority
+## Same-agent adversarial review pass: disk durability and scenario authority
 
 Risk Flutter artifact: 355 passed/0 failed. Partial lifecycle artifact: 367 passed/0 failed. The earlier direct workflow runs were superseded/cancelled while native jobs were running; their Flutter results are valid component evidence, not a passed full workflow. Final-source native and device gates remain mandatory.
 
@@ -86,4 +86,4 @@ APK source `63a6d646d86f75c322751b3e791c66a204e75f2b`; successful Android run384
 
 Release evidence ZIP and digest index preserve raw signature/package/manifest/provenance/test/dependency/security files, plus workflow references. Existing Python1055/PostgreSQL/Compose/native13-emulator evidence remains applicable because their source directories are unchanged. No user phone test has occurred or been requested before this final candidate. Guide/readiness/matrix/gaps are complete. The original verified GitHub artifact ZIP (26,639,041 bytes) is available as the persistent downloadable delivery package and contains the same verified APK plus raw verification outputs. The private GitHub artifact link also remains available until2026-10-27. No uncertain write retry, credential access or data replacement was performed.
 
-Exact next action is user final acceptance of Build23 using `docs/BUILD23_INSTALL_ACCEPTANCE_AR.md`. Do not rerun the ephemeral-signer build as a same-package upgrade or label unresolved settlement/provider/three-session/iOS requirements complete. No automatic continuation outside the session is promised.
+Historical next-action statement withdrawn on 2026-10-14: development and independent review must precede a final phone request. Do not rerun the ephemeral-signer build as a same-package upgrade or label unresolved settlement/provider/three-session/iOS requirements complete. No automatic continuation outside the session is promised.

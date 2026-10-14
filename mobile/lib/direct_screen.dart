@@ -131,7 +131,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
         }
         final signal=readSignal();
         PaperRow research;try{research=directResearchSnapshot(rows);}
-        catch(_){research={'version':'direct-research-v1','status':'OPTIONAL_RESEARCH_UNAVAILABLE','executable':false};}
+        catch(_){research={'version':'direct-research-v2','status':'OPTIONAL_RESEARCH_UNAVAILABLE','executable':false};}
         await paper.evaluate(id:a['id'] as String,symbol:symbol,signal:signal.direction,confirmedReverse:signal.confirmedReverse,
           dataValid:()=>visible&&snapshot.validForDecision(symbol,DateTime.now()),
           observation:rows.isEmpty?'none':rows.last.time.toIso8601String(),quotes:api.quote,forceClose:forceClose,

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:options_ai_trader/direct_alpaca.dart';
 import 'package:options_ai_trader/direct_replay.dart';
+import 'wave_analysis_test.dart' show observations;
 
 void main() {
   List<MarketBar> rows(int count)=>List.generate(count,(i)=>MarketBar(DateTime.utc(2026,10,13,14,i),100+i%7.0,110,90,100+i%9.0,100));
@@ -54,4 +55,22 @@ void main() {
     final bad=decision(rows(5));bad['evidence']['bars'][0]['h']=1;
     expect(()=>DirectDecisionRecord.read(bad),throwsFormatException);
   });
+  List<MarketBar> waveRows()=>[for(final b in observations())
+    MarketBar(DateTime.utc(2026,10,13,14,b.tick),b.open,b.high,b.low,b.close,b.volume)];
+  test('Direct wave journal keeps main and internal candidates with causal alternatives',(){
+    final view=directWaveView(waveRows().take(40).toList());
+    expect(view.active.map((s)=>s.degree),containsAll(['main','internal']));
+    expect(view.primary,isNotNull);expect(view.alternate,isNotNull);
+    expect(view.active.every((s)=>s.observedAt<40),true);
+  });
+  test('Direct research never presents an invalidated wave as active after recovery',(){
+    final rows=waveRows(),first=directWaveView(rows.take(37).toList()).primary!;
+    final research=directResearchSnapshot(rows);
+    expect((research['waveCandidates'] as List).map((s)=>s['id']),isNot(contains(first.id)));
+    expect((research['waveEvents'] as List).any((e)=>e['scenario_id']==first.id&&e['event']=='INVALIDATED'),true);
+    final frozen=jsonEncode(directResearchSnapshot(rows.take(37).toList()));
+    directResearchSnapshot(rows);
+    expect(jsonEncode(directResearchSnapshot(rows.take(37).toList())),frozen);
+  });
+
 }

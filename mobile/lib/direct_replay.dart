@@ -76,15 +76,22 @@ List<MarketBar> directTimeframe(List<MarketBar> rows,int minutes) {
 }
 
 /// A contemporaneous research snapshot, never an execution permission.
+ChartWaveView directWaveView(List<MarketBar> rows) {
+  if(rows.isEmpty)return ChartWaveView(-1,const [],const []);
+  final bars=[for(var i=0;i<rows.length;i++)rows[i].candle(i)];
+  final journal=ChartWaveJournal()..append(bars);
+  return journal.view(bars.last.tick);
+}
+
 Map<String,dynamic> directResearchSnapshot(List<MarketBar> rows) {
   final bars=[for(var i=0;i<rows.length;i++)rows[i].candle(i)];
-  if(bars.length<35)return {'version':'direct-research-v1','status':'INSUFFICIENT_OBSERVED_BARS','executable':false};
-  final internal=ChartWaveAnalysis.candidates(DemoChartAnalysis.pivots(bars),degree:'internal');
-  final main=ChartWaveAnalysis.candidates(DemoChartAnalysis.pivots(bars,radius:5));
-  final waves=[...main,...internal,...ChartWaveAnalysis.nestedThirds(main,internal)];
-  return {'version':'direct-research-v1','status':'OBSERVED_SHADOW','executable':false,
+  if(bars.length<35)return {'version':'direct-research-v2','status':'INSUFFICIENT_OBSERVED_BARS','executable':false};
+  final waves=directWaveView(rows);
+  return {'version':'direct-research-v2','status':'OBSERVED_SHADOW','executable':false,
     'firstObservedAt':rows.first.time.toUtc().toIso8601String(),'lastObservedAt':rows.last.time.toUtc().toIso8601String(),
-    'waveCandidates':[for(final s in waves)s.toJson()],
+    'waveCandidates':[for(final s in waves.active)s.toJson()],
+    'waveEvents':[for(final e in waves.events)e.toJson()],
+    'primaryWaveId':waves.primary?.id,'alternateWaveId':waves.alternate?.id,
     'indicators':DemoChartAnalysis.summary(bars),
     'harmonics':[for(final h in DemoChartAnalysis.harmonics(DemoChartAnalysis.pivots(bars)))
       {'name':h.name,'points':[for(final p in h.points)[p.index,p.confirmedAt,p.price]],'przLow':h.przLow,'przHigh':h.przHigh,'invalidation':h.invalidation}],
