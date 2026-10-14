@@ -37,3 +37,14 @@ def test_fixture_contains_all_named_mirrors_and_butterfly_extension():
         for direction in ('BULLISH','BEARISH'):
             c=next(c for c in fixture['harmonics'] if c['name']==name+'_'+direction)
             assert any(h['kind']==name.replace('_EXTENSION_RANGE','') and h['direction']==direction for h in c['expected'])
+
+
+def test_full_classical_sources_have_declared_patterns_and_break_states():
+    fixture=json.loads((ROOT/'mobile/test/fixtures/geometry_contract_v1.json').read_text())
+    cases={c['name']:c for c in fixture['bars']}
+    for name,kind,confirmed in [
+        ('classic_double_top_break','DOUBLE_TOP',True),('classic_double_top_wait','DOUBLE_TOP',False),
+        ('classic_double_bottom','DOUBLE_BOTTOM',True),('classic_head_shoulders','HEAD_AND_SHOULDERS',True),
+        ('classic_inverse','INVERSE_HEAD_AND_SHOULDERS',True),
+        ('classic_triangle_wait','CONVERGING_TRIANGLE',False),('classic_triangle_break','CONVERGING_TRIANGLE',True)]:
+        assert any(p['kind']==kind and p['confirmed'] is confirmed for p in cases[name]['classical']),name

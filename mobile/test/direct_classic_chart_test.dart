@@ -21,6 +21,12 @@ List<MarketBar> classicSource(List<double> prices,bool high,double close) {
   })()];
 }
 void main() {
+  setUpAll(()async {
+    final root=Platform.environment['FLUTTER_ROOT'];
+    final font=File('$root/bin/cache/artifacts/material_fonts/Roboto-Regular.ttf');
+    final loader=FontLoader('ClassicPreview')..addFont(Future.value(ByteData.sublistView(await font.readAsBytes())));
+    await loader.load();
+  });
   final cases=<({String kind,List<double> prices,bool high,double close,bool confirmed})>[
     (kind:'DOUBLE_TOP',prices:[200,180,201],high:true,close:179,confirmed:true),
     (kind:'DOUBLE_TOP',prices:[200,180,201],high:true,close:190,confirmed:false),
@@ -55,10 +61,6 @@ void main() {
     });
   }
   testWidgets('export deterministic classical research chart previews for visual inspection',(tester)async {
-    final root=Platform.environment['FLUTTER_ROOT'];
-    final font=File('$root/bin/cache/artifacts/material_fonts/Roboto-Regular.ttf');
-    final loader=FontLoader('ClassicPreview')..addFont(Future.value(ByteData.sublistView(await font.readAsBytes())));
-    await loader.load();
     for(final c in [cases[0],cases[3],cases[5]]) {
       final rows=classicSource(c.prices,c.high,c.close),pivots=MarketGeometry.confirmedPivots(rows);
       for(final dark in [false,true]) {
