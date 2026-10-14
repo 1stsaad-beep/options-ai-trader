@@ -74,6 +74,12 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
       final bg=await api.background().timeout(const Duration(seconds:8));
       if(!mounted||epoch!=refreshEpoch)return;
       setState((){snapshot=s;background=bg;snapshotKnown=true;});
+      if(visible&&paper.ready&&!paper.busy&&['alpaca','mock'].contains(s.source)) {
+        for(final entry in s.series.entries) {
+          if(!mounted||!visible||epoch!=refreshEpoch)break;
+          await paper.observeWaves(entry.key,'${s.source=='alpaca'?'alpaca':'fixture'}|${s.feed}|${s.session}',entry.value);
+        }
+      }
       if(awaitingTest&&['succeeded','failed','cancelled'].contains(s.testStatus)){
         awaitingTest=false;testDeadline?.cancel();message(directMessage(s.testCode));
       }
@@ -132,7 +138,15 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
           catch(_){return const MarketSignal('WAIT',false,reason:'OPTIONAL_ANALYSIS_UNAVAILABLE');}
         }
         final signal=readSignal();
-        PaperRow research;try{research=directResearchSnapshot(rows);}
+        PaperRow research;try{
+          final source='${snapshot.source=='alpaca'?'alpaca':'fixture'}|${snapshot.feed}|${snapshot.session}';
+          final archive=paper.waveArchive,epoch=archive?.latest(symbol,source);
+          final matches=rows.isNotEmpty&&epoch!=null&&(epoch['times'] as List).last==rows.last.time.millisecondsSinceEpoch;
+          research=directResearchSnapshot(rows,archivedWaves:matches?archive?.view(symbol,source):null,
+            archiveOrigin:matches?{'sequence':epoch['sequence'],'source':source,'boundary':epoch['boundary'],
+              'firstAt':DateTime.fromMillisecondsSinceEpoch((epoch['times'] as List).first as int,isUtc:true).toIso8601String(),
+              'observations':(epoch['times'] as List).length}:null);
+        }
         catch(_){research={'version':'direct-research-v3','indicatorContract':marketIndicatorContract,'status':'OPTIONAL_RESEARCH_UNAVAILABLE','executable':false};}
         await paper.evaluate(id:a['id'] as String,symbol:symbol,signal:signal.direction,confirmedReverse:signal.confirmedReverse,
           dataValid:()=>visible&&snapshot.validForDecision(symbol,DateTime.now()),
@@ -244,7 +258,16 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
       items:{selectedSymbol,...watch,...snapshot.series.keys,
         for(final a in paper.accounts)...(a['positions'] as Map).keys.cast<String>()}.map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(),
       onChanged:(s){if(s!=null)setState(()=>selectedSymbol=s);}),
+    if(paper.waveArchiveError!=null)Text(paper.waveArchiveError!),
+    OutlinedButton(onPressed:paper.busy?null:()async {
+      final archive=paper.waveArchive;if(archive==null){message('أرشيف الموجات غير متحقق.');return;}
+      final epochs=archive.epochs(selectedSymbol);
+      await Clipboard.setData(ClipboardData(text:const JsonEncoder.withIndent('  ').convert({'symbol':selectedSymbol,'epochs':epochs,
+        'policy':'Original observation/capture boundaries; no broker execution evidence'})));
+      message('نُسخ أرشيف ${epochs.length} مقطع محفوظ مع المصدر وأوقات الرصد والإلغاء.');
+    },child:const Text('نسخ أرشيف الموجات ومقاطع المصدر')),
     DirectLabs(rows:snapshot.series[selectedSymbol]??[],symbol:selectedSymbol,source:snapshot.label(selectedSymbol,DateTime.now()),
+      waveEpoch:paper.waveArchive?.latest(selectedSymbol,'${snapshot.source=='alpaca'?'alpaca':'fixture'}|${snapshot.feed}|${snapshot.session}'),
       decisions:paper.journal.where((e)=>e['account']==selectedAccount).toList()),
   ];
   Future<void> restorePaper() async {
@@ -274,6 +297,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
       const Text('معامل العقد القياسي 100 فقط. لا ممارسة أو تخصيص تلقائي؛ بعد الانتهاء يبقى التعرض للمراجعة دون تسوية مختلقة. التعبئات ضمن جلسات الخيارات المحافظة 2026–2027 فقط، مع منع دخول يوم الانتهاء وإغلاق Intraday قبل نهاية الجلسة بـ15 دقيقة.'),
       const Text('يمكن للحساب المتوقف تسجيل إيصال ورقي يدوي للممارسة أو الانتهاء أو بيع أسهم التسليم. هذه الإيصالات لا تُحسب تنفيذًا سوقيًا موثقًا أو رصد OPRA.'),
       if(paper.error!=null)Text(paper.error!),
+      if(paper.waveArchiveError!=null)Text(paper.waveArchiveError!),
       FilledButton(key:const Key('paper-experiment'),onPressed:paper.busy||!paper.ready?null:()=>paper.createComparisonExperiment(),
         child:const Text('تجهيز 4 حسابات مستقلة × 1,000 USD')),
       const Text('اتجاه، اختراق، تراجع، دايفرجنس. الحسابات تبدأ متوقفة؛ لا نتائج قبل الرصد، ولا تُحسب Fixtures جلسات سوق فعلية.'),

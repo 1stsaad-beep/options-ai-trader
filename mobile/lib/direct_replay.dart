@@ -84,12 +84,13 @@ ChartWaveView directWaveView(List<MarketBar> rows) {
   return journal.view(bars.last.tick);
 }
 
-Map<String,dynamic> directResearchSnapshot(List<MarketBar> rows) {
+Map<String,dynamic> directResearchSnapshot(List<MarketBar> rows,{ChartWaveView? archivedWaves,Map<String,dynamic>? archiveOrigin}) {
   final bars=[for(var i=0;i<rows.length;i++)rows[i].candle(i)];
   if(bars.length<35)return {'version':'direct-research-v3','indicatorContract':marketIndicatorContract,'status':'INSUFFICIENT_OBSERVED_BARS','executable':false};
-  final waves=directWaveView(rows);
+  final waves=archivedWaves??directWaveView(rows);
   return {'version':'direct-research-v3','indicatorContract':marketIndicatorContract,'status':'OBSERVED_SHADOW','executable':false,
     'firstObservedAt':rows.first.time.toUtc().toIso8601String(),'lastObservedAt':rows.last.time.toUtc().toIso8601String(),
+    if(archiveOrigin!=null)'waveArchiveOrigin':archiveOrigin,
     'waveCandidates':[for(final s in waves.active)s.toJson()],
     'waveEvents':[for(final e in waves.events)e.toJson()],
     'primaryWaveId':waves.primary?.id,'alternateWaveId':waves.alternate?.id,

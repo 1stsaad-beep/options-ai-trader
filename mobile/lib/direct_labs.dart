@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'direct_alpaca.dart';
 import 'demo/chart_analysis.dart';
 import 'demo/chart_painter.dart';
+import 'demo/wave_analysis.dart';
 
 class MarketSignal {
   final String direction;
@@ -52,12 +53,15 @@ class DirectLabs extends StatefulWidget {
   final List<MarketBar> rows;
   final String symbol,source;
   final List<Map<String,dynamic>> decisions;
-  const DirectLabs({super.key,required this.rows,required this.symbol,required this.source,this.decisions=const []});
+  final Map<String,dynamic>? waveEpoch;
+  const DirectLabs({super.key,required this.rows,required this.symbol,required this.source,this.decisions=const [],this.waveEpoch});
   @override State<DirectLabs> createState()=>_DirectLabsState();
 }
 class _DirectLabsState extends State<DirectLabs> {
   int lab=0,minutes=1;
   bool levels=true,models=true,showAlternate=true;
+  String? _archiveBytes;
+  ChartWaveView? _archiveView;
   List<Widget> controls()=>[
     Wrap(spacing:6,children:[for(final frame in [1,5,15,60])ChoiceChip(label:Text('$frame دقيقة'),selected:minutes==frame,onSelected:(_)=>setState(()=>minutes=frame))]),
     Wrap(children:[FilterChip(label:const Text('المستويات'),selected:levels,onSelected:(v)=>setState(()=>levels=v)),
@@ -80,10 +84,26 @@ class _DirectLabsState extends State<DirectLabs> {
           priceLabel:'STOCK • ${widget.source}',timeLabels:{for(var i=0;i<rows.length;i++)i:rows[i].time.toIso8601String().substring(11,16)})))),
     ]);}
     final pivots=DemoChartAnalysis.pivots(bars),summary=MarketIndicators.summary(rows);
-    final wave=directWaveView(rows);
+    final epoch=widget.waveEpoch;
+    final archived=minutes==1&&epoch!=null&&(epoch['times'] as List).last==rows.last.time.millisecondsSinceEpoch;
+    if(archived) {
+      final encoded=jsonEncode(epoch);
+      if(encoded!=_archiveBytes) {
+        final journal=ChartWaveJournal.restore(epoch['journal'] as Map<String,dynamic>);
+        _archiveView=journal.view(journal.latestTick!);_archiveBytes=encoded;
+      }
+    }
+    final wave=archived?_archiveView!:directWaveView(rows);
+    ChartPattern drawing(ChartWaveScenario scenario,{bool alternate=false}) {
+      final p=scenario.drawing(alternate:alternate);if(!archived)return p;
+      final times=epoch!['times'] as List,indices={for(var i=0;i<rows.length;i++)rows[i].time.millisecondsSinceEpoch:i};
+      return ChartPattern(p.name,[for(final q in p.points)ChartPivot(indices[times[q.index]]??-1,
+        indices[times[q.confirmedAt]]??-1,q.price,q.high)],p.invalidation,p.target,
+        labels:p.labels,alternate:p.alternate,przLow:p.przLow,przHigh:p.przHigh);
+    }
     final patterns=lab==0?<ChartPattern>[
-      if(wave.primary!=null)wave.primary!.drawing(),
-      if(showAlternate&&wave.alternate!=null)wave.alternate!.drawing(alternate:true),
+      if(wave.primary!=null)drawing(wave.primary!),
+      if(showAlternate&&wave.alternate!=null)drawing(wave.alternate!,alternate:true),
     ]:lab==2?DemoChartAnalysis.harmonics(pivots):<ChartPattern>[];
     final div=MarketIndicators.divergences(rows),closes=bars.map((b)=>b.close).toList();
     final macd=MarketIndicators.macd(closes),offset=math.max(0,bars.length-180);
@@ -106,7 +126,8 @@ class _DirectLabsState extends State<DirectLabs> {
           if(entry.value!=null)Text('${entry.key}: ${entry.value!.name} • ${entry.value!.degree}\n'
             '${entry.value!.labels.join(' → ')} • التفعيل ${number(entry.value!.activation)} • الإلغاء ${number(entry.value!.invalidation)}\n'
             'أهداف Fib: ${entry.value!.targets.map(number).join(' / ')}'),
-        const Text('السجل سببي داخل نافذة البيانات المحفوظة؛ المرشح الملغى لا يعود عند تعافي السعر داخل النافذة. لا أرشيف موجي مستمر بين النوافذ.'),
+        Text(archived?'موجات من أرشيف محفوظ عبر نوافذ المصدر • ${(epoch!['times'] as List).length} شمعة • حد المصدر: ${epoch['boundary']}. قد تقع بعض نقاط النموذج قبل النافذة المعروضة.':
+          'السجل سببي داخل هذه النافذة فقط؛ لا أرشيف متحقق مطابق لهذا الفاصل والمصدر.'),
         Text('أحداث الرصد والإلغاء: ${wave.events.length}',key:const Key('direct-wave-events')),
       ],
       if(lab==1) Text('الدعم ${number(summary['support'])} • المقاومة ${number(summary['resistance'])}\nFib 38.2% / 61.8% • ${summary['candle']}\nالكشف الكامل للنماذج الكلاسيكية ما زال تجريبيًا.'),

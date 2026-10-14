@@ -9,6 +9,7 @@ import 'market_paper_risk.dart';
 import 'market_paper_policy.dart';
 import 'market_paper_backup.dart';
 import 'market_paper_settlement.dart';
+import 'direct_wave_archive.dart';
 import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
@@ -67,6 +68,7 @@ class MarketPaper extends ChangeNotifier {
   PaperRow _book={'version':1,'accounts':<dynamic>[],'journal':<dynamic>[]};
   bool ready=false,busy=false;
   String? error;
+  String? waveArchiveError;
   Future<void>? _loading;
   PaperRow? _durable;
   PaperRow? _decisionEvidence;
@@ -83,6 +85,22 @@ class MarketPaper extends ChangeNotifier {
   PaperRow copy()=>copyPaper(_book);
   PaperRow performance(String id)=>paperPerformance(account(id),now());
   PaperRow comparison()=>paperComparison({...copy(),'journal':journal},now());
+  DirectWaveArchive? get waveArchive {
+    try{return DirectWaveArchive.read(_book['waveArchive']);}
+    catch(_){waveArchiveError='أرشيف الموجات غير متحقق؛ احتُفظ بأصله دون إعادة كتابة. دفتر التداول مستقل عنه.';return null;}
+  }
+  Future<void> observeWaves(String symbol,String source,List<MarketBar> bars) async {
+    if(!ready||busy||bars.isEmpty)return;
+    busy=true;
+    try {
+      final archive=waveArchive;if(archive==null)return;
+      final updated=archive.append(symbol,source,bars,now());if(updated==null)return;
+      final next=copy();next['waveArchive']=updated;
+      if(await _commit(next)){waveArchiveError=null;}
+      else {waveArchiveError='لم يتأكد حفظ رصد الموجات؛ لم يُحذف الأرشيف السابق.';}
+    }catch(_){waveArchiveError='تعذر حفظ أرشيف الموجات أو بلغ سعته؛ احتُفظ بالتاريخ السابق. لا ادعاء باستمرارية جديدة.';}
+    finally{busy=false;notifyListeners();}
+  }
   String exportBackup() {
     if(!ready||busy)throw StateError('Ledger is not stable');
     return PaperBackup.export(copy());
@@ -91,7 +109,7 @@ class MarketPaper extends ChangeNotifier {
     if(!ready||busy)throw StateError('Ledger is not stable');
     // Import is allowed only into an empty device ledger. Existing data is never
     // replaced, merged, deleted or silently renamed by a backup operation.
-    if(accounts.isNotEmpty||journal.isNotEmpty)throw StateError('Restore requires an empty Market Paper ledger');
+    if(accounts.isNotEmpty||journal.isNotEmpty||_book['waveArchive']!=null)throw StateError('Restore requires an empty Market Paper ledger and archive');
     final restored=PaperBackup.prepare(text);
     busy=true;notifyListeners();
     try{if(!await _commit(restored))throw StateError('Restore was not confirmed');}
