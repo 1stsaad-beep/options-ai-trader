@@ -17,8 +17,11 @@ class PaperDiskStore(private val file: File) {
     }
     private val segments=PaperSegments(File(file.path+".segments"),::syncDirectory)
     private fun logical(raw:String):String {
-        if(JSONObject(raw).optString("storageFormat")==PaperSegments.FORMAT)return PaperSegments.utf8(segments.restore(raw))
         val parsed=JSONObject(raw)
+        if(parsed.has("storageFormat")) {
+            require(parsed.getString("storageFormat")==PaperSegments.FORMAT){"Unknown physical ledger format"}
+            return PaperSegments.utf8(segments.restore(raw))
+        }
         require(parsed.getInt("version")==1&&parsed.get("accounts") is org.json.JSONArray&&parsed.get("journal") is org.json.JSONArray)
         return raw
     }
@@ -39,7 +42,7 @@ class PaperDiskStore(private val file: File) {
     fun write(expected:String?,next:String):Boolean=synchronized(lock) {
         check(file.path !in uncertain){"Storage durability uncertain; restart required"}
         val bytes=next.toByteArray(Charsets.UTF_8);require(bytes.size<=MAX_BYTES)
-        val parsed=JSONObject(next);require(parsed.getInt("version")==1)
+        val parsed=JSONObject(next);require(!parsed.has("storageFormat")&&parsed.getInt("version")==1)
         require(parsed.get("accounts") is org.json.JSONArray && parsed.get("journal") is org.json.JSONArray)
         check(readLocked()==expected){"Ledger changed"}
         file.parentFile?.mkdirs()
