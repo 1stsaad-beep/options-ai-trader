@@ -107,4 +107,15 @@ class MarketGeometry {
     }
     return result;
   }
+  static List<ChartClassic> classicDrawings(List<ChartPivot> points,double close) {
+    return [for(final p in classicPatterns(points,close))(() {
+      final triangle=p['kind']=='CONVERGING_TRIANGLE';
+      final vertices=triangle?points.sublist(points.length-6):[for(final v in p['points'] as List)
+        ChartPivot(v[0] as int,v[1] as int,(v[2] as num).toDouble(),v[3] as bool)];
+      final labels=triangle?[for(var i=0;i<vertices.length;i++)'${vertices[i].high?"H":"L"}${i~/2+1}']:
+        vertices.length==5?['LS','N1','H','N2','RS']:['P1','N','P2'];
+      return ChartClassic(p['kind'] as String,List.unmodifiable(vertices),List.unmodifiable(labels),p['confirmed'] as bool,
+        neckline:(p['neckline'] as num?)?.toDouble());
+    })()];
+  }
 }

@@ -41,6 +41,17 @@ class ChartDivergence {
   String get label => '$indicator: $kind';
 }
 
+/// Observed classical geometry; no invented target, stop or execution authority.
+class ChartClassic {
+  final String kind;
+  final List<ChartPivot> points;
+  final List<String> labels;
+  final bool confirmed;
+  final double? neckline;
+  const ChartClassic(this.kind,this.points,this.labels,this.confirmed,{this.neckline});
+  bool get triangle=>kind=='CONVERGING_TRIANGLE';
+}
+
 class DemoChartAnalysis {
   static List<DemoCandle> bars(DemoEngine e, String symbol, int end) {
     if (end < 24 || end > e.tick) throw const DemoRejected('حد إعادة التشغيل يتجاوز البيانات المتاحة');

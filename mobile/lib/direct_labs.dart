@@ -60,13 +60,14 @@ class DirectLabs extends StatefulWidget {
 }
 class _DirectLabsState extends State<DirectLabs> {
   int lab=0,minutes=1;
-  bool levels=true,models=true,showAlternate=true;
+  bool levels=true,models=true,indicators=true,showAlternate=true;
   String? _archiveBytes;
   ChartWaveView? _archiveView;
   List<Widget> controls()=>[
     Wrap(spacing:6,children:[for(final frame in [1,5,15,60])ChoiceChip(label:Text('$frame دقيقة'),selected:minutes==frame,onSelected:(_)=>setState(()=>minutes=frame))]),
-    Wrap(children:[FilterChip(label:const Text('المستويات'),selected:levels,onSelected:(v)=>setState(()=>levels=v)),
-      FilterChip(label:const Text('النماذج'),selected:models,onSelected:(v)=>setState(()=>models=v)),
+    Wrap(children:[FilterChip(key:const Key('direct-levels'),label:const Text('المستويات'),selected:levels,onSelected:(v)=>setState(()=>levels=v)),
+      FilterChip(key:const Key('direct-models'),label:const Text('النماذج'),selected:models,onSelected:(v)=>setState(()=>models=v)),
+      FilterChip(key:const Key('direct-indicators'),label:const Text('المؤشرات'),selected:indicators,onSelected:(v)=>setState(()=>indicators=v)),
       if(lab==0)FilterChip(key:const Key('direct-wave-alternate'),label:const Text('الترقيم البديل'),
         selected:showAlternate,onSelected:(v)=>setState(()=>showAlternate=v))]),
   ];
@@ -107,6 +108,7 @@ class _DirectLabsState extends State<DirectLabs> {
       if(showAlternate&&wave.alternate!=null)drawing(wave.alternate!,alternate:true),
     ]:lab==2?MarketGeometry.harmonics(pivots).map(MarketGeometry.drawing).toList():<ChartPattern>[];
     final div=MarketIndicators.divergences(rows),closes=bars.map((b)=>b.close).toList();
+    final classics=lab==1?MarketGeometry.classicDrawings(pivots,bars.last.close):<ChartClassic>[];
     final macd=MarketIndicators.macd(closes),offset=math.max(0,bars.length-180);
     final signal=MarketSignal.analyze(rows);
     return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[...controls(),
@@ -116,10 +118,10 @@ class _DirectLabsState extends State<DirectLabs> {
       SingleChildScrollView(scrollDirection:Axis.horizontal,child:Row(children:[for(var i=0;i<names.length;i++)
         Padding(padding:const EdgeInsets.all(4),child:ChoiceChip(label:Text(names[i]),selected:lab==i,onSelected:(_)=>setState(()=>lab=i)))])),
       SizedBox(height:440,child:LayoutBuilder(builder:(context,c)=>InteractiveViewer(minScale:1,maxScale:4,
-        child:CustomPaint(key:const Key('direct-chart'),size:Size(c.maxWidth,440),painter:DemoCandlePainter(bars.skip(offset).toList(),summary,patterns,markers,
-          Theme.of(context).colorScheme,lab,levels,models,MarketIndicators.rsi(closes).skip(offset).toList(),
+        child:CustomPaint(key:const Key('direct-chart'),size:Size(c.maxWidth,440),painter:DemoCandlePainter(bars.skip(offset).toList(),summary,models?patterns:[],markers,
+          Theme.of(context).colorScheme,lab,levels||models,indicators,MarketIndicators.rsi(closes).skip(offset).toList(),
           macdValues:ChartMacd(macd.line.skip(offset).toList(),macd.signal.skip(offset).toList(),macd.histogram.skip(offset).toList()),
-          divergences:div,wilderRsi:true,priceLabel:'STOCK • ${widget.source}',
+          divergences:models?div:[],classicalPatterns:models?classics:[],levelOverlays:levels,wilderRsi:true,priceLabel:'STOCK • ${widget.source}',
           timeLabels:{for(var i=0;i<rows.length;i++)i:rows[i].time.toIso8601String().substring(11,16)}))))),
       if(lab==0)...[
         Text(wave.primary==null?'لا ترقيم موجي نشط مستوفٍ للقواعد.':'مرشحات موجية نشطة: ${wave.active.length}',key:const Key('direct-wave-status')),
@@ -134,7 +136,7 @@ class _DirectLabsState extends State<DirectLabs> {
       if(lab==1)...[
         Text('الدعم ${number(summary['support'])} • المقاومة ${number(summary['resistance'])}\nFib 38.2% / 61.8% • ${summary['candle']}'),
         const Text('بحث هندسي بقواعد الخادم: قمم/قيعان مزدوجة، رأس وكتفين، مثلث متقارب. التأكيد يتطلب كسرًا بالسعر، ولا يجيز التداول.'),
-        for(final p in MarketGeometry.classicPatterns(pivots,bars.last.close))Text('${p['kind']} • ${p['confirmed']==true?"كسر مؤكد":"مرشح لم يتأكد"} • خط العنق ${number(p['neckline'])}'),
+        for(final p in classics)Text('${p.kind} • ${p.confirmed?"كسر مؤكد":"مرشح لم يتأكد"} • ${p.triangle?"حدان يصلان القمم والقيعان المرصودة":"خط العنق ${number(p.neckline)}"}'),
       ],
       if(lab==2)...[
         const Text('هندسة XABCD مؤكدة بثلاث شموع • سماحية نسب 0.03 • PRZ تقاطع XA وBC؛ Cypher يعتمد XC. مرشحات بحثية.'),

@@ -43,6 +43,7 @@ void main() {
       closeTree(saved['harmonics'],MarketGeometry.harmonics(full));
       if(c.containsKey('harmonics')){closeTree(saved['harmonics'],c['harmonics']);expect(saved['harmonics'],isNotEmpty);}
       closeTree(saved['classicalPatterns'],MarketGeometry.classicPatterns(full,rows.last.close));
+      if(c.containsKey('classical')){closeTree(saved['classicalPatterns'],c['classical']);expect(saved['classicalPatterns'],isNotEmpty);}
     });
     if(c['name']=='gartley_source') {
       testWidgets('Direct painter receives actual detected XABCD and PRZ from completed source',(tester)async {

@@ -27,6 +27,8 @@ def test_checked_in_geometry_matches_server_detector_without_regeneration():
         assert helpers.portable_points(confirmed_pivots(bars,left=3,right=3))==case['expected']
         if 'harmonics' in case:
             assert helpers.portable_harmonics(confirmed_pivots(bars,left=3,right=3))==case['harmonics']
+        if 'classical' in case:
+            assert helpers.portable_classic(confirmed_pivots(bars,left=3,right=3),bars[-1].close)==case['classical']
 
 
 def test_fixture_contains_all_named_mirrors_and_butterfly_extension():

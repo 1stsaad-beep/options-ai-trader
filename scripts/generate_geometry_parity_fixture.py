@@ -72,8 +72,24 @@ def main():
         assert portable_harmonics(ps),name
         bar_cases.append({'name':name,'bars':[{'at':b.timestamp.isoformat(),'o':b.open,'h':b.high,'l':b.low,'c':b.close,'v':b.volume} for b in bars],
             'expected':portable_points(ps),'harmonics':portable_harmonics(ps)})
+    for name,prices,high,close in [
+        ('classic_double_top_break',[200,180,201],True,179),('classic_double_top_wait',[200,180,201],True,190),
+        ('classic_double_bottom',[100,120,101],False,121),('classic_head_shoulders',[200,180,220,185,201],True,179),
+        ('classic_inverse',[200,220,180,215,201],False,221),('classic_triangle_wait',[200,100,190,110,180,120],True,150),
+        ('classic_triangle_break',[200,100,190,110,180,120],True,181)]:
+        last=3+(len(prices)-1)*10
+        vertices=[(0,prices[0]+(-10 if high else 10))]+[(3+i*10,p) for i,p in enumerate(prices)]+[(last+13,close),(last+19,close)]
+        bars=[]
+        for i in range(last+20):
+            a,b=next((a,b) for a,b in zip(vertices,vertices[1:]) if a[0]<=i<=b[0])
+            c=a[1]+(b[1]-a[1])*(i-a[0])/(b[0]-a[0])
+            bars.append(Bar(START+timedelta(minutes=i),c,c+.01,c-.01,c,1000))
+        ps=confirmed_pivots(bars,left=3,right=3)
+        expected=portable_classic(ps,close);assert expected,name
+        bar_cases.append({'name':name,'bars':[{'at':b.timestamp.isoformat(),'o':b.open,'h':b.high,'l':b.low,'c':b.close,'v':b.volume} for b in bars],
+            'expected':portable_points(ps),'classical':expected})
     path=ROOT/'mobile/test/fixtures/geometry_contract_v1.json'
     path.write_text(json.dumps({'contract':GEOMETRY_CONTRACT_VERSION,'harmonics':harmonic,'classical':classic,'bars':bar_cases},indent=2)+'\n')
-    print('Authored18 harmonic,10 classic,6 bar-source cases')
+    print(f'Authored18 harmonic,10 classic,{len(bar_cases)} bar-source cases')
 
 if __name__=='__main__':main()

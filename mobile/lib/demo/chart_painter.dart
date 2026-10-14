@@ -17,23 +17,28 @@ class DemoCandlePainter extends CustomPainter {
   final List<double?> rsiValues;
   final ChartMacd? macdValues;
   final List<ChartDivergence> divergences;
+  final List<ChartClassic> classicalPatterns;
   final String? fontFamily;
   final String priceLabel;
   final bool wilderRsi;
+  final bool levelOverlays;
   final Map<int,String>? timeLabels;
   DemoCandlePainter(this.bars,this.summary,this.patterns,this.markers,this.colors,
     this.lab,this.overlays,this.indicators,this.rsiValues,
-    {this.macdValues,this.divergences=const [],this.fontFamily,
-    this.priceLabel='PRICE • synthetic',this.timeLabels,this.wilderRsi=false});
+    {this.macdValues,this.divergences=const [],this.classicalPatterns=const [],this.fontFamily,
+    this.priceLabel='PRICE • synthetic',this.timeLabels,this.wilderRsi=false,this.levelOverlays=true});
 
   List<String> get layerLabels => [
     'Candles ${bars.length}', 'Observation axis',
-    if(overlays) ...['Support','Resistance',
-      if(lab==1) ...['Fib 0.382','Fib 0.618'],
+    if(overlays) ...[
+      if(levelOverlays)...['Support','Resistance',if(lab==1)...['Fib 0.382','Fib 0.618']],
       for(final p in patterns) ...[
         '${p.alternate?"Alternate":"Primary"}: ${p.name}',
         ...(p.labels.isNotEmpty?p.labels:lab==2?['X','A','B','C','D']:[]),
         if(p.przLow!=null && p.przHigh!=null) 'PRZ'],
+      if(lab==1)for(final p in classicalPatterns)...[
+        '${p.kind}: ${p.confirmed?"BREAK_CONFIRMED":"CANDIDATE"}',...p.labels,
+        if(p.neckline!=null)'Neckline',if(p.triangle)...['Upper boundary','Lower boundary']],
       if(lab==3 || lab==4) for(final d in divergences) d.label],
     if(indicators) ...[wilderRsi?'RSI 14 (Wilder)':'RSI 14 (rolling)','MACD 12/26','Signal 9','Histogram'],
   ];
@@ -51,6 +56,10 @@ class DemoCandlePainter extends CustomPainter {
         if(p.przLow!=null) lows.add(p.przLow!);
         if(p.przHigh!=null) highs.add(p.przHigh!);
       }
+      if(lab==1) {for(final p in classicalPatterns) {
+        final visible=p.points.where((p)=>bars.any((b)=>b.tick==p.index));
+        lows.addAll(visible.map((p)=>p.price));highs.addAll(visible.map((p)=>p.price));
+      }}
     }
     final minimum=lows.reduce(math.min),maximum=highs.reduce(math.max);
     final margin=math.max(.25,(maximum-minimum)*.12);
@@ -88,12 +97,14 @@ class DemoCandlePainter extends CustomPainter {
         line(Offset(plot.left,y(price)),Offset(plot.right,y(price)),color,.8);
         text('$label ${price.toStringAsFixed(2)}',Offset(plot.left+2,y(price)-12),color);
       }
-      level((summary['support'] as num).toDouble(),'S',colors.primary);
-      level((summary['resistance'] as num).toDouble(),'R',colors.primary);
-      if(lab==1) { for(final ratio in [.382,.618]) {
-        level(summary['resistance']-(summary['resistance']-summary['support'])*ratio,
-          'Fib $ratio',colors.tertiary);
-      } }
+      if(levelOverlays) {
+        level((summary['support'] as num).toDouble(),'S',colors.primary);
+        level((summary['resistance'] as num).toDouble(),'R',colors.primary);
+        if(lab==1) { for(final ratio in [.382,.618]) {
+          level(summary['resistance']-(summary['resistance']-summary['support'])*ratio,
+            'Fib $ratio',colors.tertiary);
+        } }
+      }
       for(final p in patterns) {
         final color=p.alternate?Colors.lightBlue:Colors.orange;
         final path=Path();var started=false;
@@ -113,6 +124,28 @@ class DemoCandlePainter extends CustomPainter {
           text('PRZ',Offset(left,y(p.przLow!)+3),color);
         }
       }
+      if(lab==1) {for(final p in classicalPatterns) {
+        final color=p.confirmed?Colors.teal:Colors.orange;
+        if(!p.points.any((p)=>indices.containsKey(p.index)))continue;
+        void path(List<ChartPivot> points) {
+          final shape=Path();var started=false;
+          for(final point in points) {
+            if(!indices.containsKey(point.index)){started=false;continue;}
+            final at=Offset(x(point.index),y(point.price));
+            if(started){shape.lineTo(at.dx,at.dy);}else{shape.moveTo(at.dx,at.dy);started=true;}
+          }
+          canvas.drawPath(shape,Paint()..color=color..style=PaintingStyle.stroke..strokeWidth=2);
+        }
+        if(p.triangle) {
+          path(p.points.where((v)=>v.high).toList());path(p.points.where((v)=>!v.high).toList());
+        }else{path(p.points);}
+        for(var i=0;i<p.points.length;i++) {
+          final point=p.points[i];if(!indices.containsKey(point.index))continue;
+          final at=Offset(x(point.index),y(point.price));canvas.drawCircle(at,3,Paint()..color=color);
+          text(p.labels[i],at+Offset(-6,point.high?-18:8),color,fontSize:11);
+        }
+        if(p.neckline!=null)level(p.neckline!,'NECK',color);
+      }}
     }
     for(final m in markers) {
       final index=indices[m['tick']];if(index==null)continue;

@@ -41,5 +41,6 @@ jobs:
           path: |
             alpaca-policy.txt
             mobile/direct-flutter-tests.json
+            mobile/classic-preview-*.png
             mobile/build/app/test-results/**
           retention-days: 14
