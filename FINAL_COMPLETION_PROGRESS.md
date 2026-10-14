@@ -96,3 +96,8 @@ Historical next-action statement withdrawn on 2026-10-14: development and indepe
 ## Resume batch16 — artifact verification and actual classical geometry review (2026-10-14)
 
 Reconfirmed remote HEAD13235f6e and reconstructed422 source/document blobs with exact Git hashes after transient workspace loss. No prior local draft was available; remote reports remain the recovery authority. Downloaded all five original6a71afff CI ZIPs, verified SHA-256/CRC and recounted674 Flutter,41 JVM,1192 Python,23 chart and6 Golden. PostgreSQL/backup/Compose receipts verified; preserved original archives with an offline verifier in docs/evidence/storage-parity-20261014/. Six previews were actually viewed: H&S labels overlap and the conservative break level was drawn as a flat neckline despite unequal N1/N2. Corrected annotation placement and draw the observed N1–N2 segment separately from the unchanged conservative break threshold. Extended existing widget/render assertions; new CI and corrected visual inspection pending. No new APK, provider connection, independent review or full-design acceptance claimed.
+
+
+## Batch17 — read-only health probes and collector shutdown recovery
+
+Reproduced2 failures: both health commands created an absent database. Replaced repository initialization with bounded read-only probes, no financial/advisory writer lock or migrations. Collector SIGTERM now records STOPPED only for its current lease owner; stale-owner shutdown cannot overwrite the successor. Actual process outage/recovery and account preservation verified.56 targeted Python checks passed; PostgreSQL adds2 acceptance checks and awaits CI. See docs/RUNTIME_HEALTH_RECOVERY_20261014.md. This does not close durable market-priced execution or long soak.

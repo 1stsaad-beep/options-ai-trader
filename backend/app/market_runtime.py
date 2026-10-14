@@ -303,12 +303,16 @@ class MarketCollector:
                 save_coordinator(db, state)
                 return self._health(db, 'DATA_UNAVAILABLE', timestamp(self.now()), demand, 'PROVIDER_OR_STORAGE_UNAVAILABLE')
 
-    def release(self):
+    def release(self, *, mark_stopped=False):
         with self.repo.transaction() as db:
             state = coordinator_in(db)
             if state['owner'] == self.owner:
                 state.update(owner=None, lease_until=None)
                 save_coordinator(db, state)
+                if mark_stopped:
+                    # Same transaction and current owner only: an old process
+                    # must never mark a successor's fresh heartbeat stopped.
+                    self._health(db, 'STOPPED', timestamp(self.now()), self._demand(db))
 
 
 def status(service, account_id):
@@ -318,7 +322,8 @@ def status(service, account_id):
         config = config_in(db, account_id)
         row = db.one("SELECT * FROM runtime_health WHERE name='market_collector'")
         heartbeat = json.loads(row['payload']) if row else None
-        healthy = row is not None and 0 <= (now - timestamp(row['updated_at'])).total_seconds() <= 30
+        from .runtime_health import heartbeat_valid
+        healthy = heartbeat_valid(row, 'market_collector', now)
         links = db.all('SELECT l.*,j.payload,j.digest,j.size_bytes,j.request_key,j.fingerprint,j.sequence,j.recorded_at,j.id FROM market_runtime_latest l JOIN market_data_journal j ON l.observation_id=j.id JOIN watchlist w ON w.account_id=l.account_id AND w.symbol=l.symbol WHERE l.account_id=?', (account_id,))
         latest = []
         for link in links:

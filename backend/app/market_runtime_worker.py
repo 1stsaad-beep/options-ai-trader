@@ -55,9 +55,10 @@ def build_provider(repo, owner, now):
 
 
 def heartbeat_ok(repo, now):
+    from .runtime_health import heartbeat_valid
     with repo.transaction() as db:
-        row = db.one("SELECT updated_at FROM runtime_health WHERE name='market_collector'")
-    return row is not None and 0 <= (now - timestamp(row['updated_at'])).total_seconds() <= 30
+        row = db.one("SELECT updated_at,payload FROM runtime_health WHERE name='market_collector'")
+    return heartbeat_valid(row, 'market_collector', now)
 
 
 def reset_auth_lock(service):
@@ -86,9 +87,11 @@ def main(argv=None):
         raise SystemExit('Live is hard locked')
     now = lambda: datetime.now(timezone.utc)
     url = os.getenv('DATABASE_URL', 'sqlite:///options_demo.db')
+    if args.healthcheck:
+        from .runtime_health import probe_heartbeat
+        return 0 if probe_heartbeat(url, 'market_collector', now()) else 1
     stop = threading.Event()
-    for name in (signal.SIGTERM, signal.SIGINT):
-        signal.signal(name, lambda *_: stop.set())
+    previous = {name:signal.signal(name, lambda *_:stop.set()) for name in (signal.SIGTERM, signal.SIGINT)}
     repo = collector = None
     owner = str(uuid.uuid4())
     try:
@@ -97,8 +100,6 @@ def main(argv=None):
                 if repo is None:
                     repo = Repository(url, invalidate_accounts=False)
                 service = TradingService(repo)
-                if args.healthcheck:
-                    return 0 if heartbeat_ok(repo, now()) else 1
                 if args.reset_auth_lock:
                     reset_auth_lock(service)
                     return 0
@@ -125,11 +126,13 @@ def main(argv=None):
     finally:
         if collector is not None:
             try:
-                collector.release()
+                collector.release(mark_stopped=stop.is_set())
             except Exception:
                 pass
         if repo is not None:
             repo.close()
+        for name, handler in previous.items():
+            signal.signal(name, handler)
     return 0
 
 

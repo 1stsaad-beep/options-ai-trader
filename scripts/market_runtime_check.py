@@ -19,7 +19,7 @@ from app.service import TradingService
 from market_data_journal_check import fixture as journal_fixture
 
 
-def check(repositories):
+def check(repositories, url=None):
     services = [TradingService(r) for r in repositories]
     sample, initial = journal_fixture()
     clock = [initial]
@@ -131,7 +131,24 @@ def check(repositories):
         assert fresh_process.tick()['state'] == 'COLLECTING_ANALYSIS_ONLY'
         assert all(not services[0].rows(a, 'orders') for a in accounts)
         checks.append('restart_backoff_recovery_and_no_fabricated_stop_fills')
-        fresh_process.release()
+        if url:
+            from app.runtime_health import probe_heartbeat, readonly_connection
+            # Probe succeeds while the financial advisory writer lock is held.
+            with repositories[1].transaction():
+                assert probe_heartbeat(url, 'market_collector', clock[0])
+            with readonly_connection(url) as connection:
+                try:
+                    connection.execute("UPDATE runtime_health SET updated_at=updated_at WHERE name='market_collector'")
+                except Exception as error:
+                    assert error.sqlstate == '25006'
+                else:
+                    raise AssertionError('Health connection accepted a write')
+            checks.append('readonly_probe_has_no_advisory_lock_and_database_rejects_writes')
+        fresh_process.release(mark_stopped=True)
+        assert not rt.status(services[0], accounts[0])['heartbeat_fresh']
+        if url:
+            assert not probe_heartbeat(url, 'market_collector', clock[0])
+            checks.append('graceful_owner_shutdown_immediately_invalidates_probe_and_api')
     return checks
 
 
@@ -145,7 +162,7 @@ def run():
     try:
         for _ in range(2):
             repositories.append(Repository(url, invalidate_accounts=False))
-        checks = check(repositories)
+        checks = check(repositories, url=url)
         print(json.dumps({'status': 'passed', 'database': 'PostgreSQL', 'checks_passed': len(checks),
                           'checks_failed': 0, 'checks': checks, 'external_market_connection': False,
                           'provider': 'explicit_mock_contract'}, indent=2))

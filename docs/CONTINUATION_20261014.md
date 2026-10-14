@@ -133,3 +133,8 @@ All applicable gates for code6a71afff6109c15a9d193ab67a0f1c136a7cb147 completed 
 ## Batch16 — recovered artifacts and visual defect correction
 
 See FINAL_COMPLETION_PROGRESS.md and docs/evidence/storage-parity-20261014/index.json. Existing6a71afff results are now verified from original bytes, not metadata alone. Visual inspection found real annotation/neckline issues; the source fix preserves detector confirmation policy, source pivots and historical snapshots. Await new CI and review of corrected previews; old Golden images remain unchanged.
+
+
+## Batch17 — read-only health probes and collector shutdown recovery
+
+Reproduced2 failures: both health commands created an absent database. Replaced repository initialization with bounded read-only probes, no financial/advisory writer lock or migrations. Collector SIGTERM now records STOPPED only for its current lease owner; stale-owner shutdown cannot overwrite the successor. Actual process outage/recovery and account preservation verified.56 targeted Python checks passed; PostgreSQL adds2 acceptance checks and awaits CI. See docs/RUNTIME_HEALTH_RECOVERY_20261014.md. This does not close durable market-priced execution or long soak.

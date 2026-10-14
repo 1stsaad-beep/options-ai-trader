@@ -131,13 +131,10 @@ def opportunities_for(service, account_id):
 
 def heartbeat_ok(repo, now):
     """Process liveness only; never repairs a ledger or grants entry authority."""
-    try:
-        with repo.transaction() as db:
-            row = db.one("SELECT * FROM runtime_health WHERE name='worker'")
-        return (row is not None and json.loads(row['payload'])['status'] == 'OK' and
-                0 <= (now - datetime.fromisoformat(row['updated_at'])).total_seconds() <= 120)
-    except (KeyError, TypeError, ValueError):
-        return False
+    from .runtime_health import heartbeat_valid
+    with repo.transaction() as db:
+        row = db.one("SELECT * FROM runtime_health WHERE name='worker'")
+    return heartbeat_valid(row, 'worker', now)
 
 
 def main(argv=None):
@@ -152,6 +149,10 @@ def main(argv=None):
         parser.error('interval must be between 1 and 60 seconds')
     if os.getenv('TRADING_MODE', 'paper') != 'paper' or os.getenv('ENABLE_LIVE', 'false').lower() != 'false':
         raise RuntimeError('Live is hard locked')
+    if args.healthcheck:
+        from .runtime_health import probe_heartbeat
+        return 0 if probe_heartbeat(os.getenv('DATABASE_URL', 'sqlite:///options_demo.db'),
+            'worker', datetime.now(timezone.utc)) else 1
     stop = threading.Event()
     previous = {name:signal.signal(name, lambda *_:stop.set()) for name in (signal.SIGINT, signal.SIGTERM)}
     repo = None
@@ -160,11 +161,8 @@ def main(argv=None):
             try:
                 if repo is None:
                     # Real process recovery preserves receipts but disarms stale
-                    # account knowledge. Health probes never invalidate accounts.
-                    repo = Repository(os.getenv('DATABASE_URL', 'sqlite:///options_demo.db'),
-                                      invalidate_accounts=not args.healthcheck)
-                if args.healthcheck:
-                    return 0 if heartbeat_ok(repo, datetime.now(timezone.utc)) else 1
+                    # account knowledge. Probes use a separate read-only path.
+                    repo = Repository(os.getenv('DATABASE_URL', 'sqlite:///options_demo.db'))
                 result = tick(TradingService(repo), execute_mock=args.execute_mock)
                 print(json.dumps({'component':'synthetic_worker', 'status':'OK',
                     'source':'synthetic_fixture', 'execute_mock':args.execute_mock,
