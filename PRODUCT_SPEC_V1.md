@@ -31,3 +31,7 @@ Four distinct modes: Demo Synthetic (offline generated observations), Direct Alp
 1. Audit current implementation and close critical defects with regression evidence and frequent non-forced Git checkpoints.
 2. Independent review pass after implementation and final applicable Python/Flutter/Golden/native/API/security/PostgreSQL/Compose/causality/lifecycle verification. Mocks, real provider access and physical-phone evidence remain distinct.
 3. Only after those gates: one final candidate APK with SHA-256, signer, source SHA/artifact, readiness matrix and short final phone acceptance. Never ask the user to test intermediate APKs. Do not label incomplete essentials V1.0 complete. Three real sessions cannot be fabricated or replaced by fixture results.
+
+## Current gate correction — 2026-10-14
+
+The user explicitly requests an honest post-Build23 audit and continued feasible repairs. No new APK before software gaps are closed, and no phone test now. Build23 is a historical verified engineering artifact; it does not fulfill the final V1.0 delivery gate. An independent review requires a distinct reviewer and a documented report; another pass by the implementer is not sufficient. See docs/POST_BUILD23_AUDIT_20261014_AR.md.

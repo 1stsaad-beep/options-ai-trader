@@ -1,3 +1,5 @@
+> 2026-10-14 correction: this is the implementer's historical adversarial pass, not completion of the independent-review assignment. Additional defects were found and fixed after Build23. Current status: [post-Build23 audit](POST_BUILD23_AUDIT_20261014_AR.md). No new APK or phone test now.
+
 # Build23 engineering review
 
 Review boundary: completion changes from recovery baseline `9ff7b6084c5a874dd3621748346bf0692f5bc962`. This is a separate adversarial review pass by the same engineering agent, not a second human review or external certification. Acceptance uses original failing regressions, immutable-source CI artifacts, independently executed server calendar fixtures and real Android framework instrumentation with mock provider data.
