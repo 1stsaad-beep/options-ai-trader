@@ -52,7 +52,7 @@ Added source-specific wave history to the atomic device ledger/backup, separate 
 
 The initial capacity is explicit:10000 observations/8MiB, no silent eviction or auto-reset. This does not close unbounded archive/soak/performance work; segmentation outside the live ledger and incremental checkpoint optimization remain open. The archive is optional research: corrupted research is retained and unavailable, but cannot veto qualified owned protection. Failed CAS/readback never claims a new archived observation. Tests cover rolling windows, restore, revision/source/gap boundaries, corruption, capacity and original events.
 
-Sourceb2d1d651 stopped at two redundant null-assertion analyzer warnings; corrected inc2e2793d. Chart/golden38544279560 and security38544279376 passed; collect full Direct/JVM38544279503 results before claiming batch acceptance.
+Sourceb2d1d651 stopped at two redundant null-assertion analyzer warnings; corrected inc2e2793d. Chart/golden38544279560 and security38544279376 passed. Full Direct38544279503 found a runtime generic cast when appending milliseconds to a newly created typed integer list; explicitly typed map<int> fixes the actual append, retaining all failure/restore tests. Batch6 acceptance remains pending that correction's CI; earlier chart success did not establish archive correctness.
 
 ## Batch 7 — observed option counterfactual contract (integration pending)
 

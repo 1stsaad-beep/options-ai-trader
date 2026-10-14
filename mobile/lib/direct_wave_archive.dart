@@ -119,7 +119,7 @@ class DirectWaveArchive {
         (raw[i][1] as num).toDouble(),(raw[i][2] as num).toDouble(),(raw[i][3] as num).toDouble(),(raw[i][4] as num).toDouble(),(raw[i][5] as num).toDouble()),
         ...fresh.sublist(start,end)];
       journal.append([for(var i=0;i<all.length;i++)all[i].candle(i)]);
-      times.addAll(fresh.sublist(start,end).map((b)=>b.time.toUtc().millisecondsSinceEpoch));
+      times.addAll(fresh.sublist(start,end).map<int>((b)=>b.time.toUtc().millisecondsSinceEpoch));
       active['journal']=journal.toJson();active['capturedAt']=captured.toUtc().toIso8601String();
       (active['captures'] as List).add({'through':times.length-1,'at':captured.toUtc().toIso8601String()});
       start=end;if(start<fresh.length)boundary='OBSERVATION_GAP';
