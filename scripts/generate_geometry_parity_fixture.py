@@ -59,8 +59,21 @@ def main():
             for i in [10,11]:bars[i]=Bar(bars[i].timestamp,100,105,99.5,100,1000)
         bar_cases.append({'name':name,'bars':[{'at':b.timestamp.isoformat(),'o':b.open,'h':b.high,'l':b.low,'c':b.close,'v':b.volume} for b in bars],
             'expected':portable_points(confirmed_pivots(bars,left=3,right=3))})
+    for name,prices in [('gartley_source',cases['GARTLEY']),('butterfly_extension_source',cases['BUTTERFLY_EXTENSION_RANGE']),
+                        ('bearish_cypher_source',[400-p for p in cases['CYPHER']])]:
+        high=name.startswith('bearish')
+        vertices=[(0,prices[0]+(-10 if high else 10))]+[(3+i*10,p) for i,p in enumerate(prices)]+[(48,prices[-1]+(-10 if high else 10))]
+        bars=[]
+        for i in range(49):
+            a,b=next((a,b) for a,b in zip(vertices,vertices[1:]) if a[0]<=i<=b[0])
+            c=a[1]+(b[1]-a[1])*(i-a[0])/(b[0]-a[0])
+            bars.append(Bar(START+timedelta(minutes=i),c,c+.01,c-.01,c,1000))
+        ps=confirmed_pivots(bars,left=3,right=3)
+        assert portable_harmonics(ps),name
+        bar_cases.append({'name':name,'bars':[{'at':b.timestamp.isoformat(),'o':b.open,'h':b.high,'l':b.low,'c':b.close,'v':b.volume} for b in bars],
+            'expected':portable_points(ps),'harmonics':portable_harmonics(ps)})
     path=ROOT/'mobile/test/fixtures/geometry_contract_v1.json'
     path.write_text(json.dumps({'contract':GEOMETRY_CONTRACT_VERSION,'harmonics':harmonic,'classical':classic,'bars':bar_cases},indent=2)+'\n')
-    print('Authored18 harmonic,10 classic,3 bar-source cases')
+    print('Authored18 harmonic,10 classic,6 bar-source cases')
 
 if __name__=='__main__':main()

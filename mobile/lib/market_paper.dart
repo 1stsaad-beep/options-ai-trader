@@ -12,6 +12,7 @@ import 'market_paper_settlement.dart';
 import 'direct_wave_archive.dart';
 import 'observed_option_replay.dart';
 import 'option_observation_archive.dart';
+import 'paper_money.dart';
 import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
@@ -412,9 +413,10 @@ class MarketPaper extends ChangeNotifier {
           if(position['consumedQuote']==quoteId||(position['lastCloseQuoteAt'] is String&&!q.time.isAfter(DateTime.parse(position['lastCloseQuoteAt'] as String)))){await _record(id,symbol,'CLOSE_WAIT_NEW_QUOTE');return;}
           final filled=math.min(desired,math.min(q.bidSize,q.askSize));
           final remaining=qty-filled,unfilled=desired-filled;
-          final removedCost=(position['cost'] as int)*filled~/qty;
-          final entryFees=((position['entryFees']??qty*65) as int)*filled~/qty;
-          final pnl=q.bid*filled*100-filled*65-removedCost-entryFees;
+          final removedCost=paperPortion(position['cost'] as int,filled,qty);
+          final entryFees=paperPortion((position['entryFees']??qty*65) as int,filled,qty);
+          final gross=paperProduct(paperProduct(q.bid,filled),100);
+          final pnl=gross-filled*65-removedCost-entryFees;
           final tradePnl=((position['realizedPnl']??0) as int)+pnl;
           final next=copy(),target=_in(next,id),p=(target['positions'] as Map)[symbol] as PaperRow;
           if(remaining==0){(target['positions'] as Map).remove(symbol);}else{
@@ -425,7 +427,7 @@ class MarketPaper extends ChangeNotifier {
             if(unfilled>0){p['closeIntent']={'reason':reason,'remaining':unfilled,'at':pending?['at']??now().toUtc().toIso8601String()};}
             else{p.remove('closeIntent');}
           }
-          target['cash']=(target['cash'] as int)+q.bid*filled*100-filled*65;
+          target['cash']=paperSum(target['cash'] as int,gross-filled*65);
           if(target['fees'] is int)target['fees']=(target['fees'] as int)+filled*65;
           if(remaining==0&&target['closedTrades'] is int)target['closedTrades']=(target['closedTrades'] as int)+1;
           if(remaining==0&&tradePnl>0&&target['winningTrades'] is int)target['winningTrades']=(target['winningTrades'] as int)+1;

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'direct_alpaca.dart';
 import 'market_paper_reports.dart';
 import 'paper_settlement.dart';
+import 'paper_money.dart';
 
 Map<String, dynamic> copyPaper(Map<String, dynamic> value) =>
     jsonDecode(jsonEncode(value)) as Map<String, dynamic>;
@@ -195,20 +196,20 @@ void validatePaper(Map<String, dynamic> book) {
         final result=projectPaperSettlement(p==null?null:{...p,'opened':acquired[key]},deliveries[key],cash,
           request,DateTime.parse(event['at'] as String));
         if (result['symbol']!=key || paperBytes(result)!=paperBytes(receipt['result'])) invalid();
-        cash+=result['cashDelta'] as int;fees+=result['feeCents'] as int;
-        settlementCount++;settlementPnl+=result['realizedPnl'] as int;
+        cash=paperSum(cash,result['cashDelta'] as int);fees=paperSum(fees,result['feeCents'] as int);
+        settlementCount++;settlementPnl=paperSum(settlementPnl,result['realizedPnl'] as int);
         final day=DateTime.parse(event['at'] as String).toUtc().toIso8601String().substring(0,10);
-        daily[day]=(daily[day]??0)+(result['realizedPnl'] as int);
+        daily[day]=paperSum(daily[day]??0,result['realizedPnl'] as int);
         final old=deliveries[key]??{'quantity':0,'cost':0};
         final qty=(old['quantity'] as int)+(result['shareDelta'] as int);
-        final cost=(old['cost'] as int)+(result['shareBasisDelta'] as int);
+        final cost=paperSum(old['cost'] as int,result['shareBasisDelta'] as int);
         if(qty==0){deliveries.remove(key);}else{deliveries[key]={'quantity':qty,'cost':cost};}
         final removed=result['optionQuantity'] as int;
         if(removed>0) {
           if(removed==p!['quantity']){held.remove(key);acquired.remove(key);}else{
             p['quantity']=(p['quantity'] as int)-removed;p['cost']=(p['cost'] as int)-(result['removedCost'] as int);
             p['entryFees']=(p['entryFees'] as int)-(result['removedEntryFees'] as int);
-            p['realizedPnl']=(p['realizedPnl'] as int)+(result['realizedPnl'] as int);
+            p['realizedPnl']=paperSum(p['realizedPnl'] as int,result['realizedPnl'] as int);
           }
         }
         continue;
@@ -224,26 +225,27 @@ void validatePaper(Map<String, dynamic> book) {
       final q = event['quote'] as Map, key = event['symbol'] as String;
       final qty = f['quantity'] as int, price = f['price'] as int, fee = f['fee'] as int;
       if (fee != qty * 65 || price != q[f['side'] == 'BUY' ? 'ask' : 'bid']) invalid();
-      fees += fee;
+      fees = paperSum(fees,fee);
+      final gross=paperProduct(paperProduct(qty,price),100);
       if (f['side'] == 'BUY') {
         final p = held.putIfAbsent(key, () => {'contract': q['contract'], 'quantity': 0, 'cost': 0, 'entryFees': 0, 'realizedPnl': 0});
         if (p['contract'] != q['contract']) invalid();
         acquired[key]=event['at'] as String;
         p['quantity'] = (p['quantity'] as int) + qty;
-        p['cost'] = (p['cost'] as int) + qty * price * 100;
-        p['entryFees'] = (p['entryFees'] as int) + fee;
-        cash -= qty * price * 100 + fee;
+        p['cost'] = paperSum(p['cost'] as int,gross);
+        p['entryFees'] = paperSum(p['entryFees'] as int,fee);
+        cash = paperSum(cash,-paperSum(gross,fee));
       } else {
         final p = held[key];
         if (p == null || p['contract'] != q['contract'] || qty > (p['quantity'] as int)) invalid();
         final oldQty=p['quantity'] as int;
-        final cost=(p['cost'] as int)*qty~/oldQty,entry=(p['entryFees'] as int)*qty~/oldQty;
-        final pnl = qty * price * 100 - fee - cost - entry;
+        final cost=paperPortion(p['cost'] as int,qty,oldQty),entry=paperPortion(p['entryFees'] as int,qty,oldQty);
+        final pnl = paperSum(gross-fee,-paperSum(cost,entry));
         if (f['realizedPnl'] != pnl || f['removedCost'] != cost || f['entryFees'] != entry) invalid();
-        cash += qty * price * 100 - fee;
-        p['realizedPnl']=(p['realizedPnl'] as int)+pnl;
+        cash = paperSum(cash,gross-fee);
+        p['realizedPnl']=paperSum(p['realizedPnl'] as int,pnl);
         final day = (event['at'] as String).substring(0, 10);
-        daily[day] = (daily[day] ?? 0) + pnl;
+        daily[day] = paperSum(daily[day] ?? 0,pnl);
         if(qty==oldQty){closed++;if((p['realizedPnl'] as int)>0)winners++;held.remove(key);acquired.remove(key);}
         else{p['quantity']=oldQty-qty;p['cost']=(p['cost'] as int)-cost;p['entryFees']=(p['entryFees'] as int)-entry;}
 

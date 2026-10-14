@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:options_ai_trader/direct_alpaca.dart';
 import 'package:options_ai_trader/direct_replay.dart';
+import 'package:options_ai_trader/direct_labs.dart';
 import 'package:options_ai_trader/demo/chart_analysis.dart';
+import 'package:options_ai_trader/demo/chart_painter.dart';
 import 'package:options_ai_trader/market_geometry.dart';
 import 'market_indicators_test.dart' show closeTree;
 
@@ -38,8 +41,21 @@ void main() {
       }
       final saved=directResearchSnapshot(rows);expect(saved['geometryContract'],marketGeometryContract);
       closeTree(saved['harmonics'],MarketGeometry.harmonics(full));
+      if(c.containsKey('harmonics')){closeTree(saved['harmonics'],c['harmonics']);expect(saved['harmonics'],isNotEmpty);}
       closeTree(saved['classicalPatterns'],MarketGeometry.classicPatterns(full,rows.last.close));
     });
+    if(c['name']=='gartley_source') {
+      testWidgets('Direct painter receives actual detected XABCD and PRZ from completed source',(tester)async {
+        await tester.pumpWidget(MaterialApp(home:Scaffold(body:SingleChildScrollView(child:DirectLabs(rows:rows,symbol:'NVDA',source:'fixture')))));
+        await tester.ensureVisible(find.text('Harmonic Lab'));await tester.tap(find.text('Harmonic Lab'));await tester.pumpAndSettle();
+        final painter=tester.widget<CustomPaint>(find.byKey(const Key('direct-chart'))).painter! as DemoCandlePainter;
+        expect(painter.patterns.single.name,'Gartley');expect(painter.patterns.single.points.length,5);
+        expect(painter.patterns.single.labels,['X','A','B','C','D']);
+        expect(painter.patterns.single.przLow!,lessThanOrEqualTo(painter.patterns.single.points.last.price));
+        expect(painter.patterns.single.przHigh!,greaterThanOrEqualTo(painter.patterns.single.points.last.price));
+        expect(tester.takeException(),isNull);
+      });
+    }
   }
   test('invalid confirmations, ordering and tolerance cannot invent patterns',() {
     expect(()=>MarketGeometry.harmonics([const ChartPivot(1,1,100,false)]),throwsFormatException);

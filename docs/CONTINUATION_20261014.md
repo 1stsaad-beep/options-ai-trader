@@ -92,4 +92,12 @@ Parser now rejects sub-cent/oversize prices instead of rounding a provider quote
 
 NEXT: finish final applicable CI without interrupting native JVM jobs; inspect raw artifact counts/digests and save evidence. Update requirements with accepted source scopes. Remaining code includes full wave/divergence/strategy/Demo parity, scalable storage outside the rewritten live ledger, richer Direct execution/Greeks and adjusted-deliverable modeling, legacy lot reconstruction, delivered-stock qualified marks and a durable actual-market virtual execution worker. Read-only collector and synthetic recovery are not that worker. Independent review is still unavailable; no APK or phone request.
 
+## Batch 12 — exact financial receipt products and proportional basis (acceptance pending)
+
+Self-review found ordinary partial closes multiplying cost*quantity in a64-bit Dart integer before division, unlike the already-exact settlement path. Added BigInt intermediate product/sum/allocation helpers bounded to the portable ledger range and applied them to closure and receipt reconstruction. A regression exercises a valid million-contract historical fixture with8e15-cent basis, an exact500000-contract partial reduction and restart. A separate forged receipt whose gross product is2^64+48384 must be rejected, never accepted as48384; original unreadable storage is retained. These extreme local fixtures are arithmetic adversaries, not supported trading recommendations or real positions.
+
+Added3 additional complete OHLCV geometry fixtures (Gartley, extended Butterfly, bearish Cypher), comparing actual detected pivots and nonempty saved harmonic results with Python. A Direct widget assertion verifies the painter receives the five observed XABCD points and enclosing PRZ; this complements geometry unit checks but is not an independent visual-design acceptance.
+
+Verified original c96447e backend artifacts by SHA-256+ZIP CRC:1146 Python tests, zero failures/errors/skips;22 execution +6 journal +8 runtime +5 settlement PostgreSQL checks,17 backup/restore checks and17 Compose checks passed. Files are downloaded for the forthcoming source-linked evidence archive. Final Dart/JVM/security results remain pending this correction's publication.
+
 Open software work remains distinct from external evidence: actual OPRA entitlement and three recorded sessions, secure stable signing material, independently deployed uptime, signed iOS/device acceptance cannot be manufactured. The software gaps above remain authorized work, not requests for user testing.
