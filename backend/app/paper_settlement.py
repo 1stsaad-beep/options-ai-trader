@@ -22,8 +22,10 @@ def integer(value, minimum=0):
 
 
 def stamp(value):
-    if not isinstance(value, str):
+    if not isinstance(value, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})', value):
         raise ValueError('Explicit timestamp required')
+    if value[-1] != 'Z' and (int(value[-5:-3]) > 23 or int(value[-2:]) > 59):
+        raise ValueError('Invalid timezone components')
     result = datetime.fromisoformat(value.replace('Z', '+00:00'))
     if result.tzinfo is None or result.utcoffset() is None:
         raise ValueError('Timezone required')
@@ -45,7 +47,7 @@ def project(position, delivery, cash, request, now):
     if request['source'] not in ('manual_paper', 'fixture'):
         raise ValueError('Paper-only receipt source required')
     for key in ('id', 'reference'):
-        if not isinstance(request[key], str) or not 1 <= len(request[key].strip()) <= 120:
+        if not isinstance(request[key], str) or not request[key].strip() or len(request[key]) > 120:
             raise ValueError('Receipt identity/reference required')
     match = PATTERN.fullmatch(request['contract']) if isinstance(request['contract'], str) else None
     if not match or int(match[6]) <= 0 or int(match[6]) % 10:
@@ -68,7 +70,7 @@ def project(position, delivery, cash, request, now):
             raise ValueError('Owned delivered shares required; short stock prohibited')
         basis_delta = -(stock_cost * qty // stock_qty)
         stock_delta = -qty
-        cash_delta = spot * qty - fee
+        cash_delta = integer(spot * qty) - fee
         pnl = cash_delta + basis_delta
     elif action in ('EXERCISE', 'EXPIRE_WORTHLESS'):
         if not position or position['contract'] != request['contract'] or qty > integer(position['quantity'], 1):
@@ -91,17 +93,18 @@ def project(position, delivery, cash, request, now):
         else:
             if effective > cutoff:
                 raise ValueError('Exercise after cutoff prohibited')
-            shares = qty * 100
+            shares = integer(qty * 100)
+            gross = integer(strike * shares)
             if right == 'C':
-                cash_delta = -strike * shares - fee
+                cash_delta = -gross - fee
                 stock_delta = shares
-                basis_delta = strike * shares + removed_cost + removed_fees + fee
+                basis_delta = gross + removed_cost + removed_fees + fee
             else:
                 if shares > stock_qty:
                     raise ValueError('Put exercise requires owned underlying shares; no short delivery')
                 stock_delta = -shares
                 basis_delta = -(stock_cost * shares // stock_qty)
-                cash_delta = strike * shares - fee
+                cash_delta = gross - fee
                 pnl = cash_delta + basis_delta - removed_cost - removed_fees
     else:
         raise ValueError('Long-only equity options cannot receive assignment or cash settlement')

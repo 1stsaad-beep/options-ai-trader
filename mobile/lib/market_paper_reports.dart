@@ -25,19 +25,27 @@ Map<String, dynamic> paperPerformance(Map<String, dynamic> account, DateTime now
     if (!quote.valid(now, quantity: quantity)) { complete = false; continue; }
     liquidation += quote.bid * quantity * 100 - quantity * 65;
   }
+  final deliveries=account['deliveryPositions'] as Map? ?? {};
+  final deliveryBasis=deliveries.values.fold<int>(0,(sum,p)=>sum+(p['cost'] as int));
+  if(deliveries.isNotEmpty)complete=false; // No stock mark is invented from an option or receipt.
   final cash = account['cash'] as int, initial = account['initialCash'] as int;
   // Original V1 charged USD0.65 on every entry; this basis is derivable for
   // still-owned inventory. Unknown historical trade/fee totals remain null.
-  final realized = cash + basis + entryFees - initial;
+  final realized = cash + basis + entryFees + deliveryBasis - initial;
   final equity = complete ? cash + liquidation : null;
-  final trades = account['closedTrades'] as int?;
+  final settled=(account['settlementCount']??0) as int;
+  final trades = settled>0?null:account['closedTrades'] as int?;
   return {
     'source': 'independent_market_paper', 'executionModel': 'approximate_quote_side',
     'initialCashCents': initial, 'cashCents': cash, 'realizedPnlCents': realized,
     'unrealizedPnlCents': complete ? liquidation - basis - entryFees : null,
     'equityCents': equity, 'returnPercent': equity == null ? null : (equity - initial) * 100 / initial,
     'valuationComplete': complete, 'totalFeesCents': account['fees'],
-    'closedTrades': trades, 'winningTrades': account['winningTrades'],
+    'closedTrades': trades, 'winningTrades': settled>0?null:account['winningTrades'],
+    'ordinaryOptionTradeCloses':account['closedTrades'],'settlementEvents':settled,
+    'settlementRealizedPnlCents':account['settlementRealizedPnl']??0,
+    'deliveredShareBasisCents':deliveryBasis,'deliveredShares':deliveries,
+    'tradeCountPolicy':settled>0?'Mixed stock delivery and option receipts; aggregate win rate not inferred':'ordinary_option_round_trips',
     'winRatePercent': trades == null || trades == 0 ? null : (account['winningTrades'] as int) * 100 / trades,
     'sampledMaxDrawdownCents': account['maxDrawdown'],
     'drawdownPolicy': 'observed_fresh_option_bid_equity_after_modeled_closing_fees',

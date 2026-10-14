@@ -819,6 +819,221 @@
       },
       "now": "2026-10-17T15:00:00+00:00",
       "rejected": true
+    },
+    {
+      "name": "invalid_calendar_timestamp",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-02-30T15:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "invalid_clock",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-13T25:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "invalid_offset",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00+00:99",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "space_timestamp",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16 20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "zero_year",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "0000-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "overlong_padded_reference",
+      "position": {
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "cost": 42000,
+        "entryFees": 130,
+        "opened": "2026-10-13T15:00:00Z"
+      },
+      "delivery": null,
+      "cash": 3000000,
+      "request": {
+        "id": "call_partial",
+        "action": "EXERCISE",
+        "contract": "NVDA261016C00200000",
+        "quantity": 1,
+        "feeCents": 100,
+        "underlyingCents": 20000,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "                                                                                                                        a"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "gross_overflow_cannot_hide_behind_fee",
+      "position": null,
+      "delivery": {
+        "quantity": 2,
+        "cost": 2
+      },
+      "cash": 0,
+      "request": {
+        "id": "call_partial",
+        "action": "SELL_DELIVERY",
+        "contract": "NVDA261016C00200000",
+        "quantity": 2,
+        "feeCents": 9007199254740991,
+        "underlyingCents": 9007199254740991,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "rejected": true
+    },
+    {
+      "name": "large_proportional_basis_is_exact",
+      "position": null,
+      "delivery": {
+        "quantity": 10,
+        "cost": 9007199254740990
+      },
+      "cash": 0,
+      "request": {
+        "id": "call_partial",
+        "action": "SELL_DELIVERY",
+        "contract": "NVDA261016C00200000",
+        "quantity": 5,
+        "feeCents": 0,
+        "underlyingCents": 1,
+        "effectiveAt": "2026-10-16T20:00:00Z",
+        "recordedAt": "2026-10-17T14:00:00Z",
+        "source": "fixture",
+        "reference": "parity"
+      },
+      "now": "2026-10-17T15:00:00+00:00",
+      "expected": {
+        "version": "paper-equity-delivery-v1",
+        "symbol": "NVDA",
+        "cashDelta": 5,
+        "optionQuantity": 0,
+        "removedCost": 0,
+        "removedEntryFees": 0,
+        "shareDelta": -5,
+        "shareBasisDelta": -4503599627370495,
+        "realizedPnl": -4503599627370490,
+        "feeCents": 0,
+        "externalOrder": false,
+        "source": "paper_receipt"
+      }
     }
   ]
 }

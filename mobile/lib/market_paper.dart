@@ -8,6 +8,7 @@ import 'market_paper_reports.dart';
 import 'market_paper_risk.dart';
 import 'market_paper_policy.dart';
 import 'market_paper_backup.dart';
+import 'market_paper_settlement.dart';
 import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
@@ -138,14 +139,14 @@ class MarketPaper extends ChangeNotifier {
   PaperRow _in(PaperRow book,String id)=>(book['accounts'] as List).cast<PaperRow>().singleWhere((a)=>a['id']==id);
   PaperRow _quote(OptionQuote q)=>{'contract':q.contract,'feed':q.feed,'at':q.time.toUtc().toIso8601String(),
     'bid':q.bid,'ask':q.ask,'bidSize':q.bidSize,'askSize':q.askSize};
-  void _log(PaperRow book,String id,String symbol,String decision,{OptionQuote? quote,PaperRow? fill}) {
+  void _log(PaperRow book,String id,String symbol,String decision,{OptionQuote? quote,PaperRow? fill,DateTime? at}) {
     var rows=book['journal'] as List;
     if(rows.length>=1000) {
       final archive=(book['journalArchive']??=<dynamic>[]) as List;
       archive.add(rows);
       rows=<dynamic>[];book['journal']=rows;
     }
-    rows.add({'account':id,'symbol':symbol,'at':now().toUtc().toIso8601String(),'decision':decision,
+    rows.add({'account':id,'symbol':symbol,'at':(at??now()).toUtc().toIso8601String(),'decision':decision,
       if(quote!=null)'quote':_quote(quote),if(fill!=null)'fill':copyPaper(fill),
       if(_decisionEvidence!=null)'evidence':copyPaper(_decisionEvidence!)});
   }
@@ -164,6 +165,37 @@ class MarketPaper extends ChangeNotifier {
     busy=true;
     try {final next=copy();(next['accounts'] as List).add(_newAccount('mp-${now().microsecondsSinceEpoch}-${accounts.length}',name,initialCash,strategy));
       await _commit(next);
+    }finally{busy=false;notifyListeners();}
+  }
+  Future<PaperRow> settle(String id,PaperRow request) async {
+    if(!ready||busy)throw StateError('Ledger is not available');
+    if(account(id)['ledgerPolicy']!='receipt-v2')throw StateError('Complete original receipts required');
+    for(final e in journal.where((e)=>e['account']==id&&e['settlement'] is Map)) {
+      final prior=e['settlement'] as Map;
+      if(prior['request']['id']==request['id']) {
+        if(paperBytes(prior['request'])!=paperBytes(request))throw StateError('Receipt identity conflict');
+        return copyPaper(prior['result'] as PaperRow);
+      }
+    }
+    if(account(id)['enabled']==true)throw StateError('Stop account automation before a manual settlement');
+    if(request['action']!='SELL_DELIVERY') {
+      final effective=DateTime.tryParse('${request['effectiveAt']}');
+      if(effective==null||journal.any((e)=>e['account']==id&&e['fill']?['side']=='BUY'&&
+          e['quote']?['contract']==request['contract']&&DateTime.parse(e['at'] as String).isAfter(effective))) {
+        throw const FormatException('Receipt predates acquisition; historical lot reconstruction required');
+      }
+    }
+    busy=true;notifyListeners();final epoch=_epochs[id]??0;
+    try {
+      final at=now(),next=copy();
+      final applied=applyPaperSettlement(account(id),request,at);
+      final rows=(next['accounts'] as List);rows[rows.indexWhere((a)=>a['id']==id)]=applied['account'];
+      _log(next,id,applied['result']['symbol'] as String,'PAPER_SETTLEMENT_${request['action']}',at:at);
+      (next['journal'] as List).last['settlement']={'request':copyPaper(request),'result':applied['result']};
+      if(!await _commit(next,admission:()=>ready&&(_epochs[id]??0)==epoch&&account(id)['enabled']==false)) {
+        throw StateError('Settlement storage not confirmed');
+      }
+      return copyPaper(applied['result'] as PaperRow);
     }finally{busy=false;notifyListeners();}
   }
   Future<void> createComparisonExperiment() async {
@@ -236,6 +268,7 @@ class MarketPaper extends ChangeNotifier {
       return current();
     }
     String? risk(int qty,int price,{bool adding=false}) {
+      if((account(id)['deliveryPositions'] as Map? ?? {}).isNotEmpty)return 'DELIVERED_STOCK_REVIEW_REQUIRED';
       if(!paperSession(now()).entry)return 'SESSION_ENTRY_BLOCKED';
       if(!paperExpiry(marks.values.firstWhere((q)=>q.underlying==symbol&&q.direction==signal).contract,now()).entry)return 'EXPIRY_ENTRY_BLOCKED';
       if((account(id)['positions'] as Map).values.any((p)=>p['closeIntent']!=null))return 'PENDING_CLOSE_RISK_LIMIT';

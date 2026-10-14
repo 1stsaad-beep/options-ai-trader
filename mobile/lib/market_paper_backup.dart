@@ -18,7 +18,8 @@ class PaperBackup {
     const accountKeys={'id','name','cash','initialCash','enabled','positions','contracts','riskPercent','quantity',
       'stopPercent','takePercent','trailPercent','addEnabled','lastSignal','ledgerPolicy','strategy','watchlist','fees',
       'closedTrades','winningTrades','peakEquity','maxDrawdown','dailyRealized','allocationPercent','dailyLossPercent',
-      'maxPositions','maxContracts','holdingMode','maxHoldingDays','partialPercent','scenarioExit'};
+      'maxPositions','maxContracts','holdingMode','maxHoldingDays','partialPercent','scenarioExit',
+      'deliveryPositions','settlementCount','settlementRealizedPnl'};
     validatePaper(book);
     for(final a in book['accounts'] as List) {
       if((a as Map).keys.any((k)=>!accountKeys.contains(k)))throw const FormatException('Unknown account fields');

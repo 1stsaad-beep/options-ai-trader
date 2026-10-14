@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'direct_alpaca.dart';
 import 'market_paper_reports.dart';
+import 'paper_settlement.dart';
 
 Map<String, dynamic> copyPaper(Map<String, dynamic> value) =>
     jsonDecode(jsonEncode(value)) as Map<String, dynamic>;
@@ -44,6 +45,18 @@ void validatePaper(Map<String, dynamic> book) {
       if (!integer(a[field], 1, 50)) invalid();
     }
     if (a.containsKey('ledgerPolicy') && a['ledgerPolicy']!='receipt-v2') invalid();
+    if (a.containsKey('settlementCount') && !integer(a['settlementCount'], 0, maxMoney)) invalid();
+    if (a.containsKey('settlementRealizedPnl') && !integer(a['settlementRealizedPnl'], -maxMoney, maxMoney)) invalid();
+    if (a.containsKey('deliveryPositions')) {
+      if (a['deliveryPositions'] is! Map || a['ledgerPolicy'] != 'receipt-v2') invalid();
+      for (final entry in (a['deliveryPositions'] as Map).entries) {
+        if (entry.key is! String || !symbol.hasMatch(entry.key as String) || entry.value is! Map ||
+            !integer(entry.value['quantity'], 1, maxMoney) || !integer(entry.value['cost'], 1, maxMoney) ||
+            (entry.value as Map).keys.toSet().difference({'quantity','cost'}).isNotEmpty) {
+          invalid();
+        }
+      }
+    }
     if (a.containsKey('strategy') && !paperStrategyLabels.containsKey(a['strategy'])) invalid();
     if (a.containsKey('watchlist')) {
       final watch = a['watchlist'];
@@ -148,6 +161,17 @@ void validatePaper(Map<String, dynamic> book) {
         invalid();
       }
     }
+    if (raw.containsKey('settlement')) {
+      final receipt = raw['settlement'];
+      if (receipt is! Map || receipt.length != 2 || receipt['request'] is! Map<String,dynamic> ||
+          receipt['result'] is! Map || raw.containsKey('fill') || raw.containsKey('quote') ||
+          raw['decision'] != 'PAPER_SETTLEMENT_${receipt['request']['action']}' ||
+          (book['accounts'] as List).singleWhere((a)=>a['id']==raw['account'])['ledgerPolicy']!='receipt-v2') {
+        invalid();
+      }
+    } else if ((raw['decision'] as String).startsWith('PAPER_SETTLEMENT_')) {
+      invalid();
+    }
   }
   final experiment = book['experiment'];
   if (experiment != null && (experiment is! Map || experiment['id'] != 'four-accounts-three-sessions-v1' ||
@@ -161,7 +185,34 @@ void validatePaper(Map<String, dynamic> book) {
     if (a['ledgerPolicy'] != 'receipt-v2') continue;
     var cash = a['initialCash'] as int, fees = 0, closed = 0, winners = 0;
     final held = <String, Map<String, dynamic>>{}, daily = <String, int>{};
+    final deliveries = <String, Map<String,dynamic>>{}, acquired = <String,String>{}, receipts = <String>{};
+    var settlementCount = 0, settlementPnl = 0;
     for (final event in events.cast<Map>().where((e) => e['account'] == a['id'])) {
+      if (event['settlement'] is Map) {
+        final receipt=event['settlement'] as Map, request=receipt['request'] as Map<String,dynamic>;
+        final key=event['symbol'] as String, p=held[key];
+        if (request['id'] is! String || !receipts.add(request['id'] as String)) invalid();
+        final result=projectPaperSettlement(p==null?null:{...p,'opened':acquired[key]},deliveries[key],cash,
+          request,DateTime.parse(event['at'] as String));
+        if (result['symbol']!=key || paperBytes(result)!=paperBytes(receipt['result'])) invalid();
+        cash+=result['cashDelta'] as int;fees+=result['feeCents'] as int;
+        settlementCount++;settlementPnl+=result['realizedPnl'] as int;
+        final day=DateTime.parse(event['at'] as String).toUtc().toIso8601String().substring(0,10);
+        daily[day]=(daily[day]??0)+(result['realizedPnl'] as int);
+        final old=deliveries[key]??{'quantity':0,'cost':0};
+        final qty=(old['quantity'] as int)+(result['shareDelta'] as int);
+        final cost=(old['cost'] as int)+(result['shareBasisDelta'] as int);
+        if(qty==0){deliveries.remove(key);}else{deliveries[key]={'quantity':qty,'cost':cost};}
+        final removed=result['optionQuantity'] as int;
+        if(removed>0) {
+          if(removed==p!['quantity']){held.remove(key);acquired.remove(key);}else{
+            p['quantity']=(p['quantity'] as int)-removed;p['cost']=(p['cost'] as int)-(result['removedCost'] as int);
+            p['entryFees']=(p['entryFees'] as int)-(result['removedEntryFees'] as int);
+            p['realizedPnl']=(p['realizedPnl'] as int)+(result['realizedPnl'] as int);
+          }
+        }
+        continue;
+      }
       final f = event['fill'];
       if (f == null) {
         if ((event['decision'] as String).startsWith('OPENED_') ||
@@ -177,6 +228,7 @@ void validatePaper(Map<String, dynamic> book) {
       if (f['side'] == 'BUY') {
         final p = held.putIfAbsent(key, () => {'contract': q['contract'], 'quantity': 0, 'cost': 0, 'entryFees': 0, 'realizedPnl': 0});
         if (p['contract'] != q['contract']) invalid();
+        acquired[key]=event['at'] as String;
         p['quantity'] = (p['quantity'] as int) + qty;
         p['cost'] = (p['cost'] as int) + qty * price * 100;
         p['entryFees'] = (p['entryFees'] as int) + fee;
@@ -192,7 +244,7 @@ void validatePaper(Map<String, dynamic> book) {
         p['realizedPnl']=(p['realizedPnl'] as int)+pnl;
         final day = (event['at'] as String).substring(0, 10);
         daily[day] = (daily[day] ?? 0) + pnl;
-        if(qty==oldQty){closed++;if((p['realizedPnl'] as int)>0)winners++;held.remove(key);}
+        if(qty==oldQty){closed++;if((p['realizedPnl'] as int)>0)winners++;held.remove(key);acquired.remove(key);}
         else{p['quantity']=oldQty-qty;p['cost']=(p['cost'] as int)-cost;p['entryFees']=(p['entryFees'] as int)-entry;}
 
       }
@@ -203,6 +255,8 @@ void validatePaper(Map<String, dynamic> book) {
       'realizedPnl':p.value['realizedPnl']??0,
     }};
     if (cash != a['cash'] || fees != a['fees'] || closed != a['closedTrades'] || winners != a['winningTrades'] ||
+        settlementCount != (a['settlementCount']??0) || settlementPnl != (a['settlementRealizedPnl']??0) ||
+        paperBytes(deliveries) != paperBytes(a['deliveryPositions']??{}) ||
         paperBytes(held) != paperBytes(actual) || paperBytes(daily) != paperBytes(a['dailyRealized'])) {
       invalid();
     }

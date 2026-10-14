@@ -16,6 +16,14 @@ Added pure Python/Dart standard-long-equity settlement projections: partial/full
 
 Primary references checked: OIC https://www.optionseducation.org/advancedconcepts/equity-vs-index-options and https://www.optionseducation.org/optionsoverview/exercising-options (equity share delivery; holder exercise versus writer assignment). These do not provide account-specific authority or settlement receipts. No broker network action occurred.
 
-Local arithmetic tests:21 passed after correcting one expected-value arithmetic typo (Put P&L78835, not78735 cents). Added27 checked-in cross-language positive/negative cases, plus Python fixture consistency test. Source integration into durable ledgers/UI remains next, so R09 is not closed by this pure module. CI is pending for the first checkpoint.
+Local arithmetic tests:22 passed including the 27 checked-in cross-language positive/negative cases. Initial checkpoint2275be6 passed backend/security but Flutter analysis stopped on one missing brace; corrected by0cc1c31. Its Flutter test step and chart/golden gate passed; native gate/artifact verification remain to collect.
+
+## Batch 2 — durable device settlement integration (acceptance pending)
+
+MarketPaper.settle now applies explicit paper receipts only to stopped receipt-v2 accounts, records request/result atomically, reconciles the full original journal at load, deduplicates retry identity and rejects changed identity. Delivery shares and basis survive export/recovery; a dropped/ambiguous write never silently consumes another receipt. Historical exercise predating the latest acquisition is conservatively rejected pending lot reconstruction. Full and partial conversions/disposals and worthless expiry have independent numeric expectations plus corruption/recovery tests. Manual receipt UI previews cash/shares/P&L, invalidates preview on edits and has no network/order path.
+
+Delivered shares have no invented mark: current equity is unknown and new option exposure is blocked until disposal. Mixed delivery/option aggregate win rate is unknown; ordinary option close counts and settlement event/P&L totals are separate. This is a limited paper model, not proof of actual exercise, OPRA data or broker settlement. Put exercise requires already owned shares. Legacy ledgers without complete quantity receipts cannot be upgraded silently.
+
+NEXT: collect/fix CI for this batch, integrate settlement receipts and share delivery into the server transactional ledger/API with PostgreSQL replay/backup coverage; then continue steps2–5 above. Pure Python arithmetic alone does not complete server lifecycle. R09 remains partial; no claim that all possible software work is closed.
 
 Open software work remains distinct from external evidence: actual OPRA entitlement and three recorded sessions, secure stable signing material, independently deployed uptime, signed iOS/device acceptance cannot be manufactured. The software gaps above remain authorized work, not requests for user testing.

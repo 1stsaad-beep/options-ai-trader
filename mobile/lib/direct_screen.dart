@@ -10,6 +10,7 @@ import 'market_paper_reports.dart';
 import 'market_paper_backup.dart';
 import 'direct_replay.dart';
 import 'direct_decision_view.dart';
+import 'paper_settlement_dialog.dart';
 
 class DirectAlpacaScreen extends StatefulWidget {
   final DirectAlpaca? api;
@@ -270,6 +271,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
       const Text('Market Paper • أموال افتراضية مستقلة • تعبئة بحثية تقريبية فقط بعرض OPRA مؤهل (شراء ask / إغلاق bid، عمولة افتراضية 0.65 USD للعقد لكل جهة). لا تحاكي طابور السوق أو الانزلاق أو التنفيذ الفعلي.'),
       const Text('بدون OPRA حديث وصالح: إشارات فقط، لا تعبئة Call/Put. IEX/SIP للأسهم لا يمنحان بيانات الخيارات. لا استخدام للأسعار الإرشادية indicative.'),
       const Text('معامل العقد القياسي 100 فقط. لا ممارسة أو تخصيص تلقائي؛ بعد الانتهاء يبقى التعرض للمراجعة دون تسوية مختلقة. التعبئات ضمن جلسات الخيارات المحافظة 2026–2027 فقط، مع منع دخول يوم الانتهاء وإغلاق Intraday قبل نهاية الجلسة بـ15 دقيقة.'),
+      const Text('يمكن للحساب المتوقف تسجيل إيصال ورقي يدوي للممارسة أو الانتهاء أو بيع أسهم التسليم. هذه الإيصالات لا تُحسب تنفيذًا سوقيًا موثقًا أو رصد OPRA.'),
       if(paper.error!=null)Text(paper.error!),
       FilledButton(key:const Key('paper-experiment'),onPressed:paper.busy||!paper.ready?null:()=>paper.createComparisonExperiment(),
         child:const Text('تجهيز 4 حسابات مستقلة × 1,000 USD')),
@@ -294,6 +296,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
         Text('النقد الافتراضي: ${(a['cash']/100).toStringAsFixed(2)} USD'),
         Text('P&L محقق: ${money(report!['realizedPnlCents'])} • غير محقق: ${money(report['unrealizedPnlCents'])}'),
         Text('الرسوم: ${money(report['totalFeesCents'])} • الصفقات المغلقة: ${report['closedTrades']??"غير متاح"} • النجاح: ${report['winRatePercent']??"—"}%'),
+        if((report['settlementEvents'] as int)>0)Text('إيصالات التسوية: ${report['settlementEvents']} • الربح المحقق منها: ${money(report['settlementRealizedPnlCents'])}. معدل نجاح مختلط للتحويلات والصفقات غير محسوب.'),
         Text('العائد: ${report['returnPercent']??"غير متاح"}% • التراجع المرصود: ${money(report['sampledMaxDrawdownCents'])}؛ لا تقدير خلال انقطاع الأسعار.'),
         DropdownButtonFormField<String>(isExpanded:true,key:ValueKey('paper-strategy-$selectedAccount-${a['strategy']}'),
           initialValue:a['strategy'] as String? ?? 'confluence',decoration:const InputDecoration(labelText:'استراتيجية هذا الحساب'),
@@ -343,6 +346,17 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
             onPressed:paper.busy||!paper.ready||!snapshot.enabled?null:
               ()=>paperCycle(forceClose:true,closeAccount:a['id'] as String,closeSymbol:p.key as String),
             child:Text('إغلاق ${p.key} افتراضيًا بعرض صالح')),
+          OutlinedButton(key:ValueKey('paper-settle-${a['id']}-${p.key}'),
+            onPressed:paper.busy||!paper.ready||a['enabled']==true?null:()=>showDialog<bool>(context:context,
+              builder:(_)=>PaperSettlementDialog(paper:paper,accountId:a['id'] as String,contract:p.value['contract'] as String)),
+            child:const Text('تسجيل إيصال ممارسة / انتهاء ورقي')),
+        ],
+        for(final p in (a['deliveryPositions'] as Map? ?? {}).entries)...[
+          Text('${p.key}: ${p.value['quantity']} سهم مستلم • أساس تكلفة ${money(p.value['cost'])} • القيمة السوقية غير متاحة؛ دخول الخيارات مقفل.'),
+          OutlinedButton(onPressed:paper.busy||!paper.ready||a['enabled']==true?null:()=>showDialog<bool>(context:context,
+            builder:(_)=>PaperSettlementDialog(paper:paper,accountId:a['id'] as String,delivery:true,
+              contract:paper.journal.lastWhere((e)=>e['account']==a['id']&&e['symbol']==p.key&&e['settlement'] is Map)['settlement']['request']['contract'] as String)),
+            child:const Text('تسجيل بيع الأسهم المستلمة ورقيًا')),
         ],
         const Text('الإغلاق اليدوي يعمل للحساب المتوقف أيضًا، دون تشغيل التقييم أو فتح مركز جديد. يحتاج اتصال بيانات وعرض خيار مؤهلًا.'),
         const Text('آخر القرارات — دفتر هذا الحساب فقط'),

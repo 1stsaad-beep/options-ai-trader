@@ -8,9 +8,22 @@ int _integer(dynamic v,[int min=0]) {
   return v;
 }
 DateTime _stamp(dynamic v) {
-  if(v is! String||!(v.endsWith('Z')||RegExp(r'[+-]\d\d:\d\d$').hasMatch(v)))throw const FormatException('Timezone required');
+  final m=v is String?RegExp(r'^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,6})?(Z|([+-])(\d{2}):(\d{2}))$').firstMatch(v):null;
+  if(m==null)throw const FormatException('Explicit ISO timestamp required');
+  final date=DateTime.utc(int.parse(m[1]!),int.parse(m[2]!),int.parse(m[3]!));
+  if(int.parse(m[1]!)<1||date.year!=int.parse(m[1]!)||date.month!=int.parse(m[2]!)||date.day!=int.parse(m[3]!)||
+      int.parse(m[4]!)>23||int.parse(m[5]!)>59||int.parse(m[6]!)>59||
+      (m[7]!='Z'&&(int.parse(m[9]!)>23||int.parse(m[10]!)>59))) {
+    throw const FormatException('Invalid timestamp components');
+  }
   return DateTime.parse(v).toUtc();
 }
+int _product(int a,int b) {
+  final result=BigInt.from(a)*BigInt.from(b);
+  if(result>BigInt.from(_max))throw const FormatException('Gross amount exceeds exact range');
+  return result.toInt();
+}
+int _portion(int cost,int quantity,int total)=>(BigInt.from(cost)*BigInt.from(quantity)~/BigInt.from(total)).toInt();
 
 /// Explicit virtual receipts only. No network, option-price substitution or
 /// automatic exercise. Result must commit atomically with original evidence.
@@ -40,7 +53,7 @@ Map<String,dynamic> projectPaperSettlement(Map? position,Map? delivery,int cash,
   final action=request['action'];
   if(action=='SELL_DELIVERY') {
     if(qty>stockQty)throw const FormatException('Owned shares required; no short stock');
-    basisDelta=-(stockCost*qty~/stockQty);stockDelta=-qty;cashDelta=spot*qty-fee;pnl=cashDelta+basisDelta;
+    basisDelta=-_portion(stockCost,qty,stockQty);stockDelta=-qty;cashDelta=_product(spot,qty)-fee;pnl=cashDelta+basisDelta;
   }else if(['EXERCISE','EXPIRE_WORTHLESS'].contains(action)) {
     if(position==null||position['contract']!=request['contract']||qty>_integer(position['quantity'],1))throw const FormatException('Owned option quantity required');
     if(effective.isBefore(_stamp(position['opened'])))throw const FormatException('Receipt predates ownership');
@@ -51,18 +64,18 @@ Map<String,dynamic> projectPaperSettlement(Map? position,Map? delivery,int cash,
       cutoff=s.closes;break;
     }
     if(cutoff==null)throw const FormatException('Known contract calendar required');
-    optionQty=qty;removedCost=_integer(position['cost'],1)*qty~/(position['quantity'] as int);
-    removedFees=_integer(position['entryFees']??0)*qty~/(position['quantity'] as int);
+    optionQty=qty;removedCost=_portion(_integer(position['cost'],1),qty,position['quantity'] as int);
+    removedFees=_portion(_integer(position['entryFees']??0),qty,position['quantity'] as int);
     if(action=='EXPIRE_WORTHLESS') {
       if(effective!=cutoff||(right=='C'?spot>strike:spot<strike))throw const FormatException('Explicit non-ITM cutoff observation required');
       cashDelta=-fee;pnl=-removedCost-removedFees-fee;
     }else {
       if(effective.isAfter(cutoff))throw const FormatException('Exercise after cutoff prohibited');
-      final shares=qty*100;
-      if(right=='C') {cashDelta=-strike*shares-fee;stockDelta=shares;basisDelta=strike*shares+removedCost+removedFees+fee;}
+      final shares=_product(qty,100),gross=_product(strike,shares);
+      if(right=='C') {cashDelta=-gross-fee;stockDelta=shares;basisDelta=gross+removedCost+removedFees+fee;}
       else {
         if(shares>stockQty)throw const FormatException('Put exercise requires owned shares');
-        stockDelta=-shares;basisDelta=-(stockCost*shares~/stockQty);cashDelta=strike*shares-fee;pnl=cashDelta+basisDelta-removedCost-removedFees;
+        stockDelta=-shares;basisDelta=-_portion(stockCost,shares,stockQty);cashDelta=gross-fee;pnl=cashDelta+basisDelta-removedCost-removedFees;
       }
     }
   }else {throw const FormatException('No assignment or cash settlement of long equity options');}
