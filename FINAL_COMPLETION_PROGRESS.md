@@ -1,3 +1,13 @@
+# Readiness correction and continued development — 2026-10-14
+
+The user's post-Build23 audit supersedes the historical next-action statements below. **Do not request phone acceptance and do not package another APK.** Build23 is a verified engineering checkpoint, not a completed V1.0 candidate. Assignment 1 is partial; assignment 2 is partial and its independent-review component is NOT complete; assignment 3 has a built/verified artifact but the final-delivery gate is partial because prerequisite functionality/review is open.
+
+Audit baseline: remote and local HEAD `5654069651fdfb783e34166baf9d5145ae79ccdc`; APK source `63a6d646d86f75c322751b3e791c66a204e75f2b`. New source fixes (pending CI): manual owned-position close while automation is stopped, account/symbol-specific close controls for holdings outside watchlists, entire bounded analysis source retained with decision receipts, and offline original-decision candle replay with earlier-cursor withholding. Configuration/background epochs still cancel in-flight manual requests; none can arm automation or open an opposite position. New regressions cover disabled/restart/partial/uncertain persistence, source completeness and future-data rejection, offline replay and removed-symbol UI access.
+
+No independent second reviewer has reviewed this patch. Green unit/golden/mock tests do not imply that settlement, full design parity, real OPRA access, three sessions, stable signing or continuous execution is implemented/accepted. Detailed requirement reassessment is in progress. All new code commits use `[chart-check]` to skip release packaging.
+
+---
+
 # Final completion progress
 
 ## Mission and current gate

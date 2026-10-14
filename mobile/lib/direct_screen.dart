@@ -9,6 +9,7 @@ import 'market_paper.dart';
 import 'market_paper_reports.dart';
 import 'market_paper_backup.dart';
 import 'direct_replay.dart';
+import 'direct_decision_view.dart';
 
 class DirectAlpacaScreen extends StatefulWidget {
   final DirectAlpaca? api;
@@ -115,12 +116,12 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     });
     await refresh();
   }
-  Future<void> paperCycle({bool forceClose=false}) async {
+  Future<void> paperCycle({bool forceClose=false,String? closeAccount,String? closeSymbol}) async {
     if(!visible||!snapshot.enabled||paper.busy)return;
     for(final a in paper.accounts) {
-      if(a['enabled']!=true)continue;
-      if(forceClose&&a['id']!=selectedAccount)continue;
-      final targets=forceClose?[selectedSymbol]:{...(a['watchlist'] as List? ?? watch).cast<String>(),...(a['positions'] as Map).keys.cast<String>()}.toList();
+      if(!forceClose&&a['enabled']!=true)continue;
+      if(forceClose&&a['id']!=closeAccount)continue;
+      final targets=forceClose?[closeSymbol!]:{...(a['watchlist'] as List? ?? watch).cast<String>(),...(a['positions'] as Map).keys.cast<String>()}.toList();
       for(final symbol in targets) {
         if(!visible||!mounted)return;
         final rows=snapshot.series[symbol]??[];
@@ -140,8 +141,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
             return p['direction']=='CALL'?price<p['scenarioLevel']:price>p['scenarioLevel'];},evidence:{'source':snapshot.source=='alpaca'?'alpaca':'fixture',
             'feed':snapshot.feed,'rule':signal.reason,'research':research,
             'scenarioLevel':research['indicators']?[signal.direction=='CALL'?'support':'resistance'],'recordedAt':DateTime.now().toUtc().toIso8601String(),
-            'bars':[for(final bar in rows.skip(rows.length>120?rows.length-120:0))
-              {'at':bar.time.toUtc().toIso8601String(),'o':bar.open,'h':bar.high,'l':bar.low,'c':bar.close,'v':bar.volume}]});
+            ...directBarEvidence(rows)});
       }
     }
   }
@@ -238,8 +238,9 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     for(final s in watch) ListTile(title:Text('$s • ${snapshot.series[s]?.lastOrNull?.close.toStringAsFixed(2)??"—"} USD'),
       subtitle:Text('${snapshot.label(s,DateTime.now())} • ${snapshot.series[s]?.lastOrNull?.time.toIso8601String()??"لا تحديث"}'),
       onTap:()=>setState(()=>selectedSymbol=s)),
-    DropdownButtonFormField<String>(initialValue:selectedSymbol,decoration:const InputDecoration(labelText:'السهم'),
-      items:{selectedSymbol,...watch,...snapshot.series.keys}.map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(),
+    DropdownButtonFormField<String>(key:ValueKey('market-symbol-$selectedSymbol'),initialValue:selectedSymbol,decoration:const InputDecoration(labelText:'السهم'),
+      items:{selectedSymbol,...watch,...snapshot.series.keys,
+        for(final a in paper.accounts)...(a['positions'] as Map).keys.cast<String>()}.map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(),
       onChanged:(s){if(s!=null)setState(()=>selectedSymbol=s);}),
     DirectLabs(rows:snapshot.series[selectedSymbol]??[],symbol:selectedSymbol,source:snapshot.label(selectedSymbol,DateTime.now()),
       decisions:paper.journal.where((e)=>e['account']==selectedAccount).toList()),
@@ -333,10 +334,22 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
         },child:const Text('تعيين عقد للمحاكاة المشروطة بـOPRA')),
         Text('العقود المحددة: ${a['contracts']}'),
         OutlinedButton(onPressed:paper.busy?null:()=>paperCycle(),child:const Text('تقييم الحسابات المفعلة الآن')),
-        for(final p in (a['positions'] as Map).entries)ListTile(title:Text('${p.key} ${p.value['direction']} × ${p.value['quantity']}'),subtitle:Text('${p.value['contract']} • تكلفة ${(p.value['cost']/100).toStringAsFixed(2)} USD${p.value['closeIntent']==null?'':' • إغلاق غير محسوم: ${p.value['closeIntent']['remaining']} (${p.value['closeIntent']['reason']})'}')),
-        OutlinedButton(onPressed:paper.busy?null:()=>paperCycle(forceClose:true),child:Text('طلب إغلاق افتراضي لـ $selectedSymbol بعرض صالح')),
+        for(final p in (a['positions'] as Map).entries)...[
+          ListTile(key:ValueKey('paper-position-${a['id']}-${p.key}'),
+            title:Text('${p.key} ${p.value['direction']} × ${p.value['quantity']}'),
+            subtitle:Text('${p.value['contract']} • تكلفة ${(p.value['cost']/100).toStringAsFixed(2)} USD${p.value['closeIntent']==null?'':' • إغلاق غير محسوم: ${p.value['closeIntent']['remaining']} (${p.value['closeIntent']['reason']})'}'),
+            onTap:()=>setState((){selectedSymbol=p.key as String;page=1;})),
+          OutlinedButton(key:ValueKey('paper-close-${a['id']}-${p.key}'),
+            onPressed:paper.busy||!paper.ready||!snapshot.enabled?null:
+              ()=>paperCycle(forceClose:true,closeAccount:a['id'] as String,closeSymbol:p.key as String),
+            child:Text('إغلاق ${p.key} افتراضيًا بعرض صالح')),
+        ],
+        const Text('الإغلاق اليدوي يعمل للحساب المتوقف أيضًا، دون تشغيل التقييم أو فتح مركز جديد. يحتاج اتصال بيانات وعرض خيار مؤهلًا.'),
         const Text('آخر القرارات — دفتر هذا الحساب فقط'),
-        for(final e in paper.journal.where((e)=>e['account']==selectedAccount).toList().reversed.take(30))Text('${e['at']} • ${e['symbol']} • ${e['decision']}'),
+        for(final e in paper.journal.where((e)=>e['account']==selectedAccount).toList().reversed.take(30))ListTile(
+          title:Text('${e['symbol']} • ${e['decision']}'),subtitle:Text('${e['at']}'),
+          trailing:const Icon(Icons.history),onTap:()=>Navigator.push(context,MaterialPageRoute<void>(
+            builder:(_)=>DirectDecisionView(event:e)))),
       ],
     ];
   }

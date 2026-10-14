@@ -1,7 +1,59 @@
 import 'dart:math' as math;
+import 'dart:convert';
 import 'direct_alpaca.dart';
 import 'demo/chart_analysis.dart';
 import 'demo/wave_analysis.dart';
+
+/// The entire bounded source used by the decision, including indicator warmup.
+/// Never truncate independently of the analysis window.
+Map<String,dynamic> directBarEvidence(List<MarketBar> rows)=>{
+  'sourceWindow':{'version':1,'count':rows.length,
+    'firstAt':rows.isEmpty?null:rows.first.time.toUtc().toIso8601String(),
+    'lastAt':rows.isEmpty?null:rows.last.time.toUtc().toIso8601String()},
+  'bars':[for(final b in rows){'at':b.time.toUtc().toIso8601String(),
+    'o':b.open,'h':b.high,'l':b.low,'c':b.close,'v':b.volume}],
+};
+
+/// Read-only replay of saved observations. No network, generated prices or
+/// recalculated decision reason; older truncated evidence remains explicit.
+class DirectDecisionRecord {
+  final String originalJson;
+  final List<MarketBar> bars;
+  final bool completeSource;
+  const DirectDecisionRecord._(this.originalJson,this.bars,this.completeSource);
+  Map<String,dynamic> get original=>jsonDecode(originalJson) as Map<String,dynamic>;
+  factory DirectDecisionRecord.read(Map<String,dynamic> event) {
+    try {
+      final frozen=jsonEncode(event),copy=jsonDecode(frozen) as Map<String,dynamic>;
+      final evidence=copy['evidence'] as Map? ?? {};
+      final raw=evidence['bars'] as List? ?? [];
+      if(raw.length>1000)throw const FormatException('Source window exceeds limit');
+      final at=DateTime.parse(copy['at'] as String);
+      final recorded=evidence['recordedAt']==null?at:DateTime.parse(evidence['recordedAt'] as String);
+      if(recorded.isAfter(at))throw const FormatException('Evidence after decision');
+      final bars=<MarketBar>[];
+      for(final value in raw) {
+        final row=Map<String,dynamic>.from(value as Map);
+        final time=DateTime.parse(row['at'] as String).toUtc();
+        final b=MarketBar.parse({...row,'t':time.millisecondsSinceEpoch});
+        if(b.time.add(const Duration(minutes:1)).isAfter(recorded)||
+          (bars.isNotEmpty&&!b.time.isAfter(bars.last.time))) {
+          throw const FormatException('Incomplete, future or unordered observation');
+        }
+        bars.add(b);
+      }
+      final window=evidence['sourceWindow'] as Map?;
+      final complete=window?['version']==1&&window?['count']==bars.length&&bars.isNotEmpty&&
+        window?['firstAt']==bars.first.time.toIso8601String()&&window?['lastAt']==bars.last.time.toIso8601String();
+      if(window!=null&&!complete&&!(bars.isEmpty&&window['version']==1&&window['count']==0&&window['firstAt']==null&&window['lastAt']==null)) {
+        throw const FormatException('Source window mismatch');
+      }
+      return DirectDecisionRecord._(frozen,List.unmodifiable(bars),complete);
+    } catch(_) {
+      throw const FormatException('Saved decision observations are unavailable or invalid');
+    }
+  }
+}
 
 /// UTC-anchored complete intervals only. Missing minutes never become candles.
 List<MarketBar> directTimeframe(List<MarketBar> rows,int minutes) {

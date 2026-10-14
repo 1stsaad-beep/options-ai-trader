@@ -208,13 +208,17 @@ class MarketPaper extends ChangeNotifier {
     try{final next=copy();for(final a in next['accounts'] as List){a['enabled']=false;}await _commit(next);}
     finally{busy=false;notifyListeners();}
   }
-  bool _current(String id,int epoch)=>ready&&!_paused.contains(id)&&(_epochs[id]??0)==epoch&&account(id)['enabled']==true;
+  bool _current(String id,int epoch,{bool manualClose=false})=>ready&&(_epochs[id]??0)==epoch&&
+    (manualClose||(!_paused.contains(id)&&account(id)['enabled']==true));
   Future<void> evaluate({required String id,required String symbol,required String signal,
     required bool confirmedReverse,required bool Function() dataValid,required String observation,required QuoteReader quotes,
     bool forceClose=false,PaperRow? evidence,String Function()? currentSignal,
     bool Function()? scenarioInvalidated,bool Function()? currentReverse}) async {
-    if(!ready||busy||_paused.contains(id)||account(id)['enabled']!=true)return;
+    if(!ready||busy||(!forceClose&&(_paused.contains(id)||account(id)['enabled']!=true)))return;
     busy=true;notifyListeners();final epoch=_epochs[id]??0;
+    // Explicit owned-position reduction does not arm automation. Lifecycle and
+    // configuration changes still invalidate its in-flight quote/readback.
+    bool current()=>_current(id,epoch,manualClose:forceClose);
     bool stockValid(){try{return dataValid();}catch(_){return false;}}
     bool signalCurrent(){try{return currentSignal==null||currentSignal()==signal;}catch(_){return false;}}
     bool scenarioBroken(){try{return scenarioInvalidated?.call()==true;}catch(_){return false;}}
@@ -225,11 +229,11 @@ class MarketPaper extends ChangeNotifier {
         final contract=p['contract'] as String;
         if(!marks.containsKey(contract)) {
           final q=await quotes(contract);
-          if(!_current(id,epoch))return false;
+          if(!current())return false;
           if(q!=null&&q.contract==contract)marks[contract]=q;
         }
       }
-      return _current(id,epoch);
+      return current();
     }
     String? risk(int qty,int price,{bool adding=false}) {
       if(!paperSession(now()).entry)return 'SESSION_ENTRY_BLOCKED';
@@ -260,14 +264,14 @@ class MarketPaper extends ChangeNotifier {
           p['closeIntent']={'reason':reason,'remaining':pending!=null&&pending['reason']==reason?pending['remaining']:qty,
             'at':pending!=null&&pending['reason']==reason?pending['at']:now().toUtc().toIso8601String()};
           (_in(next,id)['positions'] as Map)[symbol]=p;
-          _log(next,id,symbol,event);await _commit(next,admission:()=>_current(id,epoch));
+          _log(next,id,symbol,event);await _commit(next,admission:()=>current());
         }
         if(!session.fill||!expiry.close) {
           if(closeReason!=null){await retainIntent(closeReason,!expiry.close?expiry.status:'SESSION_CLOSE_DEFERRED');}
           else{await _record(id,symbol,'SESSION_CLOSED_NO_FILL');}return;
         }
         final q=await quotes(position['contract'] as String);
-        if(!_current(id,epoch))return;
+        if(!current())return;
         if(q==null||q.contract!=position['contract']||!q.valid(now())) {
           if(closeReason!=null){await retainIntent(closeReason,'CLOSE_UNCONFIRMED_NO_REVERSAL');}
           else{await _record(id,symbol,'CLOSE_UNCONFIRMED_NO_REVERSAL');}return;
@@ -313,12 +317,12 @@ class MarketPaper extends ChangeNotifier {
           _log(next,id,symbol,'${remaining==0?'CLOSED':'PARTIAL'}_$reason',quote:q,
             fill:{'side':'SELL_TO_CLOSE','quantity':filled,'price':q.bid,'fee':filled*65,'removedCost':removedCost,
               'entryFees':entryFees,'realizedPnl':pnl,'cashAfter':target['cash']});
-          if(!await _commit(next,admission:()=>_current(id,epoch)&&q.valid(now(),quantity:filled)&&paperSession(now()).fill&&paperExpiry(q.contract,now()).close&&
+          if(!await _commit(next,admission:()=>current()&&q.valid(now(),quantity:filled)&&paperSession(now()).fill&&paperExpiry(q.contract,now()).close&&
             (pending!=null||reason!='CONFIRMED_DIVERGENCE'||reverseCurrent())&&
             (pending!=null||reason!='SCENARIO_EXIT'||(stockValid()&&scenarioBroken())))) {
             return;
           }
-          if(remaining>0||forceClose||!reverse||!reverseCurrent()||!_current(id,epoch)||!stockValid()||!signalCurrent())return;
+          if(remaining>0||forceClose||!reverse||!reverseCurrent()||!current()||!stockValid()||!signalCurrent())return;
           if((account(id)['positions'] as Map).containsKey(symbol))return;
         } else {
           if(!stockValid()){await _record(id,symbol,'INVALID_OR_STALE_STOCK_DATA');return;}
@@ -340,12 +344,12 @@ class MarketPaper extends ChangeNotifier {
             }
           }
           final adds=p['quantity']!=qty;
-          await _commit(next,admission:()=>_current(id,epoch)&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:qty)&&
+          await _commit(next,admission:()=>current()&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:qty)&&
             (!adds||risk(1,q.ask,adding:true)==null));return;
         }
       }
       if(!stockValid()){await _record(id,symbol,'INVALID_OR_STALE_STOCK_DATA');return;}
-      if(!['CALL','PUT'].contains(signal)||!_current(id,epoch))return;
+      if(!['CALL','PUT'].contains(signal)||!current())return;
       a=account(id);
       if(a['watchlist'] is List&&!(a['watchlist'] as List).contains(symbol)){await _record(id,symbol,'ACCOUNT_WATCHLIST_BLOCKED');return;}
       if((a['lastSignal'] as Map)[symbol]==observation)return;
@@ -354,7 +358,7 @@ class MarketPaper extends ChangeNotifier {
       if(contract==null){await _record(id,symbol,'QUALIFIED_OPTION_CONTRACT_REQUIRED');return;}
       if(!paperExpiry(contract,now()).entry){await _record(id,symbol,'EXPIRY_ENTRY_BLOCKED');return;}
       final q=await quotes(contract);
-      if(!_current(id,epoch))return;
+      if(!current())return;
       final quantity=a['quantity'] as int;
       if(q==null||q.contract!=contract||q.underlying!=symbol||q.direction!=signal||!q.valid(now(),quantity:quantity)||!stockValid()||!signalCurrent()){
         await _record(id,symbol,'OPRA_QUOTE_REQUIRED_NO_FILL');return;
@@ -374,7 +378,7 @@ class MarketPaper extends ChangeNotifier {
       target['positions']=positions;target['cash']=(target['cash'] as int)-cost-fee;(target['lastSignal'] as Map)[symbol]=observation;
       if(target['fees'] is int)target['fees']=(target['fees'] as int)+fee;
       _log(next,id,symbol,'OPENED_$signal',quote:q,fill:{'side':'BUY','quantity':quantity,'price':q.ask,'fee':fee,'cashAfter':target['cash']});
-      await _commit(next,admission:()=>_current(id,epoch)&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:quantity)&&risk(quantity,q.ask)==null);
+      await _commit(next,admission:()=>current()&&stockValid()&&signalCurrent()&&q.valid(now(),quantity:quantity)&&risk(quantity,q.ask)==null);
     }catch(_){error='توقفت الدورة دون فتح عكسي. راجع البيانات وسعة السجل والتخزين.';notifyListeners();}
     finally{_decisionEvidence=null;busy=false;notifyListeners();}
   }

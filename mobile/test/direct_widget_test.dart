@@ -19,6 +19,9 @@ class MockDirect extends DirectAlpaca {
   @override Future<DirectSnapshot> snapshot()async=>DirectSnapshot(source:'mock');
   @override Future<bool> background()async=>false;
 }
+class ConnectedDirect extends MockDirect {
+  @override Future<DirectSnapshot> snapshot()async=>DirectSnapshot(source:'mock',enabled:true,connected:true);
+}
 void main(){
   testWidgets('no automatic network connection, secret is obscured then cleared after save',(tester)async{
     tester.view.physicalSize=const Size(1100,2400);tester.view.devicePixelRatio=1;addTearDown(tester.view.resetPhysicalSize);addTearDown(tester.view.resetDevicePixelRatio);
@@ -53,6 +56,26 @@ void main(){
       home:DirectAlpacaScreen(api:MockDirect(),paperStore:store,initialPage:2)));
     await tester.pumpAndSettle();expect(tester.takeException(),isNull);
     for(var i=0;i<8;i++){await tester.drag(find.byType(ListView),const Offset(0,-600));await tester.pumpAndSettle();expect(tester.takeException(),isNull);}
+    await tester.pumpWidget(const SizedBox());await tester.pumpAndSettle();
+  });
+  testWidgets('owned symbol outside watchlist has a direct stopped-account close control',(tester)async{
+    tester.view.physicalSize=const Size(650,9000);tester.view.devicePixelRatio=1;
+    addTearDown(tester.view.resetPhysicalSize);addTearDown(tester.view.resetDevicePixelRatio);
+    final clock=DateTime.utc(2026,10,13,15,1,15),store=MemoryPaperStore();
+    final ledger=MarketPaper(store,clock:()=>clock);await ledger.load();await ledger.add('A');
+    final id=ledger.accounts.single['id'] as String;
+    await ledger.configure(id,{'enabled':true,'watchlist':['QQQ'],'contracts':{'QQQ:CALL':'QQQ261016C00200000'}});
+    await ledger.evaluate(id:id,symbol:'QQQ',signal:'CALL',confirmedReverse:false,dataValid:()=>true,
+      observation:'open',quotes:(c)async=>OptionQuote(c,'opra',clock,200,210,10,10));
+    await ledger.configure(id,{'enabled':false,'watchlist':['NVDA']});
+    final api=ConnectedDirect();await tester.pumpWidget(MaterialApp(home:DirectAlpacaScreen(api:api,paperStore:store,initialPage:2)));
+    await tester.pumpAndSettle();
+    final close=find.byKey(ValueKey('paper-close-$id-QQQ'));await tester.ensureVisible(close);
+    expect(tester.widget<OutlinedButton>(close).onPressed,isNotNull);
+    expect(find.text('إغلاق QQQ افتراضيًا بعرض صالح'),findsOneWidget);
+    await tester.tap(find.byKey(ValueKey('paper-position-$id-QQQ')));await tester.pumpAndSettle();
+    final selector=tester.widget<DropdownButtonFormField<String>>(find.byKey(const ValueKey('market-symbol-QQQ')));
+    expect(selector.initialValue,'QQQ');expect(api.starts,0);expect(tester.takeException(),isNull);
     await tester.pumpWidget(const SizedBox());await tester.pumpAndSettle();
   });
 
