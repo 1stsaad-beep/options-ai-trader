@@ -1,0 +1,1207 @@
+{
+  "cases": [
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "100 delivered shares gross bid and original capitalized basis",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": true,
+        "riskComplete": true,
+        "basisCents": 2021165,
+        "valueCents": 2200000,
+        "unrealizedPnlCents": 178835,
+        "exposureCents": 2201000,
+        "openLossCents": 0,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "QUALIFIED",
+            "valueCents": 2200000,
+            "unrealizedPnlCents": 178835,
+            "exposureCents": 2201000
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "iex",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "IEX is display only",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": true,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": 2200000,
+        "unrealizedPnlCents": 178835,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "IEX_PARTIAL_MARK",
+            "valueCents": 2200000,
+            "unrealizedPnlCents": 178835,
+            "exposureCents": 2201000
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 19000,
+          "askCents": 19010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "negative mark loss retains larger cost reserve",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": true,
+        "riskComplete": true,
+        "basisCents": 2021165,
+        "valueCents": 1900000,
+        "unrealizedPnlCents": -121165,
+        "exposureCents": 2021165,
+        "openLossCents": 121165,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "QUALIFIED",
+            "valueCents": 1900000,
+            "unrealizedPnlCents": -121165,
+            "exposureCents": 2021165
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:30Z",
+      "source": "fixture",
+      "name": "exact 30 seconds is eligible",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": true,
+        "riskComplete": true,
+        "basisCents": 2021165,
+        "valueCents": 2200000,
+        "unrealizedPnlCents": 178835,
+        "exposureCents": 2201000,
+        "openLossCents": 0,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "QUALIFIED",
+            "valueCents": 2200000,
+            "unrealizedPnlCents": 178835,
+            "exposureCents": 2201000
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:30.000001Z",
+      "source": "fixture",
+      "name": "stale one microsecond",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "STALE",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:02.000001Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "captured in future",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "NOT_YET_KNOWN",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:01.000001Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "quote after capture",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "alpaca",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "source isolation",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "SOURCE_MISMATCH",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "AAPL",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "wrong symbol",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "delayed_sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "delayed feed",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "no timezone",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-02-30T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "bad date",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00+24:00",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "bad offset",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 0,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "zero bid",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": true,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "bool bid",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000.1,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "fractional cents",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 23000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "crossed",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 100,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "wide spread",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "v2",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "unknown version",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 100000001
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "price cap",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {},
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "missing observation",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "MISSING",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": "bad"
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "corrupt optional observation",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010,
+          "executionAllowed": true
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "extra unknown authority cannot qualify",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 9007199254740991,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "gross exact range overflow",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": false,
+        "riskComplete": false,
+        "basisCents": 2021165,
+        "valueCents": null,
+        "unrealizedPnlCents": null,
+        "exposureCents": null,
+        "openLossCents": null,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 9007199254740991,
+            "basisCents": 2021165,
+            "status": "INVALID",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "exposureCents": null
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 67,
+          "cost": 1354181
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T15:00:00Z",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "after partial sale basis is not re-inferred",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": true,
+        "riskComplete": true,
+        "basisCents": 1354181,
+        "valueCents": 1474000,
+        "unrealizedPnlCents": 119819,
+        "exposureCents": 1474670,
+        "openLossCents": 0,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 67,
+            "basisCents": 1354181,
+            "status": "QUALIFIED",
+            "valueCents": 1474000,
+            "unrealizedPnlCents": 119819,
+            "exposureCents": 1474670
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    },
+    {
+      "deliveries": {
+        "NVDA": {
+          "quantity": 100,
+          "cost": 2021165
+        }
+      },
+      "observations": {
+        "NVDA": {
+          "version": "paper-delivery-valuation-v1",
+          "symbol": "NVDA",
+          "source": "fixture",
+          "feed": "sip",
+          "at": "2026-10-13T18:00:00+03:00",
+          "capturedAt": "2026-10-13T15:00:01Z",
+          "bidCents": 22000,
+          "askCents": 22010
+        }
+      },
+      "now": "2026-10-13T15:00:02Z",
+      "source": "fixture",
+      "name": "matching explicit offset",
+      "expected": {
+        "version": "paper-delivery-valuation-v1",
+        "complete": true,
+        "riskComplete": true,
+        "basisCents": 2021165,
+        "valueCents": 2200000,
+        "unrealizedPnlCents": 178835,
+        "exposureCents": 2201000,
+        "openLossCents": 0,
+        "positions": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 2021165,
+            "status": "QUALIFIED",
+            "valueCents": 2200000,
+            "unrealizedPnlCents": 178835,
+            "exposureCents": 2201000
+          }
+        ],
+        "modeledExitFeeCents": 0,
+        "externalOrder": false,
+        "policy": "observed_bid_gross_no_guaranteed_fill;iex_display_only;sip_required_for_new_risk"
+      }
+    }
+  ]
+}

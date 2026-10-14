@@ -14,6 +14,7 @@ import 'observed_option_replay.dart';
 import 'option_observation_archive.dart';
 import 'observed_bar_archive.dart';
 import 'paper_money.dart';
+import 'delivery_valuation.dart';
 import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
@@ -296,6 +297,42 @@ class MarketPaper extends ChangeNotifier {
       return copyPaper(applied['result'] as PaperRow);
     }finally{busy=false;notifyListeners();}
   }
+  /// Read-only provider observations; never accepts prices through configure or settlement.
+  Future<void> observeDeliveries({required String source,required Future<PaperRow?> Function(String) quotes,
+      required bool Function() active}) async {
+    if(!ready||busy||!['fixture','alpaca'].contains(source)||!active())return;
+    final symbols={for(final a in accounts)...(a['deliveryPositions'] as Map? ?? {}).keys.cast<String>()};
+    if(symbols.isEmpty)return;
+    busy=true;
+    try {
+      final observed=<String,PaperRow>{};
+      for(final symbol in symbols) {
+        if(!active()||!ready)return;
+        PaperRow? quote;try{quote=await quotes(symbol);}catch(_){continue;}
+        if(!active()||!ready)return;
+        if(quote==null)continue;
+        final candidate={...quote,'capturedAt':now().toUtc().toIso8601String()};
+        final check=valueDeliveries({symbol:{'quantity':1,'cost':1}},{symbol:candidate},now(),source);
+        if(check['complete']==true)observed[symbol]=candidate;
+      }
+      if(observed.isEmpty)return;
+      final next=copy();var changed=false;
+      for(final a in next['accounts'] as List) {
+        final marks=Map<String,dynamic>.from(a['deliveryMarks'] as Map? ?? {});
+        for(final symbol in (a['deliveryPositions'] as Map? ?? {}).keys) {
+          final quote=observed[symbol];if(quote==null)continue;
+          final previous=marks[symbol];
+          if(previous is Map&&previous['source']==source&&previous['feed']==quote['feed']) {
+            final oldAt=DateTime.tryParse('${previous['at']}'),at=DateTime.parse(quote['at'] as String);
+            if(oldAt!=null&&!at.isAfter(oldAt))continue; // Never refresh age or rewrite an equal-time observation.
+          }
+          marks[symbol]=quote;changed=true;
+        }
+        a['deliveryMarks']=marks;a['deliveryMarkSource']=source;
+      }
+      if(changed)await _commit(next,admission:()=>ready&&active());
+    }finally{busy=false;notifyListeners();}
+  }
   Future<void> createComparisonExperiment() async {
     if(!ready||busy||_book['experiment']!=null)return;
     busy=true;
@@ -371,11 +408,10 @@ class MarketPaper extends ChangeNotifier {
       return current();
     }
     String? risk(int qty,int price,{bool adding=false}) {
-      if((account(id)['deliveryPositions'] as Map? ?? {}).isNotEmpty)return 'DELIVERED_STOCK_REVIEW_REQUIRED';
       if(!paperSession(now()).entry)return 'SESSION_ENTRY_BLOCKED';
       if(!paperExpiry(marks.values.firstWhere((q)=>q.underlying==symbol&&q.direction==signal).contract,now()).entry)return 'EXPIRY_ENTRY_BLOCKED';
       if((account(id)['positions'] as Map).values.any((p)=>p['closeIntent']!=null))return 'PENDING_CLOSE_RISK_LIMIT';
-      return paperRiskReason(account(id),symbol,qty,price,marks,now(),journal:journal,adding:adding);
+      return paperRiskReason(account(id),symbol,qty,price,marks,now(),journal:journal,adding:adding,source:_decisionEvidence?['source'] as String? ?? 'fixture');
     }
     _decisionEvidence={...copyPaper(evidence??{'source':'fixture'}),'observation':observation,
       'signal':signal,'stockDataValid':stockValid(),'strategy':account(id)['strategy']??'confluence'};

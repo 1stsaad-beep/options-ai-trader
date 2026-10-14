@@ -1,10 +1,11 @@
 import 'direct_alpaca.dart';
+import 'delivery_valuation.dart';
 
 /// Pure admission over current account truth and qualified observed option marks.
 /// Research labels, confidence scores and caller narratives cannot override it.
 String? paperRiskReason(Map<String, dynamic> account, String symbol, int quantity,
     int price, Map<String, OptionQuote> marks, DateTime now,
-    {required Iterable<Map<String, dynamic>> journal, bool adding = false}) {
+    {required Iterable<Map<String, dynamic>> journal, bool adding = false, String source = 'fixture'}) {
   final positions = account['positions'] as Map;
   final initial = account['initialCash'] as int;
   final additional = quantity * (price * 100 + 65);
@@ -15,7 +16,10 @@ String? paperRiskReason(Map<String, dynamic> account, String symbol, int quantit
       currentCost + additional > initial * (account['riskPercent'] as int) / 100) {
     return 'RISK_LIMIT';
   }
-  var exposure = 0, contracts = 0, openLoss = 0;
+  final deliveries=account['deliveryPositions'] as Map? ?? {};
+  final delivery=valueDeliveries(deliveries,account['deliveryMarks'] as Map? ?? {},now,source);
+  if(delivery['riskComplete']!=true)return 'DELIVERED_STOCK_REVIEW_REQUIRED';
+  var exposure = delivery['exposureCents'] as int, contracts = 0, openLoss = delivery['openLossCents'] as int;
   for (final raw in positions.values) {
     final p = raw as Map;
     final qty = p['quantity'] as int, cost = (p['cost'] as int) + ((p['entryFees'] ?? qty * 65) as int);
@@ -27,7 +31,7 @@ String? paperRiskReason(Map<String, dynamic> account, String symbol, int quantit
   }
   if (exposure + additional > initial * ((account['allocationPercent'] ?? 30) as int) / 100) return 'ALLOCATION_RISK_LIMIT';
   if (contracts + quantity > ((account['maxContracts'] ?? 10) as int)) return 'CONTRACT_COUNT_RISK_LIMIT';
-  if (!adding && positions.length + 1 > ((account['maxPositions'] ?? 4) as int)) return 'POSITION_COUNT_RISK_LIMIT';
+  if (!adding && positions.length + deliveries.length + 1 > ((account['maxPositions'] ?? 4) as int)) return 'POSITION_COUNT_RISK_LIMIT';
   final day = now.toUtc().toIso8601String().substring(0, 10);
   if (journal.any((event) => event['account'] == account['id'] &&
       (event['at'] as String).startsWith(day) && (event['decision'] as String).startsWith('CLOSED_') &&

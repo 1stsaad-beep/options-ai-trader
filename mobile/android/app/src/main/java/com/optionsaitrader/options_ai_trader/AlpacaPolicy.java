@@ -18,7 +18,7 @@ public final class AlpacaPolicy {
             if (!"GET".equals(method) || u.getUserInfo() != null || u.getFragment() != null || u.getPort() != -1) return false;
             String path=u.getRawPath();
             if ("https".equals(u.getScheme()) && "data.alpaca.markets".equals(u.getHost()))
-                return "/v2/stocks/bars".equals(path) || "/v1beta1/options/snapshots".equals(path);
+                return "/v2/stocks/quotes/latest".equals(path) || "/v2/stocks/bars".equals(path) || "/v1beta1/options/snapshots".equals(path);
             return "https".equals(u.getScheme()) && "stream.data.alpaca.markets".equals(u.getHost()) &&
                 ("/v2/iex".equals(path) || "/v2/sip".equals(path)) && u.getRawQuery() == null;
         } catch (Exception e) { return false; }

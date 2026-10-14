@@ -23,3 +23,7 @@ This table maps the attached mission to source and executable checks. A source i
 Python test names resolve under `backend/tests/`; Dart tests under `mobile/test/`; native tests under `mobile/android/app/src/{test,androidTest}/`. The final artifact must name its exact tested source and actual signer. Unsupported settlement and provider/device/three-session evidence remain explicit; this is not a claim of full V1.0 completion.
 
 SCOPED_IMPLEMENTED/COMPLETE_SCOPED describes the explicitly tested simulator or lock behavior, not a live-provider or full-design acceptance. The same-agent adversarial review is not an independent second review.
+
+### Batch20 continuation: R02/R07/R09/R14
+
+Delivered-stock valuation now has a shared Python/Dart contract,26 hand-expected cases and account integration. Source/capture time/age/cent arithmetic are mandatory; IEX is a partial display mark, SIP is required for device risk admission with delivery allocation/open loss included. Server reads verified saved IEX observations and keeps new-risk blocking.94 affected Python checks passed; Flutter/native/full CI pending. See docs/DELIVERY_VALUATION_20261014.md. Broader settlement eligibility/legacy lots, execution model, storage, continuous worker, full parity and independent review remain partial.

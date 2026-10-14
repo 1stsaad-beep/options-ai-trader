@@ -927,8 +927,10 @@ class TradingService:
             premium=sum(p['cost'] for p in positions)
             delivery_basis=sum(p['cost'] for p in deliveries)
             cash=account['equity']+account['realized']-premium-delivery_basis
-            unrealized=0
-            complete=self.snapshot_valid(account) and not self.expiration_reviews(db, account) and not bool(deliveries)
+            from .delivery_valuation import saved_delivery_valuation
+            delivery_valuation=saved_delivery_valuation(db, account_id, self.now())
+            unrealized=delivery_valuation['unrealizedPnlCents'] or 0
+            complete=self.snapshot_valid(account) and not self.expiration_reviews(db, account) and delivery_valuation['complete']
             for position in positions:
                 key=(account_id,position['symbol'],position['right_kind'],position['expiry'],position['strike'])
                 mark=db.one('SELECT * FROM option_marks WHERE account_id=? AND symbol=? AND right_kind=? AND expiry=? AND strike=?',key)
@@ -939,4 +941,4 @@ class TradingService:
             reserved=sum(self._pending_cost(db,o) for o in db.all("SELECT * FROM orders WHERE account_id=? AND side='BUY' AND status IN ('PENDING','PARTIAL')",(account_id,)))
             fees=sum(f['quantity']*self._fee(db,f['order_id']) for f in db.all('SELECT f.* FROM fills f JOIN orders o ON o.id=f.order_id WHERE o.account_id=?',(account_id,)))
             fees+=sum(r['feeCents'] for r in settled)
-            return {'source':'synthetic_mock','equity_cents':account['equity'],'realized_pnl_cents':account['realized'],'open_premium_cents':premium,'open_positions':len(positions),'live_enabled':False,'unrealized_pnl_cents':unrealized if complete else None,'valuation_complete':complete,'simulated_cash_cents':cash,'available_after_reservations_cents':cash-reserved,'total_commissions_cents':fees,'net_liquidation_cents':account['equity']+account['realized']+unrealized if complete else None,'valuation_policy':'fresh_synthetic_bid_minus_owned_basis_and_projected_close_fees','delivered_shares':deliveries,'delivered_share_basis_cents':delivery_basis,'settlement_events':len(settled),'settlement_realized_pnl_cents':sum(r['realizedPnl'] for r in settled),'settlement_source':'explicit_paper_receipts_not_broker_confirmation'}
+            return {'source':'synthetic_mock','equity_cents':account['equity'],'realized_pnl_cents':account['realized'],'open_premium_cents':premium,'open_positions':len(positions),'live_enabled':False,'unrealized_pnl_cents':unrealized if complete else None,'valuation_complete':complete,'simulated_cash_cents':cash,'available_after_reservations_cents':cash-reserved,'total_commissions_cents':fees,'net_liquidation_cents':account['equity']+account['realized']+unrealized if complete else None,'valuation_policy':'synthetic_option_bid_less_close_fee_plus_observed_gross_share_bid;share_marks_are_not_fills','delivery_valuation':delivery_valuation,'delivered_shares':deliveries,'delivered_share_basis_cents':delivery_basis,'settlement_events':len(settled),'settlement_realized_pnl_cents':sum(r['realizedPnl'] for r in settled),'settlement_source':'explicit_paper_receipts_not_broker_confirmation'}

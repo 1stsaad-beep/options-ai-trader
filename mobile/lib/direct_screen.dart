@@ -169,6 +169,9 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     if(!forceClose&&visible&&mounted&&['alpaca','mock'].contains(snapshot.source)) {
       await paper.observeRecentOptions(source:snapshot.source=='alpaca'?'alpaca':'fixture',quotes:observedQuote,
         active:()=>visible&&mounted&&snapshot.enabled);
+      // Owned option protection above takes priority over optional share marks.
+      if(snapshot.source=='alpaca')await paper.observeDeliveries(source:'alpaca',quotes:api.stockQuote,
+        active:()=>visible&&mounted&&snapshot.enabled&&snapshot.source=='alpaca');
     }
   }
   @override void didChangeAppLifecycleState(AppLifecycleState state){visible=state==AppLifecycleState.resumed;
@@ -386,8 +389,9 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
               builder:(_)=>PaperSettlementDialog(paper:paper,accountId:a['id'] as String,contract:p.value['contract'] as String)),
             child:const Text('تسجيل إيصال ممارسة / انتهاء ورقي')),
         ],
+        if((a['deliveryPositions'] as Map? ?? {}).isNotEmpty)const Text('تقييم الأسهم بسعر Bid مرصود ورسوم خروج مفترضة صفر، دون ضمان تعبئة. IEX للعرض فقط؛ مخاطرة جديدة تتطلب SIP حديثًا واجتياز حدود الحساب. غياب السعر أو قدمه يبقي القيمة غير متاحة.'),
         for(final p in (a['deliveryPositions'] as Map? ?? {}).entries)...[
-          Text('${p.key}: ${p.value['quantity']} سهم مستلم • أساس تكلفة ${money(p.value['cost'])} • القيمة السوقية غير متاحة؛ دخول الخيارات مقفل.'),
+          Text('${p.key}: ${p.value['quantity']} سهم مستلم • أساس تكلفة ${money(p.value['cost'])} • Bid مرصود ${money((report['deliveryValuation']['positions'] as List).firstWhere((r)=>r['symbol']==p.key)['valueCents'])}.'),
           OutlinedButton(onPressed:paper.busy||!paper.ready||a['enabled']==true?null:()=>showDialog<bool>(context:context,
             builder:(_)=>PaperSettlementDialog(paper:paper,accountId:a['id'] as String,delivery:true,
               contract:paper.journal.lastWhere((e)=>e['account']==a['id']&&e['symbol']==p.key&&e['settlement'] is Map)['settlement']['request']['contract'] as String)),

@@ -57,6 +57,7 @@ class MainActivity : FlutterActivity() {
                     }
                     "stop" -> {AlpacaMonitorService.stop(this);result.success(true)}
                     "snapshot" -> result.success(AlpacaRuntime.get(this).snapshot())
+                    "stockQuote" -> AlpacaRuntime.get(this).stockQuote(call.argument<String>("symbol")?:"") { quote -> runOnUiThread {result.success(quote)} }
                     "quote" -> AlpacaRuntime.get(this).quote(call.argument<String>("contract")?:"") { quote -> runOnUiThread {result.success(quote)} }
                     "backgroundStatus" -> result.success(AlpacaMonitorService.running)
                     "backgroundStart" -> {

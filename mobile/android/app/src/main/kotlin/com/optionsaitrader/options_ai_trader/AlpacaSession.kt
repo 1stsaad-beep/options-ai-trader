@@ -319,6 +319,29 @@ internal class AlpacaSession(
                 .put("bidSize",q.getInt("bs")).put("askSize",q.getInt("as")).toString())
         }catch(_:Exception){done(null)} },maxOf(0,delay),TimeUnit.MILLISECONDS)
     }
+    fun stockQuote(symbol:String,done:(String?)->Unit) {
+        require(symbol.matches(Regex("[A-Z]{1,6}")));val g=generation;val selectedFeed=feed
+        val delay=maxOf(nextRequest,blockedUntil)-now()
+        if(delay>10000){done(null);return}
+        http.schedule({try {
+            val url="https://data.alpaca.markets/v2/stocks/quotes/latest".toHttpUrl().newBuilder()
+                .addQueryParameter("symbols",symbol).addQueryParameter("feed",selectedFeed).build()
+            val q=request(g,url).getJSONObject("quotes").getJSONObject(symbol)
+            val at=Instant.parse(q.getString("t"));val captured=Instant.ofEpochMilli(now())
+            require(!at.isAfter(captured)&&java.time.Duration.between(at,captured).toMillis()<=30000)
+            fun cents(field:String):Long {
+                val price=java.math.BigDecimal(q.get(field).toString())
+                require(price.signum()>0&&price<=java.math.BigDecimal("1000000"))
+                return price.movePointRight(2).longValueExact()
+            }
+            val bid=cents("bp");val ask=cents("ap")
+            require(ask>=bid&&(ask-bid)*5<=ask&&current(g)&&feed==selectedFeed)
+            done(JSONObject().put("version","paper-delivery-valuation-v1").put("symbol",symbol)
+                .put("source","alpaca").put("feed",selectedFeed)
+                .put("at",at.truncatedTo(java.time.temporal.ChronoUnit.MICROS).toString())
+                .put("bidCents",bid).put("askCents",ask).toString())
+        }catch(_:Exception){done(null)}},maxOf(0,delay),TimeUnit.MILLISECONDS)
+    }
     @Synchronized fun snapshot():String {
         val series=JSONObject();val analysis=JSONObject()
         for((s,values) in bars) {

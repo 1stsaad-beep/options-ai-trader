@@ -11,6 +11,8 @@ public class AlpacaPolicyTest {
         for(String path:List.of("/v2/orders","/v2/account","/v2/stocks/../orders","/v2/stocks/%2e%2e/orders"))
             check(!AlpacaPolicy.permits("GET","https://data.alpaca.markets"+path));
         for(String url:List.of("http://data.alpaca.markets/v2/stocks/bars","https://user@data.alpaca.markets/v2/stocks/bars","https://data.alpaca.markets:443/v2/stocks/bars","https://data.alpaca.markets/v2/stocks/bars#x"))check(!AlpacaPolicy.permits("GET",url));
+        check(AlpacaPolicy.permits("GET","https://data.alpaca.markets/v2/stocks/quotes/latest?symbols=NVDA&feed=iex"));
+        check(!AlpacaPolicy.permits("POST","https://data.alpaca.markets/v2/stocks/quotes/latest"));
         check(AlpacaPolicy.permits("GET","https://data.alpaca.markets/v2/stocks/bars?feed=iex"));
         check(AlpacaPolicy.permits("GET","https://data.alpaca.markets/v1beta1/options/snapshots?feed=opra"));
         check(AlpacaPolicy.permits("GET","https://stream.data.alpaca.markets/v2/iex"));

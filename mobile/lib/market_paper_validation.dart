@@ -58,6 +58,10 @@ void validatePaper(Map<String, dynamic> book) {
         }
       }
     }
+    // Optional market marks do not authorize cash changes or veto owned protection.
+    // Each mark is validated at valuation/admission time, including its source and age.
+    if(a.containsKey('deliveryMarks')&&a['deliveryMarks'] is! Map)invalid();
+    if(a.containsKey('deliveryMarkSource')&&!['fixture','alpaca'].contains(a['deliveryMarkSource']))invalid();
     if (a.containsKey('strategy') && !paperStrategyLabels.containsKey(a['strategy'])) invalid();
     if (a.containsKey('watchlist')) {
       final watch = a['watchlist'];

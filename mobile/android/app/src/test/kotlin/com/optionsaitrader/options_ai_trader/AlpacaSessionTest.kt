@@ -49,6 +49,7 @@ class AlpacaSessionTest {
                 networkFailure?.let{throw it}
                 val body=if(chain.request().url.encodedPath.contains("options"))
                     """{"snapshots":{"NVDA261016C00200000":{"latestQuote":{"t":"2026-10-13T15:01:15Z","bp":2,"ap":2.1,"bs":10,"as":10}}}}"""
+                else if(chain.request().url.encodedPath=="/v2/stocks/quotes/latest") """{"quotes":{"NVDA":{"t":"2026-10-13T15:01:15Z","bp":220,"ap":220.1}}}"""
                 else """{"bars":{"NVDA":[{"t":"2026-10-13T15:00:00Z","o":100,"h":102,"l":99,"c":101,"v":10}]}}"""
                 Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(httpCode).message("mock")
                     .header("Retry-After","600").body(body.toResponseBody()).build()
@@ -91,6 +92,19 @@ class AlpacaSessionTest {
     @Test fun rateLimitSurvivesManualRestart(){Harness(429).use {h->h.start();h.auth();h.await{h.view().getLong("retryAt")>h.clock.get()};val until=h.view().getLong("retryAt");h.session.stop();h.session.start("iex","regular",listOf("NVDA"));assertEquals(until,h.view().getLong("retryAt"));assertEquals("HTTP_429",h.view().getString("testCode"));assertEquals("RETRY_WAIT",h.view().getString("state"));assertEquals(1,h.requests.size)}}
     @Test fun disconnectedTransportStopsFreshnessAndSchedulesRecovery(){Harness().use {h->h.start();h.auth();h.await{h.view().getBoolean("connected")};h.sockets.listener.onFailure(h.sockets.socket,java.io.IOException("secret provider URL"),null);h.await{!h.view().getBoolean("connected")};assertTrue(h.session.enabled);assertFalse(h.session.snapshot().contains("secret provider"))}}
     @Test fun optionsAreExplicitOpraGetOnly(){Harness().use {h->h.start();h.auth();h.await{h.requests.size==1};h.clock.addAndGet(5000);val done=CountDownLatch(1);var answer:String?=null;h.session.quote("NVDA261016C00200000"){answer=it;done.countDown()};assertTrue(done.await(3,TimeUnit.SECONDS));assertEquals("opra",JSONObject(answer!!).getString("feed"));assertEquals("opra",h.requests.last().url.queryParameter("feed"));assertEquals("GET",h.requests.last().method)}}
+    @Test fun deliveredStockUsesReadOnlyExplicitFeedAndExactCents(){Harness().use {h->
+        h.start();h.auth();h.await{h.requests.size==1};h.clock.addAndGet(5000)
+        val done=CountDownLatch(1);var answer:String?=null;h.session.stockQuote("NVDA"){answer=it;done.countDown()}
+        assertTrue(done.await(3,TimeUnit.SECONDS));val q=JSONObject(answer!!)
+        assertEquals("iex",q.getString("feed"));assertEquals("alpaca",q.getString("source"));assertEquals(22000,q.getInt("bidCents"))
+        assertEquals("GET",h.requests.last().method);assertEquals("NVDA",h.requests.last().url.queryParameter("symbols"))
+        assertEquals("iex",h.requests.last().url.queryParameter("feed"));assertFalse(q.has("cash"))
+    }}
+    @Test fun staleDeliveredStockCannotProvideAMark(){Harness().use {h->
+        h.start();h.auth();h.await{h.requests.size==1};h.clock.addAndGet(31000)
+        val done=CountDownLatch(1);var answer:String?="sentinel";h.session.stockQuote("NVDA"){answer=it;done.countDown()}
+        assertTrue(done.await(3,TimeUnit.SECONDS));assertNull(answer)
+    }}
     @Test fun optionsForbiddenDoesNotBecomeIndicative(){Harness(403).use {h->h.start();h.auth();h.await{h.requests.size==1};h.clock.addAndGet(5000);val done=CountDownLatch(1);var answer:String?="sentinel";h.session.quote("NVDA261016C00200000"){answer=it;done.countDown()};assertTrue(done.await(3,TimeUnit.SECONDS));assertNull(answer)}}
     @Test fun reconnectionRequiresNewAuthentication(){Harness().use {h->h.start();h.auth();h.await{h.view().getBoolean("connected")};h.sockets.listener.onFailure(h.sockets.socket,java.io.IOException(),null);h.await{!h.view().getBoolean("connected")};Thread.sleep(5200);h.await{h.sockets.count==2};assertFalse(h.view().getBoolean("connected"));h.auth();h.await{h.view().getBoolean("connected")}}}
     @Test fun dataClientRejectsOrderBeforeNetwork(){val client=AlpacaSession.client();try {

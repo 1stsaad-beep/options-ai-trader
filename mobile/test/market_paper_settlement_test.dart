@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:options_ai_trader/direct_alpaca.dart';
 import 'package:options_ai_trader/market_paper.dart';
 import 'package:options_ai_trader/market_paper_validation.dart';
+import 'package:options_ai_trader/delivery_valuation.dart';
 import 'market_paper_safety_test.dart' show FaultPaperStore;
 
 void main() {
@@ -39,6 +40,52 @@ void main() {
     await restored.restoreBackup(paper.exportBackup());
     expect(restored.account(id)['deliveryPositions'],paper.account(id)['deliveryPositions']);
     validatePaper(restored.copy());
+  });
+  Future<void> mark({String feed='sip',String source='fixture',int bid=22000,DateTime? at,bool Function()? active})=>
+    paper.observeDeliveries(source:source,active:active??()=>true,quotes:(symbol)async=>{
+      'version':deliveryValuationVersion,'symbol':symbol,'source':source,'feed':feed,
+      'at':(at??clock).toIso8601String(),'bidCents':bid,'askCents':bid+10});
+  test('share marks value original basis; no cash or receipts changed; backup preserves age',()async {
+    await paper.settle(id,receipt(quantity:2));final before=paper.account(id),events=paper.journal;
+    await mark();final report=paper.performance(id);
+    expect(report['equityCents'],10357770);expect(report['unrealizedPnlCents'],357770);
+    expect(report['deliveryValuation']['riskComplete'],true);expect(paper.account(id)['cash'],before['cash']);
+    expect(paper.account(id)['deliveryPositions'],before['deliveryPositions']);expect(paper.journal,events);
+    final restored=MarketPaper(FaultPaperStore(),clock:()=>clock);await restored.load();await restored.restoreBackup(paper.exportBackup());
+    expect(restored.performance(id)['equityCents'],10357770);expect(restored.account(id)['enabled'],false);
+    clock=clock.add(const Duration(seconds:31));expect(restored.performance(id)['equityCents'],isNull);
+  });
+  test('delivery loss and allocation remain mandatory after qualified marks',()async {
+    await paper.settle(id,receipt(quantity:2));await mark();await paper.configure(id,{'enabled':true});await open();
+    expect(paper.journal.last['decision'],'ALLOCATION_RISK_LIMIT');
+    await paper.configure(id,{'allocationPercent':100});clock=clock.add(const Duration(seconds:1));await mark(bid:18000);await open();
+    expect(paper.journal.last['decision'],'DAILY_LOSS_RISK_LIMIT');expect(paper.account(id)['positions'],isEmpty);
+  });
+  test('SIP and current source can admit; IEX or source mismatch cannot',()async {
+    await paper.settle(id,receipt(quantity:2));await mark(feed:'iex');
+    await paper.configure(id,{'enabled':true,'allocationPercent':100});await open();
+    expect(paper.journal.last['decision'],'DELIVERED_STOCK_REVIEW_REQUIRED');expect(paper.performance(id)['equityCents'],10357770);
+    clock=clock.add(const Duration(seconds:1));await mark(source:'alpaca');await open();
+    expect(paper.account(id)['positions'],isEmpty);
+    clock=clock.add(const Duration(seconds:1));await mark();await open();
+    expect(paper.account(id)['positions']['NVDA']['quantity'],2);validatePaper(paper.copy());
+  });
+  test('duplicate or older marks do not refresh capture time or overwrite price',()async {
+    await paper.settle(id,receipt(quantity:2));final at=clock;await mark();final before=paper.account(id)['deliveryMarks'],writes=store.writes;
+    clock=clock.add(const Duration(seconds:1));await mark(at:at,bid:23000);await mark(at:at.subtract(const Duration(seconds:1)));
+    expect(paper.account(id)['deliveryMarks'],before);expect(store.writes,writes);
+  });
+  test('cancelled and unconfirmed observations do not authorize values',()async {
+    await paper.settle(id,receipt(quantity:2));await mark(active:()=>false);expect(paper.performance(id)['equityCents'],isNull);
+    store.dropWrite=true;await mark();expect(paper.performance(id)['equityCents'],isNull);
+    store.dropWrite=false;store.throwAfterWrite=true;await mark();expect(paper.performance(id)['equityCents'],10357770);
+  });
+  test('corrupt optional share mark cannot veto an owned option close',()async {
+    await paper.settle(id,receipt());store.value!['accounts'][0]['deliveryMarks']={'NVDA':{'invalid':true}};
+    final recovered=MarketPaper(store,clock:()=>clock);await recovered.load();expect(recovered.ready,true);
+    await recovered.evaluate(id:id,symbol:'NVDA',signal:'WAIT',confirmedReverse:false,dataValid:()=>false,
+      observation:'close',forceClose:true,quotes:(c)async=>OptionQuote(c,'opra',clock,200,210,10,10));
+    expect(recovered.account(id)['positions'],isEmpty);expect(recovered.performance(id)['equityCents'],isNull);
   });
   test('receipt retry is exactly idempotent including after restart',()async {
     final request=receipt(),result=await paper.settle(id,receipt());final writes=store.writes;

@@ -173,5 +173,9 @@ class DirectAlpaca {
   Future<DirectSnapshot> snapshot() async=>DirectSnapshot.parse((await channel.invokeMethod<String>('snapshot'))!);
   Future<bool> background() async=>await channel.invokeMethod<bool>('backgroundStatus')??false;
   Future<void> startBackground() async {await channel.invokeMethod<bool>('backgroundStart');}
+  Future<Map<String,dynamic>?> stockQuote(String symbol) async {
+    final text=await channel.invokeMethod<String>('stockQuote',{'symbol':symbol});
+    return text==null?null:jsonDecode(text) as Map<String,dynamic>;
+  }
   Future<OptionQuote?> quote(String contract) async {final text=await channel.invokeMethod<String>('quote',{'contract':contract});return text==null?null:OptionQuote.parse(text);}
 }

@@ -1,4 +1,5 @@
 import 'direct_alpaca.dart';
+import 'delivery_valuation.dart';
 
 const paperStrategies = ['trend', 'breakout', 'pullback', 'divergence'];
 const paperStrategyLabels = {
@@ -27,7 +28,9 @@ Map<String, dynamic> paperPerformance(Map<String, dynamic> account, DateTime now
   }
   final deliveries=account['deliveryPositions'] as Map? ?? {};
   final deliveryBasis=deliveries.values.fold<int>(0,(sum,p)=>sum+(p['cost'] as int));
-  if(deliveries.isNotEmpty)complete=false; // No stock mark is invented from an option or receipt.
+  final delivery=valueDeliveries(deliveries,account['deliveryMarks'] as Map? ?? {},now,account['deliveryMarkSource'] as String? ?? 'alpaca');
+  if(delivery['complete']!=true)complete=false;
+  liquidation+=(delivery['valueCents'] as int? ?? 0);
   final cash = account['cash'] as int, initial = account['initialCash'] as int;
   // Original V1 charged USD0.65 on every entry; this basis is derivable for
   // still-owned inventory. Unknown historical trade/fee totals remain null.
@@ -38,13 +41,13 @@ Map<String, dynamic> paperPerformance(Map<String, dynamic> account, DateTime now
   return {
     'source': 'independent_market_paper', 'executionModel': 'approximate_quote_side',
     'initialCashCents': initial, 'cashCents': cash, 'realizedPnlCents': realized,
-    'unrealizedPnlCents': complete ? liquidation - basis - entryFees : null,
+    'unrealizedPnlCents': complete ? liquidation - basis - entryFees - deliveryBasis : null,
     'equityCents': equity, 'returnPercent': equity == null ? null : (equity - initial) * 100 / initial,
     'valuationComplete': complete, 'totalFeesCents': account['fees'],
     'closedTrades': trades, 'winningTrades': settled>0?null:account['winningTrades'],
     'ordinaryOptionTradeCloses':account['closedTrades'],'settlementEvents':settled,
     'settlementRealizedPnlCents':account['settlementRealizedPnl']??0,
-    'deliveredShareBasisCents':deliveryBasis,'deliveredShares':deliveries,
+    'deliveryValuation':delivery,'deliveredShareBasisCents':deliveryBasis,'deliveredShares':deliveries,
     'tradeCountPolicy':settled>0?'Mixed stock delivery and option receipts; aggregate win rate not inferred':'ordinary_option_round_trips',
     'winRatePercent': trades == null || trades == 0 ? null : (account['winningTrades'] as int) * 100 / trades,
     'sampledMaxDrawdownCents': account['maxDrawdown'],

@@ -65,7 +65,7 @@ class _PaperSettlementDialogState extends State<PaperSettlementDialog> {
     title:const Text('إيصال تسوية ورقي صريح'),
     content:SizedBox(width:480,child:SingleChildScrollView(child:Column(mainAxisSize:MainAxisSize.min,crossAxisAlignment:CrossAxisAlignment.start,children:[
       Text(widget.contract),
-      const Text('تسجيل محاسبي افتراضي يدوي، وليس تأكيد وسيط أو سعر OPRA أو أمر تداول. لا ممارسة تلقائية. الأسهم المستلمة بلا تقييم سوقي وتمنع دخول خيارات جديدة حتى تصفيتها ورقيًا.'),
+      const Text('تسجيل محاسبي افتراضي يدوي، وليس تأكيد وسيط أو سعر OPRA أو أمر تداول. لا ممارسة تلقائية. الأسهم المستلمة تحتاج عرض سهم مستقلًا وحديثًا للتقييم. IEX للعرض فقط؛ دخول خيارات جديدة يتطلب SIP مؤهلًا واجتياز حدود المخاطر.'),
       DropdownButtonFormField<String>(key:const Key('settlement-action'),initialValue:action,isExpanded:true,
         items:widget.delivery?const [DropdownMenuItem(value:'SELL_DELIVERY',child:Text('بيع الأسهم المستلمة ورقيًا'))]:[
           const DropdownMenuItem(value:'EXERCISE',child:Text('ممارسة وتحويل إلى أسهم / نقد')),
