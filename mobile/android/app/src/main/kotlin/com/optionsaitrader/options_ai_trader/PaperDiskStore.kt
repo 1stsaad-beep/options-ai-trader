@@ -12,8 +12,14 @@ import org.json.JSONObject
 class PaperDiskStore(private val file: File) {
     companion object { private val lock=Any(); private val uncertain=mutableSetOf<String>(); private const val MAX_BYTES=PaperSegments.MAX_BYTES }
     private fun syncDirectory(directory:File) {
-        val descriptor=android.system.Os.open(directory.path,android.system.OsConstants.O_RDONLY or android.system.OsConstants.O_DIRECTORY,0)
-        try{android.system.Os.fsync(descriptor)}finally{android.system.Os.close(descriptor)}
+        // O_DIRECTORY is not part of Android's public SDK. Check the opened
+        // descriptor, rather than a racy path check, before syncing its entries.
+        val descriptor=android.system.Os.open(directory.path,
+            android.system.OsConstants.O_RDONLY or android.system.OsConstants.O_CLOEXEC or android.system.OsConstants.O_NOFOLLOW,0)
+        try {
+            check(android.system.OsConstants.S_ISDIR(android.system.Os.fstat(descriptor).st_mode)) { "Ledger parent is not a directory" }
+            android.system.Os.fsync(descriptor)
+        } finally { android.system.Os.close(descriptor) }
     }
     private val segments=PaperSegments(File(file.path+".segments"),::syncDirectory)
     private fun logical(raw:String):String {
