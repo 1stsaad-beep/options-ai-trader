@@ -1,0 +1,15 @@
+{
+  "baseline": "bdffb57fedfdb63e68d1026c42e54561161a3e53",
+  "accepted_source": "dd50244090b90deac3f2835ab4a439cf981b49dc",
+  "run_id": 38861923793,
+  "artifact_id": 12029696539,
+  "direct_zip_sha256": "9dcba5ea4df04d731ab860afc3d63afc2e8543ad1032180c23b3fd301b37e7ef",
+  "flutter": 753,
+  "jvm": 51,
+  "python_local": 1276,
+  "failures": 0,
+  "skipped": 0,
+  "phone_tested": false,
+  "release_built": false,
+  "bundle_sha256": "1f590381ac731737d526c1d437d7f6b2e1280bd36c8ef2503b819f324568137f"
+}

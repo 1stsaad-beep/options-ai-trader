@@ -116,3 +116,12 @@ Actual f43f77e5 preview inspection confirmed the sloping neckline correction but
 ## Final source-bound acceptance for batches16–19
 
 Code8c9089e769ec83437666dd2d09551830fd42dca1: all applicable CI complete and successful. Original ZIP SHA/CRC and raw counts verified:683 Flutter,41 JVM,1218 Python,23 chart semantic and6 unchanged Golden; PostgreSQL22 execution/6 journal/10 runtime/5 settlement/17 backup;17 Compose. Security0 pattern findings across991 files/1800 blobs/168 commits,24 Python and44 Pub without known advisories at scan time.12 classical360/780px previews actually viewed and accepted for the scoped geometry/label fixes only. Sourcefa24ebbf Direct run was superseded/cancelled, not counted as a pass. New artifact bundle SHA256 d3ba89ff0860ff9940e68803fe237e1ec9c96ee28394b8f014c0bfb0812838b2; docs/evidence/resume-wave-runtime-20261014/index.json and verify.py. All remaining software gaps and unavailable independent review are explicitly retained in the latest Arabic resume. No APK/phone request/provider credentials/external trades/Oracle or other-project changes.
+
+
+## 2026-10-16 continuation — batches23–24
+
+Recovered actual remote HEAD bdffb57fedfdb63e68d1026c42e54561161a3e53, verified459 source/document blobs and reconstructed the exact local Git tree/commit;591 historical/evidence paths remain remote-only and preserved in the base tree/index. No other repository or Oracle access.
+
+Batch23 dd50244090b90deac3f2835ab4a439cf981b49dc fixes an actual Android Kotlin build failure on unsupported O_DIRECTORY using public descriptor open/fstat/S_ISDIR/fsync, preserving directory durability. Original Direct38861923793 artifact12029696539 SHA256/CRC verified:753 Flutter,51 JVM, zero failures/skips. Security/chart/data-only gates passed; APK/iOS skipped. Local Python baseline1276 passed.
+
+Batch24 adds versioned Python/Dart observed strategy parity and a separate prefix-only read-only alternative-signal Replay UI/API; ten fixtures/540 prefixes/five strategies and32 new Python tests passed. Full final-source CI remains pending. Historical decisions and Demo strategies are preserved. See docs/STRATEGY_REPLAY_20261016.md and docs/RESUME_20261016_AR.md for exact scope and remaining work. No completed-V1, independent-review, continuous market execution or final-APK claim.

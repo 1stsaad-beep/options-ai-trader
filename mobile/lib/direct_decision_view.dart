@@ -4,6 +4,7 @@ import 'demo/chart_painter.dart';
 import 'direct_replay.dart';
 import 'observed_option_replay.dart';
 import 'observed_bar_archive.dart';
+import 'strategy_replay.dart';
 
 /// An offline view of one account-scoped event supplied by its ledger.
 /// At an earlier cursor the final decision snapshot is deliberately hidden.
@@ -22,6 +23,7 @@ class _DirectDecisionViewState extends State<DirectDecisionView> {
   late final List<Map<String,dynamic>> observations;
   late final DateTime asOf;
   bool compare=false;
+  bool compareRules=false;
   int horizon=300,slippage=0;
   int cursor=0;
   @override void initState() {
@@ -36,6 +38,10 @@ class _DirectDecisionViewState extends State<DirectDecisionView> {
     final saved=record,event=saved?.original??original;
     final prefix=saved==null||cursor<0?null:saved.bars.take(cursor+1).toList();
     final finalCursor=saved==null||cursor==saved.bars.length-1;
+    final alternatives=compareRules&&saved!=null&&saved.completeSource?compareStrategies({
+      'account':event['account'],'symbol':event['symbol'],'source':event['evidence']?['source'],
+      'capturedAt':event['evidence']?['recordedAt']??event['at'],
+      'bars':directBarEvidence(saved.bars)['bars'],'cursor':cursor}):null;
     final outcome=compare?replayObservedOption({'entry':original,'observations':observations,
       'asOf':asOf.toIso8601String(),'horizonSeconds':horizon,'slippageCents':slippage}):null;
     return Scaffold(appBar:AppBar(title:const Text('إعادة عرض القرار المحفوظ')),
@@ -55,6 +61,14 @@ class _DirectDecisionViewState extends State<DirectDecisionView> {
               finalCursor?directTradeMarkers(prefix,1,event['symbol'] as String,[event]):[],
               Theme.of(context).colorScheme,0,false,false,[],priceLabel:'STOCK • saved observation',
               timeLabels:{for(var i=0;i<prefix.length;i++)i:prefix[i].time.toIso8601String().substring(11,16)})))),
+        ],
+        if(saved!=null&&saved.completeSource&&cursor>=0)...[
+          OutlinedButton(key:const Key('strategy-replay-toggle'),onPressed:()=>setState(()=>compareRules=!compareRules),
+            child:const Text('مقارنة الاستراتيجيات على الشموع المحفوظة')),
+          if(alternatives!=null)...[
+            const Text('حساب بحثي لاحق للقواعد الخمس على الشموع حتى المؤشر فقط. لا يعدّل السبب الأصلي ولا يولّد أسعار خيارات أو أرباحًا أو تعبئات. لا يثبت أن هذه الشموع كانت متاحة فعليًا عند مؤشر أقدم من وقت التقاطها.'),
+            SelectableText(const JsonEncoder.withIndent('  ').convert(alternatives),key:const Key('strategy-replay-result')),
+          ],
         ],
         if(finalCursor)...[
           Text('القرار الأصلي: ${event['decision']}',key:const Key('replay-original-reason')),

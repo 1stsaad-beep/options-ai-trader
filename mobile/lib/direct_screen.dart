@@ -162,7 +162,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
           scenarioInvalidated:(){final p=paper.account(a['id'] as String)['positions'][symbol];final price=snapshot.series[symbol]?.lastOrNull?.close;
             if(p==null||p['scenarioLevel'] is! num||price==null)return false;
             return p['direction']=='CALL'?price<p['scenarioLevel']:price>p['scenarioLevel'];},evidence:{'source':snapshot.source=='alpaca'?'alpaca':'fixture',
-            'feed':snapshot.feed,'session':snapshot.session,'rule':signal.reason,'research':research,
+            'feed':snapshot.feed,'session':snapshot.session,'rule':signal.reason,'strategyContract':marketStrategyContract,'research':research,
             'scenarioLevel':research['indicators']?[signal.direction=='CALL'?'support':'resistance'],'recordedAt':DateTime.now().toUtc().toIso8601String(),
             ...directBarEvidence(rows)});
       }

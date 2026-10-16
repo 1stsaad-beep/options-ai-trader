@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:options_ai_trader/direct_alpaca.dart';
@@ -30,5 +31,22 @@ void main() {
     await tester.pumpWidget(MaterialApp(home:DirectDecisionView(event:bad)));await tester.pumpAndSettle();
     expect(find.byKey(const Key('replay-invalid')),findsOneWidget);
     expect(find.byKey(const Key('decision-replay-chart')),findsNothing);
+    expect(find.byKey(const Key('strategy-replay-toggle')),findsNothing);
+  });
+  testWidgets('alternative signals stay separate from the immutable original and follow the cursor',(tester)async {
+    final original=event();original['evidence']['source']='fixture';final bytes=jsonEncode(original);
+    await tester.pumpWidget(MaterialApp(home:DirectDecisionView(event:original)));await tester.pumpAndSettle();
+    final move=tester.widget<Slider>(find.byKey(const Key('replay-slider'))).onChanged!;
+    await tester.scrollUntilVisible(find.byKey(const Key('strategy-replay-toggle')),200,
+      scrollable:find.descendant(of:find.byType(ListView).first,matching:find.byType(Scrollable)).first);
+    await tester.tap(find.byKey(const Key('strategy-replay-toggle')));await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('strategy-replay-result')));
+    Map<String,dynamic> result()=>jsonDecode(tester.widget<SelectableText>(find.byKey(const Key('strategy-replay-result'))).data!) as Map<String,dynamic>;
+    expect(result()['prefixCount'],40);expect(result()['executionAllowed'],false);expect(result()['pnlCents'],isNull);
+    expect((result()['signals'] as Map).keys.toSet(),{'confluence','trend','breakout','pullback','divergence'});
+    move(10);await tester.pumpAndSettle();
+    expect(result()['prefixCount'],11);expect(result()['historicalAvailabilityVerified'],false);
+    expect(find.byKey(const Key('replay-original-json')),findsNothing);expect(jsonEncode(original),bytes);
+    expect(tester.takeException(),isNull);
   });
 }

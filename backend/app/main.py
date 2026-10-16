@@ -98,6 +98,11 @@ def create_app(repository=None, token=None, market_data_provider=None):
         from .observed_option_replay import replay_option
         return {'provenance':'client_supplied_unverified', 'persisted':False,
                 'result':replay_option(body)}
+    @app.post('/api/research/strategy-comparison',dependencies=secured)
+    def strategy_comparison(body: dict):
+        from .strategy_replay import compare_strategies
+        return {'provenance':'client_supplied_unverified', 'persisted':False,
+                'result':compare_strategies(body)}
     @app.get('/api/readiness',dependencies=secured)
     def readiness(s=Depends(service)):
         from .monitoring import readiness as inspect

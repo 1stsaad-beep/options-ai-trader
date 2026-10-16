@@ -35,3 +35,8 @@ Versioned conservative option policy is integrated into Direct entry/add/close, 
 ### Batch22 continuation: R08/R14
 
 Device physical archive chunks are now outside the AtomicFile root; content hashes, directory fsync, immutable original migration anchor and uncached logical CAS preserve exact bytes. Eight JVM tests added; source-specific result pending. Existing logical64MiB/archive8MiB/export16MiB limits and full-memory validation remain; instrumentation, storage-pressure safety and continuous soak are not complete. See docs/SEGMENTED_DEVICE_STORAGE_20261014.md.
+
+
+### 2026-10-16 batches23–24: R04/R08/R13/R14
+
+The inherited Android build failure is fixed and accepted on dd50244 (753 Flutter/51 JVM). The next source adds the shared five-rule observed strategy contract with540 prefix fixtures and an authenticated no-write alternative-signal Replay endpoint plus offline saved-decision comparison. New receipts name the rule version; legacy originals and synthetic Demo contracts remain unchanged. This is scoped signal parity; wave identity/ranking, complete engine/Demo parity, modeled option outcomes, durable market execution and remaining storage/capacity work remain PARTIAL. Final-source mobile/backend CI is pending.
