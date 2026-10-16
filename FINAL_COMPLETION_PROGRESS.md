@@ -146,3 +146,12 @@ Batch26 separates optional native archive chunks from financial core, preserves 
 ## Batch27 — optional archive write-pressure fallback (CI pending)
 
 Unchanged optional manifests now reuse their content hash without re-staging. A typed pre-root optional-stage failure is distinguished from financial/root failure. Only after confirming the original durable preimage, MarketPaper may retry once with prior archives and actual inline source for newly uncommitted decisions. Committed original records remain unchanged; admission and quote freshness run again. No success is claimed if the financial/root write also fails. Added2 JVM/3 Flutter pressure/rollback/freshness regressions; source-specific acceptance pending. Migration still needs space to preserve its legacy anchor; full-memory64MiB/backup16MiB limits remain.
+
+
+## Batches26–27 accepted / batch28 server controls and saved Replay
+
+Batch26 source8ac33742d44ddae1410e0a6d094765fc42c3455d Direct38868887931 passed:769 Flutter/59 JVM. Batch27 sourcef304b3198b3065bdef1cee06bca097729823de3d Direct38869724672 passed:772 Flutter/61 JVM. Original artifact SHA256/CRC and raw zero-failure counts verified; chart/security/data-policy gates passed for both. Retained original archives in docs/evidence/resume-20261016/batch26-27-ci-evidence.zip. Instrumentation/APK deliberately skipped, not counted as acceptance.
+
+Batch28 adds authenticated read-only observed-worker status and separate mobile account create/configure/enable/stop/owned-close/explicit-settlement controls, bounded original event pages and offline prefix-only chart/alternative-strategy Replay. No provider key or CYCLE is submitted by the phone. CAS guards writes; uncertain writes invalidate local controls and are not automatically retried. Manual settlement preview uses shared arithmetic and fixed observed server time, then the backend revalidates exact current state. No financial authority is assigned to heartbeat or comparison. The source=alpaca new-entry lock remains explicit. Python full suite1354 passed; new Flutter source acceptance pending CI.
+
+Still open: Greek/deliverable qualification, historical lots, remaining full-memory/backup capacity, Demo/full-wave parity, server augmentation/scenario exits/advanced performance, operational deployment/soak, independent final review and final single APK. No intermediate phone test or completion claim.

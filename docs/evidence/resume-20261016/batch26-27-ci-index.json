@@ -1,0 +1,19 @@
+{
+  "bundle": "batch26-27-ci-evidence.zip",
+  "sha256": "e261437760b7622ff1764a91166720be6194db26c813cf9704fd120eb22c4253",
+  "sources": [
+    {
+      "file": "direct-8ac337.zip",
+      "head": "8ac33742d44ddae1410e0a6d094765fc42c3455d",
+      "run": 38868887931,
+      "sha256": "3b6bff8f97bf140fec2fc45cf039163a3279fc0d678153f9b0800c6b10d90d46"
+    },
+    {
+      "file": "direct-f304b3.zip",
+      "head": "f304b3198b3065bdef1cee06bca097729823de3d",
+      "run": 38869724672,
+      "sha256": "d78c3d8c7a85ad980ab99f3f9baf3bddb3bd4cd29ad652442748d28bc652ea7c"
+    }
+  ],
+  "scope": "Flutter/JVM mocks; no Android emulator, phone, APK or provider connection"
+}

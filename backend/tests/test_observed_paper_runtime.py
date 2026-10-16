@@ -198,3 +198,39 @@ def test_two_database_connections_use_same_acceptance_contract(tmp_path):
     try: assert check(repositories)['status']=='passed'
     finally:
         for repo in repositories: repo.close()
+
+
+def test_status_is_authenticated_read_only_and_never_grants_entry():
+    from fastapi.testclient import TestClient
+    from app.main import create_app
+    from test_alpaca_market_api import TOKEN, HEADERS
+    from datetime import datetime, timezone, timedelta
+    repo=Repository()
+    with TestClient(create_app(repo,TOKEN)) as client:
+        path='/api/observed-paper/status'
+        assert client.get(path).status_code==401
+        empty=client.get(path,headers=HEADERS).json()
+        assert empty['state']=='WORKER_UNAVAILABLE' and not empty['heartbeatFresh']
+        assert not empty['newMarketEntryAllowed'] and not empty['externalOrder']
+        with repo.transaction() as db:
+            assert db.one('SELECT COUNT(*) AS n FROM observed_paper_accounts')['n']==0
+            assert db.one("SELECT * FROM runtime_health WHERE name='observed_paper'") is None
+        for offset,payload,fresh in [(0,{'state':'RUNNING_VIRTUAL','processed':2,'blocked':1},True),
+                (-61,{'state':'RUNNING_VIRTUAL'},False),(10,{'state':'RUNNING_VIRTUAL'},False),(0,{'state':'UNKNOWN'},False)]:
+            with repo.transaction() as db:
+                db.execute("DELETE FROM runtime_health WHERE name='observed_paper'")
+                db.execute('INSERT INTO runtime_health(name,updated_at,payload) VALUES(?,?,?)',
+                    ('observed_paper',iso(datetime.now(timezone.utc)+timedelta(seconds=offset)),json.dumps(payload)))
+            response=client.get(path,headers=HEADERS).json()
+            assert response['heartbeatFresh'] is fresh
+            assert not response['newMarketEntryAllowed']
+            assert response['state']==('RUNNING_VIRTUAL' if fresh else 'WORKER_UNAVAILABLE')
+    repo.close()
+
+
+def test_saved_mobile_observed_fixture_reproduces_original_ledger():
+    import sys
+    from pathlib import Path
+    root=Path(__file__).parents[2];sys.path.insert(0,str(root/'scripts'))
+    from generate_observed_server_fixture import generate
+    assert generate()==json.loads((root/'mobile/test/fixtures/observed_server_v1.json').read_text())

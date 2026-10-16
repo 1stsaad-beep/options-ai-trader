@@ -7,6 +7,7 @@ import 'api.dart';
 import 'analysis_contract.dart';
 import 'market_data.dart';
 import 'market_runtime.dart';
+import 'observed_server.dart';
 import 'market_monitor.dart';
 import 'demo/screen.dart';
 import 'demo/store.dart';
@@ -822,6 +823,14 @@ class _DashboardState extends State<Dashboard> {
                   builder: (_) => MarketRuntimeScreen(api: api,
                     accounts: List<Map<String, dynamic>>.from(accounts), initialAccount: accountId!),
                 ));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_balance_wallet_outlined),
+              title: const Text('دفتر الخادم الافتراضي'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>ObservedServerScreen(api:api)));
               },
             ),
             ListTile(
