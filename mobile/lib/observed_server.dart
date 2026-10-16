@@ -22,7 +22,7 @@ class ObservedServerAccount {
   ObservedServerAccount._(this.state,this.version,this.eventHash);
   factory ObservedServerAccount.parse(dynamic raw,String account) {
     final root=observedObject(raw),state=observedObject(root['state']);
-    if(!observedId(account)||state['id']!=account||state['contract']!='observed-paper-ledger-v1'||
+    if(!observedId(account)||state['id']!=account||!['observed-paper-ledger-v1','observed-paper-ledger-v2'].contains(state['contract'])||
         state['executionContract']!='paper-option-execution-v2'||!['fixture','alpaca'].contains(state['source'])||
         state['name'] is! String||state['enabled'] is! bool||!observedInteger(root['version'])||!observedHash(root['eventHash'])) {
       throw const FormatException('Unqualified server account');
@@ -163,6 +163,7 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
       body:ListView(padding:const EdgeInsets.all(16),children:[
         const Text('حسابات مستقلة عن Demo ودفتر الهاتف. الأرصدة افتراضية، ولا تُرسل أوامر إلى وسيط.'),
         if(runtime!=null)Text('العامل: ${observedRuntimeLabel(runtime!['state'])} • نبض حديث: ${runtime!['heartbeatFresh']==true?"نعم":"لا"}'),
+        if(runtime!=null)Text('وقت قراءة الخادم: ${runtime!['serverTime']} • حدّث الصفحة للتحقق مجددًا.'),
         const Text('الدخول السوقي الجديد مقفل حاليًا حتى اكتمال تحقق أهلية العقد وGreeks. تشغيل الحساب لا يثبت تشغيل العامل أو صلاحية بيانات السوق.'),
         if(busy)const LinearProgressIndicator(),
         if(error!=null)Text(error!,key:const Key('observed-error')),
@@ -188,11 +189,39 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
           if(observedObject(value['deliveries']).isNotEmpty)const Text('توجد أسهم تسليم؛ تتطلب تسوية افتراضية صريحة ومراجعة، والدخول الجديد محجوب.'),
           for(final entry in observedObject(value['deliveries']).entries)Card(child:ListTile(title:Text('${entry.key} • ${entry.value['quantity']} أسهم تسليم'),
             trailing:TextButton(onPressed:busy||value['enabled']==true?null:()=>settle(null,deliverySymbol:entry.key),child:const Text('تصرف افتراضي')))),
+          OutlinedButton(key:const Key('observed-performance'),onPressed:busy?null:performance,child:const Text('أداء الإيصالات الأصلية')),
           OutlinedButton(key:const Key('observed-events'),onPressed:busy?null:loadEvents,child:const Text('تحميل صفحة القرارات الأصلية التالية')),
           for(final event in events)ListTile(title:Text('#${event.version} • ${event.original['command']['kind']}'),subtitle:Text(event.original['at'] as String),
             onTap:()=>Navigator.push(context,MaterialPageRoute<void>(builder:(_)=>ObservedServerReplay(account:account!,event:event)))),
         ],
       ]));
+  }
+  Future<void> performance() async {
+    final current=saved,id=account;if(current==null||id==null||busy)return;
+    setState(()=>busy=true);
+    Map<String,dynamic>? report;
+    try {
+      final value=observedObject(await widget.api.request('GET','${path(id)}/performance'));
+      if(value['contract']!='observed-paper-performance-v1'||value['account']!=id||value['source']!=current.state['source']||
+          value['externalOrder']!=false||value['version']!=current.version||value['eventHash']!=current.eventHash||
+          value['realizedPnlCents']!=current.state['realized']||value['cashCents']!=current.state['cash']||
+          value['feesCents']!=current.state['fees'])throw const FormatException();
+      for(final key in ['maximumRealizedDrawdownCents','closedQuoteRoundTrips','settlementAffectedClosuresExcluded','buyContracts','sellContracts','addFills']) {
+        if(!observedInteger(value[key]))throw const FormatException();
+      }
+      report=value;
+    }catch(_){if(mounted)setState(()=>error='تعذر التحقق من التقرير المطابق لإصدار الحساب؛ حدّث الحالة ثم أعد الطلب.');}
+    finally{if(mounted)setState(()=>busy=false);}
+    if(!mounted||report==null)return;
+    final r=report;
+    await showDialog<void>(context:context,builder:(context)=>AlertDialog(title:const Text('أداء الإيصالات الأصلية'),
+      content:SingleChildScrollView(child:Column(mainAxisSize:MainAxisSize.min,crossAxisAlignment:CrossAxisAlignment.start,children:[
+        Text('الربح المحقق ${(r['realizedPnlCents']/100).toStringAsFixed(2)} USD • الرسوم ${(r['feesCents']/100).toStringAsFixed(2)} USD'),
+        Text('أقصى تراجع للمحقق ${(r['maximumRealizedDrawdownCents']/100).toStringAsFixed(2)} USD'),
+        Text('دورات خيار مغلقة بالأسعار ${r['closedQuoteRoundTrips']} • إغلاقات متأثرة بالتسوية مستبعدة من الإحصاء ${r['settlementAffectedClosuresExcluded']}'),
+        Text('عقود مشتراة ${r['buyContracts']} • مباعة ${r['sellContracts']} • تعبئات تعزيز ${r['addFills']}'),
+        const Text('التراجع للمحقق لا يقيس تراجع قيمة المحفظة. لا ربح غير محقق أو Sharpe دون تقييم كامل مؤهل. التسويات مشمولة في الربح المحقق والرسوم، ومستبعدة من إحصاء دورات الخيار.'),
+      ])),actions:[TextButton(onPressed:()=>Navigator.pop(context),child:const Text('إغلاق'))]));
   }
   Future<void> settle(String? contract,{String? deliverySymbol}) async {
     final current=saved,status=runtime;

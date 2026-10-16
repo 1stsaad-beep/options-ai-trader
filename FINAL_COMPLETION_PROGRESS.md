@@ -155,3 +155,10 @@ Batch26 source8ac33742d44ddae1410e0a6d094765fc42c3455d Direct38868887931 passed:
 Batch28 adds authenticated read-only observed-worker status and separate mobile account create/configure/enable/stop/owned-close/explicit-settlement controls, bounded original event pages and offline prefix-only chart/alternative-strategy Replay. No provider key or CYCLE is submitted by the phone. CAS guards writes; uncertain writes invalidate local controls and are not automatically retried. Manual settlement preview uses shared arithmetic and fixed observed server time, then the backend revalidates exact current state. No financial authority is assigned to heartbeat or comparison. The source=alpaca new-entry lock remains explicit. Python full suite1354 passed; new Flutter source acceptance pending CI.
 
 Still open: Greek/deliverable qualification, historical lots, remaining full-memory/backup capacity, Demo/full-wave parity, server augmentation/scenario exits/advanced performance, operational deployment/soak, independent final review and final single APK. No intermediate phone test or completion claim.
+
+
+## Batch29 — version-preserving lifecycle and receipt performance
+
+New observed-paper accounts use v2 with opt-in one-time profitable augmentation and original support/resistance scenario exit; v1 is frozen and old original SQL events/hashes reproduce exactly. Streamed receipt statistics distinguish realized drawdown and cost basis from unmarked NAV and exclude settlement-affected closures from quote round-trip win rate. Mobile controls support both contracts and version-bound performance reads. Local full1368 Python passed. See docs/OBSERVED_PAPER_V2_20261016.md.
+
+Batch28 source6f32da0 analyzer failure was corrected in1178247; its subsequent Direct38872514130 failed two new widget scroll assertions. Original failed ZIP SHA256/CRC verified and retained in batch28-failed-ci-evidence.zip. Both harness defects are corrected here. No Flutter source success or final acceptance is claimed yet. Greek/deliverable market entry remains blocked; remaining parity/capacity/valuation/operational and independent-review/APK work stays open.

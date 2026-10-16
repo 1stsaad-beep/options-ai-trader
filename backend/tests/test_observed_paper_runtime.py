@@ -185,6 +185,10 @@ def test_authenticated_controls_reject_price_injection_and_other_mode(tmp_path):
         assert client.post(prefix+'/a/reconcile',headers=HEADERS).json()['version']==1
         assert len(client.get(prefix+'/a/events',headers=HEADERS).json()['events'])==2
         assert client.get(prefix+'/missing/state',headers=HEADERS).status_code==409
+        assert client.get(prefix+'/a/performance').status_code==401
+        performance=client.get(prefix+'/a/performance',headers=HEADERS).json()
+        assert performance['eventCount']==2 and performance['version']==1 and performance['account']=='a'
+        assert performance['liquidationEquityCents'] is None and performance['externalOrder'] is False
     repo.close()
 
 

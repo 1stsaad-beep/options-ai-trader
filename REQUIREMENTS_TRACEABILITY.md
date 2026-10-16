@@ -52,3 +52,10 @@ The inherited Android build failure is fixed and accepted on dd50244 (753 Flutte
 `PaperIndependentStore.kt` and `PaperDiskStore.kt` retain a lossless core template and independent optional archive directories. Missing optional chunks preserve manifest-bound unavailable markers; financial corruption still fails closed. MarketPaper refreshes only proven optional availability changes and discards the in-flight attempt before a fresh protective retry.8 JVM/3 Flutter/new instrumented regression added. R14/R15 remain PARTIAL for full-memory limits, genuine disk-pressure capture behavior, large portable backup and final native/phone soak; see docs/OPTIONAL_ARCHIVE_ISOLATION_20261016.md.
 
 Batch28 R05/R06/R08/R10/R12: observed_server.dart and observed_server_controls.dart add isolated server controls, bounded original-event pages and prefix-only Replay; Python fixture reproduces actual server ledger/events. Authenticated heartbeat API never grants entry. CAS and uncertain-write tests added; Flutter CI pending.
+
+
+## Batch29 — version-preserving lifecycle and receipt performance
+
+New observed-paper accounts use v2 with opt-in one-time profitable augmentation and original support/resistance scenario exit; v1 is frozen and old original SQL events/hashes reproduce exactly. Streamed receipt statistics distinguish realized drawdown and cost basis from unmarked NAV and exclude settlement-affected closures from quote round-trip win rate. Mobile controls support both contracts and version-bound performance reads. Local full1368 Python passed. See docs/OBSERVED_PAPER_V2_20261016.md.
+
+Batch28 source6f32da0 analyzer failure was corrected in1178247; its subsequent Direct38872514130 failed two new widget scroll assertions. Original failed ZIP SHA256/CRC verified and retained in batch28-failed-ci-evidence.zip. Both harness defects are corrected here. No Flutter source success or final acceptance is claimed yet. Greek/deliverable market entry remains blocked; remaining parity/capacity/valuation/operational and independent-review/APK work stays open.

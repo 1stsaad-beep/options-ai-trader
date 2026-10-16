@@ -1,0 +1,894 @@
+{
+  "accounts": {
+    "mode": "observed_market_virtual",
+    "externalOrder": false,
+    "accounts": [
+      "server-one"
+    ]
+  },
+  "status": {
+    "mode": "observed_market_virtual",
+    "externalOrder": false,
+    "serverTime": "2026-10-13T15:00:01.000Z",
+    "heartbeatFresh": false,
+    "state": "WORKER_UNAVAILABLE",
+    "newMarketEntryAllowed": false,
+    "entryBlockReason": "CONTRACT_ELIGIBILITY_UNVERIFIED",
+    "processed": 0,
+    "blocked": 0
+  },
+  "snapshot": {
+    "version": 4,
+    "eventHash": "f981d4c50bf8d1ef90327be60c9a51ceab193c46febfbc68703e918dc0a9a178",
+    "state": {
+      "cash": 9967990,
+      "closedTrades": 0,
+      "config": {
+        "addEnabled": false,
+        "allocationPercent": 30,
+        "contracts": {
+          "NVDA": {
+            "CALL": "NVDA261023C00150000"
+          }
+        },
+        "dailyLossPercent": 3,
+        "holdingMode": "intraday",
+        "maxContracts": 10,
+        "maxHoldingDays": 3,
+        "maxPositions": 4,
+        "partialPercent": 20,
+        "quantity": 3,
+        "riskPercent": 5,
+        "scenarioExit": false,
+        "stopPercent": 20,
+        "strategy": "trend",
+        "takePercent": 40,
+        "trailPercent": 15
+      },
+      "consumption": {
+        "NVDA261023C00150000": {
+          "at": "2026-10-13T15:00:00.000Z",
+          "identity": "3de03d9401717b72921e0c7eb1ff04a11181e45a03e61f65824e6a08606251c0",
+          "quantity": 3
+        }
+      },
+      "contract": "observed-paper-ledger-v2",
+      "dailyRealized": {},
+      "deliveries": {},
+      "enabled": false,
+      "executionContract": "paper-option-execution-v2",
+      "fees": 210,
+      "id": "server-one",
+      "initialCash": 10000000,
+      "lastAt": "2026-10-13T15:00:01.000Z",
+      "lastSignals": {
+        "NVDA": "trend|2026-10-13T14:59:00.000Z"
+      },
+      "name": "Server fixture",
+      "positions": {
+        "NVDA": {
+          "added": false,
+          "changedAt": "2026-10-13T15:00:00.000Z",
+          "closeIntent": null,
+          "contract": "NVDA261023C00150000",
+          "cost": 32010,
+          "highBid": 99,
+          "markAt": "2026-10-13T15:00:00.000Z",
+          "markIdentity": "3de03d9401717b72921e0c7eb1ff04a11181e45a03e61f65824e6a08606251c0",
+          "opened": "2026-10-13T15:00:00.000Z",
+          "partialTaken": false,
+          "quantity": 3,
+          "roundPnl": 0,
+          "scenarioLevel": 98.40791435266814
+        }
+      },
+      "realized": 0,
+      "source": "fixture",
+      "winningTrades": 0
+    }
+  },
+  "events": {
+    "account": "server-one",
+    "mode": "observed_market_virtual",
+    "externalOrder": false,
+    "events": [
+      {
+        "version": 0,
+        "eventHash": "f8d2c285db9c0780414c7a1520b74bb0107231f73eceb8a503fa147baef429b3",
+        "afterHash": "158298253f8c1a5c1ca4e878c728a78dc033fc9f6799334c3281cdd953bbe518",
+        "at": "2026-10-13T15:00:00.000Z",
+        "facts": {
+          "externalOrder": false,
+          "kind": "CREATE"
+        },
+        "original": {
+          "at": "2026-10-13T15:00:00.000Z",
+          "command": {
+            "kind": "CREATE",
+            "state": {
+              "cash": 10000000,
+              "closedTrades": 0,
+              "config": {
+                "addEnabled": false,
+                "allocationPercent": 30,
+                "contracts": {},
+                "dailyLossPercent": 3,
+                "holdingMode": "intraday",
+                "maxContracts": 10,
+                "maxHoldingDays": 3,
+                "maxPositions": 4,
+                "partialPercent": 20,
+                "quantity": 1,
+                "riskPercent": 5,
+                "scenarioExit": false,
+                "stopPercent": 20,
+                "strategy": "trend",
+                "takePercent": 40,
+                "trailPercent": 15
+              },
+              "consumption": {},
+              "contract": "observed-paper-ledger-v2",
+              "dailyRealized": {},
+              "deliveries": {},
+              "enabled": false,
+              "executionContract": "paper-option-execution-v2",
+              "fees": 0,
+              "id": "server-one",
+              "initialCash": 10000000,
+              "lastAt": null,
+              "lastSignals": {},
+              "name": "Server fixture",
+              "positions": {},
+              "realized": 0,
+              "source": "fixture",
+              "winningTrades": 0
+            }
+          },
+          "facts": {
+            "externalOrder": false,
+            "kind": "CREATE"
+          }
+        }
+      },
+      {
+        "version": 1,
+        "eventHash": "0780fb6bb0a76851d5ffaaa45d5d9bb3db6cd64603b9eb7f63bc783bcb8ca4b4",
+        "afterHash": "114a0bf9c630e946f93c38be63f15402d449c14c8552c458393ff8cebcab2783",
+        "at": "2026-10-13T15:00:00.000Z",
+        "facts": {
+          "blocked": [],
+          "externalOrder": false,
+          "fills": [],
+          "kind": "CONFIGURE"
+        },
+        "original": {
+          "at": "2026-10-13T15:00:00.000Z",
+          "command": {
+            "config": {
+              "addEnabled": false,
+              "allocationPercent": 30,
+              "contracts": {
+                "NVDA": {
+                  "CALL": "NVDA261023C00150000"
+                }
+              },
+              "dailyLossPercent": 3,
+              "holdingMode": "intraday",
+              "maxContracts": 10,
+              "maxHoldingDays": 3,
+              "maxPositions": 4,
+              "partialPercent": 20,
+              "quantity": 3,
+              "riskPercent": 5,
+              "scenarioExit": false,
+              "stopPercent": 20,
+              "strategy": "trend",
+              "takePercent": 40,
+              "trailPercent": 15
+            },
+            "kind": "CONFIGURE"
+          },
+          "facts": {
+            "blocked": [],
+            "externalOrder": false,
+            "fills": [],
+            "kind": "CONFIGURE"
+          }
+        }
+      },
+      {
+        "version": 2,
+        "eventHash": "a61ca02dafb32efad656d3f06c69118f6af9e3999975a13574f94d9b1fb46201",
+        "afterHash": "71d1c398b67cd082b8ba9d5b2b11f424cf1229fff1f352cadd89ff8ce29ba322",
+        "at": "2026-10-13T15:00:00.000Z",
+        "facts": {
+          "blocked": [],
+          "externalOrder": false,
+          "fills": [],
+          "kind": "ENABLE"
+        },
+        "original": {
+          "at": "2026-10-13T15:00:00.000Z",
+          "command": {
+            "enabled": true,
+            "kind": "ENABLE"
+          },
+          "facts": {
+            "blocked": [],
+            "externalOrder": false,
+            "fills": [],
+            "kind": "ENABLE"
+          }
+        }
+      },
+      {
+        "version": 3,
+        "eventHash": "faf1363cd82f2b7df44b02d568931d17eb0322c6a15a090c501ddc885ffb7b0b",
+        "afterHash": "af3bfdffe7b4cf335c09b99e0da0e602e5e5b4da7df7fe2de75181ed7dc021cb",
+        "at": "2026-10-13T15:00:00.000Z",
+        "facts": {
+          "blocked": [],
+          "externalOrder": false,
+          "fills": [
+            {
+              "contract": "NVDA261023C00150000",
+              "execution": {
+                "cashDeltaCents": -32010,
+                "consumedQuantity": 0,
+                "externalOrder": false,
+                "feeCents": 210,
+                "policy": {
+                  "additionalFeeCents": 5,
+                  "adverseSlippageCents": 1,
+                  "commissionCents": 65,
+                  "liquidityPolicy": "minimum_displayed_sides_once_per_quote",
+                  "participationBps": 2500
+                },
+                "priceCents": 106,
+                "quantity": 3,
+                "queuePositionKnown": false,
+                "requestedQuantity": 3,
+                "side": "BUY",
+                "status": "FILLED",
+                "unfilledQuantity": 0,
+                "version": "paper-option-execution-v2"
+              },
+              "quote": {
+                "ask": 105,
+                "askSize": 40,
+                "at": "2026-10-13T15:00:00.000Z",
+                "bid": 100,
+                "bidSize": 40,
+                "contract": "NVDA261023C00150000",
+                "feed": "opra"
+              },
+              "reason": "QUANTITATIVE_RULE",
+              "side": "BUY",
+              "symbol": "NVDA"
+            }
+          ],
+          "kind": "CYCLE"
+        },
+        "original": {
+          "at": "2026-10-13T15:00:00.000Z",
+          "command": {
+            "kind": "CYCLE",
+            "observation": {
+              "bars": {
+                "NVDA": [
+                  {
+                    "at": "2026-10-13T14:00:00+00:00",
+                    "c": 98.9442,
+                    "h": 100.13094981026921,
+                    "l": 98.7253825272168,
+                    "o": 100.0,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:01:00+00:00",
+                    "c": 97.5641,
+                    "h": 99.06415452870387,
+                    "l": 97.34362269565447,
+                    "o": 98.9442,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:02:00+00:00",
+                    "c": 99.2359,
+                    "h": 99.57603570544875,
+                    "l": 97.23455121924836,
+                    "o": 97.5641,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:03:00+00:00",
+                    "c": 98.1236,
+                    "h": 99.49690400245244,
+                    "l": 97.94059520696756,
+                    "o": 99.2359,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:04:00+00:00",
+                    "c": 96.8143,
+                    "h": 98.25545498772945,
+                    "l": 96.64997987022633,
+                    "o": 98.1236,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:05:00+00:00",
+                    "c": 98.5242,
+                    "h": 98.87287601463352,
+                    "l": 96.4723042959893,
+                    "o": 96.8143,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:06:00+00:00",
+                    "c": 99.726,
+                    "h": 99.88403068540578,
+                    "l": 98.33124501281013,
+                    "o": 98.5242,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:07:00+00:00",
+                    "c": 100.2339,
+                    "h": 100.55346841266362,
+                    "l": 99.36960549260259,
+                    "o": 99.726,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:08:00+00:00",
+                    "c": 101.7541,
+                    "h": 101.88011547579048,
+                    "l": 99.95214443488405,
+                    "o": 100.2339,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:09:00+00:00",
+                    "c": 102.4409,
+                    "h": 102.69268613271312,
+                    "l": 101.60076294772776,
+                    "o": 101.7541,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:10:00+00:00",
+                    "c": 102.3353,
+                    "h": 102.56770386217961,
+                    "l": 101.95492349083003,
+                    "o": 102.4409,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:11:00+00:00",
+                    "c": 103.7972,
+                    "h": 104.06149166087611,
+                    "l": 102.145226278128,
+                    "o": 102.3353,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:12:00+00:00",
+                    "c": 105.4327,
+                    "h": 105.70441004050576,
+                    "l": 103.43250482803637,
+                    "o": 103.7972,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:13:00+00:00",
+                    "c": 106.8249,
+                    "h": 107.07741171259983,
+                    "l": 105.20851618706048,
+                    "o": 105.4327,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:14:00+00:00",
+                    "c": 107.2205,
+                    "h": 107.449812905188,
+                    "l": 106.67650381816351,
+                    "o": 106.8249,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:15:00+00:00",
+                    "c": 106.4409,
+                    "h": 107.56427769559039,
+                    "l": 106.32792845927833,
+                    "o": 107.2205,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:16:00+00:00",
+                    "c": 104.6262,
+                    "h": 106.72880522366196,
+                    "l": 104.44207003651513,
+                    "o": 106.4409,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:17:00+00:00",
+                    "c": 104.7647,
+                    "h": 105.0060720258345,
+                    "l": 104.42334702037336,
+                    "o": 104.6262,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:18:00+00:00",
+                    "c": 106.7538,
+                    "h": 106.91247204829999,
+                    "l": 104.5408616030778,
+                    "o": 104.7647,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:19:00+00:00",
+                    "c": 105.5645,
+                    "h": 107.0435994945373,
+                    "l": 105.3816085495121,
+                    "o": 106.7538,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:20:00+00:00",
+                    "c": 104.9878,
+                    "h": 105.88858280429713,
+                    "l": 104.79159932902508,
+                    "o": 105.5645,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:21:00+00:00",
+                    "c": 105.2219,
+                    "h": 105.5931945304592,
+                    "l": 104.85750616838463,
+                    "o": 104.9878,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:22:00+00:00",
+                    "c": 103.4683,
+                    "h": 105.39056083207163,
+                    "l": 103.13875132760212,
+                    "o": 105.2219,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:23:00+00:00",
+                    "c": 103.93,
+                    "h": 104.1012251509476,
+                    "l": 103.26897990138848,
+                    "o": 103.4683,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:24:00+00:00",
+                    "c": 102.6402,
+                    "h": 104.16770562565105,
+                    "l": 102.52735664366539,
+                    "o": 103.93,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:25:00+00:00",
+                    "c": 103.4294,
+                    "h": 103.79817833373355,
+                    "l": 102.2537787204973,
+                    "o": 102.6402,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:26:00+00:00",
+                    "c": 104.3689,
+                    "h": 104.75686027748388,
+                    "l": 103.32394374241201,
+                    "o": 103.4294,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:27:00+00:00",
+                    "c": 103.5249,
+                    "h": 104.75870202709044,
+                    "l": 103.19232816943246,
+                    "o": 104.3689,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:28:00+00:00",
+                    "c": 103.1666,
+                    "h": 103.9078925102059,
+                    "l": 102.88044685856094,
+                    "o": 103.5249,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:29:00+00:00",
+                    "c": 104.4383,
+                    "h": 104.62632307609707,
+                    "l": 103.00917543855738,
+                    "o": 103.1666,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:30:00+00:00",
+                    "c": 104.2149,
+                    "h": 104.57923128796678,
+                    "l": 104.0004096095827,
+                    "o": 104.4383,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:31:00+00:00",
+                    "c": 106.0622,
+                    "h": 106.26159216875976,
+                    "l": 104.11208106009813,
+                    "o": 104.2149,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:32:00+00:00",
+                    "c": 104.2414,
+                    "h": 106.21307011314599,
+                    "l": 103.90627629755359,
+                    "o": 106.0622,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:33:00+00:00",
+                    "c": 103.6923,
+                    "h": 104.42850027092275,
+                    "l": 103.56316933604033,
+                    "o": 104.2414,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:34:00+00:00",
+                    "c": 105.6193,
+                    "h": 105.84648575578152,
+                    "l": 103.52992494747278,
+                    "o": 103.6923,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:35:00+00:00",
+                    "c": 103.8567,
+                    "h": 105.73588118755471,
+                    "l": 103.70609891860887,
+                    "o": 105.6193,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:36:00+00:00",
+                    "c": 104.564,
+                    "h": 104.70889216046001,
+                    "l": 103.7444322900007,
+                    "o": 103.8567,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:37:00+00:00",
+                    "c": 104.5267,
+                    "h": 104.73871759540162,
+                    "l": 104.12740904187358,
+                    "o": 104.564,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:38:00+00:00",
+                    "c": 103.0158,
+                    "h": 104.78547247592712,
+                    "l": 102.68366236242152,
+                    "o": 104.5267,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:39:00+00:00",
+                    "c": 102.6531,
+                    "h": 103.41209721537291,
+                    "l": 102.40977141109308,
+                    "o": 103.0158,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:40:00+00:00",
+                    "c": 101.6205,
+                    "h": 102.87628674659416,
+                    "l": 101.50943924455555,
+                    "o": 102.6531,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:41:00+00:00",
+                    "c": 101.3054,
+                    "h": 101.79507579221004,
+                    "l": 100.93860987501479,
+                    "o": 101.6205,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:42:00+00:00",
+                    "c": 102.6296,
+                    "h": 102.87917391587132,
+                    "l": 101.19590489283323,
+                    "o": 101.3054,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:43:00+00:00",
+                    "c": 101.6472,
+                    "h": 102.80231673722344,
+                    "l": 101.48478035204042,
+                    "o": 102.6296,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:44:00+00:00",
+                    "c": 100.5731,
+                    "h": 102.00811285480935,
+                    "l": 100.430589469666,
+                    "o": 101.6472,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:45:00+00:00",
+                    "c": 98.7782,
+                    "h": 100.95150995262827,
+                    "l": 98.50859673987733,
+                    "o": 100.5731,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:46:00+00:00",
+                    "c": 100.7405,
+                    "h": 100.9613886197867,
+                    "l": 98.40791435266814,
+                    "o": 98.7782,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:47:00+00:00",
+                    "c": 101.3564,
+                    "h": 101.69365731682186,
+                    "l": 100.41708211430795,
+                    "o": 100.7405,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:48:00+00:00",
+                    "c": 101.3336,
+                    "h": 101.4842725849765,
+                    "l": 101.17032361166046,
+                    "o": 101.3564,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:49:00+00:00",
+                    "c": 102.8288,
+                    "h": 103.19872855655582,
+                    "l": 100.95622678854438,
+                    "o": 101.3336,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:50:00+00:00",
+                    "c": 102.1752,
+                    "h": 103.12587269997425,
+                    "l": 101.83534860220098,
+                    "o": 102.8288,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:51:00+00:00",
+                    "c": 102.7452,
+                    "h": 103.08964785137472,
+                    "l": 101.91679283217363,
+                    "o": 102.1752,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:52:00+00:00",
+                    "c": 103.3641,
+                    "h": 103.669887955525,
+                    "l": 102.56471028628975,
+                    "o": 102.7452,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:53:00+00:00",
+                    "c": 105.0553,
+                    "h": 105.44218371739476,
+                    "l": 103.24178582956803,
+                    "o": 103.3641,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:54:00+00:00",
+                    "c": 106.9397,
+                    "h": 107.32823214523464,
+                    "l": 104.7547944352107,
+                    "o": 105.0553,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:55:00+00:00",
+                    "c": 105.1179,
+                    "h": 107.30939091658193,
+                    "l": 104.97961016372706,
+                    "o": 106.9397,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:56:00+00:00",
+                    "c": 106.992,
+                    "h": 107.29215697521637,
+                    "l": 104.99975506641103,
+                    "o": 105.1179,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:57:00+00:00",
+                    "c": 105.6611,
+                    "h": 107.28255693700443,
+                    "l": 105.39033821924885,
+                    "o": 106.992,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:58:00+00:00",
+                    "c": 106.6471,
+                    "h": 107.025344283923,
+                    "l": 105.49553756074158,
+                    "o": 105.6611,
+                    "v": 1000
+                  },
+                  {
+                    "at": "2026-10-13T14:59:00+00:00",
+                    "c": 104.6602,
+                    "h": 107.0238085980402,
+                    "l": 104.55626691686062,
+                    "o": 106.6471,
+                    "v": 1300
+                  }
+                ]
+              },
+              "capturedAt": "2026-10-13T15:00:00.000Z",
+              "quotes": [
+                {
+                  "ask": 105,
+                  "askSize": 40,
+                  "at": "2026-10-13T15:00:00.000Z",
+                  "bid": 100,
+                  "bidSize": 40,
+                  "contract": "NVDA261023C00150000",
+                  "feed": "opra"
+                }
+              ],
+              "source": "fixture",
+              "stockFeed": "iex"
+            }
+          },
+          "facts": {
+            "blocked": [],
+            "externalOrder": false,
+            "fills": [
+              {
+                "contract": "NVDA261023C00150000",
+                "execution": {
+                  "cashDeltaCents": -32010,
+                  "consumedQuantity": 0,
+                  "externalOrder": false,
+                  "feeCents": 210,
+                  "policy": {
+                    "additionalFeeCents": 5,
+                    "adverseSlippageCents": 1,
+                    "commissionCents": 65,
+                    "liquidityPolicy": "minimum_displayed_sides_once_per_quote",
+                    "participationBps": 2500
+                  },
+                  "priceCents": 106,
+                  "quantity": 3,
+                  "queuePositionKnown": false,
+                  "requestedQuantity": 3,
+                  "side": "BUY",
+                  "status": "FILLED",
+                  "unfilledQuantity": 0,
+                  "version": "paper-option-execution-v2"
+                },
+                "quote": {
+                  "ask": 105,
+                  "askSize": 40,
+                  "at": "2026-10-13T15:00:00.000Z",
+                  "bid": 100,
+                  "bidSize": 40,
+                  "contract": "NVDA261023C00150000",
+                  "feed": "opra"
+                },
+                "reason": "QUANTITATIVE_RULE",
+                "side": "BUY",
+                "symbol": "NVDA"
+              }
+            ],
+            "kind": "CYCLE"
+          }
+        }
+      },
+      {
+        "version": 4,
+        "eventHash": "f981d4c50bf8d1ef90327be60c9a51ceab193c46febfbc68703e918dc0a9a178",
+        "afterHash": "92edc1bf467f0b3686ad3c50a95cd6ba8a282cc72f75646fccf0a347cb8d090e",
+        "at": "2026-10-13T15:00:01.000Z",
+        "facts": {
+          "blocked": [],
+          "externalOrder": false,
+          "fills": [],
+          "kind": "ENABLE"
+        },
+        "original": {
+          "at": "2026-10-13T15:00:01.000Z",
+          "command": {
+            "enabled": false,
+            "kind": "ENABLE"
+          },
+          "facts": {
+            "blocked": [],
+            "externalOrder": false,
+            "fills": [],
+            "kind": "ENABLE"
+          }
+        }
+      }
+    ],
+    "nextAfter": 4
+  },
+  "performance": {
+    "contract": "observed-paper-performance-v1",
+    "account": "server-one",
+    "source": "fixture",
+    "externalOrder": false,
+    "realizedPnlCents": 0,
+    "feesCents": 210,
+    "cashCents": 9967990,
+    "ownedBasisCents": 32010,
+    "bookCapitalCents": 10000000,
+    "realizedReturnPercent": 0.0,
+    "maximumRealizedDrawdownCents": 0,
+    "liquidationEquityCents": null,
+    "unrealizedPnlCents": null,
+    "equityDrawdownPercent": null,
+    "sharpe": null,
+    "closedQuoteRoundTrips": 0,
+    "winningQuoteRoundTrips": 0,
+    "losingQuoteRoundTrips": 0,
+    "flatQuoteRoundTrips": 0,
+    "quoteWinRatePercent": null,
+    "quoteProfitFactor": null,
+    "quoteGrossProfitCents": 0,
+    "quoteGrossLossCents": 0,
+    "settlementAffectedClosuresExcluded": 0,
+    "settlementReceipts": 0,
+    "buyContracts": 3,
+    "sellContracts": 0,
+    "addFills": 0,
+    "fillReasons": {
+      "QUANTITATIVE_RULE": 1
+    },
+    "eventCount": 5,
+    "valuationStatus": "UNMARKED",
+    "asOf": "2026-10-13T15:00:01.000Z",
+    "limitations": [
+      "Realized drawdown is not marked portfolio drawdown",
+      "Quote round-trip statistics exclude settlement-affected closures",
+      "Book capital retains owned cost basis and is not liquidation equity",
+      "No return forecast, Sharpe or mark-to-market metric without qualified complete valuation"
+    ],
+    "version": 4,
+    "eventHash": "f981d4c50bf8d1ef90327be60c9a51ceab193c46febfbc68703e918dc0a9a178"
+  }
+}

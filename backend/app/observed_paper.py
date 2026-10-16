@@ -10,18 +10,19 @@ import json
 import re
 
 from .engines import Bar
-from .market_strategy import analyze, STRATEGIES
+from .market_strategy import analyze, STRATEGIES, greater
+from . import observed_paper_v1 as v1
 from .market_sessions import evaluate_session, prior_session_position, US_EQUITY_OPTIONS_POLICY
 from .observed_option_replay import read_observation, iso
 from .option_expiration import evaluate_expiration
 from .paper_execution import project_execution, VERSION as EXECUTION_VERSION
 from .paper_settlement import PATTERN, project, stamp, integer
 
-VERSION = 'observed-paper-ledger-v1'
+VERSION = 'observed-paper-ledger-v2'
 DEFAULTS = {'strategy':'trend','quantity':1,'riskPercent':5,'allocationPercent':30,
             'dailyLossPercent':3,'maxPositions':4,'maxContracts':10,'stopPercent':20,
             'takePercent':40,'trailPercent':15,'partialPercent':20,'holdingMode':'intraday',
-            'maxHoldingDays':3,'contracts':{}}
+            'maxHoldingDays':3,'contracts':{},'addEnabled':False,'scenarioExit':False}
 
 
 def canonical(value):
@@ -37,6 +38,8 @@ def configuration(value):
         raise ValueError('Strict observed-paper configuration required')
     if value['strategy'] not in STRATEGIES or value['holdingMode'] not in ('intraday','swing'):
         raise ValueError('Unsupported observed-paper policy')
+    if any(type(value[key]) is not bool for key in ('addEnabled','scenarioExit')):
+        raise ValueError('Explicit lifecycle policy required')
     for key, low, high in [('quantity',1,100),('riskPercent',1,20),('allocationPercent',1,100),
             ('dailyLossPercent',1,20),('maxPositions',1,10),('maxContracts',1,100),
             ('stopPercent',1,95),('takePercent',1,500),('trailPercent',0,95),
@@ -57,7 +60,9 @@ def configuration(value):
     return deepcopy(value)
 
 
-def create(account, name, initial, source):
+def create(account, name, initial, source, *, version=VERSION):
+    if version==v1.VERSION: return v1.create(account,name,initial,source)
+    if version!=VERSION: raise ValueError('Unknown observed-paper contract')
     if not isinstance(account, str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,80}', account):
         raise ValueError('Invalid account identifier')
     if not isinstance(name, str) or not 1 <= len(name.strip()) <= 80 or source not in ('fixture','alpaca'):
@@ -71,6 +76,7 @@ def create(account, name, initial, source):
 
 
 def validate(state):
+    if state.get('contract')==v1.VERSION: return v1.validate(state)
     if state['contract'] != VERSION or state['source'] not in ('alpaca','fixture') or type(state['enabled']) is not bool:
         raise ValueError('Invalid observed-paper state')
     configuration(state['config'])
@@ -85,6 +91,8 @@ def validate(state):
         basis += integer(p['cost']); stamp(p['opened'])
         stamp(p['changedAt']); stamp(p['markAt']); integer(p['highBid']); integer(abs(p['roundPnl']))
         if type(p['partialTaken']) is not bool: raise ValueError('Invalid position policy')
+        if type(p['added']) is not bool or type(p['scenarioLevel']) not in (int,float) or not 0<p['scenarioLevel']<=1e12:
+            raise ValueError('Invalid original scenario')
         intent = p.get('closeIntent')
         if intent is not None and not 1 <= integer(intent['quantity']) <= p['quantity']:
             raise ValueError('Invalid residual close intent')
@@ -101,6 +109,7 @@ def validate(state):
 
 def apply(original, command, at):
     """Pure replayable transition; only supplied contemporaneous option quotes fill."""
+    if original.get('contract')==v1.VERSION: return v1.apply(original,command,at)
     validate(original)
     state = deepcopy(original)
     at = stamp(at); at_text = iso(at)
@@ -231,7 +240,7 @@ def _cycle(state, observation, at, facts):
         state['cash'] += model['cashDeltaCents']; state['fees'] += model['feeCents']
         facts['fills'].append({'symbol':symbol,'contract':q['contract'],'side':side,'reason':reason,'quote':q,'execution':model})
 
-    closed = set()
+    closed = set(); traded = set()
     for symbol, p in list(state['positions'].items()):
         if not state['enabled'] and not p.get('closeIntent'): continue
         ordered = ordered_quote(p['contract']); q = ordered[0] if ordered else None
@@ -253,6 +262,10 @@ def _cycle(state, observation, at, facts):
                 elif not reason and not p['partialTaken'] and p['quantity']>1 and config['partialPercent'] and pnl*100>=p['cost']*config['partialPercent']:
                     reason='PARTIAL_PROFIT'; quantity=(p['quantity']+1)//2
             signal = signals.get(symbol)
+            if not reason and config['scenarioExit'] and symbol in source_bars:
+                close=source_bars[symbol][-1].close
+                broken=greater(p['scenarioLevel'],close) if _direction(p['contract'])=='CALL' else greater(close,p['scenarioLevel'])
+                if broken: reason='SCENARIO_EXIT'; quantity=p['quantity']
             if signal and signal['confirmedReverse'] and signal['direction'] not in ('WAIT', _direction(p['contract'])):
                 reason='CONFIRMED_REVERSAL'; quantity=p['quantity']
             existing = p.get('closeIntent')
@@ -265,6 +278,7 @@ def _cycle(state, observation, at, facts):
         quantity = item[1]['quantity']; removed = p['cost']*quantity//p['quantity']
         realized = item[1]['cashDeltaCents']-removed
         consume(symbol,'SELL_TO_CLOSE',item,intent['reason']); _realized(state,realized,iso(at))
+        traded.add(symbol)
         p['quantity']-=quantity; p['cost']-=removed; p['roundPnl']+=realized; intent['quantity']-=quantity
         p['changedAt']=iso(at)
         if not p['quantity']:
@@ -274,6 +288,30 @@ def _cycle(state, observation, at, facts):
             if intent['reason']=='PARTIAL_PROFIT': p['partialTaken']=True
             p['closeIntent']=None
     if not state['enabled'] or not session.entry_allowed: return
+    for symbol,p in state['positions'].items():
+        if not config['addEnabled'] or p['added'] or p.get('closeIntent') or symbol in traded: continue
+        signal=signals.get(symbol)
+        if not signal or signal['direction']!=_direction(p['contract']) or symbol not in config['contracts']: continue
+        if config['contracts'][symbol].get(signal['direction'])!=p['contract'] or not evaluate_expiration(_expiry(p['contract']),at)['entry_allowed']: continue
+        if state['source']=='alpaca':
+            facts['blocked'].append({'symbol':symbol,'reason':'CONTRACT_ELIGIBILITY_UNVERIFIED'}); continue
+        signal_key=config['strategy']+'|'+iso(source_bars[symbol][-1].timestamp)
+        if state['lastSignals'].get(symbol)==signal_key: continue
+        ordered=ordered_quote(p['contract'])
+        if ordered is None: continue
+        q=ordered[0]
+        # One add only, after a new completed same-direction signal and >=10%
+        # conservative liquidation gain on the entire owned basis, including fees.
+        if ((q['bid']-1)*100-70)*p['quantity']*100 < p['cost']*110: continue
+        item=execution(p['contract'],'BUY',1)
+        if not item: continue
+        ordered_quotes={c:ordered_quote(c)[0] for c in quotes if ordered_quote(c) is not None}
+        cost=-item[1]['cashDeltaCents']; reason=_risk(state,cost,1,ordered_quotes,at,adding=symbol)
+        if reason:
+            facts['blocked'].append({'symbol':symbol,'reason':reason}); continue
+        consume(symbol,'BUY',item,'ADD_ON_QUALIFIED_QUOTE')
+        p['quantity']+=1;p['cost']+=cost;p['added']=True;p['changedAt']=iso(at)
+        p['markAt']=q['at'];p['markIdentity']=digest(q);state['lastSignals'][symbol]=signal_key
     for symbol, choices in config['contracts'].items():
         if symbol in state['positions'] or symbol in closed: continue
         signal = signals.get(symbol)
@@ -298,7 +336,8 @@ def _cycle(state, observation, at, facts):
         consume(symbol,'BUY',item,signal['reason'])
         state['positions'][symbol] = {'contract':contract,'quantity':item[1]['quantity'],'cost':cost,'opened':iso(at),
             'highBid':max(0,item[0]['bid']-1),'partialTaken':False,'closeIntent':None,'roundPnl':0,'changedAt':iso(at),
-            'markAt':item[0]['at'],'markIdentity':digest(item[0])}
+            'markAt':item[0]['at'],'markIdentity':digest(item[0]),'added':False,
+            'scenarioLevel':min(b.low for b in source_bars[symbol][-20:]) if signal['direction']=='CALL' else max(b.high for b in source_bars[symbol][-20:])}
         state['lastSignals'][symbol] = signal_key
     # Only expired operational quote-use cache is pruned; immutable events retain
     # every original quote and fill. Active contract chronology is never pruned.
@@ -315,13 +354,14 @@ def _direction(contract):
     return 'CALL' if PATTERN.fullmatch(contract)[5]=='C' else 'PUT'
 
 
-def _risk(state, cost, quantity, quotes, at):
+def _risk(state, cost, quantity, quotes, at, *, adding=None):
     c = state['config']; initial = state['initialCash']; positions = state['positions']
     if state['deliveries']: return 'DELIVERED_STOCK_REVIEW_REQUIRED'
     if any(p.get('closeIntent') for p in positions.values()): return 'UNRESOLVED_CLOSE_INTENT'
-    if cost>state['cash'] or cost*100>initial*c['riskPercent']: return 'TRADE_RISK_LIMIT'
+    owned_cost=positions[adding]['cost'] if adding in positions else 0
+    if cost>state['cash'] or (cost+owned_cost)*100>initial*c['riskPercent']: return 'TRADE_RISK_LIMIT'
     if (sum(p['cost'] for p in positions.values())+cost)*100>initial*c['allocationPercent']: return 'ALLOCATION_RISK_LIMIT'
-    if len(positions)>=c['maxPositions'] or sum(p['quantity'] for p in positions.values())+quantity>c['maxContracts']: return 'POSITION_OR_QUANTITY_LIMIT'
+    if (adding is None and len(positions)>=c['maxPositions']) or sum(p['quantity'] for p in positions.values())+quantity>c['maxContracts']: return 'POSITION_OR_QUANTITY_LIMIT'
     loss = max(0,-state['dailyRealized'].get(iso(at)[:10],0))
     for p in positions.values():
         q = quotes.get(p['contract'])

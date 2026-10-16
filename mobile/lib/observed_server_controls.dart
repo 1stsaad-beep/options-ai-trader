@@ -44,11 +44,13 @@ class ObservedServerConfig extends StatefulWidget {
 }
 class _ObservedServerConfigState extends State<ObservedServerConfig> {
   late String strategy,holding;
+  late bool addEnabled,scenarioExit;
   late final Map<String,TextEditingController> fields;
   late final TextEditingController contracts;
   String? error;
   @override void initState() {
     super.initState();strategy=widget.config['strategy'] as String;holding=widget.config['holdingMode'] as String;
+    addEnabled=widget.config['addEnabled']==true;scenarioExit=widget.config['scenarioExit']==true;
     fields={for(final key in observedLimits.keys)key:TextEditingController(text:'${widget.config[key]}')};
     contracts=TextEditingController(text:(widget.config['contracts'] as Map).values.expand((r)=>(r as Map).values).join('\n'));
   }
@@ -56,6 +58,7 @@ class _ObservedServerConfigState extends State<ObservedServerConfig> {
   void save() {
     try {
       final result=<String,dynamic>{'strategy':strategy,'holdingMode':holding,'contracts':observedContracts(contracts.text.trim())};
+      if(widget.config.containsKey('addEnabled')){result['addEnabled']=addEnabled;result['scenarioExit']=scenarioExit;}
       for(final entry in fields.entries) {
         final value=int.tryParse(entry.value.text.trim()),limit=observedLimits[entry.key]!;
         if(value==null||value<limit.$2||value>limit.$3)throw FormatException('${limit.$1}: من ${limit.$2} إلى ${limit.$3}.');
@@ -67,6 +70,10 @@ class _ObservedServerConfigState extends State<ObservedServerConfig> {
   @override Widget build(BuildContext context)=>AlertDialog(title:const Text('سياسة الحساب المتوقف'),
     content:SizedBox(width:480,child:SingleChildScrollView(child:Column(mainAxisSize:MainAxisSize.min,children:[
       const Text('العقود قائمة مراقبة صريحة. حفظها لا يثبت سيولتها أو أهليتها ولا يفتح قفل الدخول السوقي.'),
+      if(widget.config.containsKey('addEnabled'))...[
+        SwitchListTile(key:const Key('observed-add'),title:const Text('تعزيز مرة واحدة بعد ربح محافظ 10% وإشارة جديدة'),value:addEnabled,onChanged:(v)=>setState(()=>addEnabled=v)),
+        SwitchListTile(key:const Key('observed-scenario'),title:const Text('خروج عند كسر دعم / مقاومة الدخول المحفوظة'),value:scenarioExit,onChanged:(v)=>setState(()=>scenarioExit=v)),
+      ],
       DropdownButtonFormField<String>(key:const Key('observed-strategy'),initialValue:strategy,isExpanded:true,
         items:[for(final key in marketStrategies)DropdownMenuItem(value:key,child:Text(key))],onChanged:(v){if(v!=null)strategy=v;}),
       DropdownButtonFormField<String>(initialValue:holding,isExpanded:true,items:const [DropdownMenuItem(value:'intraday',child:Text('داخل الجلسة')),DropdownMenuItem(value:'swing',child:Text('عدة جلسات'))],onChanged:(v){if(v!=null)holding=v;}),

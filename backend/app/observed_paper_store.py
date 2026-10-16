@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 import json
 import re
 
-from .observed_paper import apply, canonical, create, digest
+from .observed_paper import apply, canonical, create, digest, VERSION
 from .paper_settlement import stamp
 from .observed_option_replay import iso
 
@@ -51,8 +51,8 @@ class ObservedPaperStore:
         self.now = now or (lambda:datetime.now(timezone.utc))
         self._verified = {}
 
-    def create(self, account, name, initial=1000000, source='fixture'):
-        state = create(account,name,initial,source); at=iso(self.now())
+    def create(self, account, name, initial=1000000, source='fixture', *, version=VERSION):
+        state = create(account,name,initial,source,version=version); at=iso(self.now())
         with self.repo.transaction() as db:
             if db.one('SELECT id FROM observed_paper_accounts WHERE id=?',(account,)):
                 raise LedgerConflict('Observed-paper account already exists')
@@ -72,6 +72,13 @@ class ObservedPaperStore:
             row,state=self._read(db,account,full=full)
             return {'version':row['version'],'eventHash':row['event_hash'],'state':state}
 
+    def performance(self, account):
+        from .observed_paper_performance import summarize
+        with self.repo.transaction() as db:
+            row,state=self._read(db,account)
+            result=summarize(db.stream('SELECT payload FROM observed_paper_events WHERE account_id=? ORDER BY sequence',(account,)),state)
+            return result|{'version':row['version'],'eventHash':row['event_hash']}
+
     def _read(self, db, account, *, full=False):
         row=db.one('SELECT * FROM observed_paper_accounts WHERE id=?',(account,))
         if row is None: raise LedgerConflict('Unknown observed-paper account')
@@ -90,7 +97,7 @@ class ObservedPaperStore:
                 if e['fingerprint']!=digest(command) or e['created']!=payload['at']: raise ValueError()
                 if sequence==0:
                     seed=command['state']
-                    rebuilt=create(seed['id'],seed['name'],seed['initialCash'],seed['source'])
+                    rebuilt=create(seed['id'],seed['name'],seed['initialCash'],seed['source'],version=seed['contract'])
                     if command!={'kind':'CREATE','state':rebuilt} or seed['id']!=account: raise ValueError()
                     facts={'kind':'CREATE','externalOrder':False}
                 else:
