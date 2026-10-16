@@ -73,7 +73,9 @@ class ObservedServerEvent {
     final command=observedObject(original['command']),facts=observedObject(original['facts']);
     if(!observedInteger(root['version'])||!observedHash(root['eventHash'])||!observedHash(root['afterHash'])||
         root['at']!=original['at']||jsonEncode(root['facts'])!=jsonEncode(facts)||facts['externalOrder']!=false||
-        command['kind']!=facts['kind'])throw const FormatException('Invalid original event');
+        command['kind']!=facts['kind']) {
+      throw const FormatException('Invalid original event');
+    }
     observationStamp(original['at']);
     return ObservedServerEvent._(root['version'] as int,root['eventHash'] as String,jsonDecode(jsonEncode(original)) as Map<String,dynamic>);
   }
