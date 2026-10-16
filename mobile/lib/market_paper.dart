@@ -194,6 +194,31 @@ class MarketPaper extends ChangeNotifier {
     error='حالة الحفظ غير مؤكدة؛ توقفت كل التغييرات والعكس. احتُفظ بالدفتر دون استبدال. أعد فتح التطبيق لاستعادة الحالة المحفوظة وفحصها.';
     notifyListeners();
   }
+  bool _refreshUnavailableArchives(PaperRow? observed) {
+    if(observed==null||_durable==null)return false;
+    const keys={'waveArchive','optionArchive','barArchive'};
+    PaperRow core(PaperRow value)=>{for(final entry in value.entries)if(!keys.contains(entry.key))entry.key:entry.value};
+    if(paperBytes(core(observed))!=paperBytes(core(_durable!)))return false;
+    final changed=keys.where((key)=>paperBytes(observed[key])!=paperBytes(_durable![key])).toList();
+    if(changed.isEmpty)return false;
+    for(final key in changed) {
+      final marker=observed[key];
+      if(marker is! Map||marker.length!=2||marker['storageUnavailable']!='paper-optional-archive-v1'||
+          marker['sha256'] is! String||!RegExp(r'^[0-9a-f]{64}$').hasMatch(marker['sha256'] as String)) {
+        return false;
+      }
+    }
+    // Only optional physical availability changed. Discard this uncommitted
+    // attempt, retain financial state and let the next cycle use a fresh quote
+    // and inline evidence. Never adopt a financial change from another writer.
+    for(final key in changed){_book[key]=copyPaper(observed[key] as PaperRow);}
+    _durable=copyPaper(observed);
+    if(changed.contains('waveArchive'))waveArchiveError='جزء من أرشيف الموجات غير متاح؛ مرجعه الأصلي محفوظ ودفتر الأموال مستقل.';
+    if(changed.contains('optionArchive'))optionArchiveError='جزء من أرشيف عروض الخيارات غير متاح؛ لا تُختلق عروض بديلة.';
+    if(changed.contains('barArchive'))barArchiveError='جزء من أرشيف الشارت غير متاح؛ تعاد المحاولة بعرض جديد ومصدر القرار المتاح فقط.';
+    error='تغير توفر أرشيف اختياري؛ لم تُعتمد العملية الحالية. دفتر الأموال سليم ويمكن إعادة المحاولة.';
+    notifyListeners();return true;
+  }
   Future<bool> _commit(PaperRow next,{bool Function()? admission}) async {
     if(!ready)return false;
     _appendOptionObservations(next);
@@ -210,7 +235,11 @@ class MarketPaper extends ChangeNotifier {
     validatePaper(next);
     // Compare the durable preimage before writing; never overwrite a second owner.
     try {
-      if(paperBytes(await store.read())!=paperBytes(_durable)){_uncertain();return false;}
+      final observed=await store.read();
+      if(paperBytes(observed)!=paperBytes(_durable)) {
+        if(!_refreshUnavailableArchives(observed))_uncertain();
+        return false;
+      }
     }catch(_){_uncertain();return false;}
     if(admission!=null&&!admission())return false;
     try {await store.write(copyPaper(next));}catch(_){ /* Readback resolves a lost acknowledgement. */ }

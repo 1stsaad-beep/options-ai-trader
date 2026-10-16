@@ -602,3 +602,10 @@ Batch24 final source420012c: Direct38864161127 passed (766 Flutter,51 JVM; origi
 Batch25 implements a separate durable observed-paper ledger/runtime, atomic immutable events/segments, generation-fenced capture/commit, settlement, bounded OPRA read-only adapter and authenticated controls. Full implementation/limitations:docs/OBSERVED_PAPER_RUNTIME_20261016.md. New alpaca entries remain CONTRACT_ELIGIBILITY_UNVERIFIED pending qualified Greek/deliverable metadata; fixtures never imply an actual OPRA connection. Source-specific PG/backup/Compose gates pending. No deployment/phone test/independent final review/APK performed.
 
 Batch25 local full suite:1352 passed (one existing Starlette TestClient deprecation warning);44 new checks. Original batch24 CI archive and batch25 local JUnit/tested-file hashes are retained in docs/evidence/resume-20261016/batch24-25-evidence.zip. Remote acceptance pending.
+
+
+## 2026-10-16 — batch25 accepted / batch26 storage isolation
+
+Source63889257f6b9b0cbd5164794b66555b5309dc6ef: backend/PG/backup/Compose38867756814 and security38867756826 passed. Original artifact SHA256/CRC verified;1352 Python,9 new observed-paper PostgreSQL checks,18 backup checks and20 Compose checks. Retained original ZIPs in docs/evidence/resume-20261016/batch25-ci-evidence.zip. No actual market connection or deployment.
+
+Batch26 separates optional native archive chunks from financial core, preserves lossless original JSON and legacy anchors, and retains unavailable original references while permitting fresh owned-protection retries. Eight JVM/three Flutter/new instrumentation cases added; CI pending. See docs/OPTIONAL_ARCHIVE_ISOLATION_20261016.md. Full memory/disk-pressure/export limits and other completion gaps remain open; no APK built.

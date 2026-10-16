@@ -45,3 +45,8 @@ The inherited Android build failure is fixed and accepted on dd50244 (753 Flutte
 ### 2026-10-16 — batch25 scoped R01/R02/R07/R08/R09/R12/R13/R14 progress
 
 `observed_paper{,_store,_runtime,_data,_worker,_api}.py` adds independent server virtual accounts, original-input events, atomic balance/receipt/segment transactions, streamed reconciliation, generation-fenced worker capture, durable residual owned-close intents and explicit stock-delivery settlement. Tests:test_observed_paper.py/test_observed_paper_runtime.py; disposable two-connection acceptance:observed_paper_check.py; backup/Compose gates extended. Actual market new entry is deliberately still CONTRACT_ELIGIBILITY_UNVERIFIED; qualified Greeks/deliverables, augmentation/scenario exit, device UI/linkage, advanced performance analytics and deployed/soak evidence remain partial. R03/R04/Demo parity and device archive/memory limits remain open. See OBSERVED_PAPER_RUNTIME_20261016.md; CI pending, no final-V1 or APK claim.
+
+
+### 2026-10-16 — batch26 physical optional isolation (acceptance pending)
+
+`PaperIndependentStore.kt` and `PaperDiskStore.kt` retain a lossless core template and independent optional archive directories. Missing optional chunks preserve manifest-bound unavailable markers; financial corruption still fails closed. MarketPaper refreshes only proven optional availability changes and discards the in-flight attempt before a fresh protective retry.8 JVM/3 Flutter/new instrumented regression added. R14/R15 remain PARTIAL for full-memory limits, genuine disk-pressure capture behavior, large portable backup and final native/phone soak; see docs/OPTIONAL_ARCHIVE_ISOLATION_20261016.md.

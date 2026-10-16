@@ -58,17 +58,33 @@ class AlpacaVaultDeviceTest {
         val next="""{"version":1,"accounts":[],"journal":[],"journalArchive":[]}"""
         try {
             file.writeText(old);val store=PaperDiskStore(file);assertEquals(old,store.read());assertTrue(store.write(old,next))
-            val manifest=JSONObject(file.readText());assertEquals(PaperSegments.FORMAT,manifest.getString("storageFormat"))
+            val manifest=JSONObject(file.readText());assertEquals(PaperIndependentStore.FORMAT,manifest.getString("storageFormat"))
             assertEquals(next,PaperDiskStore(file).read())
             val directory=File(file.path+".segments")
             assertTrue(directory.listFiles()!!.any{it.name.startsWith("legacy-")})
-            val sha=manifest.getJSONArray("segments").getJSONObject(0).getString("sha256")
-            assertTrue(File(directory,"$sha.bin").delete()) // Disposable fixture only.
+            val sha=JSONObject(manifest.getString("core")).getJSONArray("segments").getJSONObject(0).getString("sha256")
+            assertTrue(File(file.path+".independent/financial","$sha.bin").delete()) // Disposable fixture only.
             try{PaperDiskStore(file).read();fail("missing segment became empty ledger")}catch(_:IllegalStateException){}
         }finally{dir.deleteRecursively()}
     }
     @Test fun runtimeIsSharedAcrossActivityAndApplicationContexts(){
         assertSame(AlpacaRuntime.get(context),AlpacaRuntime.get(context.applicationContext))
+    }
+    @Test fun physicalOptionalArchiveLossDoesNotPreventAtomicFinancialAdvance(){
+        val dir=File(context.cacheDir,"paper-optional-isolation-fixture").apply{mkdirs()}
+        val file=File(dir,"ledger.json")
+        val first="""{"version":1,"accounts":[],"journal":[{"original":1.0}],"barArchive":{"source":1.0}}"""
+        try {
+            val store=PaperDiskStore(file);assertTrue(store.write(null,first));assertEquals(first,store.read())
+            val root=JSONObject(file.readText());val archive=root.getJSONObject("archives").getString("barArchive")
+            val sha=JSONObject(archive).getJSONArray("segments").getJSONObject(0).getString("sha256")
+            assertTrue(File(file.path+".independent/barArchive","$sha.bin").delete())
+            val recovered=PaperDiskStore(file).read()!!
+            assertEquals(PaperIndependentStore.UNAVAILABLE,JSONObject(recovered).getJSONObject("barArchive").getString("storageUnavailable"))
+            val next=recovered.replace("\"accounts\":[]","\"accounts\":[{\"cash\":1000}]")
+            assertTrue(PaperDiskStore(file).write(recovered,next));assertEquals(next,PaperDiskStore(file).read())
+            assertEquals(archive,JSONObject(file.readText()).getJSONObject("archives").getString("barArchive"))
+        }finally{dir.deleteRecursively()}
     }
     @Test fun actualActivityScreenSleepWakeResumesOneMockSession(){
         val opened=AtomicInteger();val active=AtomicInteger();val maximum=AtomicInteger()

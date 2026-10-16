@@ -1,0 +1,22 @@
+{
+  "source": "63889257f6b9b0cbd5164794b66555b5309dc6ef",
+  "backend_run": 38867756814,
+  "security_run": 38867756826,
+  "python": 1352,
+  "postgres_observed_checks": 9,
+  "postgres_backup_checks": 18,
+  "compose_checks": 20,
+  "external_market_connection": false,
+  "apk_built": false,
+  "artifacts": {
+    "backend-638892.zip": {
+      "id": 12032221198,
+      "sha256": "5f929a65830f154507522191a8e284575e0d9d48ec086bda18d8574ed9b2f979"
+    },
+    "compose-638892.zip": {
+      "id": 12032405188,
+      "sha256": "11ae3456ef19b0f1c411cf5e905ccb9988c4d92851356d78db88c629713c8a3f"
+    }
+  },
+  "bundle_sha256": "9a42306b7505268d3bcea328d24f46ed4216263008de4b4955df7cc88c13731d"
+}

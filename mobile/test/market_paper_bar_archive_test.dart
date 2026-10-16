@@ -77,6 +77,35 @@ void main() {
     expect(DirectDecisionRecord.read(paper.journal.last).completeSource,true);
     expect(()=>DirectDecisionRecord.read(paper.journal.first),throwsFormatException);
   });
+  test('physical optional loss refreshes availability then protects on a fresh retry',()async {
+    await evaluate();final original=jsonEncode(paper.journal.first);
+    final marker={'storageUnavailable':'paper-optional-archive-v1','sha256':'a'*64};
+    store.value!['barArchive']=marker;
+    await evaluate(close:true);
+    expect(paper.ready,true);expect(paper.account(id)['positions'],isNotEmpty);
+    expect(paper.copy()['barArchive'],marker);expect(paper.journal.length,1);
+    now=now.add(const Duration(seconds:1));await evaluate(close:true);
+    expect(paper.ready,true);expect(paper.account(id)['positions'],isEmpty);
+    expect(jsonEncode(paper.journal.first),original);expect(paper.copy()['barArchive'],marker);
+    expect(paper.journal.last['evidence']['bars'],isNotNull);
+    expect(DirectDecisionRecord.read(paper.journal.last).completeSource,true);
+    expect(()=>paper.exportBackup(),throwsFormatException);
+  });
+  test('optional loss cannot conceal a concurrent financial owner change',()async {
+    await evaluate();
+    final second=MarketPaper(store,clock:()=>now);await second.load();await second.add('other owner');
+    store.value!['barArchive']={'storageUnavailable':'paper-optional-archive-v1','sha256':'b'*64};
+    final original=jsonEncode(store.value);await evaluate(close:true);
+    expect(paper.ready,false);expect(jsonEncode(store.value),original);
+  });
+  test('ordinary archive edits and malformed physical markers still fail CAS',()async {
+    for(final marker in [{'invalid':true},{'storageUnavailable':'paper-optional-archive-v1','sha256':'bad'}]) {
+      final saved=MarketPaper(store,clock:()=>now);await saved.load();
+      store.value!['barArchive']=marker;
+      await saved.add('must not commit');expect(saved.ready,false);
+      expect(saved.accounts.where((a)=>a['name']=='must not commit'),isEmpty);
+    }
+  });
   test('backup refuses missing sources altered joins and future first-capture evidence',()async {
     await evaluate();final original=paper.exportBackup();
     for(final corrupt in <void Function(Map<String,dynamic>)>[

@@ -22,9 +22,11 @@ class PaperDiskStore(private val file: File) {
         } finally { android.system.Os.close(descriptor) }
     }
     private val segments=PaperSegments(File(file.path+".segments"),::syncDirectory)
+    private val independent=PaperIndependentStore(File(file.path+".independent"),::syncDirectory)
     private fun logical(raw:String):String {
         val parsed=JSONObject(raw)
         if(parsed.has("storageFormat")) {
+            if(parsed.getString("storageFormat")==PaperIndependentStore.FORMAT)return independent.restore(raw)
             require(parsed.getString("storageFormat")==PaperSegments.FORMAT){"Unknown physical ledger format"}
             return PaperSegments.utf8(segments.restore(raw))
         }
@@ -53,11 +55,13 @@ class PaperDiskStore(private val file: File) {
         check(readLocked()==expected){"Ledger changed"}
         file.parentFile?.mkdirs()
         // Preserve the original legacy ledger losslessly before its first physical migration.
+        var previous:String?=null
         if(file.exists()) {
             val raw=file.readText(Charsets.UTF_8)
-            if(JSONObject(raw).optString("storageFormat")!=PaperSegments.FORMAT)segments.preserveLegacy(raw.toByteArray(Charsets.UTF_8))
+            if(JSONObject(raw).optString("storageFormat")==PaperIndependentStore.FORMAT)previous=raw
+            else segments.preserveLegacy(logical(raw).toByteArray(Charsets.UTF_8))
         }
-        val manifest=segments.stage(bytes).toByteArray(Charsets.UTF_8)
+        val manifest=independent.stage(next,previous).toByteArray(Charsets.UTF_8)
         val atomic=AtomicFile(file);val output=atomic.startWrite()
         try {
             output.write(manifest);output.flush();output.fd.sync();atomic.finishWrite(output)
