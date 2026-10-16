@@ -10,6 +10,18 @@ import 'package:options_ai_trader/market_paper_backup.dart';
 import 'market_paper_safety_test.dart' show FaultPaperStore;
 import 'observed_bar_archive_test.dart' show archivedTestEvidence;
 
+class ArchivePressureStore extends FaultPaperStore {
+  bool pressure=false,financialFailure=false;
+  void Function()? afterArchiveFailure;
+  @override Future<void> write(PaperRow next) async {
+    if(pressure&&const ['barArchive','optionArchive','waveArchive'].any((key)=>jsonEncode(next[key])!=jsonEncode(value?[key]))) {
+      afterArchiveFailure?.call();throw OptionalPaperArchiveWriteFailure();
+    }
+    if(financialFailure)throw StateError('financial storage full');
+    await super.write(next);
+  }
+}
+
 void main() {
   const contract='NVDA261016C00200000';
   late DateTime now;late FaultPaperStore store;late MarketPaper paper;late String id;
@@ -105,6 +117,29 @@ void main() {
       await saved.add('must not commit');expect(saved.ready,false);
       expect(saved.accounts.where((a)=>a['name']=='must not commit'),isEmpty);
     }
+  });
+  test('optional capture pressure saves only actual inline source and exactly one fill',()async {
+    final pressure=ArchivePressureStore();store=pressure;paper=MarketPaper(store,clock:()=>now);
+    await paper.load();id=await add();pressure.pressure=true;
+    await evaluate();expect(paper.ready,true);expect(paper.account(id)['positions'],isNotEmpty);
+    expect(paper.journal.length,1);expect(paper.copy()['barArchive'],isNull);
+    expect(paper.copy()['optionArchive'],isNull);expect(paper.journal.single['evidence']['barReference'],isNull);
+    expect(DirectDecisionRecord.read(paper.journal.single).bars.length,1000);
+    final entry=jsonEncode(paper.journal.single);now=now.add(const Duration(seconds:1));await evaluate(close:true);
+    expect(paper.account(id)['positions'],isEmpty);expect(paper.journal.length,2);
+    expect(jsonEncode(paper.journal.first),entry);expect(paper.exportBackup(),isNotEmpty);
+  });
+  test('optional fallback rechecks quote freshness instead of admitting a delayed fill',()async {
+    final pressure=ArchivePressureStore();store=pressure;paper=MarketPaper(store,clock:()=>now);
+    await paper.load();id=await add();pressure.pressure=true;
+    pressure.afterArchiveFailure=()=>now=now.add(const Duration(seconds:31));
+    await evaluate();expect(paper.ready,true);expect(paper.account(id)['positions'],isEmpty);expect(paper.journal,isEmpty);
+  });
+  test('optional fallback does not turn financial write failure into a receipt',()async {
+    final pressure=ArchivePressureStore();store=pressure;paper=MarketPaper(store,clock:()=>now);
+    await paper.load();id=await add();final before=jsonEncode(store.value);
+    pressure.pressure=true;pressure.financialFailure=true;
+    await evaluate();expect(paper.ready,true);expect(paper.journal,isEmpty);expect(jsonEncode(store.value),before);
   });
   test('backup refuses missing sources altered joins and future first-capture evidence',()async {
     await evaluate();final original=paper.exportBackup();

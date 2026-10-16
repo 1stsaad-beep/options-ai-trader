@@ -25,6 +25,7 @@ abstract class PaperStore {
   Future<PaperRow?> read();
   Future<void> write(PaperRow value);
 }
+class OptionalPaperArchiveWriteFailure implements Exception {}
 class PreferencesPaperStore implements PaperStore {
   static const key='oat.direct.market_paper.v1';
   @override Future<PaperRow?> read() async {
@@ -61,7 +62,12 @@ class DevicePaperStore implements PaperStore {
   }
   @override Future<void> write(PaperRow next) async {
     if(defaultTargetPlatform!=TargetPlatform.android){await legacy.write(next);return;}
-    if(await channel.invokeMethod<bool>('write',{'expected':_observed,'next':jsonEncode(next)})!=true)throw StateError('Disk write not confirmed');
+    try {
+      if(await channel.invokeMethod<bool>('write',{'expected':_observed,'next':jsonEncode(next)})!=true)throw StateError('Disk write not confirmed');
+    }on PlatformException catch(error) {
+      if(error.code=='PAPER_OPTIONAL_STAGE_FAILED')throw OptionalPaperArchiveWriteFailure();
+      rethrow;
+    }
   }
 }
 
@@ -219,9 +225,32 @@ class MarketPaper extends ChangeNotifier {
     error='تغير توفر أرشيف اختياري؛ لم تُعتمد العملية الحالية. دفتر الأموال سليم ويمكن إعادة المحاولة.';
     notifyListeners();return true;
   }
-  Future<bool> _commit(PaperRow next,{bool Function()? admission}) async {
+  PaperRow _retainPriorArchives(PaperRow candidate) {
+    final next=copyPaper(candidate),prior=_durable??{'version':1,'accounts':<dynamic>[],'journal':<dynamic>[]};
+    List<dynamic> events(PaperRow value)=>[for(final segment in value['journalArchive'] as List? ?? [])...(segment as List),...(value['journal'] as List)];
+    final original=events(prior),updated=events(next);
+    if(updated.length<original.length)throw StateError('Original journal shortened');
+    for(var i=0;i<original.length;i++) {
+      if(paperBytes(original[i])!=paperBytes(updated[i]))throw StateError('Original receipt changed');
+    }
+    // Only uncommitted new references are materialized from their actual saved
+    // candidate source. Original committed decisions are never rewritten.
+    for(final event in updated.skip(original.length)) {
+      final evidence=event['evidence'];
+      if(evidence is Map&&evidence.containsKey('barReference')) {
+        final bars=ObservedBarArchive.read(next['barArchive']).resolve(event['symbol'] as String,
+          Map<String,dynamic>.from(evidence),observationStamp(event['at']));
+        evidence.remove('barReference');evidence['bars']=bars;
+      }
+    }
+    for(final key in const ['waveArchive','optionArchive','barArchive']) {
+      if(prior.containsKey(key)){next[key]=prior[key];}else{next.remove(key);}
+    }
+    return next;
+  }
+  Future<bool> _commit(PaperRow next,{bool Function()? admission,bool captureOptional=true,bool allowArchiveFallback=true}) async {
     if(!ready)return false;
-    _appendOptionObservations(next);
+    if(captureOptional)_appendOptionObservations(next);
     final optionCapture=_pendingOptionObservations.isNotEmpty&&paperBytes(next['optionArchive'])!=paperBytes(_book['optionArchive']);
     final barCapture=paperBytes(next['barArchive'])!=paperBytes(_book['barArchive']);
     for(final a in (next['accounts'] as List).cast<PaperRow>()) {
@@ -242,7 +271,10 @@ class MarketPaper extends ChangeNotifier {
       }
     }catch(_){_uncertain();return false;}
     if(admission!=null&&!admission())return false;
-    try {await store.write(copyPaper(next));}catch(_){ /* Readback resolves a lost acknowledgement. */ }
+    var archiveStageFailed=false;
+    try {await store.write(copyPaper(next));}
+    on OptionalPaperArchiveWriteFailure {archiveStageFailed=true;}
+    catch(_){ /* Readback resolves a lost acknowledgement. */ }
     PaperRow? observed;
     try {observed=await store.read();}catch(_){_uncertain();return false;}
     if(paperBytes(observed)==paperBytes(next)) {
@@ -252,6 +284,15 @@ class MarketPaper extends ChangeNotifier {
       notifyListeners();return true;
     }
     if(paperBytes(observed)!=paperBytes(_durable)){_uncertain();return false;}
+    if(archiveStageFailed&&allowArchiveFallback) {
+      final fallback=_retainPriorArchives(next);
+      if(paperBytes(fallback)!=paperBytes(_durable)) {
+        final committed=await _commit(fallback,admission:admission,captureOptional:false,allowArchiveFallback:false);
+        if(optionCapture)optionArchiveError='تعذر حفظ الرصد الاختياري الجديد؛ الأرشيف السابق محفوظ وعروض التعبئة الأصلية في الدفتر.';
+        if(barCapture)barArchiveError='تعذرت كتابة أرشيف جديد؛ حُفظ مصدر القرار المتاح داخل سجله فقط عند تأكيد العملية.';
+        return committed;
+      }
+    }
     error='لم يُحفظ التغيير؛ بقي الدفتر السابق مؤكدًا. لم تُعتمد تعبئة أو عملية عكس.';
     if(optionCapture)optionArchiveError='لم يتأكد حفظ عروض الخيارات؛ لم يُعتمد تاريخ جديد.';
     if(barCapture)barArchiveError='لم يتأكد حفظ شموع القرار؛ لم يُعتمد مرجع جديد.';

@@ -68,4 +68,27 @@ class PaperIndependentStoreTest {
         val root=JSONObject(store.stage(sample()));root.put("injected",true);rejected{store.restore(root.toString())}
         val other=JSONObject(store.stage(sample()));other.getJSONObject("archives").remove("waveArchive");rejected{store.restore(other.toString())}
     }
+    @Test fun optionalWritePressureRetainsOldArchiveAndPermitsCoreOnlyRetry()=run{dir,store->
+        val original=sample();val root=store.stage(original)
+        val pressure=PaperIndependentStore(File(dir,"parts")){directory->
+            if(directory.name=="barArchive")throw java.io.IOException("fixture optional pressure")
+            sync(directory)
+        }
+        try{pressure.stage(original.replace("\"rows\":[1.0","\"rows\":[2.0"),root);fail("optional staging unexpectedly passed")}
+        catch(_:PaperOptionalStageFailure){}
+        assertEquals(original,store.restore(root))
+        val next=original.replace("\"accounts\":[]","\"accounts\":[{\"cash\":42}]")
+        val committed=pressure.stage(next,root);assertEquals(next,store.restore(committed))
+        assertEquals(JSONObject(root).getJSONObject("archives").toString(),JSONObject(committed).getJSONObject("archives").toString())
+    }
+    @Test fun financialWriteFailureCannotBeMisclassifiedAsOptional()=run{dir,store->
+        val root=store.stage(sample())
+        val pressure=PaperIndependentStore(File(dir,"parts")){directory->
+            if(directory.name=="financial")throw java.io.IOException("fixture financial pressure")
+            sync(directory)
+        }
+        try{pressure.stage(sample().replace("\"source\":1.0","\"source\":2.0"),root);fail("financial staging unexpectedly passed")}
+        catch(error:Exception){assertFalse(error is PaperOptionalStageFailure)}
+        assertEquals(sample(),store.restore(root))
+    }
 }

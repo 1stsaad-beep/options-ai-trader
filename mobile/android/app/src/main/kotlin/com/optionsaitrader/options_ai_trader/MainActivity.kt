@@ -23,7 +23,8 @@ class MainActivity : FlutterActivity() {
                     "write" -> result.success(paperDisk.write(call.argument<String>("expected"),call.argument<String>("next")?:""))
                     else -> result.notImplemented()
                 }
-            }catch(_:Exception){result.error("PAPER_STORAGE_UNCERTAIN","Ledger storage could not be confirmed",null)}
+            }catch(_:PaperOptionalStageFailure){result.error("PAPER_OPTIONAL_STAGE_FAILED","Optional archive was not committed",null)}
+            catch(_:Exception){result.error("PAPER_STORAGE_UNCERTAIN","Ledger storage could not be confirmed",null)}
         }
         val access=AlpacaAccess(AlpacaVault(this),AlpacaPreferences(this))
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger,"oat/alpaca_data").setMethodCallHandler { call,result ->

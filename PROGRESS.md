@@ -609,3 +609,8 @@ Batch25 local full suite:1352 passed (one existing Starlette TestClient deprecat
 Source63889257f6b9b0cbd5164794b66555b5309dc6ef: backend/PG/backup/Compose38867756814 and security38867756826 passed. Original artifact SHA256/CRC verified;1352 Python,9 new observed-paper PostgreSQL checks,18 backup checks and20 Compose checks. Retained original ZIPs in docs/evidence/resume-20261016/batch25-ci-evidence.zip. No actual market connection or deployment.
 
 Batch26 separates optional native archive chunks from financial core, preserves lossless original JSON and legacy anchors, and retains unavailable original references while permitting fresh owned-protection retries. Eight JVM/three Flutter/new instrumentation cases added; CI pending. See docs/OPTIONAL_ARCHIVE_ISOLATION_20261016.md. Full memory/disk-pressure/export limits and other completion gaps remain open; no APK built.
+
+
+## Batch27 — optional archive write-pressure fallback (CI pending)
+
+Unchanged optional manifests now reuse their content hash without re-staging. A typed pre-root optional-stage failure is distinguished from financial/root failure. Only after confirming the original durable preimage, MarketPaper may retry once with prior archives and actual inline source for newly uncommitted decisions. Committed original records remain unchanged; admission and quote freshness run again. No success is claimed if the financial/root write also fails. Added2 JVM/3 Flutter pressure/rollback/freshness regressions; source-specific acceptance pending. Migration still needs space to preserve its legacy anchor; full-memory64MiB/backup16MiB limits remain.

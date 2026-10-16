@@ -3,6 +3,8 @@ package com.optionsaitrader.options_ai_trader
 import java.io.File
 import org.json.JSONObject
 
+class PaperOptionalStageFailure:java.io.IOException("Optional archive staging unavailable")
+
 /** Physical isolation of optional research from the financial receipt journal.
  * The lossless template retains every original JSON number/string lexeme and
  * field order; parsing/re-encoding doubles would break captured source digests.
@@ -89,7 +91,12 @@ class PaperIndependentStore(private val directory:File, private val syncDirector
                 val original=previousArchives!!.getString(field.key)
                 require(candidate.getString("sha256")==PaperSegments.digest(original.toByteArray(Charsets.UTF_8))){"Archive reference changed"}
                 original // Keep the physical original even when it is unreadable.
-            }else parts(field.key).stage(value.toByteArray(Charsets.UTF_8))
+            }else {
+                val data=value.toByteArray(Charsets.UTF_8)
+                val prior=previousArchives?.optString(field.key)?.takeIf{it.isNotEmpty()}
+                val same=prior?.let{JSONObject(it).let{p->p.getInt("length")==data.size&&p.getString("sha256")==PaperSegments.digest(data)}}==true
+                if(same)prior!! else try{parts(field.key).stage(data)}catch(_:Exception){throw PaperOptionalStageFailure()}
+            }
             archives.put(field.key,manifest);substitutions[field.key]="null"
         }
         val core=parts("financial").stage(replace(text,fields,substitutions).toByteArray(Charsets.UTF_8))
