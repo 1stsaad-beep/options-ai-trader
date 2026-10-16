@@ -87,6 +87,20 @@ def test_safe_inspection_and_heartbeat_require_no_accounts():
         smoke.validate_readiness(bad)
 
 
+def test_observed_worker_is_disabled_nonroot_and_secret_isolated():
+    containers=fixture_containers()
+    worker=copy.deepcopy(containers[1])
+    worker['Config']['Labels']['com.docker.compose.service']='observed-paper'
+    worker['Config']['Env']+=['OAT_OBSERVED_PAPER_APPROVAL=','OAT_ALPACA_DATA_APPROVAL=']
+    containers.append(worker)
+    assert 'observed-paper' in smoke.inspect_owned_containers(PROJECT,containers,observed_paper=True)
+    worker['Config']['Env'][-2]='OAT_OBSERVED_PAPER_APPROVAL=virtual_only_approved'
+    with pytest.raises(smoke.SmokeFailure,match='DISABLED'): smoke.inspect_owned_containers(PROJECT,containers,observed_paper=True)
+    worker['Config']['Env'][-2]='OAT_OBSERVED_PAPER_APPROVAL='
+    containers[0]['Mounts']=[{'Destination':'/run/secrets/oat_observed_paper'}]
+    with pytest.raises(smoke.SmokeFailure,match='SECRET'): smoke.inspect_owned_containers(PROJECT,containers,observed_paper=True)
+
+
 def test_http_redirect_never_forwards_credentials():
     with pytest.raises(smoke.SmokeFailure, match="HTTP_REDIRECT_REFUSED"):
         smoke.NoRedirects().redirect_request(None, None, 302, "redirect", {}, "https://external.invalid")

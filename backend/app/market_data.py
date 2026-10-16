@@ -97,8 +97,13 @@ class DataTransport(Protocol):
     def get(self, path: str, params: dict) -> DataResponse: ...
 
 
-def allowed_query(path, params):
+def allowed_query(path, params, *, observed_options=False):
     """Reject arbitrary paths/queries before credentials can enter a request."""
+    if observed_options and path == '/v1beta1/options/quotes/latest':
+        symbols = params.get('symbols')
+        return (set(params) == {'symbols','feed'} and params['feed']=='opra'
+                and isinstance(symbols,str) and 1 <= len(symbols.split(',')) <= 30
+                and all(OPTION.fullmatch(s) for s in symbols.split(',')))
     if path in ('/v2/stocks/quotes/latest', '/v2/stocks/trades/latest'):
         return set(params) <= {'symbols', 'feed'} and params.get('feed') == 'iex'
     if path == '/v2/stocks/bars':
@@ -116,11 +121,12 @@ class AlpacaDataTransport:
     Creating this transport is offline. A separate operator approval flag is
     required by from_environment before production can use credentials.
     """
-    def __init__(self, credentials: DataCredentials):
+    def __init__(self, credentials: DataCredentials, *, observed_options=False):
         self._credentials = credentials
+        self._observed_options = observed_options is True
 
     def get(self, path, params):
-        if not allowed_query(path, params):
+        if not allowed_query(path, params, observed_options=self._observed_options):
             raise MarketDataError('DATA_ROUTE_FORBIDDEN')
         connection = http.client.HTTPSConnection(DATA_HOST, 443, timeout=8, context=ssl.create_default_context())
         try:

@@ -33,3 +33,8 @@ Remaining programming work is not all an external-access blocker: qualified deli
 | Prohibited scope | Live/external broker orders, connected IBKR Paper, paid data purchases, public deployment and other repositories. | Remain locked/unperformed under user authorization boundaries. |
 
 No confirmed market profitability, realistic execution guarantee, calibrated signal probability, completed three-session study, or iOS distribution readiness is claimed. Existing source/reports remain available as historical evidence; current acceptance is tied to exact workflow/source hashes.
+
+
+## 2026-10-16 batch25 delta
+
+The independent observed-paper ledger, persistent worker scaffolding, original-input replay, explicit settlement, logical SQL segments and fenced concurrency are now implemented/tested locally. This supersedes only the blanket absence of a durable server engine. Market entry is still locked pending Greek/deliverable eligibility; API exists but dedicated mobile controls/chart linkage do not. Other documented device storage, parity, advanced lifecycle/reporting, deployment/soak, independent review and final APK gates remain open. See docs/OBSERVED_PAPER_RUNTIME_20261016.md for exact implementation and source-specific acceptance status.

@@ -165,7 +165,24 @@ def paper_settlement_schema(db, postgres):
                 db.execute(f"CREATE TRIGGER immutable_{table}_{action.lower()} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT, 'receipts are immutable'); END")
 
 
-MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema), (7, 'v1_market_runtime', market_runtime_schema), (8, 'v1_market_segments', market_segments_schema), (9, 'v1_paper_settlement', paper_settlement_schema)]
+def observed_paper_schema(db, postgres):
+    """Separate balances; never import or alias the synthetic/device ledger."""
+    db.execute('CREATE TABLE observed_paper_accounts (id TEXT PRIMARY KEY, payload TEXT NOT NULL, version BIGINT NOT NULL, event_hash TEXT NOT NULL)')
+    db.execute('CREATE TABLE observed_paper_events (account_id TEXT NOT NULL REFERENCES observed_paper_accounts(id), sequence BIGINT NOT NULL, request_key TEXT NOT NULL, fingerprint TEXT NOT NULL, receipt_id TEXT, payload TEXT NOT NULL, digest TEXT NOT NULL, previous_hash TEXT NOT NULL, after_hash TEXT NOT NULL, created TEXT NOT NULL, size_bytes BIGINT NOT NULL, PRIMARY KEY(account_id,sequence), UNIQUE(account_id,request_key), UNIQUE(account_id,receipt_id))')
+    db.execute('CREATE TABLE observed_paper_segments (account_id TEXT NOT NULL REFERENCES observed_paper_accounts(id), number BIGINT NOT NULL, first_sequence BIGINT NOT NULL, last_sequence BIGINT NOT NULL, size_bytes BIGINT NOT NULL, sealed INTEGER NOT NULL, chain_hash TEXT NOT NULL, PRIMARY KEY(account_id,number))')
+    db.execute('CREATE TABLE observed_paper_lease (name TEXT PRIMARY KEY, owner TEXT NOT NULL, generation BIGINT NOT NULL, expires_at TEXT NOT NULL)')
+    db.execute('CREATE TABLE observed_paper_data_state (name TEXT PRIMARY KEY, payload TEXT NOT NULL)')
+    if postgres:
+        db.execute('CREATE TRIGGER immutable_observed_paper_event BEFORE UPDATE OR DELETE ON observed_paper_events FOR EACH ROW EXECUTE FUNCTION immutable_decision_v1()')
+        db.execute('CREATE TRIGGER guard_observed_paper_segment BEFORE UPDATE OR DELETE ON observed_paper_segments FOR EACH ROW EXECUTE FUNCTION guard_market_segment()')
+    else:
+        for action in ('UPDATE', 'DELETE'):
+            db.execute(f"CREATE TRIGGER immutable_observed_paper_event_{action.lower()} BEFORE {action} ON observed_paper_events BEGIN SELECT RAISE(ABORT, 'observed-paper events are immutable'); END")
+        db.execute("CREATE TRIGGER guard_observed_paper_segment_update BEFORE UPDATE ON observed_paper_segments WHEN OLD.sealed=1 BEGIN SELECT RAISE(ABORT, 'sealed segments are immutable'); END")
+        db.execute("CREATE TRIGGER guard_observed_paper_segment_delete BEFORE DELETE ON observed_paper_segments BEGIN SELECT RAISE(ABORT, 'segments are immutable'); END")
+
+
+MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema), (7, 'v1_market_runtime', market_runtime_schema), (8, 'v1_market_segments', market_segments_schema), (9, 'v1_paper_settlement', paper_settlement_schema), (10, 'v1_observed_paper_runtime', observed_paper_schema)]
 
 
 def migrate(db, postgres):

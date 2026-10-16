@@ -593,3 +593,12 @@ Recovered actual remote HEAD bdffb57fedfdb63e68d1026c42e54561161a3e53, verified4
 Batch23 dd50244090b90deac3f2835ab4a439cf981b49dc fixes an actual Android Kotlin build failure on unsupported O_DIRECTORY using public descriptor open/fstat/S_ISDIR/fsync, preserving directory durability. Original Direct38861923793 artifact12029696539 SHA256/CRC verified:753 Flutter,51 JVM, zero failures/skips. Security/chart/data-only gates passed; APK/iOS skipped. Local Python baseline1276 passed.
 
 Batch24 adds versioned Python/Dart observed strategy parity and a separate prefix-only read-only alternative-signal Replay UI/API; ten fixtures/540 prefixes/five strategies and32 new Python tests passed. Full final-source CI remains pending. Historical decisions and Demo strategies are preserved. See docs/STRATEGY_REPLAY_20261016.md and docs/RESUME_20261016_AR.md for exact scope and remaining work. No completed-V1, independent-review, continuous market execution or final-APK claim.
+
+
+## 2026-10-16 — batch24 accepted, batch25 implementation
+
+Batch24 final source420012c: Direct38864161127 passed (766 Flutter,51 JVM; original ZIP SHA256/CRC recounted), chart38864161223/security38864161182 passed. Sourceece24cb backend38863918923 passed; local1308 Python. Initial Flutter lint failures are retained as failures and corrected.
+
+Batch25 implements a separate durable observed-paper ledger/runtime, atomic immutable events/segments, generation-fenced capture/commit, settlement, bounded OPRA read-only adapter and authenticated controls. Full implementation/limitations:docs/OBSERVED_PAPER_RUNTIME_20261016.md. New alpaca entries remain CONTRACT_ELIGIBILITY_UNVERIFIED pending qualified Greek/deliverable metadata; fixtures never imply an actual OPRA connection. Source-specific PG/backup/Compose gates pending. No deployment/phone test/independent final review/APK performed.
+
+Batch25 local full suite:1352 passed (one existing Starlette TestClient deprecation warning);44 new checks. Original batch24 CI archive and batch25 local JUnit/tested-file hashes are retained in docs/evidence/resume-20261016/batch24-25-evidence.zip. Remote acceptance pending.

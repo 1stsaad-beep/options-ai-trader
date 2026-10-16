@@ -67,6 +67,8 @@ def create_app(repository=None, token=None, market_data_provider=None):
             raise RuntimeError('Live execution is hard locked; only paper mode is permitted')
         app.state.repository = repository or Repository(os.getenv('DATABASE_URL','sqlite:///options_demo.db'))
         app.state.service = TradingService(app.state.repository)
+        from .observed_paper_store import ObservedPaperStore
+        app.state.observed_paper = ObservedPaperStore(app.state.repository)
         from .market_data import from_environment, DisabledMarketData
         app.state.market_data = (market_data_provider if market_data_provider is not None else
             DisabledMarketData() if os.getenv('OAT_MARKET_RUNTIME_ROLE') == 'api_cache_only' else from_environment())
@@ -91,6 +93,8 @@ def create_app(repository=None, token=None, market_data_provider=None):
     install_market_data_routes(app, secured, service, lambda: app.state.market_data)
     from .market_runtime_api import install_market_runtime_routes
     install_market_runtime_routes(app, secured, service)
+    from .observed_paper_api import install_observed_paper_routes
+    install_observed_paper_routes(app, secured, lambda: app.state.observed_paper)
     @app.post('/api/research/observed-option-replay',dependencies=secured)
     def observed_option_replay(body: dict):
         # Portable device evidence is inspected without importing balances or

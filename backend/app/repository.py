@@ -6,6 +6,7 @@ PostgreSQL advisory transaction locking serializes risk admission across workers
 import json
 import sqlite3
 import threading
+import uuid
 from contextlib import contextmanager
 
 from .migrations import SCHEMA, migrate
@@ -61,3 +62,18 @@ class Session:
         return dict(row) if row is not None else None
     def all(self, sql, parameters=()):
         return [dict(row) for row in self.execute(sql, parameters).fetchall()]
+    def stream(self, sql, parameters=(), batch_size=2):
+        """Bounded recovery reads, including a server-side PostgreSQL cursor."""
+        if type(batch_size) is not int or not 1 <= batch_size <= 64:
+            raise ValueError('Invalid stream batch size')
+        if self.postgres:
+            with self.connection.cursor(name='oat_'+uuid.uuid4().hex) as cursor:
+                cursor.itersize=batch_size
+                cursor.execute(sql.replace('?', '%s'),parameters)
+                for row in cursor: yield dict(row)
+        else:
+            cursor=self.execute(sql,parameters)
+            try:
+                for row in cursor: yield dict(row)
+            finally:
+                cursor.close()

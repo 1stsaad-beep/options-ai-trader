@@ -108,6 +108,17 @@ def run():
                                    retry_at=journal.utc(journal_time+timedelta(seconds=180)))
                 runtime.save_coordinator(db, coordinator)
             saved_runtime_events = runtime.events(service, accounts[0])
+            from app.observed_paper_store import ObservedPaperStore
+            from observed_paper_check import seed as seed_observed, observation as observed_input
+            observed=ObservedPaperStore(repository,lambda:now)
+            seed_observed(observed,'backup-observed')
+            observed_lease=observed.acquire('backup-observed-worker')
+            observed.command('backup-observed','entry',{'kind':'CYCLE','observation':observed_input(now)},expected_version=2,lease=observed_lease)
+            observed.command('backup-observed','close',{'kind':'REQUEST_CLOSE','symbol':'NVDA'})
+            observed.command('backup-observed','stop',{'kind':'ENABLE','enabled':False})
+            saved_observed=observed.snapshot('backup-observed',full=True)
+            saved_observed_events=observed.events('backup-observed')
+            observed.release(observed_lease)
             with tempfile.TemporaryDirectory(prefix="oat-postgres-roundtrip-") as temporary:
                 archive = Path(temporary) / "ledger.dump"
                 metadata = snapshots.backup(fixture, archive)
@@ -171,6 +182,18 @@ def run():
                 recovered_repository = Repository(_url(fixture, restored_name))
                 try:
                     recovered = TradingService(recovered_repository, today=lambda: now.date(), now=lambda: now)
+                    recovered_observed=ObservedPaperStore(recovered_repository,lambda:now)
+                    assert recovered_observed.snapshot('backup-observed',full=True)==saved_observed
+                    assert recovered_observed.events('backup-observed')==saved_observed_events
+                    assert saved_observed['state']['positions']['NVDA']['closeIntent']['quantity']==3
+                    checks.append('observed_virtual_balance_original_inputs_pending_close_segments_and_replay_restored')
+                    try:
+                        with recovered_repository.transaction() as db:
+                            db.execute("UPDATE observed_paper_events SET payload=payload WHERE account_id='backup-observed'")
+                    except psycopg.Error as error:
+                        assert 'immutable' in str(error)
+                    else:
+                        raise AssertionError('Observed event guard missing after restore')
                     with patch.object(journal, 'utc_now', lambda: journal_time):
                         assert journal.replay(recovered, accounts[0], saved_market['id']) == saved_market
                     checks.append('market_journal_exact_payload_hash_and_receipt_restored')

@@ -69,11 +69,11 @@ def project_resources(project: str, env: dict) -> list[str]:
     return found
 
 
-def inspect_owned_containers(project: str, containers: list[dict], *, market_runtime=False) -> dict:
+def inspect_owned_containers(project: str, containers: list[dict], *, market_runtime=False, observed_paper=False) -> dict:
     if PROJECT_PATTERN.fullmatch(project) is None:
         raise SmokeFailure("PROJECT_OWNERSHIP_GUARD")
     services = {}
-    expected = {'api', 'worker', 'postgres'} | ({'market-collector'} if market_runtime else set())
+    expected = {'api', 'worker', 'postgres'} | ({'market-collector'} if market_runtime else set()) | ({'observed-paper'} if observed_paper else set())
     for container in containers:
         config, state = container.get("Config", {}), container.get("State", {})
         labels = config.get("Labels", {})
@@ -94,7 +94,7 @@ def inspect_owned_containers(project: str, containers: list[dict], *, market_run
             bindings = container.get("NetworkSettings", {}).get("Ports", {}).get("8000/tcp", [])
             if bindings != [{"HostIp": "127.0.0.1", "HostPort": "8000"}]:
                 raise SmokeFailure("API_LOOPBACK_BINDING_REQUIRED")
-        if service in {"api", "worker", "market-collector"}:
+        if service in {"api", "worker", "market-collector", "observed-paper"}:
             if not container.get("HostConfig", {}).get("ReadonlyRootfs") or config.get("User") in (None, "", "0", "root"):
                 raise SmokeFailure("RUNTIME_HARDENING_MISSING")
             values = dict(item.split("=", 1) for item in config.get("Env", []) if "=" in item)
@@ -111,6 +111,11 @@ def inspect_owned_containers(project: str, containers: list[dict], *, market_run
                         raise SmokeFailure('COLLECTOR_MUST_BE_DISABLED_AND_HEALTHY')
                 if service == 'api' and values.get('OAT_MARKET_RUNTIME_ROLE') != 'api_cache_only':
                     raise SmokeFailure('API_CACHE_ONLY_REQUIRED')
+            if observed_paper:
+                if service!='observed-paper' and any(m.get('Destination')=='/run/secrets/oat_observed_paper' for m in container.get('Mounts',[])):
+                    raise SmokeFailure('OBSERVED_SECRET_MUST_BE_WORKER_ONLY')
+                if service=='observed-paper' and (values.get('OAT_OBSERVED_PAPER_APPROVAL') or values.get('OAT_ALPACA_DATA_APPROVAL') or state.get('Health',{}).get('Status')!='healthy'):
+                    raise SmokeFailure('OBSERVED_WORKER_MUST_BE_DISABLED_AND_HEALTHY')
         services[service] = True
     if set(services) != expected:
         raise SmokeFailure("BASE_COMPOSE_SERVICES_INCOMPLETE")
@@ -153,10 +158,10 @@ def validate_readiness(payload):
     return True
 
 
-def run_smoke(*, market_runtime=False) -> dict:
+def run_smoke(*, market_runtime=False, observed_paper=False) -> dict:
     project = "oat-smoke-" + secrets.token_hex(12)
     env = {key: value for key, value in os.environ.items()
-           if not key.startswith(("COMPOSE_", "OAT_ALPACA_", "APCA_")) and key not in {"OPTIONS_API_TOKEN", "POSTGRES_PASSWORD"}}
+           if not key.startswith(("COMPOSE_", "OAT_ALPACA_", "OAT_OBSERVED_", "APCA_")) and key not in {"OPTIONS_API_TOKEN", "POSTGRES_PASSWORD"}}
     result = {"test": "base_compose_runtime", "project": project, "status": "failed",
               "checks": [], "live_enabled": False, "accounts_created": 0, "orders_created": 0,
               "cleanup": "not_required", "source": "isolated_synthetic_mock"}
@@ -172,12 +177,18 @@ def run_smoke(*, market_runtime=False) -> dict:
             placeholder.write_text('{}')
             placeholder.chmod(0o600)
             private_settings['OAT_ALPACA_SECRET_FILE'] = str(placeholder)
+        if observed_paper:
+            placeholder=Path(private)/'empty-observed-secret.json'
+            placeholder.write_text('{}'); placeholder.chmod(0o600)
+            private_settings['OAT_OBSERVED_PAPER_SECRET_FILE']=str(placeholder)
         with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
             stream.write("\n".join(f"{name}={value}" for name, value in private_settings.items()) + "\n")
         compose = ["docker", "compose", "--project-name", project, "--env-file", str(env_file),
                    "--file", str(ROOT / "infra" / "compose.yaml")]
         if market_runtime:
             compose += ['--file', str(ROOT / 'infra' / 'compose.market-runtime.yaml'), '--profile', 'market-runtime']
+        if observed_paper:
+            compose += ['--file',str(ROOT/'infra'/'compose.observed-paper.yaml'),'--profile','observed-paper']
         try:
             require_local_engine(env)
             with socket.socket() as probe:
@@ -189,10 +200,10 @@ def run_smoke(*, market_runtime=False) -> dict:
             command(compose + ["up", "--detach", "--build", "--wait", "--wait-timeout", "120"], env, 900)
             stage = "container_ownership_and_ports"
             identifiers = command(compose + ["ps", "--all", "--quiet"], env, 20).split()
-            if len(identifiers) != (4 if market_runtime else 3) or any(re.fullmatch(r"[0-9a-f]{12,64}", item) is None for item in identifiers):
+            if len(identifiers) != 3+int(market_runtime)+int(observed_paper) or any(re.fullmatch(r"[0-9a-f]{12,64}", item) is None for item in identifiers):
                 raise SmokeFailure("EXPECTED_OWNED_CONTAINERS")
             containers = json.loads(command(["docker", "inspect", *identifiers], env, 20))
-            inspect_owned_containers(project, containers, market_runtime=market_runtime)
+            inspect_owned_containers(project, containers, market_runtime=market_runtime, observed_paper=observed_paper)
             result["checks"].extend(["owned_services_running", "postgres_healthy", "loopback_only_ports", "api_worker_nonroot_readonly", "paper_mock_live_false"])
             stage = "http_and_worker_readiness"
             deadline = time.monotonic() + 120
@@ -264,6 +275,24 @@ def run_smoke(*, market_runtime=False) -> dict:
                 result['checks'].extend(['database_outage_fails_healthcheck_then_worker_recovers', 'collector_disabled_without_secret_or_approval', 'api_has_no_alpaca_secret_or_transport'])
                 result['test'] = 'compose_base_plus_disabled_market_runtime'
                 result['market_connection_tested'] = False
+            if observed_paper:
+                stage='independent_disabled_observed_worker_restart'
+                def observed_heartbeat():
+                    query="SELECT json_build_object('at',updated_at,'payload',payload::json) FROM runtime_health WHERE name='observed_paper'"
+                    return json.loads(command(compose+['exec','--no-TTY','postgres','psql','--username','trader','--dbname','options_demo','--tuples-only','--no-align','--command',query],env,20))
+                before=observed_heartbeat()
+                command(compose+['stop','api'],env,45)
+                command(compose+['restart','observed-paper'],env,60)
+                deadline=time.monotonic()+50
+                while time.monotonic()<deadline:
+                    item=observed_heartbeat()
+                    if item['at']>before['at'] and item['payload']['state']=='DISABLED' and item['payload']['externalOrder'] is False:
+                        break
+                    time.sleep(1)
+                else: raise SmokeFailure('OBSERVED_HEARTBEAT_NOT_ADVANCING')
+                command(compose+['exec','--no-TTY','observed-paper','python','-m','app.observed_paper_worker','--healthcheck'],env,20)
+                result['checks'].extend(['observed_worker_disabled_without_secret_read','observed_worker_restart_without_api_or_phone','observed_worker_independent_healthcheck'])
+                result['market_connection_tested']=False
             result["status"] = "passed"
         except Exception as exc:
             result["failed_stage"] = stage
@@ -288,10 +317,11 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", action="store_true", help="Create and remove a disposable local Docker Compose project")
     parser.add_argument('--market-runtime', action='store_true', help='Include disabled collector and restart/outage checks')
+    parser.add_argument('--observed-paper', action='store_true', help='Include disabled observed virtual worker')
     args = parser.parse_args(argv)
     if not args.run:
         parser.error("--run is required; no Docker project was started")
-    result = run_smoke(market_runtime=args.market_runtime)
+    result = run_smoke(market_runtime=args.market_runtime,observed_paper=args.observed_paper)
     print(json.dumps(result, sort_keys=True, indent=2))
     return 0 if result["status"] == "passed" else 1
 

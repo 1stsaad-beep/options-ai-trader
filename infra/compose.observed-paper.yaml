@@ -1,0 +1,37 @@
+# Opt-in, independent virtual accounts. No external order adapter.
+# Do not share this secret with a different collector/provider process.
+services:
+  observed-paper:
+    profiles: [observed-paper]
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    command: [python, -m, app.observed_paper_worker]
+    environment:
+      DATABASE_URL: postgresql://trader:${POSTGRES_PASSWORD}@postgres:5432/options_demo
+      TRADING_MODE: paper
+      BROKER_PROVIDER: mock
+      ENABLE_LIVE: 'false'
+      OAT_OBSERVED_PAPER_APPROVAL: ${OAT_OBSERVED_PAPER_APPROVAL:-}
+      OAT_ALPACA_DATA_APPROVAL: ${OAT_ALPACA_DATA_APPROVAL:-}
+      OAT_ALPACA_DATA_CREDENTIALS_FILE: /run/secrets/oat_observed_paper
+      OAT_OBSERVED_PAPER_REQUESTS_PER_MINUTE: ${OAT_OBSERVED_PAPER_REQUESTS_PER_MINUTE:-10}
+    secrets: [oat_observed_paper]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    read_only: true
+    tmpfs: ['/tmp:size=16m,mode=1777']
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    stop_grace_period: 30s
+    healthcheck:
+      test: [CMD, python, -m, app.observed_paper_worker, --healthcheck]
+      interval: 20s
+      timeout: 8s
+      retries: 3
+      start_period: 30s
+secrets:
+  oat_observed_paper:
+    file: ${OAT_OBSERVED_PAPER_SECRET_FILE:?Set an explicit private external file; empty while disabled}

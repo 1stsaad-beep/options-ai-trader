@@ -40,3 +40,8 @@ Device physical archive chunks are now outside the AtomicFile root; content hash
 ### 2026-10-16 batches23–24: R04/R08/R13/R14
 
 The inherited Android build failure is fixed and accepted on dd50244 (753 Flutter/51 JVM). The next source adds the shared five-rule observed strategy contract with540 prefix fixtures and an authenticated no-write alternative-signal Replay endpoint plus offline saved-decision comparison. New receipts name the rule version; legacy originals and synthetic Demo contracts remain unchanged. This is scoped signal parity; wave identity/ranking, complete engine/Demo parity, modeled option outcomes, durable market execution and remaining storage/capacity work remain PARTIAL. Final-source mobile/backend CI is pending.
+
+
+### 2026-10-16 — batch25 scoped R01/R02/R07/R08/R09/R12/R13/R14 progress
+
+`observed_paper{,_store,_runtime,_data,_worker,_api}.py` adds independent server virtual accounts, original-input events, atomic balance/receipt/segment transactions, streamed reconciliation, generation-fenced worker capture, durable residual owned-close intents and explicit stock-delivery settlement. Tests:test_observed_paper.py/test_observed_paper_runtime.py; disposable two-connection acceptance:observed_paper_check.py; backup/Compose gates extended. Actual market new entry is deliberately still CONTRACT_ELIGIBILITY_UNVERIFIED; qualified Greeks/deliverables, augmentation/scenario exit, device UI/linkage, advanced performance analytics and deployed/soak evidence remain partial. R03/R04/Demo parity and device archive/memory limits remain open. See OBSERVED_PAPER_RUNTIME_20261016.md; CI pending, no final-V1 or APK claim.
