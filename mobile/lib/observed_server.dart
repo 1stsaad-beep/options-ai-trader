@@ -205,7 +205,9 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
       if(value['contract']!='observed-paper-performance-v1'||value['account']!=id||value['source']!=current.state['source']||
           value['externalOrder']!=false||value['version']!=current.version||value['eventHash']!=current.eventHash||
           value['realizedPnlCents']!=current.state['realized']||value['cashCents']!=current.state['cash']||
-          value['feesCents']!=current.state['fees'])throw const FormatException();
+          value['feesCents']!=current.state['fees']) {
+        throw const FormatException();
+      }
       for(final key in ['maximumRealizedDrawdownCents','closedQuoteRoundTrips','settlementAffectedClosuresExcluded','buyContracts','sellContracts','addFills']) {
         if(!observedInteger(value[key]))throw const FormatException();
       }
