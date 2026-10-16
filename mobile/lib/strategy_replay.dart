@@ -15,7 +15,9 @@ Map<String,dynamic> compareStrategies(dynamic query) {
     final account=query['account'],symbol=query['symbol'],raw=query['bars'],cursor=query['cursor'];
     if(account is! String||account.isEmpty||account.runes.length>120||account.trim()!=account||
       symbol is! String||!RegExp(r'^[A-Z][A-Z0-9.]{0,9}$').hasMatch(symbol)||!['alpaca','fixture'].contains(query['source'])||
-      raw is! List||raw.isEmpty||raw.length>1000||cursor is! int||cursor<0||cursor>=raw.length)throw const FormatException('identity');
+      raw is! List||raw.isEmpty||raw.length>1000||cursor is! int||cursor<0||cursor>=raw.length) {
+      throw const FormatException('identity');
+    }
     final captured=observationStamp(query['capturedAt']);
     final rows=<MarketBar>[];
     for(final row in raw) {
@@ -27,7 +29,9 @@ Map<String,dynamic> compareStrategies(dynamic query) {
       }
       final at=observationStamp(row['at']);
       if(at.second!=0||at.millisecond!=0||at.microsecond!=0||at.add(const Duration(minutes:1)).isAfter(captured)||
-        (rows.isNotEmpty&&!at.isAfter(rows.last.time)))throw const FormatException('clock');
+        (rows.isNotEmpty&&!at.isAfter(rows.last.time))) {
+        throw const FormatException('clock');
+      }
       rows.add(MarketBar.parse({...Map<String,dynamic>.from(row),'t':at.millisecondsSinceEpoch}));
     }
     final prefix=rows.take(cursor+1).toList();
