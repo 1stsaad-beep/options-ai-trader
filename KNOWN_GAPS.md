@@ -1,6 +1,8 @@
 # Known gaps and closed defects
 
-Batch65 implements bounded provider DNS and whole-network-request deadlines with30 new tests and1695 full local Python passes; source CI pending. See docs/PROVIDER_DEADLINES_20261017.md. This closes that scoped software gap, not the other phase-one requirements.
+Batch66 adds a compatible standalone durable receiver (1729 local Python; source CI pending). Independent outside-host/database outage detection, deployed receipt/delivery and human notification remain separate work; no receiver was deployed.
+
+Batch65 implements bounded provider DNS and whole-network-request deadlines with30 new tests and1695 full local Python passes; source CI39038281766 and security39038281736 accepted. See docs/PROVIDER_DEADLINES_20261017.md. This closes that scoped software gap, not the other phase-one requirements.
 
 ## Current checkpoint57–64 — still PARTIAL
 

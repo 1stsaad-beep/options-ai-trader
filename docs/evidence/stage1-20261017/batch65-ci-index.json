@@ -1,0 +1,46 @@
+{
+  "artifacts": [
+    {
+      "id": 12103172191,
+      "name": "compose",
+      "hash": "cf1bef135fc051411a46258bcf13010601fe94f28852affeefa634fd3fb16e8f",
+      "run": 39038281766,
+      "file": "batch65-compose.zip",
+      "crcVerified": true,
+      "source": "cfbedfba1d32295427c46cdcf9d9d1a10f8352b6",
+      "conclusion": "success"
+    },
+    {
+      "id": 12102418551,
+      "name": "backend",
+      "hash": "55c0816684f300b0fb90d809aa03c3b96c11b71ee0e56b46b4ad402f3ff64ad1",
+      "run": 39038281766,
+      "file": "batch65-backend.zip",
+      "crcVerified": true,
+      "source": "cfbedfba1d32295427c46cdcf9d9d1a10f8352b6",
+      "conclusion": "success"
+    },
+    {
+      "id": 12102843261,
+      "name": "security",
+      "hash": "f9ae6b6416856774417a0eb6e4f10e906d5c80a1985d6021b5cfcbfd25e25550",
+      "run": 39038281736,
+      "file": "batch65-security.zip",
+      "crcVerified": true,
+      "source": "cfbedfba1d32295427c46cdcf9d9d1a10f8352b6",
+      "conclusion": "success"
+    }
+  ],
+  "python": 1695,
+  "postgresql": [
+    22,
+    6,
+    10,
+    5,
+    32,
+    4,
+    23
+  ],
+  "compose": 23,
+  "externalMarketConnection": false
+}
