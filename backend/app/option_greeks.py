@@ -13,7 +13,11 @@ def provider_greeks(raw, right):
     for key, value in values.items():
         if value is None:
             continue
-        if type(value) not in (int, float) or not math.isfinite(value):
+        try:
+            finite = type(value) in (int, float) and math.isfinite(value)
+        except OverflowError:
+            finite = False
+        if not finite:
             raise ValueError('Invalid provider Greeks')
         if key == 'delta' and not ((0 <= value <= 1) if right == 'C' else (-1 <= value <= 0)):
             raise ValueError('Invalid provider delta')

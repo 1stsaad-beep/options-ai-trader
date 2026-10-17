@@ -1,5 +1,7 @@
 # Stage-one continuation — 2026-10-17
 
+Batch40 rejects oversized provider Greek integers through the same fixed error boundary instead of leaking OverflowError (regression reproduced before repair).1460 full Python tests passed locally. No mobile/native change from ffa67fccb63d862485cdb8507cd247d343b015d0; backend source CI follows this save.
+
 Batch38 adds sanitized durable worker failure codes and read-only authentication/backoff/request-budget diagnostics, with validated Arabic Flutter labels. Corrupt provider state stays unverified and unmodified; stale heartbeat cannot attest a current diagnostic.39 targeted Python passed,13 new cases;10 Flutter tests and a PostgreSQL two-connection check added. Current-state alerts do not implement push delivery or a deployed soak. Source CI pending.
 
 Batch37 hardens actual provider Greek numeric domains and matching Dart chain validation:21 shared cases, no invented values/timestamps, explicit missing/partial/values-only diagnostics, all freshness/entry claims remain false.122 targeted Python passed. Fixes two Flutter analyzer block-style findings in batch36; Flutter/JVM acceptance remains pending rerun. Full deliverable/contract qualification remains open.

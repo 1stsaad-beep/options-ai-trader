@@ -19,7 +19,7 @@ def test_shared_provider_value_contract(case):
         assert 'GREEKS_PROVIDER_TIME_UNAVAILABLE' in report['reasons']
 
 
-@pytest.mark.parametrize('bad',[float('nan'),float('inf'),float('-inf')])
+@pytest.mark.parametrize('bad',[float('nan'),float('inf'),float('-inf'),10**400],ids=['nan','infinity','negative_infinity','oversized_integer'])
 def test_nonfinite_provider_sensitivities_are_rejected(bad):
     with pytest.raises(ValueError):provider_greeks({'theta':bad},'C')
 
