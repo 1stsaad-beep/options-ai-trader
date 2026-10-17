@@ -37,7 +37,9 @@ Map<String, dynamic> parseObservedDaily(dynamic raw, ObservedServerAccount saved
       r['throughVersion'] != saved.version || r['throughEventHash'] != saved.eventHash ||
       r['externalOrder'] != false || r['executionAllowed'] != false || r['newEntryAllowed'] != false ||
       r['sampling'] != 'LAST_MICROSECOND_BEFORE_MODELED_SESSION_CLOSE' || !observedHash(r['reportHash']) ||
-      points is! List || points.length != schedule.length) throw const FormatException('Invalid daily report');
+      points is! List || points.length != schedule.length) {
+    throw const FormatException('Invalid daily report');
+  }
   final initial = saved.state['initialCash'] as int, values = <int?>[];
   var previousVersion = -1, fees = 0;
   Map<String, dynamic>? previous;
@@ -52,7 +54,9 @@ Map<String, dynamic> parseObservedDaily(dynamic raw, ObservedServerAccount saved
       if (previousVersion >= 0 || p['complete'] != false || p['stateVersion'] != null || p['stateEventHash'] != null ||
           reasons.length != 1 || reasons.single != 'ACCOUNT_NOT_CREATED' ||
           ['cashCents', 'feesCents', 'realizedPnlCents', 'ownedBasisCents', 'liquidationEquityCents',
-            'unrealizedPnlCents', 'totalPnlCents'].any((key) => p[key] != null)) throw const FormatException('Invalid pre-genesis sample');
+            'unrealizedPnlCents', 'totalPnlCents'].any((key) => p[key] != null)) {
+        throw const FormatException('Invalid pre-genesis sample');
+      }
       values.add(null); continue;
     }
     for (final key in ['stateVersion', 'cashCents', 'feesCents', 'ownedBasisCents']) {
@@ -74,10 +78,14 @@ Map<String, dynamic> parseObservedDaily(dynamic raw, ObservedServerAccount saved
     }
     if (reasons.toSet().length != reasons.length || reasons.any((x) => ![
         'QUALIFIED_ORIGINAL_QUOTE_UNAVAILABLE', 'INSUFFICIENT_REMAINING_LIQUIDITY',
-        'QUALIFIED_STOCK_QUOTE_UNAVAILABLE'].contains(x))) throw const FormatException('Invalid daily gap');
+          'QUALIFIED_STOCK_QUOTE_UNAVAILABLE'].contains(x))) {
+      throw const FormatException('Invalid daily gap');
+    }
     if (equity == null) {
       if (p['status'] != 'INCOMPLETE' || p['complete'] != false || reasons.isEmpty ||
-          p['totalPnlCents'] != null || p['unrealizedPnlCents'] != null) throw const FormatException('Hidden daily gap');
+          p['totalPnlCents'] != null || p['unrealizedPnlCents'] != null) {
+        throw const FormatException('Hidden daily gap');
+      }
     } else if (p['complete'] != true || !['CASH_ONLY', 'OBSERVED_MODEL'].contains(p['status']) || reasons.isNotEmpty ||
         p['totalPnlCents'] != equity - initial || p['unrealizedPnlCents'] != equity - p['cashCents'] - p['ownedBasisCents'] ||
         p['status'] == 'CASH_ONLY' && (p['ownedBasisCents'] != 0 || equity != p['cashCents'])) {
