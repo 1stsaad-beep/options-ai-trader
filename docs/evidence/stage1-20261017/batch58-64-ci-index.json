@@ -1,0 +1,1141 @@
+{
+  "source": "Original GitHub Actions artifacts; all receiver/provider data synthetic; no APK. Failed/cancelled runs are not acceptance.",
+  "artifacts": [
+    {
+      "run": 39019931820,
+      "source": "eebac27a6362240f04ac209e70655f936d412075",
+      "id": 12096128160,
+      "name": "batch58-compose-runtime-result.zip",
+      "digest": "sha256:78146b6e0605d0148d5d50f1fe143c76b28944bf8e4e878eb037f119db819aea",
+      "workflow": {
+        "id": 39019931820,
+        "name": "Mock safety checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "eebac27a6362240f04ac209e70655f936d412075"
+      },
+      "crc": "passed",
+      "results": {
+        "compose-smoke.json": {
+          "accounts_created": 0,
+          "cleanup": "owned_resources_removed",
+          "live_enabled": false,
+          "market_connection_tested": false,
+          "orders_created": 0,
+          "project": "oat-smoke-1a951b59ce7f31e86a30d9b8",
+          "source": "isolated_synthetic_mock",
+          "status": "passed",
+          "test": "compose_base_plus_disabled_market_runtime",
+          "worker_age_seconds": 4.894008,
+          "check_count": 20
+        }
+      }
+    },
+    {
+      "run": 39019931820,
+      "source": "eebac27a6362240f04ac209e70655f936d412075",
+      "id": 12096038545,
+      "name": "batch58-backend-test-results.zip",
+      "digest": "sha256:a23572977bc2b4fff1a52c3277b9927a5e61854e2f86e0bfffd24c742f5edf7e",
+      "workflow": {
+        "id": 39019931820,
+        "name": "Mock safety checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "eebac27a6362240f04ac209e70655f936d412075"
+      },
+      "crc": "passed",
+      "results": {
+        "test-results.xml": {
+          "tests": 1628,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "http-smoke.json": {
+          "http_server": "passed",
+          "authentication": "passed",
+          "account_isolation": "passed",
+          "idempotency": "passed",
+          "partial_fill_duplicate": "passed",
+          "disconnect_reconcile": "passed",
+          "independent_shadow_worker": "passed",
+          "emergency_stop": "passed",
+          "worker_preserves_untrusted_state": "passed",
+          "market_data_outage": "passed",
+          "safe_emergency_owned_close": "passed",
+          "version": "1.0.0-rc.2",
+          "automatic_mock_partial_entry_stop_loss_close": "passed",
+          "automatic_daily_entry_replay": "passed",
+          "research_snapshot_list_original_replay_http": "passed",
+          "research_journal_process_restart": "passed",
+          "live_orders_sent": 0,
+          "data_source": "synthetic",
+          "database": "SQLite"
+        },
+        "lifecycle-synthetic.json": {
+          "version": "1.0.0-rc.2",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "purpose": "Controlled lifecycle/accounting checks; not profitability evidence"
+        },
+        "postgres-backup-restore.json": {
+          "status": "passed",
+          "checks_passed": 21,
+          "checks_failed": 0,
+          "database": "PostgreSQL",
+          "postgresql_major": 16,
+          "broker": "none",
+          "data": "synthetic",
+          "check_count": 21
+        },
+        "postgres-v1-results.json": {
+          "status": "passed",
+          "checks_passed": 22,
+          "checks_failed": 0,
+          "database": "PostgreSQL",
+          "broker": "none",
+          "check_count": 22
+        },
+        "market-data-journal-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "checks_passed": 6,
+          "checks_failed": 0,
+          "provider": "mock_contract_fixture",
+          "external_market_connection": false,
+          "check_count": 6
+        },
+        "market-runtime-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "checks_passed": 10,
+          "checks_failed": 0,
+          "external_market_connection": false,
+          "provider": "explicit_mock_contract",
+          "check_count": 10
+        },
+        "paper-settlement-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "broker": "none",
+          "checks_passed": 5,
+          "checks_failed": 0,
+          "check_count": 5
+        },
+        "observed-paper-postgres.json": {
+          "externalOrder": false,
+          "source": "synthetic_fixture",
+          "status": "passed",
+          "check_count": 28
+        },
+        "observed-experiment-postgres.json": {
+          "externalOrder": false,
+          "source": "synthetic_fixture",
+          "status": "passed",
+          "check_count": 4
+        }
+      }
+    },
+    {
+      "run": 39019931838,
+      "source": "eebac27a6362240f04ac209e70655f936d412075",
+      "id": 12096381935,
+      "name": "batch58-v1-security-results.zip",
+      "digest": "sha256:1fc87137d676715d58ffc1879cd81cd255bf96b3537f1bff943af66c6d366342",
+      "workflow": {
+        "id": 39019931838,
+        "name": "Source and dependency security checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "eebac27a6362240f04ac209e70655f936d412075"
+      },
+      "crc": "passed",
+      "results": {
+        "secret-scan.json": {
+          "files_scanned": 1141,
+          "finding_count": 0,
+          "format_version": 1,
+          "history_blobs_scanned": 2280,
+          "history_commits": 219,
+          "scope": "tracked_working_tree_and_all_reachable_history",
+          "status": "no_matching_patterns_found"
+        },
+        "dependency-audit.json": {
+          "packages": 24,
+          "vulnerabilities": 0
+        },
+        "dart-dependency-audit.json": {
+          "status": "no_known_advisories",
+          "checked_at": "2026-10-17T09:07:58.453800+00:00",
+          "source": "OSV public API",
+          "ecosystem": "Pub",
+          "packages_checked": 44,
+          "limitation": "No coverage guarantee; Flutter SDK and native OS dependencies are outside this query",
+          "packages": 44,
+          "vulnerabilities": 0
+        }
+      }
+    },
+    {
+      "run": 39020273532,
+      "source": "e8a251c38bd483ade9fc37e63635ee18c0a95140",
+      "id": 12096029827,
+      "name": "batch59-direct-alpaca-mock-results.zip",
+      "digest": "sha256:473250a49e6cccc51f87d101ac2c297351c4d689cfcd1bd3868e95fab36dcf1c",
+      "workflow": {
+        "id": 39020273532,
+        "name": "Direct Alpaca mock acceptance",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "e8a251c38bd483ade9fc37e63635ee18c0a95140"
+      },
+      "crc": "passed",
+      "results": {
+        "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.AlpacaAccessTest.xml": {
+          "tests": 12,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.AlpacaSessionTest.xml": {
+          "tests": 31,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest.xml": {
+          "tests": 10,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.PaperSegmentsTest.xml": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "mobile/direct-flutter-tests.json": {
+          "visible_success": 997,
+          "visible_failed": 0,
+          "visible_skipped": 0,
+          "hidden_excluded": 66,
+          "final": {
+            "success": true,
+            "type": "done",
+            "time": 124690
+          }
+        }
+      }
+    },
+    {
+      "run": 39020273564,
+      "source": "e8a251c38bd483ade9fc37e63635ee18c0a95140",
+      "id": 12096890050,
+      "name": "batch59-backend-test-results.zip",
+      "digest": "sha256:7e6cfc63c459b314e2ed2d151960d2ab879fd55d5a8c83e9599792499e635f5c",
+      "workflow": {
+        "id": 39020273564,
+        "name": "Mock safety checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "e8a251c38bd483ade9fc37e63635ee18c0a95140"
+      },
+      "crc": "passed",
+      "results": {
+        "test-results.xml": {
+          "tests": 1629,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "http-smoke.json": {
+          "http_server": "passed",
+          "authentication": "passed",
+          "account_isolation": "passed",
+          "idempotency": "passed",
+          "partial_fill_duplicate": "passed",
+          "disconnect_reconcile": "passed",
+          "independent_shadow_worker": "passed",
+          "emergency_stop": "passed",
+          "worker_preserves_untrusted_state": "passed",
+          "market_data_outage": "passed",
+          "safe_emergency_owned_close": "passed",
+          "version": "1.0.0-rc.2",
+          "automatic_mock_partial_entry_stop_loss_close": "passed",
+          "automatic_daily_entry_replay": "passed",
+          "research_snapshot_list_original_replay_http": "passed",
+          "research_journal_process_restart": "passed",
+          "live_orders_sent": 0,
+          "data_source": "synthetic",
+          "database": "SQLite"
+        },
+        "lifecycle-synthetic.json": {
+          "version": "1.0.0-rc.2",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "purpose": "Controlled lifecycle/accounting checks; not profitability evidence"
+        },
+        "postgres-backup-restore.json": {
+          "status": "passed",
+          "checks_passed": 21,
+          "checks_failed": 0,
+          "database": "PostgreSQL",
+          "postgresql_major": 16,
+          "broker": "none",
+          "data": "synthetic",
+          "check_count": 21
+        },
+        "postgres-v1-results.json": {
+          "status": "passed",
+          "checks_passed": 22,
+          "checks_failed": 0,
+          "database": "PostgreSQL",
+          "broker": "none",
+          "check_count": 22
+        },
+        "market-data-journal-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "checks_passed": 6,
+          "checks_failed": 0,
+          "provider": "mock_contract_fixture",
+          "external_market_connection": false,
+          "check_count": 6
+        },
+        "market-runtime-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "checks_passed": 10,
+          "checks_failed": 0,
+          "external_market_connection": false,
+          "provider": "explicit_mock_contract",
+          "check_count": 10
+        },
+        "paper-settlement-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "broker": "none",
+          "checks_passed": 5,
+          "checks_failed": 0,
+          "check_count": 5
+        },
+        "observed-paper-postgres.json": {
+          "externalOrder": false,
+          "source": "synthetic_fixture",
+          "status": "passed",
+          "check_count": 28
+        },
+        "observed-experiment-postgres.json": {
+          "externalOrder": false,
+          "source": "synthetic_fixture",
+          "status": "passed",
+          "check_count": 4
+        }
+      }
+    },
+    {
+      "run": 39020273564,
+      "source": "e8a251c38bd483ade9fc37e63635ee18c0a95140",
+      "id": 12096108880,
+      "name": "batch59-compose-runtime-result.zip",
+      "digest": "sha256:7c96e3daefabbe413f0b865947d578090c873ba953daafbfe078bb4c1b8aaf17",
+      "workflow": {
+        "id": 39020273564,
+        "name": "Mock safety checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "e8a251c38bd483ade9fc37e63635ee18c0a95140"
+      },
+      "crc": "passed",
+      "results": {
+        "compose-smoke.json": {
+          "accounts_created": 0,
+          "cleanup": "owned_resources_removed",
+          "live_enabled": false,
+          "market_connection_tested": false,
+          "orders_created": 0,
+          "project": "oat-smoke-9eb51774aa32a73a99b409c2",
+          "source": "isolated_synthetic_mock",
+          "status": "passed",
+          "test": "compose_base_plus_disabled_market_runtime",
+          "worker_age_seconds": 4.325371,
+          "check_count": 20
+        }
+      }
+    },
+    {
+      "run": 39020273531,
+      "source": "e8a251c38bd483ade9fc37e63635ee18c0a95140",
+      "id": 12095654165,
+      "name": "batch59-chart-repair-evidence.zip",
+      "digest": "sha256:0502c76cd14cf79ff5d8f624a77c7322680de57c07a7b079f15e1f139041a8ee",
+      "workflow": {
+        "id": 39020273531,
+        "name": "Chart repair targeted verification",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "e8a251c38bd483ade9fc37e63635ee18c0a95140"
+      },
+      "crc": "passed",
+      "results": {
+        "chart-tests.json": {
+          "visible_success": 23,
+          "visible_failed": 0,
+          "visible_skipped": 0,
+          "hidden_excluded": 2,
+          "final": {
+            "success": true,
+            "type": "done",
+            "time": 13682
+          }
+        },
+        "golden-tests.json": {
+          "visible_success": 6,
+          "visible_failed": 0,
+          "visible_skipped": 0,
+          "hidden_excluded": 67,
+          "final": {
+            "success": true,
+            "type": "done",
+            "time": 35353
+          }
+        }
+      }
+    },
+    {
+      "run": 39020273555,
+      "source": "e8a251c38bd483ade9fc37e63635ee18c0a95140",
+      "id": 12095818607,
+      "name": "batch59-v1-security-results.zip",
+      "digest": "sha256:abf97d848a664390c7c8d6655f7beb67f614843401d581678366e2d68c96e55f",
+      "workflow": {
+        "id": 39020273555,
+        "name": "Source and dependency security checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "e8a251c38bd483ade9fc37e63635ee18c0a95140"
+      },
+      "crc": "passed",
+      "results": {
+        "secret-scan.json": {
+          "files_scanned": 1145,
+          "finding_count": 0,
+          "format_version": 1,
+          "history_blobs_scanned": 2289,
+          "history_commits": 220,
+          "scope": "tracked_working_tree_and_all_reachable_history",
+          "status": "no_matching_patterns_found"
+        },
+        "dependency-audit.json": {
+          "packages": 24,
+          "vulnerabilities": 0
+        },
+        "dart-dependency-audit.json": {
+          "status": "no_known_advisories",
+          "checked_at": "2026-10-17T09:13:35.685521+00:00",
+          "source": "OSV public API",
+          "ecosystem": "Pub",
+          "packages_checked": 44,
+          "limitation": "No coverage guarantee; Flutter SDK and native OS dependencies are outside this query",
+          "packages": 44,
+          "vulnerabilities": 0
+        }
+      }
+    },
+    {
+      "run": 39021596275,
+      "source": "38f91f3e9adfc13297838e448875ffc4042f116d",
+      "id": 12097440686,
+      "name": "batch61-compose-runtime-result.zip",
+      "digest": "sha256:18b666cd0283a5044323092c517635fc77ce09c3090adbfbe00b62bc52eef928",
+      "workflow": {
+        "id": 39021596275,
+        "name": "Mock safety checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "38f91f3e9adfc13297838e448875ffc4042f116d"
+      },
+      "crc": "passed",
+      "results": {
+        "compose-smoke.json": {
+          "accounts_created": 0,
+          "cleanup": "owned_resources_removed",
+          "live_enabled": false,
+          "market_connection_tested": false,
+          "orders_created": 0,
+          "project": "oat-smoke-6371bb9b65f801ce7a181a87",
+          "source": "isolated_synthetic_mock",
+          "status": "passed",
+          "test": "compose_base_plus_disabled_market_runtime",
+          "worker_age_seconds": 4.938479,
+          "check_count": 20
+        }
+      }
+    },
+    {
+      "run": 39021596275,
+      "source": "38f91f3e9adfc13297838e448875ffc4042f116d",
+      "id": 12096584353,
+      "name": "batch61-backend-test-results.zip",
+      "digest": "sha256:40fffde019b539a07e60f316786a609608e7e66f1ccc3029c6c025741cf1beb1",
+      "workflow": {
+        "id": 39021596275,
+        "name": "Mock safety checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "38f91f3e9adfc13297838e448875ffc4042f116d"
+      },
+      "crc": "passed",
+      "results": {
+        "test-results.xml": {
+          "tests": 1664,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "http-smoke.json": {
+          "http_server": "passed",
+          "authentication": "passed",
+          "account_isolation": "passed",
+          "idempotency": "passed",
+          "partial_fill_duplicate": "passed",
+          "disconnect_reconcile": "passed",
+          "independent_shadow_worker": "passed",
+          "emergency_stop": "passed",
+          "worker_preserves_untrusted_state": "passed",
+          "market_data_outage": "passed",
+          "safe_emergency_owned_close": "passed",
+          "version": "1.0.0-rc.2",
+          "automatic_mock_partial_entry_stop_loss_close": "passed",
+          "automatic_daily_entry_replay": "passed",
+          "research_snapshot_list_original_replay_http": "passed",
+          "research_journal_process_restart": "passed",
+          "live_orders_sent": 0,
+          "data_source": "synthetic",
+          "database": "SQLite"
+        },
+        "lifecycle-synthetic.json": {
+          "version": "1.0.0-rc.2",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "purpose": "Controlled lifecycle/accounting checks; not profitability evidence"
+        },
+        "postgres-backup-restore.json": {
+          "status": "passed",
+          "checks_passed": 23,
+          "checks_failed": 0,
+          "database": "PostgreSQL",
+          "postgresql_major": 16,
+          "broker": "none",
+          "data": "synthetic",
+          "check_count": 23
+        },
+        "postgres-v1-results.json": {
+          "status": "passed",
+          "checks_passed": 22,
+          "checks_failed": 0,
+          "database": "PostgreSQL",
+          "broker": "none",
+          "check_count": 22
+        },
+        "market-data-journal-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "checks_passed": 6,
+          "checks_failed": 0,
+          "provider": "mock_contract_fixture",
+          "external_market_connection": false,
+          "check_count": 6
+        },
+        "market-runtime-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "checks_passed": 10,
+          "checks_failed": 0,
+          "external_market_connection": false,
+          "provider": "explicit_mock_contract",
+          "check_count": 10
+        },
+        "paper-settlement-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "broker": "none",
+          "checks_passed": 5,
+          "checks_failed": 0,
+          "check_count": 5
+        },
+        "observed-paper-postgres.json": {
+          "externalOrder": false,
+          "source": "synthetic_fixture",
+          "status": "passed",
+          "check_count": 32
+        },
+        "observed-experiment-postgres.json": {
+          "externalOrder": false,
+          "source": "synthetic_fixture",
+          "status": "passed",
+          "check_count": 4
+        }
+      }
+    },
+    {
+      "run": 39021596271,
+      "source": "38f91f3e9adfc13297838e448875ffc4042f116d",
+      "id": 12097105858,
+      "name": "batch61-v1-security-results.zip",
+      "digest": "sha256:742b776e4cd514b928e9648c6f1d33fcf63176f28cc2130d5974d90dc8d3fb9b",
+      "workflow": {
+        "id": 39021596271,
+        "name": "Source and dependency security checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "38f91f3e9adfc13297838e448875ffc4042f116d"
+      },
+      "crc": "passed",
+      "results": {
+        "secret-scan.json": {
+          "files_scanned": 1153,
+          "finding_count": 0,
+          "format_version": 1,
+          "history_blobs_scanned": 2307,
+          "history_commits": 222,
+          "scope": "tracked_working_tree_and_all_reachable_history",
+          "status": "no_matching_patterns_found"
+        },
+        "dependency-audit.json": {
+          "packages": 24,
+          "vulnerabilities": 0
+        },
+        "dart-dependency-audit.json": {
+          "status": "no_known_advisories",
+          "checked_at": "2026-10-17T09:34:09.564981+00:00",
+          "source": "OSV public API",
+          "ecosystem": "Pub",
+          "packages_checked": 44,
+          "limitation": "No coverage guarantee; Flutter SDK and native OS dependencies are outside this query",
+          "packages": 44,
+          "vulnerabilities": 0
+        }
+      }
+    },
+    {
+      "run": 39021008723,
+      "source": "5cbb3f2daaffb164032dbc539efb078ff485209d",
+      "id": 12097201912,
+      "name": "batch60-direct-alpaca-mock-results.zip",
+      "digest": "sha256:34f7be1f7ab87354be08531bf1ce85ec09cc728a269820db01a778fd9ae14b03",
+      "workflow": {
+        "id": 39021008723,
+        "name": "Direct Alpaca mock acceptance",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "source": "5cbb3f2daaffb164032dbc539efb078ff485209d"
+      },
+      "crc": "passed",
+      "results": {
+        "mobile/direct-flutter-tests.json": {
+          "visible_success": 85,
+          "visible_failed": 1,
+          "visible_skipped": 0,
+          "hidden_excluded": 6,
+          "final": null
+        }
+      }
+    },
+    {
+      "run": 39021008703,
+      "source": "5cbb3f2daaffb164032dbc539efb078ff485209d",
+      "id": 12096752378,
+      "name": "batch60-chart-repair-evidence.zip",
+      "digest": "sha256:589f948cfffff19ca3c4e86e466c18f7b9a350b8ea44324d21353b9e2c439549",
+      "workflow": {
+        "id": 39021008703,
+        "name": "Chart repair targeted verification",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "5cbb3f2daaffb164032dbc539efb078ff485209d"
+      },
+      "crc": "passed",
+      "results": {
+        "chart-tests.json": {
+          "visible_success": 23,
+          "visible_failed": 0,
+          "visible_skipped": 0,
+          "hidden_excluded": 2,
+          "final": {
+            "success": true,
+            "type": "done",
+            "time": 12175
+          }
+        },
+        "golden-tests.json": {
+          "visible_success": 6,
+          "visible_failed": 0,
+          "visible_skipped": 0,
+          "hidden_excluded": 68,
+          "final": {
+            "success": true,
+            "type": "done",
+            "time": 45305
+          }
+        }
+      }
+    },
+    {
+      "run": 39021008712,
+      "source": "5cbb3f2daaffb164032dbc539efb078ff485209d",
+      "id": 12097035299,
+      "name": "batch60-v1-security-results.zip",
+      "digest": "sha256:44fcccc2c73d2cdc90b234e151251b7af4ad5f985f310b9fec6097592069034b",
+      "workflow": {
+        "id": 39021008712,
+        "name": "Source and dependency security checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "5cbb3f2daaffb164032dbc539efb078ff485209d"
+      },
+      "crc": "passed",
+      "results": {
+        "secret-scan.json": {
+          "files_scanned": 1147,
+          "finding_count": 0,
+          "format_version": 1,
+          "history_blobs_scanned": 2293,
+          "history_commits": 221,
+          "scope": "tracked_working_tree_and_all_reachable_history",
+          "status": "no_matching_patterns_found"
+        },
+        "dependency-audit.json": {
+          "packages": 24,
+          "vulnerabilities": 0
+        },
+        "dart-dependency-audit.json": {
+          "status": "no_known_advisories",
+          "checked_at": "2026-10-17T09:25:07.793182+00:00",
+          "source": "OSV public API",
+          "ecosystem": "Pub",
+          "packages_checked": 44,
+          "limitation": "No coverage guarantee; Flutter SDK and native OS dependencies are outside this query",
+          "packages": 44,
+          "vulnerabilities": 0
+        }
+      }
+    },
+    {
+      "run": 39021882346,
+      "source": "c776b7e9bc5d3ec5c8e9925a6e1a50a0e2103a0d",
+      "id": 12096926649,
+      "name": "batch62-backend-test-results.zip",
+      "digest": "sha256:eca00d85ac0c8af7d0c174e3e18d11e79811f589a86c0f64df4bbc0910d1c26d",
+      "workflow": {
+        "id": 39021882346,
+        "name": "Mock safety checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "c776b7e9bc5d3ec5c8e9925a6e1a50a0e2103a0d"
+      },
+      "crc": "passed",
+      "results": {
+        "http-smoke.json": {
+          "http_server": "passed",
+          "authentication": "passed",
+          "account_isolation": "passed",
+          "idempotency": "passed",
+          "partial_fill_duplicate": "passed",
+          "disconnect_reconcile": "passed",
+          "independent_shadow_worker": "passed",
+          "emergency_stop": "passed",
+          "worker_preserves_untrusted_state": "passed",
+          "market_data_outage": "passed",
+          "safe_emergency_owned_close": "passed",
+          "version": "1.0.0-rc.2",
+          "automatic_mock_partial_entry_stop_loss_close": "passed",
+          "automatic_daily_entry_replay": "passed",
+          "research_snapshot_list_original_replay_http": "passed",
+          "research_journal_process_restart": "passed",
+          "live_orders_sent": 0,
+          "data_source": "synthetic",
+          "database": "SQLite"
+        },
+        "lifecycle-synthetic.json": {
+          "version": "1.0.0-rc.2",
+          "source": "synthetic_mock",
+          "live_enabled": false,
+          "purpose": "Controlled lifecycle/accounting checks; not profitability evidence"
+        },
+        "test-results.xml": {
+          "tests": 1665,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "postgres-backup-restore.json": {
+          "status": "passed",
+          "checks_passed": 23,
+          "checks_failed": 0,
+          "database": "PostgreSQL",
+          "postgresql_major": 16,
+          "broker": "none",
+          "data": "synthetic",
+          "check_count": 23
+        },
+        "postgres-v1-results.json": {
+          "status": "passed",
+          "checks_passed": 22,
+          "checks_failed": 0,
+          "database": "PostgreSQL",
+          "broker": "none",
+          "check_count": 22
+        },
+        "market-data-journal-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "checks_passed": 6,
+          "checks_failed": 0,
+          "provider": "mock_contract_fixture",
+          "external_market_connection": false,
+          "check_count": 6
+        },
+        "market-runtime-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "checks_passed": 10,
+          "checks_failed": 0,
+          "external_market_connection": false,
+          "provider": "explicit_mock_contract",
+          "check_count": 10
+        },
+        "paper-settlement-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "broker": "none",
+          "checks_passed": 5,
+          "checks_failed": 0,
+          "check_count": 5
+        },
+        "observed-paper-postgres.json": {
+          "externalOrder": false,
+          "source": "synthetic_fixture",
+          "status": "passed",
+          "check_count": 32
+        },
+        "observed-experiment-postgres.json": {
+          "externalOrder": false,
+          "source": "synthetic_fixture",
+          "status": "passed",
+          "check_count": 4
+        }
+      }
+    },
+    {
+      "run": 39021882346,
+      "source": "c776b7e9bc5d3ec5c8e9925a6e1a50a0e2103a0d",
+      "id": 12096916738,
+      "name": "batch62-compose-runtime-result.zip",
+      "digest": "sha256:6912811e6060544389b186a525a2b40f5fe677208df8a5a4df0d7e69d654531f",
+      "workflow": {
+        "id": 39021882346,
+        "name": "Mock safety checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "c776b7e9bc5d3ec5c8e9925a6e1a50a0e2103a0d"
+      },
+      "crc": "passed",
+      "results": {
+        "compose-smoke.json": {
+          "accounts_created": 0,
+          "cleanup": "owned_resources_removed",
+          "live_enabled": false,
+          "market_connection_tested": false,
+          "orders_created": 0,
+          "project": "oat-smoke-5b11f616c78f60bde56edc64",
+          "source": "isolated_synthetic_mock",
+          "status": "passed",
+          "test": "compose_base_plus_disabled_market_runtime",
+          "worker_age_seconds": 4.686271,
+          "check_count": 23
+        }
+      }
+    },
+    {
+      "run": 39021882365,
+      "source": "c776b7e9bc5d3ec5c8e9925a6e1a50a0e2103a0d",
+      "id": 12097001579,
+      "name": "batch62-v1-security-results.zip",
+      "digest": "sha256:ecc258364fa6ba0921b9577c6308a51d9788d8a997569ac9588d3419c02aeecc",
+      "workflow": {
+        "id": 39021882365,
+        "name": "Source and dependency security checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "c776b7e9bc5d3ec5c8e9925a6e1a50a0e2103a0d"
+      },
+      "crc": "passed",
+      "results": {
+        "secret-scan.json": {
+          "files_scanned": 1154,
+          "finding_count": 0,
+          "format_version": 1,
+          "history_blobs_scanned": 2312,
+          "history_commits": 223,
+          "scope": "tracked_working_tree_and_all_reachable_history",
+          "status": "no_matching_patterns_found"
+        },
+        "dependency-audit.json": {
+          "packages": 24,
+          "vulnerabilities": 0
+        },
+        "dart-dependency-audit.json": {
+          "status": "no_known_advisories",
+          "checked_at": "2026-10-17T09:38:48.887000+00:00",
+          "source": "OSV public API",
+          "ecosystem": "Pub",
+          "packages_checked": 44,
+          "limitation": "No coverage guarantee; Flutter SDK and native OS dependencies are outside this query",
+          "packages": 44,
+          "vulnerabilities": 0
+        }
+      }
+    },
+    {
+      "run": 39021931866,
+      "source": "8a56f9e6599d000b0808701aac7b23a034dd1a93",
+      "id": 12096689644,
+      "name": "batch63-direct-alpaca-mock-results.zip",
+      "digest": "sha256:c064a08dae3ddb586fe44668e744a42fd3d6b98c20f7d8a29e468eb3c3431e92",
+      "workflow": {
+        "id": 39021931866,
+        "name": "Direct Alpaca mock acceptance",
+        "status": "completed",
+        "conclusion": "failure",
+        "source": "8a56f9e6599d000b0808701aac7b23a034dd1a93"
+      },
+      "crc": "passed",
+      "results": {
+        "mobile/direct-flutter-tests.json": {
+          "visible_success": 1003,
+          "visible_failed": 2,
+          "visible_skipped": 0,
+          "hidden_excluded": 67,
+          "final": {
+            "success": false,
+            "type": "done",
+            "time": 230258
+          }
+        }
+      }
+    },
+    {
+      "run": 39021931853,
+      "source": "8a56f9e6599d000b0808701aac7b23a034dd1a93",
+      "id": 12097431328,
+      "name": "batch63-chart-repair-evidence.zip",
+      "digest": "sha256:847a02451a000be20f01908b4bac629766d5f7becf8e30336102b9b0e4c966f5",
+      "workflow": {
+        "id": 39021931853,
+        "name": "Chart repair targeted verification",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "8a56f9e6599d000b0808701aac7b23a034dd1a93"
+      },
+      "crc": "passed",
+      "results": {
+        "chart-tests.json": {
+          "visible_success": 23,
+          "visible_failed": 0,
+          "visible_skipped": 0,
+          "hidden_excluded": 2,
+          "final": {
+            "success": true,
+            "type": "done",
+            "time": 13203
+          }
+        },
+        "golden-tests.json": {
+          "visible_success": 6,
+          "visible_failed": 0,
+          "visible_skipped": 0,
+          "hidden_excluded": 68,
+          "final": {
+            "success": true,
+            "type": "done",
+            "time": 51067
+          }
+        }
+      }
+    },
+    {
+      "run": 39021931793,
+      "source": "8a56f9e6599d000b0808701aac7b23a034dd1a93",
+      "id": 12097535361,
+      "name": "batch63-v1-security-results.zip",
+      "digest": "sha256:b013dc085b4d4e0186bcc9b96c3ccc2c3e4225165c72b94f63506586d90abf8c",
+      "workflow": {
+        "id": 39021931793,
+        "name": "Source and dependency security checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "8a56f9e6599d000b0808701aac7b23a034dd1a93"
+      },
+      "crc": "passed",
+      "results": {
+        "secret-scan.json": {
+          "files_scanned": 1154,
+          "finding_count": 0,
+          "format_version": 1,
+          "history_blobs_scanned": 2315,
+          "history_commits": 224,
+          "scope": "tracked_working_tree_and_all_reachable_history",
+          "status": "no_matching_patterns_found"
+        },
+        "dependency-audit.json": {
+          "packages": 24,
+          "vulnerabilities": 0
+        },
+        "dart-dependency-audit.json": {
+          "status": "no_known_advisories",
+          "checked_at": "2026-10-17T09:39:36.898997+00:00",
+          "source": "OSV public API",
+          "ecosystem": "Pub",
+          "packages_checked": 44,
+          "limitation": "No coverage guarantee; Flutter SDK and native OS dependencies are outside this query",
+          "packages": 44,
+          "vulnerabilities": 0
+        }
+      }
+    },
+    {
+      "run": 39022338346,
+      "source": "26493077948d26fcd95c5c65c00a9419f920a002",
+      "id": 12097481451,
+      "name": "batch64-v1-security-results.zip",
+      "digest": "sha256:36e499efc6600f0222b3a1ae3f317521795c2a33cbbcc05f0816d1afd03946c6",
+      "workflow": {
+        "id": 39022338346,
+        "name": "Source and dependency security checks",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "26493077948d26fcd95c5c65c00a9419f920a002"
+      },
+      "crc": "passed",
+      "results": {
+        "secret-scan.json": {
+          "files_scanned": 1154,
+          "finding_count": 0,
+          "format_version": 1,
+          "history_blobs_scanned": 2318,
+          "history_commits": 225,
+          "scope": "tracked_working_tree_and_all_reachable_history",
+          "status": "no_matching_patterns_found"
+        },
+        "dependency-audit.json": {
+          "packages": 24,
+          "vulnerabilities": 0
+        },
+        "dart-dependency-audit.json": {
+          "status": "no_known_advisories",
+          "checked_at": "2026-10-17T09:45:59.371574+00:00",
+          "source": "OSV public API",
+          "ecosystem": "Pub",
+          "packages_checked": 44,
+          "limitation": "No coverage guarantee; Flutter SDK and native OS dependencies are outside this query",
+          "packages": 44,
+          "vulnerabilities": 0
+        }
+      }
+    },
+    {
+      "run": 39022338317,
+      "source": "26493077948d26fcd95c5c65c00a9419f920a002",
+      "id": 12096588851,
+      "name": "batch64-chart-repair-evidence.zip",
+      "digest": "sha256:18b3eba2aa0daf0b637b4b1f832bfbc8dd20b4f8c87aff0061eb6a8e82b0c995",
+      "workflow": {
+        "id": 39022338317,
+        "name": "Chart repair targeted verification",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "26493077948d26fcd95c5c65c00a9419f920a002"
+      },
+      "crc": "passed",
+      "results": {
+        "chart-tests.json": {
+          "visible_success": 23,
+          "visible_failed": 0,
+          "visible_skipped": 0,
+          "hidden_excluded": 2,
+          "final": {
+            "success": true,
+            "type": "done",
+            "time": 10086
+          }
+        },
+        "golden-tests.json": {
+          "visible_success": 6,
+          "visible_failed": 0,
+          "visible_skipped": 0,
+          "hidden_excluded": 68,
+          "final": {
+            "success": true,
+            "type": "done",
+            "time": 42587
+          }
+        }
+      }
+    },
+    {
+      "run": 39022338330,
+      "source": "26493077948d26fcd95c5c65c00a9419f920a002",
+      "id": 12096914258,
+      "name": "batch64-direct-alpaca-mock-results.zip",
+      "digest": "sha256:72cca82bbb02f9a775257372a840de4e40317795e3d129f09370cc0fdb7378fe",
+      "workflow": {
+        "id": 39022338330,
+        "name": "Direct Alpaca mock acceptance",
+        "status": "completed",
+        "conclusion": "success",
+        "source": "26493077948d26fcd95c5c65c00a9419f920a002"
+      },
+      "crc": "passed",
+      "results": {
+        "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.AlpacaAccessTest.xml": {
+          "tests": 12,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.AlpacaSessionTest.xml": {
+          "tests": 31,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest.xml": {
+          "tests": 10,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.PaperSegmentsTest.xml": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "mobile/direct-flutter-tests.json": {
+          "visible_success": 1005,
+          "visible_failed": 0,
+          "visible_skipped": 0,
+          "hidden_excluded": 67,
+          "final": {
+            "success": true,
+            "type": "done",
+            "time": 166326
+          }
+        }
+      }
+    }
+  ]
+}

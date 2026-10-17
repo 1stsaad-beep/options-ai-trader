@@ -1,5 +1,9 @@
 # Known gaps and closed defects
 
+## Current checkpoint57–64 — still PARTIAL
+
+Server metadata transport, original SQL capture/account bindings and the phone server-report screen are implemented and accepted. Durable opt-in notification delivery with exact ACK/retry/fencing, immutable receipts and a disabled Compose profile are also accepted (1665 Python;32 observed PostgreSQL;23 backup/restore;23 Compose on62). Bounded API transport acceptance: Source64 accepted1005 visible Flutter/61 JVM/23 chart/6 Golden with zero failures or skips; Direct39022338330 and chart39022338317 passed, with original artifacts verified by SHA256/CRC. This supersedes only the blanket absence of those components. Absolute provider GET deadlines/bounded DNS (socket timeouts alone are insufficient), Direct metadata and adjusted/historical qualification, wave/Demo/trailing semantics, native whole-JSON limits/safe migration/iOS durability, trusted checkpoints and qualified delivery-share marks, compatible receiver integration and independent host/database-outage monitoring remain software work. OPRA and real deployment/three sessions remain separate external gates. Do not repeat accepted batches; read current source-bound reports. No stage-one closure or APK.
+
 The engineering candidate is not a claim that every V1.0 requirement is complete. Do not use a fixture result as real-market or physical-phone acceptance.
 
 ## Post-Build23 audit — 2026-10-14

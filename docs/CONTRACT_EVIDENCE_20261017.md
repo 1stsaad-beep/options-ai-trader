@@ -1,5 +1,7 @@
 # Contract evidence — batches57 onward
 
+Current acceptance:57/58/59 all passed their existing source CI gates.59 has1629 Python,997 visible Flutter,61 JVM,23 chart/6 Golden, PostgreSQL22/6/10/5/28/4/21 and20 Compose. Original source-bound ZIPs were verified by GitHub SHA256 and CRC. The initial pending statements below are historical; they do not indicate an outstanding57–59 gate. Server capture and its phone report are wired; Direct standalone metadata and complete adjusted/historical qualification remain open.
+
 Continued from verified remote HEAD `f7f65c058075c55a6ffd7c2b3b203cba5a94c9fe` on `recovery/v1.0-20261011`. No repeat of batches1–56. Baseline1585 Python passed locally.
 
 ## Batch57: immutable source journal and constrained transport
@@ -35,3 +37,7 @@ One optional metadata request runs only after every selected account's financial
 The server account screen now opens a GET-only contract evidence view with a visible retry/error footer. Dart verifies account/version/hash, the exact hashed report payload (including exponent-form Greek numbers), original account bindings, OCC identity, terms hash, exact decimal multiplier/deliverables, receipt age, adjusted/delayed conditions and Greek numeric domains. It independently reconstructs the complete locked qualification result. Missing, tampered or stale account replies never display qualified values; no API response can grant entry or settlement. The receipt time and unavailable Greek calculation time are separately labeled. A newer account version requires refreshing the parent account state; retry does not write.
 
 Eight fixtures are generated from actual isolated SQL journals and are explicitly synthetic.27 new Dart/parser/widget cases cover all eight plus forged authority/source/binding/delivery/time and360px RTL light/dark GET-only retry. One Python fixture reproduction case and44 affected Python cases passed locally. Flutter acceptance remains pending the existing source CI; no local Flutter success or APK build is claimed.
+
+## Remaining transport deadline work
+
+The metadata transport bounds bytes and uses a4-second socket timeout; the existing general data transport uses8 seconds. These are not whole-request deadlines: OS DNS resolution and a peer sending bytes continuously can outlive the configured socket timeout. The notification transport61 and phone API60/64 have separate absolute-deadline protections; they do not automatically protect these provider GET transports. A shared provider connection lifecycle with bounded DNS, pinned TLS destination, absolute header/body deadline and late-result cancellation remains concrete software work. Its tests must prove that a timed-out metadata/data read cannot stall future protection cycles or multiply pending lookups. This is not an OPRA entitlement restriction.
