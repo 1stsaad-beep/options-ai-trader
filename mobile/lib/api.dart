@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
 import 'analysis_contract.dart';
+import 'bounded_json.dart';
 
 class ApiException implements Exception {
   final String message;
@@ -26,6 +28,55 @@ class TraderApi {
     ),
     this.token = '',
   }) : client = client ?? http.Client();
+
+  static const maxResponseBytes = 4 * 1024 * 1024;
+
+  Future<http.Response> _receive(http.Request request) async {
+    final result = Completer<http.Response>();
+    StreamSubscription<List<int>>? subscription;
+    void cancel(StreamSubscription<List<int>>? value) {
+      final pending = value?.cancel();
+      if (pending != null) unawaited(pending.catchError((Object _) {}));
+    }
+    void fail(Object error, [StackTrace? trace]) {
+      if (!result.isCompleted) result.completeError(error, trace);
+      cancel(subscription);
+    }
+    final timer = Timer(const Duration(seconds: 12), () => fail(TimeoutException('Response deadline')));
+    unawaited(Future<http.StreamedResponse>.sync(() => client.send(request)).then<void>((response) {
+      // A response that arrives after the absolute deadline is discarded and
+      // cancelled; it cannot start a new background body read or a retry.
+      if (result.isCompleted) {
+        cancel(response.stream.listen((_) {}));
+        return;
+      }
+      if (response.contentLength != null && response.contentLength! > maxResponseBytes) {
+        cancel(response.stream.listen((_) {}));
+        fail(const ApiException('استجابة الخادم تجاوزت حد الحجم المسموح'));
+        return;
+      }
+      final bytes = BytesBuilder(copy: false);
+      subscription = response.stream.listen((chunk) {
+        if (result.isCompleted) return;
+        if (chunk.length > maxResponseBytes - bytes.length) {
+          fail(const ApiException('استجابة الخادم تجاوزت حد الحجم المسموح'));
+          return;
+        }
+        bytes.add(chunk);
+      }, onError: (Object error, StackTrace trace) => fail(error, trace), onDone: () {
+        if (!result.isCompleted) {
+          result.complete(http.Response.bytes(bytes.takeBytes(), response.statusCode,
+            headers: response.headers, request: response.request, reasonPhrase: response.reasonPhrase));
+        }
+      }, cancelOnError: true);
+    }, onError: (Object error, StackTrace trace) => fail(error, trace)));
+    try {
+      return await result.future;
+    } finally {
+      timer.cancel();
+      cancel(subscription);
+    }
+  }
 
   Future<dynamic> request(String method, String path, [Object? body]) async {
     final base = Uri.tryParse(baseUrl);
@@ -58,10 +109,7 @@ class TraderApi {
     if (token.isNotEmpty) req.headers['Authorization'] = 'Bearer $token';
     if (body != null) req.body = jsonEncode(body);
     try {
-      final response = await client
-          .send(req)
-          .then(http.Response.fromStream)
-          .timeout(const Duration(seconds: 12));
+      final response = await _receive(req);
       if (response.statusCode >= 300 && response.statusCode < 400) {
         throw const ApiException(
           'رفض إعادة توجيه اتصال الخادم حفاظًا على رمز الوصول',
@@ -69,7 +117,7 @@ class TraderApi {
       }
       final dynamic value = response.body.isEmpty
           ? null
-          : jsonDecode(response.body);
+          : decodeBoundedJson(response.body, maxBytes: maxResponseBytes, maxNodes: 500000, maxDepth: 64);
       if (response.statusCode >= 400) {
         throw ApiException(
           value is Map
