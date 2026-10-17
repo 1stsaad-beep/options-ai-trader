@@ -329,3 +329,8 @@ Added read-only date-range report screen and independent Dart calendar/accountin
 ## Batch55 — daily screen analyzer correction
 
 Batch54 chart39016378506 stopped at flutter analyze on four curly_braces_in_flow_control_structures notices. Added required braces around multiline rejection guards; no validation removed or changed. Source Flutter acceptance follows. Backend54 remains running; security39016378532 passed. No APK or new automation.
+
+
+## Batch56 — keep rejected server-report errors visible after scrolling
+
+Batch55 Direct39016488917 passed969 visible Flutter tests and failed one existing mixed-source comparison widget assertion; native tests did not run. All30 new daily cases passed. The error was retained in state but could be outside the lazily built scroll viewport after the report buttons grew. Moved the fixed sanitized error to a persistent SafeArea footer with live semantics, so it remains visible after any scroll. Existing source-rejection validation is unchanged; strengthened the regression to require a hit-testable error, not merely an offscreen match. Original failed ZIP12095062499 verified SHA2567c7a4188675ae343713fdf5f899b00dcdcb5151b7f6d8b7f08ec48a7b4777a24/CRC, retained as batch55-failed-direct.zip. Source CI acceptance follows.

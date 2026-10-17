@@ -132,7 +132,7 @@ void main() {
     final server = ExperimentServer()..exists = true..malformed = true, api = server.api(); addTearDown(api.close);
     await mount(tester, api); await tap(tester, 'observed-comparison');
     expect(find.byType(ObservedComparisonScreen), findsNothing);
-    expect(find.byKey(const Key('observed-error')), findsOneWidget);
+    expect(find.byKey(const Key('observed-error')).hitTestable(), findsOneWidget);
     expect(server.calls.every((r) => r.method == 'GET'), true);
   });
 }

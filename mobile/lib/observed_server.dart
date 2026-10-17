@@ -205,6 +205,9 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
   @override Widget build(BuildContext context) {
     final value=saved?.state;
     return Scaffold(appBar:AppBar(title:const Text('دفتر الخادم الافتراضي'),actions:[IconButton(key:const Key('observed-refresh'),onPressed:busy?null:()=>load(),icon:const Icon(Icons.refresh))]),
+      bottomNavigationBar:error==null?null:SafeArea(child:Padding(padding:const EdgeInsets.all(12),
+        child:Semantics(liveRegion:true,child:Text(error!,key:const Key('observed-error'),
+          style:TextStyle(color:Theme.of(context).colorScheme.error))))),
       body:ListView(padding:const EdgeInsets.all(16),children:[
         const Text('حسابات مستقلة عن Demo ودفتر الهاتف. الأرصدة افتراضية، ولا تُرسل أوامر إلى وسيط.'),
         if(runtime!=null)Text('العامل: ${observedRuntimeLabel(runtime!['state'])} • نبض حديث: ${runtime!['heartbeatFresh']==true?"نعم":"لا"}'),
@@ -215,7 +218,6 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
         if(runtime!=null)Text('وقت قراءة الخادم: ${runtime!['serverTime']} • حدّث الصفحة للتحقق مجددًا.'),
         const Text('الدخول السوقي الجديد مقفل حاليًا حتى اكتمال تحقق أهلية العقد وGreeks. تشغيل الحساب لا يثبت تشغيل العامل أو صلاحية بيانات السوق.'),
         if(busy)const LinearProgressIndicator(),
-        if(error!=null)Text(error!,key:const Key('observed-error')),
         OutlinedButton(key:const Key('observed-create'),onPressed:busy?null:create,child:const Text('إنشاء حساب افتراضي مستقل')),
         OutlinedButton(key:const Key('observed-experiment'),onPressed:busy?null:experiment,child:const Text('إعداد أربعة حسابات × 1000 USD')),
         if(observedExperimentIds('alpaca').every(ids.contains))OutlinedButton(key:const Key('observed-comparison'),onPressed:busy?null:comparison,child:const Text('مقارنة الحسابات الأربعة')),
