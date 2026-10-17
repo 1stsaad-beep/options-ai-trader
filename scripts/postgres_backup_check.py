@@ -124,6 +124,9 @@ def run():
             coverage=ObservedPaperData(observed,SimpleNamespace(get=lambda *_:DataResponse(200,{}, {'quotes':{}})))
             assert coverage.capture([saved_observed['state']],observed_lease)['quotes']==[]
             with repository.transaction() as db: saved_capture_cursor=ObservedPaperData._cursor(db)
+            from contract_evidence_check import seed as seed_metadata
+            from app.observed_contract_evidence import report as metadata_report
+            saved_metadata=seed_metadata(observed,'backup-metadata',observed_lease)
             observed.release(observed_lease)
             from app.observed_paper_runtime import ObservedPaperRuntime
             from app.observed_paper_alerts import page as alert_page, acknowledge as alert_ack
@@ -208,6 +211,10 @@ def run():
                         except psycopg.Error as error: assert 'immutable' in str(error)
                         else: raise AssertionError('Restored alert guard missing')
                     checks.append('observed_alert_original_chain_ack_unread_and_immutable_guards_restored')
+                    # Verify the restored originals and their original financial anchors.
+                    metadata_store=ObservedPaperStore(recovered_repository,lambda:now)
+                    assert metadata_report(metadata_store,'backup-metadata')==saved_metadata
+                    checks.append('contract_metadata_originals_and_account_bindings_restored')
                     assert saved_observed['state']['positions']['NVDA']['closeIntent']['quantity']==3
                     checks.append('observed_virtual_balance_original_inputs_pending_close_segments_and_replay_restored')
                     try:

@@ -212,6 +212,8 @@ def run():
             assert not heartbeat_valid(db.one("SELECT * FROM runtime_health WHERE name='observed_watchdog'"),'observed_watchdog',now)
         result['checks']+=['independent_watchdog_existing_database_outage','watchdog_dedup_and_successor_shutdown',
             'watchdog_preserves_accounts_events_leases_and_provider_state']
+        from contract_evidence_check import check as metadata_check
+        result['checks'] += metadata_check(repositories)
         print(json.dumps(result,sort_keys=True))
     finally:
         for repo in repositories: repo.close()

@@ -284,3 +284,7 @@ Batch54 chart39016378506 stopped at flutter analyze on four curly_braces_in_flow
 ## Batch56 — keep rejected server-report errors visible after scrolling
 
 Batch55 Direct39016488917 passed969 visible Flutter tests and failed one existing mixed-source comparison widget assertion; native tests did not run. All30 new daily cases passed. The error was retained in state but could be outside the lazily built scroll viewport after the report buttons grew. Moved the fixed sanitized error to a persistent SafeArea footer with live semantics, so it remains visible after any scroll. Existing source-rejection validation is unchanged; strengthened the regression to require a hit-testable error, not merely an offscreen match. Original failed ZIP12095062499 verified SHA2567c7a4188675ae343713fdf5f899b00dcdcb5151b7f6d8b7f08ec48a7b4777a24/CRC, retained as batch55-failed-direct.zip. Source CI acceptance follows.
+
+## الدفعة57 — أصول metadata دائمة ونقل مقيد
+
+استئناف من HEAD المتحقق f7f65c058075c55a6ffd7c2b3b203cba5a94c9fe. خط الأساس1585 Python ناجح. أضيفت ترقية12 وسجل شروط/Greeks مستقل غير قابل لتعديل الأصول، مع بصمات وتسلسل وربط صريح بنسخة الحساب وحدثه، وGET مصادق للقراءة فقط. لا إعادة تفسير للدفترv1/v2 أو الدفعات القديمة. نقل GET مقيد بهوستين ومساري metadata فقط، بلا أوامر أو redirects أو SDK؛ لم يُشغَّل اتصال حقيقي.33 حالة جديدة،92 اختبارًا متأثرًا و1618 Python كاملة ناجحة محليًا. PostgreSQL/Compose/security ينتظر قبول المصدر. ربط العامل والهاتف يلي هذه الدفعة؛ المرحلة الأولى غير مغلقة. التفاصيل CONTRACT_EVIDENCE_20261017.md.
