@@ -65,7 +65,7 @@ void main() {
   test('partial then full fill are appended as new events; earlier events untouched', () async {
     final a = await addAlpaca();
     final orders = <String, Map<String, dynamic>>{};
-    final svc = BrokerOrderService(reg, clock: () => now, directQuote: (_) async => direct(), client: alpaca(orders: orders));
+    final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, directQuote: (_) async => direct(), client: alpaca(orders: orders));
     final out = await svc.submit(await svc.review(a, buy));
     final before = List<Map<String, dynamic>>.from(await svc.journal(a).events());
 
@@ -95,7 +95,7 @@ void main() {
   test('UNKNOWN send found by client order id becomes OPEN and unblocks admission', () async {
     final a = await addAlpaca();
     final orders = <String, Map<String, dynamic>>{};
-    final svc = BrokerOrderService(reg, clock: () => now, directQuote: (_) async => direct(),
+    final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, directQuote: (_) async => direct(),
         client: alpaca(orders: orders, submitTimesOut: true));
     expect((await svc.submit(await svc.review(a, buy))).state, OrderState.unknown);
     expect((await svc.review(a, buy)).admission.reason, 'UNRESOLVED_ORDER_RECONCILE_REQUIRED');
@@ -113,7 +113,7 @@ void main() {
     final journal = BrokerOrderJournal(mem, a.id, clock: () => now);
     await journal.append('oat-crashed0000000001', 'INTENT', {'state': OrderState.intent, 'contract': call,
         'side': 'BUY_TO_OPEN', 'quantity': 1, 'limitCents': 125, 'costCents': 12570});
-    final svc = BrokerOrderService(reg, clock: () => now, client: alpaca(orders: {}));
+    final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, client: alpaca(orders: {}));
     now = open.add(const Duration(seconds: 30));
     var r = await svc.reconcile(a);
     expect(r.stillUnresolved, ['oat-crashed0000000001']);
@@ -127,7 +127,7 @@ void main() {
   test('inconsistent broker data is reported, not applied', () async {
     final a = await addAlpaca();
     final orders = <String, Map<String, dynamic>>{};
-    final svc = BrokerOrderService(reg, clock: () => now, directQuote: (_) async => direct(), client: alpaca(orders: orders));
+    final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, directQuote: (_) async => direct(), client: alpaca(orders: orders));
     await svc.submit(await svc.review(a, buy));
     orders['alp-1']!.addAll({'status': 'filled', 'filled_qty': '5'}); // more than ordered
     final r = await svc.reconcile(a);
@@ -143,7 +143,7 @@ void main() {
     final orders = <String, Map<String, dynamic>>{};
     var positions = <Map<String, dynamic>>[];
     final client = alpaca(orders: orders, positions: () => positions);
-    final svc = BrokerOrderService(reg, clock: () => now, directQuote: (_) async => direct(), client: client);
+    final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, directQuote: (_) async => direct(), client: client);
     await svc.submit(await svc.review(a, buy));
     orders['alp-1']!.addAll({'status': 'filled', 'filled_qty': '2', 'filled_avg_price': '1.25'});
     var r = await svc.reconcile(a);
@@ -177,7 +177,7 @@ void main() {
     Map<String, dynamic> tsOrder(String id) => {'OrderID': id, 'Status': 'FLL', 'LimitPrice': '1.25',
       'Legs': [{'Symbol': 'AAPL 261120C200', 'BuyOrSell': 'Buy', 'QuantityOrdered': '2', 'ExecQuantity': '2', 'ExecutionPrice': '1.25'}]};
     var list = [tsOrder('900'), tsOrder('901')];
-    final svc = BrokerOrderService(reg, clock: () => now, client: MockClient((r) async {
+    final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, client: MockClient((r) async {
       switch (r.url.path) {
         case '/oauth/token': return json({'access_token': 'acc1', 'expires_in': 1200});
         case '/v3/brokerage/accounts': return json({'Accounts': [{'AccountID': 'SIM1'}]});
@@ -203,7 +203,7 @@ void main() {
     await journal.append('oat-ibunknown0000001', 'INTENT', {'state': OrderState.intent, 'contract': call,
         'side': 'BUY_TO_OPEN', 'quantity': 1, 'limitCents': 125});
     var rows = <Map<String, dynamic>>[];
-    final svc = BrokerOrderService(reg, clock: () => now, client: MockClient((r) async {
+    final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, client: MockClient((r) async {
       switch (r.url.path) {
         case '/v1/api/iserver/auth/status': return json({'authenticated': true});
         case '/v1/api/portfolio/accounts': return json([{'accountId': 'DU1234567'}]);
@@ -230,7 +230,7 @@ void main() {
           'side': 'BUY_TO_OPEN', 'quantity': 1, 'limitCents': 125});
     });
     final client = alpaca(orders: {});
-    final svc = BrokerOrderService(reg, client: client, clock: () => open.add(const Duration(seconds: 10)));
+    final svc = BrokerOrderService(reg, requireEligibility: false, client: client, clock: () => open.add(const Duration(seconds: 10)));
     await tester.pumpWidget(MaterialApp(home: Directionality(textDirection: TextDirection.rtl,
         child: BrokerPortfolioScreen(account: a, registry: reg, client: client, clock: () => open.add(const Duration(seconds: 10)), orderService: svc))));
     Future<void> settle() async {

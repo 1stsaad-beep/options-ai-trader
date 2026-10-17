@@ -52,6 +52,11 @@ class AlpacaPaperAdapter implements BrokerAdapter {
     ];
   }
 
+  /// Contract terms (status, tradable, style, multiplier, deliverables, open interest) from
+  /// the Trading API on the same Paper host. Read-only.
+  Future<Map<String, dynamic>> contractTerms(OccContract contract) async =>
+      asMap(await _http.send('GET', _uri('/v2/options/contracts/${contract.occ}'), headers: _auth));
+
   /// paper-api has no option quotes; the allowlist is not widened for data hosts.
   @override
   Future<BrokerQuote?> optionQuote(OccContract contract, {String? conid}) async => null;

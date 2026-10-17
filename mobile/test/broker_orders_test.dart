@@ -179,7 +179,7 @@ void main() {
         body = jsonDecode(r.body) as Map;
         return json({'id': 'alp-1', 'status': 'accepted'});
       });
-      svc = BrokerOrderService(reg, client: client, clock: () => now, directQuote: (_) async => direct());
+      svc = BrokerOrderService(reg, requireEligibility: false, client: client, clock: () => now, directQuote: (_) async => direct());
       final review = await svc.review(a, buy());
       expect(review.admission.admitted, isTrue);
       now = now.add(const Duration(seconds: 5));
@@ -199,7 +199,7 @@ void main() {
     test('timeouts become UNKNOWN and block the account; definitive rejects do not', () async {
       final a = await addAlpaca();
       var mode = 'timeout';
-      final svc = BrokerOrderService(reg, clock: () => now, directQuote: (_) async => direct(),
+      final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, directQuote: (_) async => direct(),
           client: alpaca(order: (r) async {
             if (mode == 'timeout') throw http.ClientException('reset');
             return json({'message': 'invalid'}, 422);
@@ -220,7 +220,7 @@ void main() {
       final a = await addAlpaca();
       var posts = 0;
       var q = direct();
-      final svc = BrokerOrderService(reg, clock: () => now, directQuote: (_) async => q,
+      final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, directQuote: (_) async => q,
           client: alpaca(order: (r) async { posts++; return json({'id': 'x', 'status': 'new'}); }));
       final review = await svc.review(a, buy());
       now = now.add(const Duration(seconds: 61));
@@ -235,7 +235,7 @@ void main() {
 
     test('Alpaca without the Direct OPRA quote fails closed', () async {
       final a = await addAlpaca();
-      final svc = BrokerOrderService(reg, clock: () => now, directQuote: (_) async => null,
+      final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, directQuote: (_) async => null,
           client: alpaca(order: (r) async => fail('must not send')));
       expect((await svc.review(a, buy())).admission.reason, 'QUOTE_UNAVAILABLE');
     });
@@ -244,7 +244,7 @@ void main() {
       final a = await reg.add(broker: BrokerKind.tradestation, label: 'TS',
           values: {'clientId': 'tsclient1', 'clientSecret': 'tssecret1', 'refreshToken': 'tsrefresh1'});
       late Map body;
-      final svc = BrokerOrderService(reg, clock: () => now, client: MockClient((r) async {
+      final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, client: MockClient((r) async {
         expect(['sim-api.tradestation.com', 'signin.tradestation.com'], contains(r.url.host));
         switch (r.url.path) {
           case '/oauth/token': return json({'access_token': 'acc1', 'expires_in': 1200});
@@ -271,7 +271,7 @@ void main() {
 
     test('IBKR: snapshot quote by conid; confirmation prompts are terminal NOT placed', () async {
       final a = await reg.add(broker: BrokerKind.ibkr, label: 'IB', values: {'gatewayUrl': 'https://gw.local:5000', 'accountId': 'DU1234567'});
-      final svc = BrokerOrderService(reg, clock: () => now, client: MockClient((r) async {
+      final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, client: MockClient((r) async {
         switch (r.url.path) {
           case '/v1/api/iserver/auth/status': return json({'authenticated': true, 'connected': true});
           case '/v1/api/portfolio/accounts': return json([{'accountId': 'DU1234567'}]);
@@ -297,7 +297,7 @@ void main() {
     test('corrupt journal is never overwritten and blocks sending', () async {
       final a = await addAlpaca();
       mem.data[BrokerOrderJournal.key(a.id)] = '{"version":1,"account":"other","events":[]}';
-      final svc = BrokerOrderService(reg, clock: () => now, directQuote: (_) async => direct(),
+      final svc = BrokerOrderService(reg, requireEligibility: false, clock: () => now, directQuote: (_) async => direct(),
           client: alpaca(order: (r) async => fail('must not send')));
       await expectLater(svc.review(a, buy()), throwsA(isA<BrokerJournalException>()));
       expect(mem.data[BrokerOrderJournal.key(a.id)], contains('"other"'));
@@ -327,7 +327,7 @@ void main() {
         posts++;
         return json({'id': 'alp-$posts', 'status': 'accepted'});
       });
-      final svc = BrokerOrderService(reg, client: client, clock: () => open,
+      final svc = BrokerOrderService(reg, requireEligibility: false, client: client, clock: () => open,
           directQuote: (_) async => OptionQuote(call, 'opra', open.subtract(const Duration(seconds: 1)), 120, 125, 50, 50));
       await tester.pumpWidget(MaterialApp(home: Directionality(textDirection: TextDirection.rtl,
           child: BrokerPortfolioScreen(account: a, registry: reg, client: client, clock: () => open, orderService: svc))));

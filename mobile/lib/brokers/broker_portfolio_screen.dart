@@ -12,6 +12,7 @@ import 'broker_options.dart';
 import 'broker_order_admission.dart';
 import 'broker_order_journal.dart';
 import 'broker_order_service.dart';
+import 'option_eligibility.dart';
 import 'broker_order_ticket.dart';
 import 'broker_portfolio.dart';
 import 'broker_store.dart';
@@ -33,7 +34,8 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
   BrokerPortfolio? portfolio;
   List<BrokerOrderRecord> orders = const [];
   late final BrokerOrderService service = widget.orderService ?? BrokerOrderService(widget.registry,
-      client: widget.client, clock: widget.clock, directQuote: (c) => DirectAlpaca().quote(c));
+      client: widget.client, clock: widget.clock, directQuote: (c) => DirectAlpaca().quote(c),
+      underlyingQuote: (u) async => UnderlyingQuote.fromDirect(await DirectAlpaca().stockQuote(u)));
   String? error;
   bool loading = false;
   DateTime _now() => (widget.clock ?? DateTime.now)();

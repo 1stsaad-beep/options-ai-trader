@@ -7,11 +7,27 @@ import 'broker_accounts_screen.dart' show brokerMessage;
 import 'broker_models.dart';
 import 'broker_options.dart';
 import 'broker_order_admission.dart';
+import 'option_eligibility.dart';
 import 'broker_order_journal.dart';
 import 'broker_order_service.dart';
 
+String _fixed(Object? v, int digits) => v is num ? v.toStringAsFixed(digits) : '—';
+
+/// Compact eligibility summary; Greeks are labeled as model values.
+String eligibilityText(OptionEligibility e) {
+  final f = e.facts, g = f['greeks'] is Map ? f['greeks'] as Map : const {};
+  return [
+    'Eligibility: ${e.eligible ? 'PASS' : 'FAIL'}',
+    'OI ${f['openInterest'] ?? '—'} • spread ${f['spreadBps'] ?? '—'} bps',
+    'model IV ${f['impliedVol'] is num ? '${((f['impliedVol'] as num) * 100).toStringAsFixed(1)}%' : '—'}'
+        ' • Δ ${_fixed(g['delta'], 3)} • Γ ${_fixed(g['gamma'], 4)} • Θ/day ${_fixed(g['thetaPerDay'], 3)} • V/pt ${_fixed(g['vegaPerPoint'], 3)}',
+    if (e.reasons.isNotEmpty) 'reasons: ${e.reasons.join(', ')}',
+  ].join('\n');
+}
+
 String orderMessage(String code) => const {
       'PORTFOLIO_STALE': 'بيانات الحساب قديمة؛ أعد المراجعة.',
+      'OPTION_NOT_ELIGIBLE': 'العقد غير مؤهل للدخول (شروط العقد/السيولة/اليونانيات). راجع الأسباب.',
       'UNRESOLVED_ORDER_RECONCILE_REQUIRED': 'يوجد أمر غير محسوم (لم يتأكد وصوله). طابق الأوامر أولًا.',
       'INVALID_CONTRACT': 'رمز العقد غير صالح (صيغة OCC مثل AAPL261120C00200000).',
       'INVALID_ORDER': 'الكمية أو السعر غير صالح.',
@@ -173,6 +189,8 @@ class _BrokerOrderTicketDialogState extends State<BrokerOrderTicketDialog> {
         if (r?.quote != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(
             'السعر: عرض ${centsText(r!.quote!.bid)} / طلب ${centsText(r.quote!.ask)} • ${r.quote!.source} (${r.quote!.timeSource})',
             textDirection: TextDirection.ltr)),
+        if (r?.eligibility != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(
+            eligibilityText(r!.eligibility!), key: const ValueKey('ticket-eligibility'), textDirection: TextDirection.ltr)),
         if (r != null && r.admission.admitted)
           Text('التكلفة التقديرية ${centsText(r.admission.costCents)} • فحوص ناجحة: ${r.admission.passed.length}'),
         if (message != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(message!,

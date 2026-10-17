@@ -10,6 +10,7 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 
 import '../direct_alpaca.dart' show OptionQuote;
+import 'alpaca_paper.dart';
 import 'broker_adapter.dart';
 import 'broker_models.dart';
 import 'broker_options.dart';
@@ -18,8 +19,11 @@ import 'broker_order_journal.dart';
 import 'broker_portfolio.dart';
 import 'broker_reconcile.dart';
 import 'broker_store.dart';
+import 'option_eligibility.dart';
 
 typedef DirectQuoteSource = Future<OptionQuote?> Function(String contract);
+typedef ContractTermsSource = Future<Map<String, dynamic>?> Function(BrokerAccount account, OccContract contract);
+typedef UnderlyingQuoteSource = Future<UnderlyingQuote?> Function(String symbol);
 
 class BrokerOrderReview {
   final BrokerAccount account;
@@ -28,7 +32,9 @@ class BrokerOrderReview {
   final BrokerQuote? quote;
   final BrokerAdmission admission;
   final DateTime reviewedAt;
-  const BrokerOrderReview(this.account, this.ticket, this.portfolio, this.quote, this.admission, this.reviewedAt);
+  final OptionEligibility? eligibility; // entries only
+  const BrokerOrderReview(this.account, this.ticket, this.portfolio, this.quote, this.admission, this.reviewedAt,
+      [this.eligibility]);
 }
 
 class BrokerOrderOutcome {
@@ -45,9 +51,50 @@ class BrokerOrderService {
   final BrokerRiskPolicy policy;
   final DateTime Function() now;
   final Random _random;
+  final ContractTermsSource? termsSource;
+  final UnderlyingQuoteSource? underlyingQuote;
+  final EligibilityPolicy eligibilityPolicy;
+  /// B9: entries must pass on-phone option eligibility. Only tests of unrelated paths turn this off.
+  final bool requireEligibility;
   BrokerOrderService(this.registry, {this.client, this.directQuote, this.policy = const BrokerRiskPolicy(),
-      DateTime Function()? clock, Random? random})
+      DateTime Function()? clock, Random? random, this.termsSource, this.underlyingQuote,
+      this.eligibilityPolicy = const EligibilityPolicy(), this.requireEligibility = true})
       : now = clock ?? DateTime.now, _random = random ?? Random.secure();
+
+  /// Contract terms from an Alpaca Paper account (this one if Alpaca, else the first
+  /// registered active Alpaca account). Read-only metadata; null when none is available.
+  Future<Map<String, dynamic>?> _defaultTerms(BrokerAccount a, OccContract c) async {
+    final alpaca = a.broker == BrokerKind.alpaca ? a
+        : (await registry.list()).where((x) => x.broker == BrokerKind.alpaca && !x.archived).firstOrNull;
+    if (alpaca == null) return null;
+    try {
+      final adapter = createPaperAdapter(alpaca, await registry.credentials(alpaca.id), client: client, clock: now);
+      return await (adapter as AlpacaPaperAdapter).contractTerms(c);
+    } on BrokerException {
+      return null;
+    }
+  }
+
+  /// Eligibility for an entry ticket given an already-fetched quote (also used by tests).
+  Future<OptionEligibility> eligibilityFor(BrokerAccount a, BrokerOrderTicket t, BrokerQuote? quote) =>
+      _eligibility(a, t, quote);
+
+  Future<OptionEligibility> _eligibility(BrokerAccount a, BrokerOrderTicket t, BrokerQuote? quote) async {
+    final c = OccContract.parse(t.contract)!;
+    Map<String, dynamic>? terms;
+    UnderlyingQuote? u;
+    try {
+      terms = await (termsSource ?? _defaultTerms)(a, c);
+    } catch (_) {
+      terms = null;
+    }
+    try {
+      u = underlyingQuote == null ? null : await underlyingQuote!(c.root);
+    } catch (_) {
+      u = null;
+    }
+    return evaluateEligibility(contract: c, terms: terms, quote: quote, underlying: u, now: now(), policy: eligibilityPolicy);
+  }
 
   BrokerOrderJournal journal(BrokerAccount a) => BrokerOrderJournal(registry.storage, a.id, clock: now);
 
@@ -70,7 +117,15 @@ class BrokerOrderService {
     final quote = await _quote(adapter, a, t);
     final orders = await journal(a).orders();
     final at = now();
-    return (adapter, BrokerOrderReview(a, t, portfolio, quote, admitBrokerOrder(t, portfolio, quote, orders, at, policy: policy), at));
+    var admission = admitBrokerOrder(t, portfolio, quote, orders, at, policy: policy);
+    OptionEligibility? eligibility;
+    if (requireEligibility && t.side == TicketSide.buyToOpen && admission.admitted) {
+      eligibility = await _eligibility(a, t, quote);
+      admission = eligibility.eligible
+          ? BrokerAdmission(null, admission.costCents, admission.feeCents, [...admission.passed, 'OPTION_ELIGIBILITY'])
+          : BrokerAdmission('OPTION_NOT_ELIGIBLE', 0, 0, admission.passed);
+    }
+    return (adapter, BrokerOrderReview(a, t, portfolio, quote, admission, at, eligibility));
   }
 
   /// Read-only broker queries; appends STATUS/FILL/RESOLVED events only.
@@ -110,7 +165,8 @@ class BrokerOrderService {
       'state': OrderState.intent, 'broker': a.broker.name, 'contract': c.occ, 'brokerSymbol': request.symbol,
       'side': t.sideCode, 'quantity': t.quantity, 'limitCents': t.limitCents, 'costCents': fresh.admission.costCents,
       'feeCents': fresh.admission.feeCents, 'ibkrConid': t.ibkrConid, 'quote': fresh.quote!.toJson(),
-      'checks': fresh.admission.passed, 'policy': policy.toJson(), 'confirmedByUser': true, 'environment': 'paper',
+      'checks': fresh.admission.passed, 'policy': policy.toJson(),
+      if (fresh.eligibility != null) 'eligibility': fresh.eligibility!.toJson(), 'confirmedByUser': true, 'environment': 'paper',
     });
     BrokerOrderAck ack;
     try {

@@ -104,3 +104,8 @@ Paper broker order status and fills (Alpaca, IBKR, TradeStation) are reconciled 
 ## 2026-10-17 batch B8 — model Greeks and implied volatility
 
 `mobile/lib/option_pricing.dart` adds a BSM (continuous yield) engine for analytic Greeks and an American CRR tree. Implied volatility fails closed with reasons. The engine is tested against Hull/Haug reference values plus round trips and finite differences. 1084 Flutter tests pass and the debug APK builds. See docs/GREEKS_IV_ENGINE_B8_20261017.md. Still OPEN: discrete dividends, adjusted deliverables, a vol surface, an external rate/dividend source, and a real quote comparison. Model values do not qualify entry by themselves. B6/B7 are deferred pending user decisions. All gaps above remain as recorded.
+
+
+## 2026-10-17 batch B9 — on-phone option eligibility
+
+Paper broker entries (all three brokers) now require on-phone eligibility, run at review and again at re-admission: standard deliverable and tradable contract (same server rule), open interest and its age, spread, a fresh underlying quote, and model IV/delta from B8. Ineligible entries are refused with explicit reasons; closes are not vetoed. Evidence is stored in the INTENT. 1093 Flutter tests pass and the debug APK builds. See docs/OPTION_ELIGIBILITY_B9_20261017.md. User decisions needed: policy thresholds, the rate/dividend inputs, and the terms source for IBKR/TS. Still OPEN: real Paper evidence, adjusted contracts, discrete dividends. B6/B7 are deferred. All gaps above remain as recorded.
