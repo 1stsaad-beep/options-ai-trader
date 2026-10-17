@@ -39,30 +39,33 @@ void main() {
       await expectLater(api.request('GET', '/api/check'), throwsA(isA<ApiException>()));
     });
   }
-  testWidgets('absolute deadline cancels even a slowly arriving body', (tester) async {
+  test('absolute deadline cancels even a slowly arriving body', () async {
     var cancelled = false;
     final stream = StreamController<List<int>>(onCancel: () { cancelled = true; });
     final api = TraderApi(client: MockClient.streaming((_, __) async => http.StreamedResponse(stream.stream, 200)));
     addTearDown(api.close);
-    final completed = expectLater(api.request('GET', '/api/check'), throwsA(isA<ApiException>()));
-    await tester.pump();
-    for (var i = 0; i < 3; i++) {
-      stream.add([32]);
-      await tester.pump(const Duration(seconds: 4));
+    // A transport test needs real async timers, without a widget fake-clock
+    // awaiting a matcher/stream cancellation outside tester.pump.
+    final ticker = Timer.periodic(const Duration(seconds: 2), (_) {
+      if (!cancelled) stream.add([32]);
+    });
+    try {
+      await expectLater(api.request('GET', '/api/check'), throwsA(isA<ApiException>()));
+      expect(cancelled, true);
+    } finally {
+      ticker.cancel();
+      await stream.close();
     }
-    await completed; expect(cancelled, true);
-    await stream.close();
   }, timeout: const Timeout(Duration(seconds: 45)));
-  testWidgets('headers arriving after deadline are discarded without body consumption', (tester) async {
+  test('headers arriving after deadline are discarded without body consumption', () async {
     var cancelled = false, attempts = 0;
     final headers = Completer<http.StreamedResponse>();
     final stream = StreamController<List<int>>(onCancel: () { cancelled = true; });
     final api = TraderApi(client: MockClient.streaming((_, __) { attempts++; return headers.future; }));
     addTearDown(api.close);
-    final completed = expectLater(api.request('POST', '/api/check', {}), throwsA(isA<ApiException>()));
-    await tester.pump(const Duration(seconds: 12)); await completed;
+    await expectLater(api.request('POST', '/api/check', {}), throwsA(isA<ApiException>()));
     headers.complete(http.StreamedResponse(stream.stream, 200));
-    await tester.pump();
+    await Future<void>.delayed(Duration.zero);
     expect(cancelled, true); expect(attempts, 1);
     await stream.close();
   }, timeout: const Timeout(Duration(seconds: 45)));
