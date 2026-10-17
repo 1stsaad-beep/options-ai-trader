@@ -134,3 +134,21 @@ Market Paper and Broker Paper accounts now record one NAV value per NY session d
 ## 2026-10-17 batch B14 — Android-only scope (documentation)
 
 This phase is Android only and has no persistent server. iOS, `backend`, `infra` and server CI are paused: kept intact, not deleted or disabled (D35). A guard test now ensures the Android core does not import the server client and that the paused sources still exist. B13's doc listed a status code as `NON_POSITIVE_EQUITY`; the correct name is `NONPOSITIVE_RETURN_BASE`, now fixed. 1122 Flutter tests pass and the debug APK builds. See docs/ANDROID_ONLY_SCOPE_B14_20261017.md. Still OPEN: server-only 24/7 features have no Android equivalent; iOS is not signed or accepted. All gaps above remain as recorded.
+
+
+## 2026-10-17 batch B15 — Paper Test build for phone testing + user decisions
+
+**User decisions (D36–D39):**
+- (1) The user enters Alpaca Paper keys himself, in the app; a Live `AK…` key is refused.
+- (2) Option contract terms for IBKR/TradeStation keep coming from Alpaca Paper (as in B9). This is a recorded decision; the absence of native terms from those brokers remains a known gap.
+- (3) **B6 (IBKR) and B7 (TradeStation) connectivity are deferred**: there is no real connectivity acceptance for them. The focus is Alpaca and the phone.
+- (4) Live stays locked.
+
+**Build:** a release APK with id `com.optionsaitrader.options_ai_trader.papertest`, label «Options AI Trader – Paper Test», versionCode 24, signed with the stable box key (cert `dde693a8…6720`). It installs beside Build 23 without touching it. The broker accounts entry is now in the home-screen drawer, and saving runs the connection test automatically. 1125 Flutter tests, 62 JVM tests and the 30/44 policy checks pass. See docs/PHONE_TEST_B15_20261017.md.
+
+**Still OPEN:**
+- The release build has not run on a real phone or emulator (R8/Keystore).
+- No real Alpaca Paper connection yet; that is up to the user.
+- The box key is a debug key: not suitable for distribution, and if it is lost, updating in place requires the backup.
+
+All gaps above remain as recorded.

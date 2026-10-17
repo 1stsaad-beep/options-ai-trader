@@ -47,3 +47,11 @@ Routine implementation decision: durable market virtual execution gets an explic
 ## 2026-10-17 D35 — Android-only phase (B14)
 
 | D35 | This phase delivers the Android Flutter app only, with no persistent server. iOS (`mobile/ios`), the server (`backend`), `infra` and server CI are paused: kept intact, not deleted or disabled, and not acceptance criteria. Server divergences are documented, not fixed. | User instruction 2026-10-17. Guard: `mobile/test/android_scope_test.dart`. Details: docs/ANDROID_ONLY_SCOPE_B14_20261017.md. Resuming them needs an explicit user decision. |
+
+
+## 2026-10-17 D36–D39 — user decisions before phone testing (B15)
+
+| D36 | The user enters Alpaca Paper keys himself, in the app (Android Keystore). Keys are never supplied by an agent or stored outside the device's secure store. A known Alpaca Live key (`AK…`) is refused before it is stored. | B15 `phone_test_flow_test.dart`. |
+| D37 | Option contract terms for IBKR and TradeStation tickets keep coming from an active Alpaca Paper account (read-only metadata). With no Alpaca account the result is `CONTRACT_TERMS_UNAVAILABLE` (not eligible). | Already implemented in B9 (`BrokerOrderService._defaultTerms`), test in `option_eligibility_test.dart`. |
+| D38 | B6 (IBKR) and B7 (TradeStation) connectivity are deferred. The focus is Alpaca Paper and real phone testing. The IBKR/TradeStation adapters stay as they are (Paper/SIM only), and no new acceptance is claimed for them. | User decision 2026-10-17. |
+| D39 | Live stays locked (`LiveTradingGate`, approval flag off). The phone-test build changes nothing about this. | B15. |

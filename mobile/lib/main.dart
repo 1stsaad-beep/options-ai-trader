@@ -19,7 +19,9 @@ void main() => runApp(const TraderApp());
 class TraderApp extends StatefulWidget {
   final TraderApi? api;
   final DemoStore? demoStore;
-  const TraderApp({super.key, this.api, this.demoStore});
+  /// Test seam for the Broker Paper screen; defaults to the Keystore-backed screen.
+  final Widget Function()? brokersBuilder;
+  const TraderApp({super.key, this.api, this.demoStore, this.brokersBuilder});
   @override
   State<TraderApp> createState() => _TraderAppState();
 }
@@ -49,6 +51,8 @@ class _TraderAppState extends State<TraderApp> {
           : DemoScreen(
               onDirect:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DirectAlpacaScreen())),
               onDirectChart:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DirectAlpacaScreen(initialPage:1))),
+              onBrokers:()=>Navigator.of(context).push(MaterialPageRoute<void>(
+                  builder:(_)=>widget.brokersBuilder?.call() ?? const BrokerAccountsScreen())),
               store: widget.demoStore,
               onTheme: (value) {
                 if (mode != value) setState(() => mode = value);

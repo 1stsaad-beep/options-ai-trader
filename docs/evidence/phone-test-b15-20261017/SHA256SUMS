@@ -1,0 +1,16 @@
+cc63cd6f1f75e0502ea8b4589fbe67ec2b54461d3b773cd238ca431aacd67619  ./apk-debug-sha256-size.txt
+e8b9bd3ab976b7688ae53ca00dbaf7daa4a57dd541db6b7d351cf0d5ecc73ce2  ./flutter-analyze.txt
+adc6115c60be70f6435eb412813972042ac805c1eb5535d7f845f9c1225a78f0  ./flutter-build-apk-debug.txt
+3f0a0379e019a6e03b79ffb2139dffb94283e067fc88c75fc2aa5a04128c66b7  ./flutter-test.txt
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ./gradle-testDebugUnitTest.txt
+fdb3c31a50e8f8ef8634442908afe8a8ed62fd44be792ed5d69562f1c9080b02  ./jvm-results/TEST-com.optionsaitrader.options_ai_trader.AlpacaAccessTest.xml
+2102960d9a621fd86775d52dc1089cd30e8997de61359c512f63562f194870c1  ./jvm-results/TEST-com.optionsaitrader.options_ai_trader.AlpacaSessionTest.xml
+5d31af8052302fa5e17b5cb84a30df5529ce1696c202dc254b32b31dbc97751d  ./jvm-results/TEST-com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest.xml
+bd6f0288bddbe137e233f5c5c38f9826e0126e6762ee1b5fa3d6ded4220c1fbd  ./jvm-results/TEST-com.optionsaitrader.options_ai_trader.PaperSegmentsTest.xml
+9a3a0bc36c1674232de7d19aed3d8cfa222c9f8302294e7f909b9506c4e8021e  ./native-policy-checks.txt
+fcb2de13830ada9b26c3415dc3f40f11e4571afed7984a1ae377edb9eb59cf45  ./paper-test-release/aapt-badging.txt
+eea25088f277cdf4a2e0638fd238399aa42223d33d719c811b99c830ee35feef  ./paper-test-release/apk-release-sha256-size.txt
+184427ea151425dea85588fcc731f99369aa01755e9f52ce2e0e2f19d828700c  ./paper-test-release/apksigner-verify.txt
+91e601b7413567453bdc7b894c511cb1dcba0f62f80fbe4d580e9cc46a24b16b  ./paper-test-release/flutter-build-apk-release.txt
+59a56935877f2a59542648dce56ca83f487621c3cad898161e93e13795e604b1  ./paper-test-release/identity.txt
+858bf771a1a9e8b7a795023c81efb907fa6effdd8f38c32c48e2a2f622d7a2d0  ./secret-scan-summary.json

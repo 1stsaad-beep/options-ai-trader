@@ -13,6 +13,7 @@ import '../direct_alpaca.dart' show DirectAlpaca;
 import 'live_gate.dart';
 
 String brokerMessage(String code) => const {
+      'ALPACA_LIVE_KEY': 'هذا مفتاح Alpaca حقيقي (Live، يبدأ بـ AK). استخدم مفتاح Paper (يبدأ عادة بـ PK) من لوحة Paper Trading.',
       'INVALID_KEYS': 'الحقول المطلوبة ناقصة أو بصيغة غير صحيحة (بدون مسافات).',
       'INVALID_SETTINGS': 'إعدادات الحساب غير صحيحة.',
       'INVALID_GATEWAY': 'عنوان Gateway يجب أن يبدأ بـ https:// دون مسار أو استعلام.',
@@ -97,8 +98,10 @@ class _BrokerAccountsScreenState extends State<BrokerAccountsScreen> {
   }
 
   Future<void> _add() async {
-    final added = await showDialog<bool>(context: context, builder: (_) => _AddBrokerDialog(registry: registry));
-    if (added == true) await _load();
+    final added = await showDialog<BrokerAccount>(context: context, builder: (_) => _AddBrokerDialog(registry: registry));
+    if (added == null) return;
+    await _load();
+    await _test(added); // first-run: verify the keys immediately (Paper host only)
   }
 
   Future<void> _importVault() async {
@@ -166,7 +169,7 @@ class _BrokerAccountsScreenState extends State<BrokerAccountsScreen> {
                 title: Text('وضع Paper فقط'),
                 subtitle: Text('Live Trading معطل بشكل ثابت. المفاتيح محفوظة مشفرة على الهاتف (Android Keystore) ولا تُعرض أو تُرسل لغير الوسيط.'),
               )),
-              SwitchListTile(value: LiveTradingGate.liveAvailable, onChanged: null,
+              SwitchListTile(key: const ValueKey('live-switch'), value: LiveTradingGate.liveAvailable, onChanged: null,
                   title: const Text('Live Trading'), subtitle: const Text('معطل — يتطلب موافقة صريحة لاحقًا')),
               if (notice != null) Padding(padding: const EdgeInsets.all(8),
                   child: Text(notice!, key: const ValueKey('vault-import-notice'))),
@@ -187,7 +190,7 @@ class _BrokerAccountsScreenState extends State<BrokerAccountsScreen> {
                     onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) =>
                         BrokerPortfolioScreen(account: a, registry: registry, client: widget.client))),
                     trailing: Wrap(spacing: 4, children: [
-                      IconButton(tooltip: 'فحص الاتصال', onPressed: busy.contains(a.id) ? null : () => _test(a),
+                      IconButton(key: ValueKey('test-${a.id}'), tooltip: 'فحص الاتصال', onPressed: busy.contains(a.id) ? null : () => _test(a),
                           icon: const Icon(Icons.wifi_tethering)),
                       IconButton(tooltip: 'أرشفة', onPressed: () => _archive(a), icon: const Icon(Icons.archive_outlined)),
                     ]),
@@ -225,9 +228,9 @@ class _AddBrokerDialogState extends State<_AddBrokerDialog> {
   Future<void> _save() async {
     setState(() { saving = true; error = null; });
     try {
-      await widget.registry.add(broker: kind, label: label.text.trim().isEmpty ? kind.title : label.text,
+      final added = await widget.registry.add(broker: kind, label: label.text.trim().isEmpty ? kind.title : label.text,
           values: {for (final f in kind.fields) f.name: _field('${kind.name}.${f.name}').text});
-      if (mounted) Navigator.pop(context, true);
+      if (mounted) Navigator.pop(context, added);
     } on BrokerStoreException catch (e) {
       setState(() { error = brokerMessage(e.code); saving = false; });
     } on FormatException {
@@ -257,8 +260,8 @@ class _AddBrokerDialogState extends State<_AddBrokerDialog> {
               child: Text(error!, style: TextStyle(color: Theme.of(context).colorScheme.error))),
         ])),
         actions: [
-          TextButton(onPressed: saving ? null : () => Navigator.pop(context, false), child: const Text('إلغاء')),
-          FilledButton(onPressed: saving ? null : _save, child: const Text('حفظ مشفر')),
+          TextButton(onPressed: saving ? null : () => Navigator.pop(context), child: const Text('إلغاء')),
+          FilledButton(key: const ValueKey('save-broker-account'), onPressed: saving ? null : _save, child: const Text('حفظ مشفر')),
         ],
       );
 }

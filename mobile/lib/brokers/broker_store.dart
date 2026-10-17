@@ -101,6 +101,10 @@ class BrokerAccountRegistry {
         continue;
       }
       if (v.length > 4096 || v.contains(RegExp(r'\s'))) throw const BrokerStoreException('INVALID_KEYS');
+      // Alpaca issues live trading key IDs with an "AK" prefix (Paper: "PK"); never store a known live key.
+      if (broker == BrokerKind.alpaca && f.name == 'keyId' && v.startsWith('AK')) {
+        throw const BrokerStoreException('ALPACA_LIVE_KEY');
+      }
       (f.secret ? secrets : settings)[f.name] = v;
     }
     final accounts = await list();

@@ -7,12 +7,17 @@ import 'chart_lab.dart';
 import 'research_lab.dart';
 import 'safety_exercises_screen.dart';
 
+/// Set by the phone-test build (`--dart-define=OAT_BUILD_CHANNEL=papertest-b15`); empty otherwise.
+const buildChannel = String.fromEnvironment('OAT_BUILD_CHANNEL');
+
 class DemoScreen extends StatefulWidget {
   final DemoStore? store;
   final ValueChanged<ThemeMode> onTheme;
   final VoidCallback onBackend;
   final VoidCallback? onDirect;
   final VoidCallback? onDirectChart;
+  /// Opens Broker Paper accounts (Alpaca / IBKR / TradeStation) without the optional server.
+  final VoidCallback? onBrokers;
   const DemoScreen({
     super.key,
     this.store,
@@ -20,6 +25,7 @@ class DemoScreen extends StatefulWidget {
     required this.onBackend,
     this.onDirect,
     this.onDirectChart,
+    this.onBrokers,
   });
   @override
   State<DemoScreen> createState() => _DemoScreenState();
@@ -444,9 +450,15 @@ class _DemoScreenState extends State<DemoScreen> with WidgetsBindingObserver {
                   ),
                   SizedBox(height: 12),
                   Text('V1.0 • Demo محلي بلا إنترنت'),
+                  if (buildChannel != '') Text('نسخة اختبار Paper ($buildChannel)', key: Key('build-channel')),
                 ],
               ),
             ),
+            if(widget.onBrokers!=null) ListTile(
+              key:const Key('drawer-brokers'),
+              leading:const Icon(Icons.account_balance_outlined),title:const Text('حسابات الوسطاء (Paper)'),
+              subtitle:const Text('Alpaca Paper: أدخل المفاتيح، افحص الاتصال، المحفظة والأوامر'),
+              onTap:(){Navigator.pop(context);controller.pause();widget.onBrokers!();}),
             for (var i = 0; i < pages.length; i++)
               ListTile(
                 selected: page == i,

@@ -4,6 +4,8 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val paperTestBuild = System.getenv("OAT_PAPER_TEST_BUILD") == "true"
+
 android {
     namespace = "com.optionsaitrader.options_ai_trader"
     compileSdk = flutter.compileSdkVersion
@@ -20,6 +22,13 @@ android {
         applicationId = "com.optionsaitrader.options_ai_trader"
         if (System.getenv("OAT_PREVIEW_BUILD") == "true") applicationIdSuffix = ".v1previewrc2b23"
         manifestPlaceholders["oatLabel"] = if (System.getenv("OAT_PREVIEW_BUILD") == "true") "Options AI Trader RC 23" else "Options AI Trader"
+        // Phone-test identity (B15): installs beside Build 23 and the default app, never replacing them.
+        // Scoped to OAT_PAPER_TEST_BUILD only; CI's preview identity (verify_preview_identity.py) is unchanged.
+        if (paperTestBuild) {
+            if (System.getenv("OAT_PREVIEW_BUILD") == "true") error("OAT_PAPER_TEST_BUILD and OAT_PREVIEW_BUILD are exclusive")
+            applicationIdSuffix = ".papertest"
+            manifestPlaceholders["oatLabel"] = "Options AI Trader – Paper Test"
+        }
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -55,6 +64,8 @@ android {
             signingConfig = if (!unsignedBuild && !privateKeyPath.isNullOrBlank())
                 signingConfigs.getByName("privateDevelopment")
                 else if (!unsignedBuild && System.getenv("OAT_PREVIEW_BUILD") == "true") signingConfigs.getByName("debug")
+                // Phone test: the box's stable debug key, so later phone-test builds update in place.
+                else if (!unsignedBuild && paperTestBuild) signingConfigs.getByName("debug")
                 else null
         }
     }

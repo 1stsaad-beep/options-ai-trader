@@ -23,10 +23,16 @@ void main() {
     final secretField = tester.widget<TextField>(find.byKey(const ValueKey('broker-field-alpaca-secretKey')));
     expect(secretField.obscureText, isTrue);
     await tester.tap(find.text('حفظ مشفر'));
+    // B15: saving runs the connection test automatically.
+    for (var i = 0; i < 6; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
     await tester.pumpAndSettle();
     expect(find.text('Alpaca'), findsOneWidget);
     expect(find.textContaining('fixturesecret1'), findsNothing);
-    await tester.tap(find.byTooltip('فحص الاتصال'));
+    expect(find.textContaining('متصل (Paper) • PA3FIXTURE'), findsOneWidget);
+    await tester.tap(find.byTooltip('فحص الاتصال')); // manual re-test still available
     // Secure-storage and HTTP futures complete outside the fake clock.
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
     await tester.pumpAndSettle();

@@ -29,3 +29,8 @@ CI verifies the actual APK package/version/launcher label, development signature
 The separate FastAPI/Mock mode remains available. Local Demo balances/prices/decisions are local synthetic data; connected Mock mode uses backend records. Live remains locked. No IBKR or Paper connection is authorized by these build/test instructions.
 
 Earlier backend setup is documented in [MOBILE.md](../docs/MOBILE.md) and the historical [BUILD_V04.md](../docs/BUILD_V04.md). Enter a local development token in the connection dialog, never in source or dart-define. On a local emulator the development backend is normally at `http://10.0.2.2:8000`; release connections require HTTPS.
+
+
+## Phone-test build (B15)
+
+`scripts/build_paper_test.sh <versionCode> <versionName> <channel> <out-dir>` builds a release APK with id `…options_ai_trader.papertest`, label «Options AI Trader – Paper Test», signed with the box's stable debug key, and checks the identity of the actual APK. See [docs/PHONE_TEST_B15_20261017.md](../docs/PHONE_TEST_B15_20261017.md).
