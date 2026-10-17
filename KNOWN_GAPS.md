@@ -114,3 +114,8 @@ Paper broker entries (all three brokers) now require on-phone eligibility, run a
 ## 2026-10-17 batch B10 — unified trailing/protective exits
 
 Market Paper, Demo and Broker Paper now use one integer rule (`protective_exit.dart`): stop > take > trail, trailing armed only after the peak exceeds the basis, and the current peak included. Market Paper behaviour is unchanged (randomized equivalence test). Demo priority now matches the others: stop wins when stop and trailing both hit. Broker Paper shows close suggestions only, with no auto-send. 1099 Flutter tests pass and the debug APK builds. See docs/TRAILING_CONSISTENCY_B10_20261017.md. Still OPEN: server trailing has no arming (server out of scope this phase), no background Broker Paper monitor, partial/time-exit unification. All gaps above remain as recorded.
+
+
+## 2026-10-17 batch B11 — Demo geometry parity and extra classic patterns
+
+The Demo labs now default to the same strict 3/1 pivots, wave contract, harmonics and classic geometry as Direct and the server. The legacy 4/2 convention stays available by explicit choice, and saved journals keep their contract. A new phone-only `extended-classic-v1` set adds triple top/bottom, ascending/descending triangle, rectangle and rising/falling wedge, using confirmed pivots only and marked SHADOW (non-executable). 1105 Flutter tests pass and the debug APK builds. See docs/PATTERNS_WAVE_DEMO_B11_20261017.md. Still OPEN: no server counterpart for the new patterns, uncalibrated thresholds, flags/cup/channels, full ranking parity. All gaps above remain as recorded.

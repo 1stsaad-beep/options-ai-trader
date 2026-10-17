@@ -21,6 +21,18 @@ class MarketGeometry {
     }
     return result;
   }
+  /// Same strict rule on synthetic/Demo candles (index = tick, confirmed at tick of the
+  /// last bar of the right window). Used so Demo labs match Direct/server geometry.
+  static List<ChartPivot> candlePivots(List<DemoCandle> bars,{int radius=3}) {
+    if(radius<1)throw ArgumentError('Positive confirmation radius required');
+    final result=<ChartPivot>[];
+    for(var i=radius;i+radius<bars.length;i++) {
+      final neighbours=[...bars.sublist(i-radius,i),...bars.sublist(i+1,i+radius+1)];
+      final high=neighbours.every((b)=>bars[i].high>b.high),low=neighbours.every((b)=>bars[i].low<b.low);
+      if(high!=low)result.add(ChartPivot(bars[i].tick,bars[i+radius].tick,high?bars[i].high:bars[i].low,high));
+    }
+    return result;
+  }
   static void _validate(List<ChartPivot> points) {
     for(var i=0;i<points.length;i++) {
       final p=points[i];

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'direct_replay.dart';
 import 'market_indicators.dart';
 import 'market_geometry.dart';
+import 'extended_patterns.dart';
 import 'package:flutter/material.dart';
 import 'direct_alpaca.dart';
 import 'demo/chart_analysis.dart';
@@ -70,7 +71,7 @@ class _DirectLabsState extends State<DirectLabs> {
       if(showAlternate&&wave.alternate!=null)drawing(wave.alternate!,alternate:true),
     ]:lab==2?MarketGeometry.harmonics(pivots).map(MarketGeometry.drawing).toList():<ChartPattern>[];
     final div=MarketIndicators.divergences(rows),closes=bars.map((b)=>b.close).toList();
-    final classics=lab==1?MarketGeometry.classicDrawings(pivots,bars.last.close):<ChartClassic>[];
+    final classics=lab==1?[...MarketGeometry.classicDrawings(pivots,bars.last.close),...extendedDrawings(pivots,bars.last.close)]:<ChartClassic>[];
     final macd=MarketIndicators.macd(closes),offset=math.max(0,bars.length-180);
     final signal=MarketSignal.analyze(rows);
     return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[...controls(),
@@ -97,7 +98,7 @@ class _DirectLabsState extends State<DirectLabs> {
       ],
       if(lab==1)...[
         Text('الدعم ${number(summary['support'])} • المقاومة ${number(summary['resistance'])}\nFib 38.2% / 61.8% • ${summary['candle']}'),
-        const Text('بحث هندسي بقواعد الخادم: قمم/قيعان مزدوجة، رأس وكتفين، مثلث متقارب. التأكيد يتطلب كسرًا بالسعر، ولا يجيز التداول.'),
+        const Text('بحث هندسي بقواعد الخادم: قمم/قيعان مزدوجة، رأس وكتفين، مثلث متقارب؛ وإضافات الهاتف (extended-classic-v1): قمة/قاع ثلاثي، مثلث صاعد/هابط، مستطيل، وتد صاعد/هابط. التأكيد يتطلب كسرًا بالسعر، ولا يجيز التداول.'),
         for(final p in classics)Text('${p.kind} • ${p.confirmed?"كسر مؤكد":"مرشح لم يتأكد"} • ${p.triangle?"حدان يصلان القمم والقيعان المرصودة":"خط العنق ${number(p.neckline)}"}'),
       ],
       if(lab==2)...[

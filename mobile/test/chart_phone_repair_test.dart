@@ -122,6 +122,9 @@ void main() {
   testWidgets('fixture through detector journal toggles and painter preserves account bytes',(t) async {
     final e=DemoEngine()..createAccount('unchanged',2000000);final before=e.encode();
     await mount(t,e);expect(find.text('لا سيناريو موجي صالح عند هذا المؤشر؛ لا يُختلق ترقيم.'),findsOneWidget);
+    // These drawing fixtures were tuned to the original Demo 4/2 convention (B11 default is market 3/1).
+    await t.ensureVisible(find.byKey(const Key('chart-market-rules')));
+    await t.tap(find.byKey(const Key('chart-market-rules')));await t.pumpAndSettle();
     await select(t,'abc');expect(painter(t).patterns,hasLength(2));
     expect(painter(t).layerLabels,contains('C'));
     expect(find.byKey(const Key('chart-fixture-warning')),findsOneWidget);

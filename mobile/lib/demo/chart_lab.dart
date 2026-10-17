@@ -6,6 +6,8 @@ import 'engine.dart';
 import 'wave_analysis.dart';
 import 'chart_fixtures.dart';
 import 'chart_painter.dart';
+import '../extended_patterns.dart';
+import '../market_geometry.dart';
 export 'chart_painter.dart' show DemoCandlePainter;
 
 class DemoChartLab extends StatefulWidget {
@@ -27,25 +29,28 @@ class _DemoChartLabState extends State<DemoChartLab> {
   bool showAlternate=true;
   String fixture='demo';
   int factor=1;
+  /// B11: Demo labs use the same strict 3/1 geometry as Direct/server by default.
+  /// The original Demo plateau 4/2 convention stays available for older sessions.
+  bool marketRules=true;
   late bool follow;
   final transform=TransformationController();
   @override
   void dispose() {transform.dispose();super.dispose();}
   void seek(int tick) {setState(() {end=tick;follow=false;});}
   void source(String value) {setState(() {
-    fixture=value;factor=1;waveJournal=ChartWaveJournal();
+    fixture=value;factor=1;waveJournal=ChartWaveJournal(strictMarket:marketRules);
     follow=value=='demo' && widget.initialEnd==null;
     end=value=='demo'?(widget.initialEnd??widget.engine.tick):ChartFixtures.bars(value).last.tick;
     transform.value=Matrix4.identity();
   });}
-  ChartWaveJournal waveJournal=ChartWaveJournal();
+  late ChartWaveJournal waveJournal=ChartWaveJournal(strictMarket:marketRules);
   @override
   void initState() {super.initState();end=widget.initialEnd ?? widget.engine.tick;follow=widget.initialEnd==null;}
   @override
   void didUpdateWidget(covariant DemoChartLab oldWidget) {
     super.didUpdateWidget(oldWidget);
     if(oldWidget.engine!=widget.engine || oldWidget.symbol!=widget.symbol) {
-      waveJournal=ChartWaveJournal(factor:factor);
+      waveJournal=ChartWaveJournal(factor:factor,strictMarket:marketRules);
       if(fixture=='demo') {end=widget.initialEnd ?? widget.engine.tick;follow=widget.initialEnd==null;}
     }
   }
@@ -57,14 +62,19 @@ class _DemoChartLabState extends State<DemoChartLab> {
     final sourceBars=fixture=='demo'?DemoChartAnalysis.bars(widget.engine,widget.symbol,end):
       ChartFixtures.bars(fixture).where((b)=>b.tick<=end).toList();
     final bars=ChartWaveAnalysis.aggregate(sourceBars,factor);
-    final summary=DemoChartAnalysis.summary(bars), pivots=DemoChartAnalysis.pivots(bars);
+    final summary=DemoChartAnalysis.summary(bars);
+    final pivots=marketRules?MarketGeometry.candlePivots(bars):DemoChartAnalysis.pivots(bars);
+    final classics=lab!=1?<ChartClassic>[]:[
+      if(marketRules)...MarketGeometry.classicDrawings(pivots,bars.last.close),
+      ...extendedDrawings(pivots,bars.last.close)];
     if(waveJournal.latestTick==null || bars.last.tick>=waveJournal.latestTick!) waveJournal.append(bars);
     final waves=waveJournal.view(bars.last.tick);
     final frames=ChartWaveAnalysis.timeframes(sourceBars);
     final patterns=lab==0?<ChartPattern>[
       if(waves.primary!=null) waves.primary!.drawing(),
       if(showAlternate && waves.alternate!=null) waves.alternate!.drawing(alternate:true),
-    ]:lab==2?DemoChartAnalysis.harmonics(pivots):<ChartPattern>[];
+    ]:lab==2?(marketRules?MarketGeometry.harmonics(pivots).map(MarketGeometry.drawing).toList():
+        DemoChartAnalysis.harmonics(pivots)):<ChartPattern>[];
     final divergenceSegments=DemoChartAnalysis.divergenceSegments(bars);
     final divergences=divergenceSegments.map((d)=>d.label).toList();
     final color=Theme.of(context).colorScheme;
@@ -85,6 +95,9 @@ class _DemoChartLabState extends State<DemoChartLab> {
       Wrap(spacing:12,children:[
         FilterChip(label:const Text('الرسومات'),selected:overlays,onSelected:(v)=>setState(()=>overlays=v)),
         FilterChip(label:const Text('المؤشرات'),selected:indicators,onSelected:(v)=>setState(()=>indicators=v)),
+        FilterChip(key:const Key('chart-market-rules'),
+          label:Text(marketRules?'قواعد السوق 3/1':'قواعد Demo القديمة 4/2'),selected:marketRules,
+          onSelected:(v)=>setState((){marketRules=v;waveJournal=ChartWaveJournal(factor:factor,strictMarket:v);})),
         if(lab==0) FilterChip(key:const Key('wave-alternate-toggle'),
           label:const Text('الترقيم البديل'),selected:showAlternate,
           onSelected:(v)=>setState(()=>showAlternate=v)),
@@ -94,12 +107,14 @@ class _DemoChartLabState extends State<DemoChartLab> {
         '${waves.alternate==null?"لا بديل صالح":showAlternate?"البديل: ${waves.alternate!.labels.join(" → ")}":"البديل مخفي"}'):
         lab==2?(patterns.isEmpty?'لا نموذج XABCD / PRZ صالح عند هذا المؤشر.':
           '${patterns.length} نموذج مطابق للقواعد • PRZ نطاق نسب بحثي، وليس وقفًا.'):
+        lab==1?(classics.isEmpty?'لا نموذج كلاسيكي مستوفٍ للهندسة عند هذا المؤشر.':
+          classics.map((c)=>'${c.kind} • ${c.confirmed?"كسر مؤكد":"مرشح لم يتأكد"}').join('\n')):
         lab==3?(divergences.isEmpty?'لا دايفرجنس مؤكد عند هذا المؤشر.':divergences.join('، ')):
         'S = دعم • R = مقاومة • Fib = فيبوناتشي',key:const Key('chart-analysis-status')),
       Wrap(spacing:8,crossAxisAlignment:WrapCrossAlignment.center,children:[
         const Text('تجميع الملاحظات:'),
         for(final f in [1,5,15]) ChoiceChip(key:Key('chart-factor-$f'),label:Text('$f×'),selected:factor==f,
-          onSelected:(_)=>setState((){factor=f;waveJournal=ChartWaveJournal(factor:f);transform.value=Matrix4.identity();})),
+          onSelected:(_)=>setState((){factor=f;waveJournal=ChartWaveJournal(factor:f,strictMarket:marketRules);transform.value=Matrix4.identity();})),
         IconButton(key:const Key('chart-zoom-in'),tooltip:'تكبير',icon:const Icon(Icons.zoom_in),
           onPressed:(){final scale=math.min(4.0,transform.value.getMaxScaleOnAxis()*1.5);
             transform.value=Matrix4.diagonal3Values(scale,scale,1);}),
@@ -113,7 +128,7 @@ class _DemoChartLabState extends State<DemoChartLab> {
           widget.markers.where((m)=>(m['tick'] as int)<=end).toList(),color,lab,overlays,indicators,
           DemoChartAnalysis.rsi(closes).skip(offset).toList(),
           macdValues:ChartMacd(macd.line.skip(offset).toList(),macd.signal.skip(offset).toList(),
-            macd.histogram.skip(offset).toList()),divergences:divergenceSegments);
+            macd.histogram.skip(offset).toList()),divergences:divergenceSegments,classicalPatterns:classics);
         return Semantics(label:painter.layerLabels.join('; '),child:ClipRect(child:
           InteractiveViewer(key:const Key('chart-pan-zoom'),transformationController:transform,
             minScale:1,maxScale:4,child:RepaintBoundary(key:const Key('chart-canvas'),

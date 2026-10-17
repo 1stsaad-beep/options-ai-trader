@@ -51,7 +51,9 @@ class ChartClassic {
   // observed neckline is the segment between points[1] and points[3].
   final double? neckline;
   const ChartClassic(this.kind,this.points,this.labels,this.confirmed,{this.neckline});
-  bool get triangle=>kind=='CONVERGING_TRIANGLE';
+  /// Drawn as separate upper (highs) and lower (lows) boundaries.
+  bool get triangle=>const {'CONVERGING_TRIANGLE','ASCENDING_TRIANGLE','DESCENDING_TRIANGLE','RECTANGLE',
+    'RISING_WEDGE','FALLING_WEDGE'}.contains(kind);
 }
 
 class DemoChartAnalysis {
