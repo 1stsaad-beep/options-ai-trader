@@ -27,6 +27,8 @@
     "artifactId": 12095062499,
     "sha256": "7c7a4188675ae343713fdf5f899b00dcdcb5151b7f6d8b7f08ec48a7b4777a24",
     "crcVerified": true,
-    "fixedBy": "a5426bb9e6a9e5bc53fabc0846aec5db49146f29"
+    "fixedBy": "a5426bb9e6a9e5bc53fabc0846aec5db49146f29",
+    "acceptedRun": 39016806708,
+    "acceptedSource": "a5426bb9e6a9e5bc53fabc0846aec5db49146f29"
   }
 }

@@ -1,0 +1,85 @@
+{
+  "backendSource": "d06b0fdde9607ccbcc2ec53e03c3e61d2511483e",
+  "currentCode": "a5426bb9e6a9e5bc53fabc0846aec5db49146f29",
+  "backendUnchangedThroughCurrent": true,
+  "backendRun": 39016378545,
+  "python": {
+    "passed": 1585,
+    "failed": 0,
+    "skipped": 0
+  },
+  "postgresChecks": {
+    "execution": 22,
+    "journal": 6,
+    "runtime": 10,
+    "settlement": 5,
+    "observed": 25,
+    "experiment": 4,
+    "backupRestore": 20
+  },
+  "composeChecks": 20,
+  "mobileRun": 39016806708,
+  "mobileStatus": "SUCCESS_RAW_VERIFIED",
+  "chartRun": 39016806674,
+  "chartPassed": 23,
+  "goldenPassed": 6,
+  "securityRun": 39016806699,
+  "security": {
+    "files": 1130,
+    "historicalBlobs": 2237,
+    "commits": 215,
+    "patternFindings": 0,
+    "pythonPackages": 24,
+    "pubPackages": 44,
+    "knownVulnerabilities": 0
+  },
+  "packaging": "Android/iOS skipped; no APK",
+  "artifacts": [
+    {
+      "file": "batch54-backend-test-results.zip",
+      "artifactId": 12094982348,
+      "runId": 39016378545,
+      "sha256": "fd991680146216987e38f3f8e2804b3c6d44c7e4d5e3f8a945fc1f1408c427e0",
+      "crcVerified": true
+    },
+    {
+      "file": "batch54-compose-runtime-result.zip",
+      "artifactId": 12094887396,
+      "runId": 39016378545,
+      "sha256": "4c47b14b3a5a6b0c3348c18ac260e4823c25947facc3dc43a3fd5b8c5dd145c7",
+      "crcVerified": true
+    },
+    {
+      "file": "batch56-security.zip",
+      "artifactId": 12094204736,
+      "runId": 39016806699,
+      "sha256": "2d3dd55ea29d76e1a5fc74c6355ff097edb95fbefd2eecf61b08ba0561ed72c1",
+      "crcVerified": true
+    },
+    {
+      "file": "batch56-chart.zip",
+      "artifactId": 12095615300,
+      "runId": 39016806674,
+      "sha256": "a584063bf486bb4b4d57db31abe4e5bb83556b7e17cf4fe8fa490c7a78ce4876",
+      "crcVerified": true
+    },
+    {
+      "file": "batch56-direct.zip",
+      "artifactId": 12094819227,
+      "runId": 39016806708,
+      "sha256": "ccdac9cf8d0d6c3a9f4211a88b4bfb3ae50f7cee95394ab27befb19d0112e78c",
+      "crcVerified": true
+    }
+  ],
+  "flutter": {
+    "passed": 970,
+    "hiddenFrameworkRecordsExcluded": 65,
+    "failed": 0,
+    "skipped": 0
+  },
+  "jvm": {
+    "passed": 61,
+    "failed": 0,
+    "skipped": 0
+  }
+}

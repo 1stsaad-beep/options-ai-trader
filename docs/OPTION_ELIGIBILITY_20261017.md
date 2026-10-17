@@ -17,3 +17,6 @@ Primary schema references checked2026-10-17:
 - https://github.com/alpacahq/alpaca-py/blob/master/alpaca/trading/models.py and enums.py (deliverable fields/enums; SDK nullability text predates the changelog).
 
 Verification: baseline1498 Python passed.135 targeted tests passed before adding the final transport sanitization/clock regression. Full current-source results and CI acceptance are recorded in the continuation checkpoint. Schema fixtures are explicitly synthetic offline inputs, not fetched market evidence.
+
+
+Final source-specific acceptance for batches48–56: backend54 d06b0fdde9607ccbcc2ec53e03c3e61d2511483e passed1585 Python and PostgreSQL22/6/10/5/25/4/20 plus20 Compose; backend/scripts/infra/workflows unchanged through56. Mobile56 a5426bb9e6a9e5bc53fabc0846aec5db49146f29 passed970 visible Flutter/61 JVM/23 chart/6 Golden (65 hidden framework records excluded). Source56 security passed in its stated scope. Original artifacts verified SHA256/CRC in evidence/stage1-20261017/batch54-56-ci-index.json. This supersedes earlier pending-CI statements only for these sources; the documented software gaps remain open, with no APK or market-session claim.
