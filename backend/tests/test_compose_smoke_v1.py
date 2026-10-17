@@ -153,3 +153,15 @@ def test_historical_generator_exception_cannot_hide_a_replaced_literal():
     assert scanner.scan_text("app/settings.py", prefix + repr(expression))
     replacement = "aB3!cD4_eF5-gH6IjK7LmN8OpQ9"
     assert scanner.scan_text("scripts/compose_smoke.py", prefix + repr(replacement))
+
+
+def test_disposable_smoke_cannot_inherit_notification_or_metadata_approvals(monkeypatch,tmp_path):
+    monkeypatch.setattr(smoke.tempfile,'tempdir',str(tmp_path))
+    for name in ['OAT_ALERT_DELIVERY_APPROVAL','OAT_ALERT_RECEIVER_FILE','OAT_OPTION_METADATA_APPROVAL','OAT_MARKET_RUNTIME_ROLE']:
+        monkeypatch.setenv(name,'must-not-be-inherited')
+    def preflight(env):
+        assert not any(k.startswith('OAT_') for k in env)
+        raise smoke.SmokeFailure('OFFLINE_GUARD_ONLY')
+    monkeypatch.setattr(smoke,'require_local_engine',preflight)
+    result=smoke.run_smoke(observed_paper=True)
+    assert result['error_code']=='OFFLINE_GUARD_ONLY' and result['cleanup']=='not_required'

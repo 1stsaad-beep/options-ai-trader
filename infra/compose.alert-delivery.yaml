@@ -1,0 +1,34 @@
+# Optional sender; no receiver is provisioned and approval defaults to absent.
+services:
+  observed-alert-delivery:
+    profiles: [observed-alert-delivery]
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    command: [python, -m, app.observed_alert_delivery_worker]
+    environment:
+      DATABASE_URL: postgresql://trader:${POSTGRES_PASSWORD}@postgres:5432/options_demo
+      TRADING_MODE: paper
+      BROKER_PROVIDER: mock
+      ENABLE_LIVE: 'false'
+      OAT_ALERT_DELIVERY_APPROVAL: ${OAT_ALERT_DELIVERY_APPROVAL:-}
+      OAT_ALERT_RECEIVER_FILE: /run/secrets/oat_alert_receiver
+    secrets: [oat_alert_receiver]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    read_only: true
+    tmpfs: ['/tmp:size=16m,mode=1777']
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    stop_grace_period: 10s
+    healthcheck:
+      test: [CMD, python, -m, app.observed_alert_delivery_worker, --healthcheck]
+      interval: 15s
+      timeout: 8s
+      retries: 3
+      start_period: 30s
+secrets:
+  oat_alert_receiver:
+    file: ${OAT_ALERT_RECEIVER_SECRET_FILE:?Set an explicit private external file; empty while disabled}

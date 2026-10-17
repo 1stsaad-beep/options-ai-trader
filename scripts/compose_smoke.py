@@ -161,7 +161,7 @@ def validate_readiness(payload):
 def run_smoke(*, market_runtime=False, observed_paper=False) -> dict:
     project = "oat-smoke-" + secrets.token_hex(12)
     env = {key: value for key, value in os.environ.items()
-           if not key.startswith(("COMPOSE_", "OAT_ALPACA_", "OAT_OBSERVED_", "APCA_")) and key not in {"OPTIONS_API_TOKEN", "POSTGRES_PASSWORD"}}
+           if not key.startswith(("COMPOSE_", "OAT_", "APCA_")) and key not in {"OPTIONS_API_TOKEN", "POSTGRES_PASSWORD"}}
     result = {"test": "base_compose_runtime", "project": project, "status": "failed",
               "checks": [], "live_enabled": False, "accounts_created": 0, "orders_created": 0,
               "cleanup": "not_required", "source": "isolated_synthetic_mock"}
@@ -181,6 +181,9 @@ def run_smoke(*, market_runtime=False, observed_paper=False) -> dict:
             placeholder=Path(private)/'empty-observed-secret.json'
             placeholder.write_text('{}'); placeholder.chmod(0o600)
             private_settings['OAT_OBSERVED_PAPER_SECRET_FILE']=str(placeholder)
+            receiver_placeholder=Path(private)/'empty-receiver-secret.json'
+            receiver_placeholder.write_text('{}');receiver_placeholder.chmod(0o600)
+            private_settings['OAT_ALERT_RECEIVER_SECRET_FILE']=str(receiver_placeholder)
         with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
             stream.write("\n".join(f"{name}={value}" for name, value in private_settings.items()) + "\n")
         compose = ["docker", "compose", "--project-name", project, "--env-file", str(env_file),
@@ -189,6 +192,7 @@ def run_smoke(*, market_runtime=False, observed_paper=False) -> dict:
             compose += ['--file', str(ROOT / 'infra' / 'compose.market-runtime.yaml'), '--profile', 'market-runtime']
         if observed_paper:
             compose += ['--file',str(ROOT/'infra'/'compose.observed-paper.yaml'),'--profile','observed-paper']
+            compose += ['--file',str(ROOT/'infra'/'compose.alert-delivery.yaml')]
         try:
             require_local_engine(env)
             with socket.socket() as probe:
@@ -292,6 +296,24 @@ def run_smoke(*, market_runtime=False, observed_paper=False) -> dict:
                 else: raise SmokeFailure('OBSERVED_HEARTBEAT_NOT_ADVANCING')
                 command(compose+['exec','--no-TTY','observed-paper','python','-m','app.observed_paper_worker','--healthcheck'],env,20)
                 result['checks'].extend(['observed_worker_disabled_without_secret_read','observed_worker_restart_without_api_or_phone','observed_worker_independent_healthcheck'])
+                stage='isolated_disabled_notification_sender'
+                config=json.loads(command(compose+['--profile','observed-alert-delivery','config','--format','json'],env,20))
+                services=config['services'];sender=services['observed-alert-delivery']
+                if sender['environment'].get('OAT_ALERT_DELIVERY_APPROVAL') or sender.get('ports') or not sender.get('read_only'):
+                    raise SmokeFailure('UNSAFE_NOTIFICATION_PROFILE')
+                if any(any(secret.get('source')=='oat_alert_receiver' for secret in service.get('secrets',[]))
+                        for name,service in services.items() if name!='observed-alert-delivery'):
+                    raise SmokeFailure('NOTIFICATION_SECRET_NOT_ISOLATED')
+                command(compose+['build','observed-alert-delivery'],env,180)
+                output=json.loads(command(compose+['run','--rm','--no-deps','observed-alert-delivery',
+                    'python','-m','app.observed_alert_delivery_worker','--once'],env,30))
+                if output!={'component':'observed_alert_delivery','state':'DISABLED','externalOrder':False}:
+                    raise SmokeFailure('NOTIFICATION_NOT_DISABLED')
+                query="SELECT (SELECT COUNT(*) FROM observed_alert_delivery_state)+(SELECT COUNT(*) FROM observed_alert_delivery_receipts)"
+                untouched=command(compose+['exec','--no-TTY','postgres','psql','--username','trader','--dbname','options_demo','--tuples-only','--no-align','--command',query],env,20).strip()
+                if untouched!='0':raise SmokeFailure('DISABLED_NOTIFICATION_WROTE_STATE')
+                result['checks'].extend(['notification_profile_no_ports_approval_or_shared_secret',
+                    'notification_container_disabled_without_reading_empty_secret','notification_disabled_has_no_delivery_state'])
                 result['market_connection_tested']=False
             result["status"] = "passed"
         except Exception as exc:
