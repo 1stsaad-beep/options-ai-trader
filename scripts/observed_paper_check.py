@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import sys
 import threading
+from types import SimpleNamespace
 from urllib.parse import urlparse
 import uuid
 
@@ -20,6 +21,7 @@ from app.runtime_health import heartbeat_valid
 from app.observed_paper_status import status as runtime_status
 from app.observed_paper_data import ObservedPaperData
 from app.observed_paper_alerts import page as alert_page, acknowledge as alert_ack
+from app.market_data import DataResponse
 
 
 def seed(store,account):
@@ -128,6 +130,19 @@ def check(repositories):
             with repositories[0].transaction() as db: db.execute(sql)
         except Exception as exc: assert 'immutable' in str(exc)
         else: raise AssertionError('Alert event guard missing')
+    demand=[{'enabled':False,'positions':{'NVDA':{'contract':'NVDA261023C'+str(150000+i).zfill(8)}},
+        'config':{'contracts':{}}} for i in range(40)]
+    requested=[]
+    def quote_fixture(path,params):
+        assert path=='/v1beta1/options/quotes/latest' and params['feed']=='opra'
+        requested.append(set(params['symbols'].split(',')))
+        return DataResponse(200,{}, {'quotes':{}})  # No fabricated qualified result or ledger cycle.
+    for s in stores:
+        data=ObservedPaperData(s,SimpleNamespace(get=quote_fixture))
+        capture_lease=s.acquire('coverage-worker')
+        assert data.capture(demand,capture_lease)['quotes']==[] and data.coverage_limited
+        s.release(capture_lease)
+    assert len(requested)==2 and all(len(batch)==30 for batch in requested) and len(set.union(*requested))==40
     with repositories[0].transaction() as db:
         ObservedPaperData._save(db,{'calls':[iso(clock[0])],'authBlocked':True,
             'retryAt':iso(clock[0]+timedelta(seconds=60)),'failures':1})
@@ -142,7 +157,8 @@ def check(repositories):
         'sealed_segment_rotation','streamed_full_replay','expired_owner_shutdown_health',
         'same_owner_successor_generation_fencing','shutdown_preserves_original_ledger',
         'read_only_version_bound_net_valuation','causal_history_two_connection_pagination','read_only_durable_diagnostics_across_connections',
-        'alert_inbox_cross_connection_pinned_pages','alert_ack_lost_response_retry','alert_native_immutable_guards']}
+        'alert_inbox_cross_connection_pinned_pages','alert_ack_lost_response_retry','alert_native_immutable_guards',
+        'bounded_owned_quote_rotation_across_connections']}
 
 
 def run():

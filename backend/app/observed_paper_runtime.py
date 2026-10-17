@@ -52,6 +52,8 @@ class ObservedPaperRuntime:
             observation=self.provider.capture([s['state'] for s in snapshots],self.lease)
         except MarketDataError as exc:
             return result|{'state':'DATA_UNAVAILABLE','diagnosticCode':safe_diagnostic(exc.code)}
+        if getattr(self.provider,'coverage_limited',False) is True:
+            result['diagnosticCode']='OBSERVED_PARTIAL_COVERAGE'
         for snapshot in snapshots:
             state=snapshot['state']; account=state['id']
             # Bound each account's original evidence to its own current demand.

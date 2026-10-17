@@ -12,6 +12,7 @@ import secrets
 import subprocess
 import sys
 import tempfile
+from types import SimpleNamespace
 from urllib.parse import quote
 import uuid
 
@@ -118,6 +119,11 @@ def run():
             observed.command('backup-observed','stop',{'kind':'ENABLE','enabled':False})
             saved_observed=observed.snapshot('backup-observed',full=True)
             saved_observed_events=observed.events('backup-observed')
+            from app.observed_paper_data import ObservedPaperData
+            from app.market_data import DataResponse
+            coverage=ObservedPaperData(observed,SimpleNamespace(get=lambda *_:DataResponse(200,{}, {'quotes':{}})))
+            assert coverage.capture([saved_observed['state']],observed_lease)['quotes']==[]
+            with repository.transaction() as db: saved_capture_cursor=ObservedPaperData._cursor(db)
             observed.release(observed_lease)
             from app.observed_paper_runtime import ObservedPaperRuntime
             from app.observed_paper_alerts import page as alert_page, acknowledge as alert_ack
@@ -192,6 +198,8 @@ def run():
                     recovered_observed=ObservedPaperStore(recovered_repository,lambda:now)
                     assert recovered_observed.snapshot('backup-observed',full=True)==saved_observed
                     assert recovered_observed.events('backup-observed')==saved_observed_events
+                    with recovered_repository.transaction() as db: assert ObservedPaperData._cursor(db)==saved_capture_cursor
+                    checks.append('bounded_capture_rotation_cursor_restored_without_invented_quotes')
                     assert alert_page(recovered_observed,after=0)==saved_alerts
                     assert alert_page(recovered_observed)['after']==first_alert['sequence']
                     for statement in ('UPDATE observed_alert_events SET payload=payload','DELETE FROM observed_alert_events'):

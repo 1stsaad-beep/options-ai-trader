@@ -237,3 +237,16 @@ Batch42 local acceptance:1477 Python passed from the backend working directory u
 ## Batch43 — PostgreSQL restore harness name collision
 
 Source42 e76deafbb3d87f32605eebb2e5a0f6f89dce3b2a passed1477 Python, the PostgreSQL execution/journal/runtime/settlement/observed/experiment checks and Compose. The extended restore script failed before creating its fixture role: the new loop variable sql shadowed psycopg.sql throughout run(). Renamed that local loop variable to statement; no financial/runtime code or migration changed. Actual dump/restore rerun remains required in CI. Direct Flutter/JVM42 remains running; no mobile change in43.
+
+
+## Batch44 — bounded fair capture under demand pressure
+
+Before this change, more than30 aggregate contracts or10 symbols rejected the whole capture, including owned protection. The read-only provider now selects at most30 contracts and10 symbols per tick, prioritizes all owned contracts when they fit, and rotates excess owned/optional demand with a durable cursor. Cursor advancement and request-budget reservation commit atomically before the provider request; uncertain requests remain charged, auth/backoff gates do not advance unreserved selections, and an expired owner cannot rotate. Invalid cursor state is refused without resetting it. No request budget, route permission, financial event contract or entry-eligibility rule is weakened.
+
+A safe OBSERVED_PARTIAL_COVERAGE diagnostic reaches the status API and durable inbox when demand, missing members or missing analysis cannot be fully covered. The phone explicitly warns that some protective processing may be delayed; this is not an all-contract monitoring guarantee. Original CYCLE observations retain their exact shape and selected provider quote timestamps; no fabricated quote is returned. A bounded capture may protect owned positions even when optional analysis fails.
+
+12 new tests cover40-contract rotation,80 optional contracts with owned priority, one remaining request slot, restart/failure/auth-budget accounting, corrupt cursor, fencing, durable partial-coverage alerts with an actual fixture close and240 simulated15-second cycles/480 offline fixture requests. This is not a market session or wall-clock soak. PostgreSQL cross-connection rotation and actual backup/restore cursor preservation are added to existing CI.63 affected Python tests passed; full/source CI follows.
+
+Batch43 fb3a99de8c53bdc01cd6f53fc26341d9b34e649a passed backend39011271368 (including actual PostgreSQL restore) and security39011271375. Source42 Flutter analyze/tests completed successfully; JVM still running at this checkpoint. No APK.
+
+Batch44 local full suite:1489 Python passed, zero failures/skips. Existing PostgreSQL acceptance now includes19 observed checks and20 backup/restore checks; these counts are pending actual CI, not claimed local PostgreSQL results.
