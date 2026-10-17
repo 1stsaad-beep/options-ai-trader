@@ -1,0 +1,84 @@
+{
+  "source": "805694fca13131494232e0f58b64899c7bd4d7f2",
+  "python": {
+    "passed": 1405,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "postgres": {
+    "execution": 22,
+    "journal": 6,
+    "runtime": 10,
+    "settlement": 5,
+    "observed_paper": 13,
+    "experiment": 4,
+    "backup_restore": 18
+  },
+  "compose_checks": 20,
+  "chart": {
+    "semantic": 23,
+    "golden": 6
+  },
+  "security": {
+    "files": 1074,
+    "historical_blobs": 2031,
+    "commits": 190,
+    "secret_pattern_findings": 0,
+    "python_packages": 24,
+    "pub_packages": 44,
+    "known_advisories": 0
+  },
+  "actual_provider_connection": false,
+  "three_session_acceptance": "NOT_RUN",
+  "new_apk": false,
+  "artifacts": [
+    {
+      "file": "batch34-backend.zip",
+      "artifact_id": 12090719409,
+      "run_id": 39006517459,
+      "sha256": "125cafd6b56ea8509c8c1203b28d6397a070093a83b0242cf9a7b87a227b292c",
+      "crc_verified": true
+    },
+    {
+      "file": "batch34-compose.zip",
+      "artifact_id": 12091311245,
+      "run_id": 39006517459,
+      "sha256": "468e1faa9def676d54137a089ab97cf223a3b09bdd33aae237cd2e70173a1d02",
+      "crc_verified": true
+    },
+    {
+      "file": "batch34-chart.zip",
+      "artifact_id": 12091316245,
+      "run_id": 39006517474,
+      "sha256": "ba7e2ef0577b453e8dbf919f663473dc32cfd0f40c9543aecdda82a1c56fd94c",
+      "crc_verified": true
+    },
+    {
+      "file": "batch34-security.zip",
+      "artifact_id": 12090649722,
+      "run_id": 39006517447,
+      "sha256": "a149083ae6a01f95b68030ad9ffadd44b88e0585e0aea236300b97e0d473813b",
+      "crc_verified": true
+    },
+    {
+      "file": "batch34-direct.zip",
+      "artifact_id": 12091271976,
+      "run_id": 39006517467,
+      "sha256": "6da14f083d9571136fdf9aa99b02b5eb5ef241b65bda77f5c58cabe9108abc2d",
+      "crc_verified": true
+    }
+  ],
+  "flutter": {
+    "passed": 848,
+    "hiddenFrameworkEntries": 59,
+    "failures": 0,
+    "skipped": 0
+  },
+  "jvm": {
+    "passed": 61,
+    "failures": 0,
+    "skipped": 0
+  },
+  "all_applicable_workflows": "success"
+}

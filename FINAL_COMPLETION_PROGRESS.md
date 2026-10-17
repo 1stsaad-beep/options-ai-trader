@@ -1,3 +1,11 @@
+# Stage-one continuation — 2026-10-17
+
+**Stage one and V1.0 remain PARTIAL. No APK or phone acceptance in this phase.** Current source805694fca13131494232e0f58b64899c7bd4d7f2 adds batches30–34: atomic four-account setup/comparison, Flutter controls, safe market admission lock, net-cost protection, lease-fenced worker shutdown, and read-only original-quote valuation. Current status and remaining software/external gaps: [Arabic delivery](docs/STAGE1_STATUS_20261017_AR.md), [resume](docs/RESUME_STAGE1_20261017_AR.md), [security](docs/STAGE1_SECURITY_20261017_AR.md), [phase-two gate](docs/STAGE2_ACCEPTANCE_20261017_AR.md), [traceability](REQUIREMENTS_TRACEABILITY.md). Older entries below are historical; latest source-bound acceptance governs.
+
+Verified source805694fc:1405 Python locally/CI; PostgreSQL22 execution/6 journal/10 runtime/5 settlement/13 observed/4 experiment/18 backup;20 Compose;23 chart and6 Golden. Security1074 files/2031 historical blobs/190 commits, zero pattern findings;24 Python/44 Pub packages without known advisories in scope. Flutter848 and JVM61 passed; original Direct ZIP SHA256/CRC verified. No provider-session claim.
+
+---
+
 # Readiness correction and continued development — 2026-10-14
 
 Latest continuation supersedes the baseline progress below: [latest Arabic resume](docs/RESUME_POST_BUILD23_20261014_AR.md), [Arabic acceptance/status and open software work](docs/CONTINUATION_ACCEPTANCE_20261014_AR.md), [batch-by-batch resume](docs/CONTINUATION_20261014.md), and [current traceability](REQUIREMENTS_TRACEABILITY.md). Virtual physical-delivery receipts, canonical Direct indicators/harmonic geometry, durable wave/option observations, observed-option counterfactuals, exact receipt arithmetic and worker recovery have now been implemented in later commits. All three final assignments remain partial; this is not an APK release or independent-review completion. The following audit/Build23 entries retain their historical source boundaries.
@@ -187,3 +195,10 @@ Batch32 accepted:825 Flutter/61 JVM, raw Direct39005864769 ZIP verified. Batch33
 Added authenticated GET valuation and Flutter read-only report bound to account version/hash. Only accepted original OPRA quote identity can value an owned option; fixed adverse slippage/exit fee and already-consumed conservative liquidity are applied without consuming liquidity. A newer stopped partial-fill quote supersedes the old protection mark. Current server time, original capture time,30-second freshness, session/expiry, complete inventory and exact integer arithmetic are rechecked independently on the phone. Cash-only equity is known; incomplete options or unpriced delivery stock leave portfolio equity/P&L null. No stock candle, cost basis or settlement price substitutes for a missing market quote. Six shared SQL fixtures cover cash, original quotes, staleness, capacity, delivery and stopped partial close;36 targeted Python passed. Full source/Flutter/PG CI pending. This is one-time modeled valuation, not historical NAV drawdown/Sharpe, eligibility, guaranteed execution or full V1.0 acceptance.
 
 Batch34 local full suite: 1405 passed, zero failures/skips; raw JUnit retained in docs/evidence/stage1-20261017/batch34-local-python.zip. Source CI remains pending.
+
+
+## Final source-bound acceptance of batches30–34 — 2026-10-17
+
+Source805694fca13131494232e0f58b64899c7bd4d7f2: all applicable gates succeeded. Raw ZIP SHA256/CRC and counts verified:1405 Python,848 Flutter (59 hidden framework records excluded),61 JVM,23 chart semantic/6 Golden. PostgreSQL22 execution/6 journal/10 runtime/5 settlement/13 observed/4 experiment/18 backup;20 Compose. Security1074 files/2031 historical blobs/190 commits, no pattern findings;24 Python/44 Pub without known advisories in scope. Five original artifacts and exact IDs/digests are in docs/evidence/stage1-20261017/batch34-ci-index.json.
+
+Stage one remains PARTIAL: qualified eligibility/adjusted and legacy lots, full wave/Demo/trailing-priority parity, capacity, complete/historical portfolio valuation, reliable operational alerting/soak and full independent acceptance remain open. Read docs/STAGE1_STATUS_20261017_AR.md, STAGE1_SECURITY_20261017_AR.md and STAGE2_ACCEPTANCE_20261017_AR.md. No APK, phone request, Oracle modification, real provider connection/financial order, user data deletion, forced Git rewrite or new automation occurred. Documentation/evidence-only delivery follows this tested source.

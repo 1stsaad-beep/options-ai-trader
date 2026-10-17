@@ -4,7 +4,7 @@ The engineering candidate is not a claim that every V1.0 requirement is complete
 
 ## Post-Build23 audit — 2026-10-14
 
-No final-phone request or new APK. All three assignments remain partial overall. Independent second review has NOT occurred; earlier same-agent review does not satisfy it. Current status: docs/RESUME_POST_BUILD23_20261014_AR.md and REQUIREMENTS_TRACEABILITY.md. docs/POST_BUILD23_AUDIT_20261014_AR.md is the historical baseline.
+No final-phone request or new APK. All three assignments remain partial overall. Independent second review has NOT occurred; earlier same-agent review does not satisfy it. Current status: docs/STAGE1_STATUS_20261017_AR.md, docs/RESUME_STAGE1_20261017_AR.md and REQUIREMENTS_TRACEABILITY.md. docs/POST_BUILD23_AUDIT_20261014_AR.md is the historical baseline.
 
 Newly repaired source defects (not present in the old APK): stopped-account manual close was silently ignored; owned symbols removed from watchlists lacked direct close/selection controls; decision evidence clipped1000-bar analysis to120 bars; Direct wave rendering bypassed causal invalidation and omitted main/alternate selection. Regression evidence is tied to the new source, not Build23. Old incomplete decision sources cannot be recovered retroactively.
 
@@ -47,3 +47,10 @@ Batch26 source8ac33742d44ddae1410e0a6d094765fc42c3455d passed Direct38868887931 
 Batch28 implements dedicated observed-server mobile controls, explicit settlement preview and original event/prefix Replay; CI pending. This supersedes the absence of a mobile route, not full server strategy-wave/chart parity or entry eligibility.
 
 Batch29 implements opt-in server augmentation and original support/resistance scenario exit in an explicitly new ledger contract; v1 replay remains frozen. Receipt-based performance is implemented; complete qualified marked-portfolio analytics remain open. CI pending.
+
+
+## 2026-10-17 scoped progress, not completion
+
+Batches30–34 add atomic server four-account setup/comparison with Flutter controls, close the unsafe phone entry/addition eligibility path, correct conservative phone net-cost thresholds, fix lease-fenced observed-worker shutdown health, and add a separate original-quote net valuation report with independent Flutter arithmetic. Missing delivery stock quotes, partial liquidity or stale options yield incomplete portfolio value; no basis/candle/settlement-price substitute exists. Latest implementation805694fca13131494232e0f58b64899c7bd4d7f2; source acceptance in docs/STAGE1_STATUS_20261017_AR.md.
+
+Do not repeat already implemented server controls, original prefix chart linkage, augmentation/scenario exits, receipt performance or four-account setup. Still open: qualified contract/Greek/deliverable adapter; adjusted/legacy lots; full wave/Demo/trailing-priority parity; financial-memory/export capacity; complete/historical portfolio metrics and delivery quotes; reliable operational alert integration/soak; independent design/platform acceptance. Software gaps are not all external. Real OPRA/three sessions, authorized deployment, stable signing and independent review remain separate gates. No APK is authorized in this phase.
