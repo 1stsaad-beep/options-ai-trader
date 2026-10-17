@@ -1,0 +1,54 @@
+{
+  "source": "ffa67fccb63d862485cdb8507cd247d343b015d0",
+  "sha256AndCrcVerified": true,
+  "artifacts": [
+    {
+      "id": 12091729143,
+      "name": "v1-security-results",
+      "sha256": "sha256:faef3128c006472e8e67a7a0e8ca92e90e27fc7a5851cb1bb64ce5e43c3d80ba",
+      "run": 39009212770,
+      "source": "ffa67fccb63d862485cdb8507cd247d343b015d0",
+      "archive": "batch39-security.zip"
+    },
+    {
+      "id": 12092645064,
+      "name": "chart-repair-evidence",
+      "sha256": "sha256:552e9eedd1b7faaf2f10439100204251987e044c886450075862e96994d3f12b",
+      "run": 39009212781,
+      "source": "ffa67fccb63d862485cdb8507cd247d343b015d0",
+      "archive": "batch39-chart.zip"
+    },
+    {
+      "id": 12092700942,
+      "name": "direct-alpaca-mock-results",
+      "sha256": "sha256:64361cdfdafdbb553cc9549e956cfd3e7b37a330139a24751bd3e1d163ac45f0",
+      "run": 39009212768,
+      "source": "ffa67fccb63d862485cdb8507cd247d343b015d0",
+      "archive": "batch39-direct.zip"
+    }
+  ],
+  "flutter": {
+    "passed": 905,
+    "hiddenFrameworkRecordsExcluded": 62,
+    "failures": 0,
+    "skipped": 0
+  },
+  "jvm": {
+    "passed": 61,
+    "failures": 0,
+    "skipped": 0
+  },
+  "chart": 23,
+  "golden": 6,
+  "security": {
+    "files": 1094,
+    "historyBlobs": 2085,
+    "historyCommits": 196,
+    "patternFindings": 0,
+    "pythonPackages": 24,
+    "pubPackages": 44,
+    "knownAdvisories": 0
+  },
+  "marketConnection": false,
+  "actualMarketSessions": 0
+}

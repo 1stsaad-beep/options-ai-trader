@@ -1,0 +1,53 @@
+{
+  "source": "5ae37429203b7ef419dfa856e7eecf6a264686c3",
+  "sha256AndCrcVerified": true,
+  "artifacts": [
+    {
+      "id": 12092312512,
+      "name": "backend-test-results",
+      "sha256": "sha256:c7f31f1e41225adc6475335d6eea7734ed043fb513a13b39900f45a8d40e2bfa",
+      "run": 39009646164,
+      "source": "5ae37429203b7ef419dfa856e7eecf6a264686c3",
+      "archive": "batch40-backend-test-results.zip"
+    },
+    {
+      "id": 12092037763,
+      "name": "compose-runtime-result",
+      "sha256": "sha256:e3c25b5a1e8a98bd140c3a6a3ec9bb763604516e79dfd8424c0f05e1fe1d692c",
+      "run": 39009646164,
+      "source": "5ae37429203b7ef419dfa856e7eecf6a264686c3",
+      "archive": "batch40-compose-runtime-result.zip"
+    },
+    {
+      "id": 12092875012,
+      "name": "v1-security-results",
+      "sha256": "sha256:449ba6b6c0d366aaf85f2eb99be7574d76720b6468541c10f44d8f6c11770514",
+      "run": 39009646162,
+      "source": "5ae37429203b7ef419dfa856e7eecf6a264686c3",
+      "archive": "batch40-v1-security-results.zip"
+    }
+  ],
+  "python": 1460,
+  "postgres": {
+    "execution": 22,
+    "journal": 6,
+    "runtime": 10,
+    "settlement": 5,
+    "observed": 15,
+    "experiment": 4,
+    "backup": 18
+  },
+  "compose": 20,
+  "security": {
+    "files": 1094,
+    "historyBlobs": 2090,
+    "historyCommits": 197,
+    "patternFindings": 0,
+    "pythonPackages": 24,
+    "pubPackages": 44,
+    "knownAdvisories": 0
+  },
+  "mobileSource": "ffa67fccb63d862485cdb8507cd247d343b015d0",
+  "marketConnection": false,
+  "actualMarketSessions": 0
+}

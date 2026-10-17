@@ -1,0 +1,34 @@
+{
+  "source": "d2e265343572185d4be361a23e047f5236f7e6bd",
+  "run": 39008858694,
+  "workflowConclusion": "cancelled",
+  "flutterDone": [
+    {
+      "success": false,
+      "type": "done",
+      "time": 130444
+    }
+  ],
+  "errors": [
+    {
+      "testID": 1052,
+      "error": "Test failed. See exception logs above.\nThe test description was: 360px RTL Brightness.dark GET pagination retains one page and retry cursor",
+      "stackTrace": "",
+      "isFailure": false,
+      "type": "error",
+      "time": 129402
+    },
+    {
+      "testID": 1053,
+      "error": "Test failed. See exception logs above.\nThe test description was: 360px RTL Brightness.light GET pagination retains one page and retry cursor",
+      "stackTrace": "",
+      "isFailure": false,
+      "type": "error",
+      "time": 129705
+    }
+  ],
+  "sha256": "b83721099821f4f1831eb58cb34c72c55b60fd869519c34585d968756b1023f3",
+  "crcVerified": true,
+  "artifact": 12091948081,
+  "accepted": false
+}
