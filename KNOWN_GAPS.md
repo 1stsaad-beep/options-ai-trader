@@ -99,3 +99,8 @@ Broker Paper option orders (Alpaca, IBKR, TradeStation) now go through ticket ->
 ## 2026-10-17 batch B5 — order-status/fill reconciliation
 
 Paper broker order status and fills (Alpaca, IBKR, TradeStation) are reconciled against the append-only order journal. Only new STATUS/FILL/RESOLVED events are added, with no edits or deletions. NOT_PLACED is set automatically only on Alpaca's definitive client-id not-found after 60 s. Contradictory data and positions below the journal are reported and not applied. There is an explicit, logged manual resolution. 1073 Flutter tests pass and the debug APK builds. See docs/BROKER_FILL_RECONCILE_B5_20261017.md. Still OPEN: real Paper evidence, per-execution prices/commissions, automatic periodic reconciliation (no server in this phase), B6/B7 deferred. All gaps above remain as recorded.
+
+
+## 2026-10-17 batch B8 — model Greeks and implied volatility
+
+`mobile/lib/option_pricing.dart` adds a BSM (continuous yield) engine for analytic Greeks and an American CRR tree. Implied volatility fails closed with reasons. The engine is tested against Hull/Haug reference values plus round trips and finite differences. 1084 Flutter tests pass and the debug APK builds. See docs/GREEKS_IV_ENGINE_B8_20261017.md. Still OPEN: discrete dividends, adjusted deliverables, a vol surface, an external rate/dividend source, and a real quote comparison. Model values do not qualify entry by themselves. B6/B7 are deferred pending user decisions. All gaps above remain as recorded.
