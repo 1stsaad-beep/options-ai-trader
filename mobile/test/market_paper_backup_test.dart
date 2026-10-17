@@ -32,6 +32,24 @@ void main() {
   test('oversized input is bounded before JSON parsing',(){
     expect(()=>PaperBackup.inspect(' '*(PaperBackup.maxBytes+1)),throwsFormatException);
   });
+  test('deep and excessive nested string JSON rejected before restore writes',()async{
+    final envelope=jsonDecode(paper.exportBackup());
+    envelope['ledger']['accounts'][0]['name']='['*2000+'0'+']'*2000;
+    final original=jsonEncode(store.value),writes=store.writes;
+    expect(()=>PaperBackup.inspect(jsonEncode(envelope)),throwsFormatException);
+    expect(jsonEncode(store.value),original);expect(store.writes,writes);
+  });
+  test('duplicate receipt fields cannot be normalized away by JSON decoding',(){
+    final text=paper.exportBackup();
+    final changed=text.replaceFirst('"version":1','"version":0,"version":1');
+    expect(changed,isNot(text));
+    expect(()=>PaperBackup.inspect(changed),throwsFormatException);
+  });
+  test('duplicate keys inside embedded JSON cannot bypass credential screening',(){
+    final envelope=jsonDecode(paper.exportBackup());
+    envelope['ledger']['accounts'][0]['name']='{"api_secret":"private","api_secret":"hidden"}';
+    expect(()=>PaperBackup.inspect(jsonEncode(envelope)),throwsFormatException);
+  });
   test('unknown write outcome cannot report a successful restore',()async{
     final target=FaultPaperStore()..failReadAfterWrite=true,other=MarketPaper(FaultPaperStore());
     final recovered=MarketPaper(target);await recovered.load();

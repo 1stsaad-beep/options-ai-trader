@@ -236,3 +236,10 @@ Batch49 full local acceptance:1559 Python passed, zero failures/skips (one exist
 ## Batch50 — isolate explicit watchdog startup
 
 Batch49 source `96e842d498e54a6258ef428c4b27dad9f54e04c2` passed1559 Python and all PostgreSQL checks (including3 new watchdog checks), actual backup/restore and security39014912887. Compose39014912873 failed at build_and_start with COMMAND_FAILED; its sanitized raw artifact is retained in batch49-failed-compose.zip with verified SHA256/CRC. The new monitor shared the observed-paper profile although default monitor startup is disabled and exits without a health heartbeat. Separated its profile to observed-watchdog, so existing worker startup does not implicitly launch an unapproved monitor. Explicit monitor use still requires the approval variable. No safety gate was removed and no workflow was added. Existing smoke guard tests pass; actual Compose acceptance requires the next CI run. Mobile JSON preflight work is uncommitted and excluded from this correction.
+
+
+## Batch51 — bounded backup JSON preflight (source CI pending)
+
+Market Paper and Demo now check UTF8 byte size, depth and value count before building decoded JSON; duplicate and escaped-equivalent keys are rejected. Embedded JSON limits/duplicate errors cannot bypass credential screening. Original-event archive validation iterates segments without flattening all events. Existing account/financial checks and stopped empty-target restore remain.9 scanner tests and3 backup regressions were added; Dart SDK3.13.5 was downloaded to scratch but its VM could not start under the executor (stack bounds unavailable), so no local Flutter/Dart success is claimed. Existing CI is the source acceptance gate. Full-file native decoding and existing64/16/2MiB limits remain open, documented in docs/BOUNDED_BACKUP_JSON_20261017.md. No pruning or user-data modification.
+
+Batch50 profile correction saved at `aaad96d48c326c3af94d1c161b682cac67dffde7`;24 affected Python tests passed. Backend39015198908 is running. Batch48 Direct39014634258 completed successfully; raw artifact verification follows.

@@ -1,0 +1,11 @@
+# Batch51 — bounded JSON preflight before backup decoding
+
+The previous phone backup path decoded JSON before checking depth/node limits. A small deeply nested or very wide input could allocate an unsafe graph before rejection. It also allocated a second complete UTF8 buffer just to check bytes and flattened all journal archive segments for validation.
+
+`bounded_json.dart` scans UTF8 size without an encoded buffer, then checks JSON grammar, exact value-node counts, depth and decoded duplicate keys before `jsonDecode` builds the graph. It retains only nesting state and current-object keys, bounded by the same input/node limits. Strings/escapes are distinguished from structure; malformed syntax remains invalid. Duplicate keys, including escaped-equivalent names, are explicitly rejected instead of overwriting financial originals.
+
+Market Paper and Demo imports now use preflight for the outer document and JSON embedded inside strings. Structural-limit and duplicate-key failures cannot be swallowed as ordinary prose; credential screening still runs before financial validation. Market Paper walks original archive segments with an iterator instead of flattening them. Existing financial validation, restore-only-into-empty state, disabled imported accounts, originals and byte/node/depth capacity limits are retained.
+
+This is bounded preflight and reduced transient copying, not an incremental native file store or unlimited backup capacity. The decoded graph and native bridge still materialize complete bounded documents.64MiB native root,16MiB Market Paper export and2MiB Demo export limits remain; no data is pruned or migrated by this change.
+
+Tests cover UTF8 boundary,1000 randomized nested values (also in a checked-in Flutter test), duplicate/escaped keys, strings containing braces, grammar failures,20000-level nesting,20000 flat values and backup rollback/credential cases. The standalone Dart3.13.5 runtime could print its version but could not start the VM in this executor (Failed to retrieve stack bounds); its tests are NOT claimed as passed. Flutter source acceptance uses existing Actions without APK. New checked-in Flutter tests include9 scanner cases and3 backup regressions. No Python production change in this batch.

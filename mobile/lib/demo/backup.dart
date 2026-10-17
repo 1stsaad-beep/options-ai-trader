@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../bounded_json.dart';
 
 import 'engine.dart';
 
@@ -22,7 +23,7 @@ class DemoBackup {
   static const maxBytes = 2 * 1024 * 1024;
 
   static void _bounded(String text) {
-    if (text.length > maxBytes || utf8.encode(text).length > maxBytes) {
+    if (text.length > maxBytes) {
       throw const DemoRejected('النسخة تتجاوز حد 2 MiB؛ لم تتغير بيانات الجهاز');
     }
   }
@@ -39,7 +40,7 @@ class DemoBackup {
   static DemoBackupPreview inspect(String text) {
     _bounded(text);
     try {
-      final envelope = jsonDecode(text);
+      final envelope = decodeBoundedJson(text, maxBytes: maxBytes, maxNodes: 4, maxDepth: 1);
       if (envelope is! Map<String, dynamic> ||
           envelope.length != 3 ||
           !['format', 'version', 'payload'].every(envelope.containsKey) ||
@@ -49,7 +50,7 @@ class DemoBackup {
       }
       final payload = envelope['payload'] as String;
       _bounded(payload);
-      final data = jsonDecode(payload);
+      final data = decodeBoundedJson(payload, maxBytes: maxBytes, maxNodes: 100000, maxDepth: 64);
       const keys = ['version', 'source', 'tick', 'sequence', 'scenario',
         'theme', 'market', 'global_stop', 'accounts'];
       if (data is! Map<String, dynamic> || data.length != keys.length ||
@@ -86,7 +87,10 @@ class DemoBackup {
           final trimmed = value.trimLeft();
           if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
             dynamic nested;
-            try { nested = jsonDecode(value); } on FormatException { return; }
+            try {
+              nested = decodeBoundedJson(value, maxBytes: maxBytes,
+                maxNodes: 100000 - visited, maxDepth: 64 - depth - 1);
+            } on JsonBoundsException { rethrow; } on JsonDuplicateKeyException { rethrow; } on FormatException { return; }
             inspectFields(nested, depth + 1);
           }
         }
