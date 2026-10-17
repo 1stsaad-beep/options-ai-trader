@@ -129,8 +129,9 @@ class BrokerPosition {
   final String symbol;
   final String quantity;
   final String? averagePrice, marketValue, unrealizedPl;
+  final String? contractId; // IBKR conid
   const BrokerPosition({required this.symbol, required this.quantity,
-      this.averagePrice, this.marketValue, this.unrealizedPl});
+      this.averagePrice, this.marketValue, this.unrealizedPl, this.contractId});
 }
 
 enum OrderSide { buy, sell }

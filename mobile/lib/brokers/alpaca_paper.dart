@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'broker_adapter.dart';
 import 'broker_http.dart';
 import 'broker_models.dart';
+import 'broker_options.dart';
 
 class AlpacaPaperAdapter implements BrokerAdapter {
   static const host = 'paper-api.alpaca.markets';
@@ -50,6 +51,10 @@ class AlpacaPaperAdapter implements BrokerAdapter {
             unrealizedPl: decimalText(r['unrealized_pl']))
     ];
   }
+
+  /// paper-api has no option quotes; the allowlist is not widened for data hosts.
+  @override
+  Future<BrokerQuote?> optionQuote(OccContract contract, {String? conid}) async => null;
 
   @override
   Future<BrokerOrderAck> submitPaperOrder(PaperOrderRequest o) async {

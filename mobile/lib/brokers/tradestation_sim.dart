@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'broker_adapter.dart';
 import 'broker_http.dart';
 import 'broker_models.dart';
+import 'broker_options.dart';
 
 class TradeStationSimAdapter implements BrokerAdapter {
   static const apiHost = 'sim-api.tradestation.com';
@@ -106,6 +107,23 @@ class TradeStationSimAdapter implements BrokerAdapter {
             averagePrice: decimalText(p['AveragePrice']), marketValue: decimalText(p['MarketValue']),
             unrealizedPl: decimalText(p['UnrealizedProfitLoss']))
     ];
+  }
+
+  /// SIM quote. TradeStation quotes carry no quote timestamp, so freshness is the
+  /// local receipt time (`timeSource: RECEIVED`), which is recorded with the order.
+  @override
+  Future<BrokerQuote?> optionQuote(OccContract contract, {String? conid}) async {
+    final symbol = contract.tradeStationSymbol;
+    final j = asMap(await _http.send('GET', _uri('/marketdata/quotes/$symbol'),
+        headers: await _auth()));
+    final rows = asList(j['Quotes']).map(asMap).where((q) => q['Symbol'] == symbol).toList();
+    if (rows.isEmpty) return null;
+    final q = rows.first;
+    final bid = decimalCents(q['Bid']?.toString()), ask = decimalCents(q['Ask']?.toString(), up: true);
+    final bs = int.tryParse('${q['BidSize'] ?? ''}'), as = int.tryParse('${q['AskSize'] ?? ''}');
+    if (bid == null || ask == null || bs == null || as == null) return null;
+    return BrokerQuote(contract: contract.occ, bid: bid, ask: ask, bidSize: bs, askSize: as, time: now(),
+        source: 'tradestation-sim', timeSource: 'RECEIVED');
   }
 
   @override

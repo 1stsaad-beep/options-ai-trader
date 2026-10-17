@@ -89,3 +89,8 @@ On the B1 source, the agent box (JDK 17, SDK 36, build-tools 36.0.0, NDK 28.2) p
 ## 2026-10-17 batch B3 — Paper balances/positions screen
 
 A read-only per-account portfolio screen (balances, positions, receipt time, 60 s stale marker, failed refresh never mixed with old data) is implemented for Alpaca, IBKR and TradeStation Paper accounts. 1046 Flutter tests pass and the debug APK builds. See docs/BROKER_PORTFOLIO_B3_20261017.md. Still OPEN: real Paper observations, persisted observation history, portfolio totals, order entry through admission (B4) and reconciliation (B5). All gaps above remain as recorded.
+
+
+## 2026-10-17 batch B4 — Paper orders through admission
+
+Broker Paper option orders (Alpaca, IBKR, TradeStation) now go through ticket -> review -> explicit confirmation -> full re-admission -> journaled single send. They reuse the session/expiry calendar, quote-qualification thresholds, conservative fee, risk-cap defaults and the opposite-direction lock. Uncertain sends block the account. 1064 Flutter tests pass. See docs/BROKER_PAPER_ORDERS_B4_20261017.md. Still OPEN: real Paper order evidence, same-day realized-loss input, a TradeStation quote timestamp, IBKR conid lookup and confirmation handling, order-status/fill reconciliation (B5). B6 (IBKR connectivity) and B7 (TradeStation OAuth) are deferred pending user decisions. All gaps above remain as recorded.

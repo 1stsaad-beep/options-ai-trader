@@ -7,6 +7,7 @@ import 'package:http/testing.dart';
 import 'package:options_ai_trader/brokers/broker_accounts_screen.dart';
 import 'package:options_ai_trader/brokers/broker_adapter.dart';
 import 'package:options_ai_trader/brokers/broker_models.dart';
+import 'package:options_ai_trader/brokers/broker_options.dart';
 import 'package:options_ai_trader/brokers/broker_portfolio.dart';
 import 'package:options_ai_trader/brokers/broker_portfolio_screen.dart';
 import 'package:options_ai_trader/brokers/broker_store.dart';
@@ -27,6 +28,8 @@ class FakeAdapter implements BrokerAdapter {
   Future<List<BrokerPosition>> positions() async { positionCalls++; return const []; }
   @override
   Future<BrokerOrderAck> submitPaperOrder(PaperOrderRequest order) => throw UnimplementedError();
+  @override
+  Future<BrokerQuote?> optionQuote(OccContract contract, {String? conid}) async => null;
 }
 
 // HTTP/storage futures need real async turns interleaved with frames; the

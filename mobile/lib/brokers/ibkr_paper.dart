@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'broker_adapter.dart';
 import 'broker_http.dart';
 import 'broker_models.dart';
+import 'broker_options.dart';
 
 class IbkrPaperAdapter implements BrokerAdapter {
   static final paperAccount = RegExp(r'^DU\d{4,10}$');
@@ -65,8 +66,27 @@ class IbkrPaperAdapter implements BrokerAdapter {
       for (final r in rows.map(asMap))
         BrokerPosition(symbol: '${r['contractDesc'] ?? r['conid']}', quantity: decimalText(r['position'])!,
             averagePrice: decimalText(r['avgPrice']), marketValue: decimalText(r['mktValue']),
-            unrealizedPl: decimalText(r['unrealizedPnl']))
+            unrealizedPl: decimalText(r['unrealizedPnl']),
+            contractId: r['conid'] == null ? null : '${r['conid']}')
     ];
+  }
+
+  /// Snapshot fields 84 bid, 86 ask, 88 bid size, 85 ask size; `_updated` epoch ms.
+  /// The first snapshot after subscribing often lacks fields: that yields null (no quote).
+  @override
+  Future<BrokerQuote?> optionQuote(OccContract contract, {String? conid}) async {
+    if (conid == null || !RegExp(r'^\d{1,12}$').hasMatch(conid)) return null;
+    final rows = asList(await _http.send('GET', _base.replace(path: '${_base.path}/iserver/marketdata/snapshot',
+        queryParameters: {'conids': conid, 'fields': '84,86,88,85'})));
+    if (rows.isEmpty) return null;
+    final r = asMap(rows.first);
+    if ('${r['conid']}' != conid) return null;
+    final bid = decimalCents(r['84']?.toString()), ask = decimalCents(r['86']?.toString(), up: true);
+    final bs = int.tryParse('${r['88'] ?? ''}'.replaceAll(',', '')), as = int.tryParse('${r['85'] ?? ''}'.replaceAll(',', ''));
+    final updated = r['_updated'];
+    if (bid == null || ask == null || bs == null || as == null || updated is! int) return null;
+    return BrokerQuote(contract: contract.occ, bid: bid, ask: ask, bidSize: bs, askSize: as,
+        time: DateTime.fromMillisecondsSinceEpoch(updated, isUtc: true), source: 'ibkr-paper', timeSource: 'QUOTE');
   }
 
   @override
