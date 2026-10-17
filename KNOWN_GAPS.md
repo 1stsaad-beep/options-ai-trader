@@ -1,10 +1,12 @@
 # Known gaps and closed defects
 
-Batch66 adds a compatible standalone durable receiver (1729 local Python; source CI pending). Independent outside-host/database outage detection, deployed receipt/delivery and human notification remain separate work; no receiver was deployed.
+## Current checkpoint65–70 — PARTIAL
 
-Batch65 implements bounded provider DNS and whole-network-request deadlines with30 new tests and1695 full local Python passes; source CI39038281766 and security39038281736 accepted. See docs/PROVIDER_DEADLINES_20261017.md. This closes that scoped software gap, not the other phase-one requirements.
+Provider GET total network deadlines/DNS are closed. Compatible durable alert receiver, readonly dedicated-token health exporter and strict bounded external health probe are implemented and tested. Source70 `23f23f40f92347d737b87210ce5ea0bb57e181ee` also hardens FIFO/post-stat config reads. Accepted1789 Python, PostgreSQL22/6/10/5/35/4/23 and23Compose; security39040474325 passed. Original artifacts verified SHA256/CRC in batch70-ci-index.json. Mobile/native/financial-v1/v2/workflows remain unchanged from accepted64.
 
-## Current checkpoint57–64 — still PARTIAL
+Persistent outside monitor/outage journal/sender loop and delivery UI diagnostics remain software work; exporter/probe alone are not continuous monitoring. Direct eligibility, full wave/Demo/trailing parity, native incremental capacity/migration/iOS durability, trusted historical checkpoints and qualified delivery-share marks remain open. Deployment/OPRA/three real sessions are separate external gates. No phase-one closure, APK, actual outbound message or deployment. Current source-bound status/resume reports supersede the historical checkpoints below.
+
+## Historical checkpoint57–64 — still PARTIAL
 
 Server metadata transport, original SQL capture/account bindings and the phone server-report screen are implemented and accepted. Durable opt-in notification delivery with exact ACK/retry/fencing, immutable receipts and a disabled Compose profile are also accepted (1665 Python;32 observed PostgreSQL;23 backup/restore;23 Compose on62). Bounded API transport acceptance: Source64 accepted1005 visible Flutter/61 JVM/23 chart/6 Golden with zero failures or skips; Direct39022338330 and chart39022338317 passed, with original artifacts verified by SHA256/CRC. This supersedes only the blanket absence of those components. Direct metadata and adjusted/historical qualification, wave/Demo/trailing semantics, native whole-JSON limits/safe migration/iOS durability, trusted checkpoints and qualified delivery-share marks, compatible receiver integration and independent host/database-outage monitoring remain software work. OPRA and real deployment/three sessions remain separate external gates. Do not repeat accepted batches; read current source-bound reports. No stage-one closure or APK.
 

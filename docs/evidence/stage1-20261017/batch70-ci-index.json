@@ -1,0 +1,58 @@
+{
+  "artifacts": [
+    {
+      "batch": 70,
+      "id": 12103633299,
+      "name": "backend-test-results",
+      "hash": "bf442d7d9788f2b15d8153bb64f5084766388e3eb429100570f453b85046f1ef",
+      "source": "23f23f40f92347d737b87210ce5ea0bb57e181ee",
+      "run": 39040474320,
+      "conclusion": "success",
+      "file": "batch70-backend-test-results.zip",
+      "crcVerified": true
+    },
+    {
+      "batch": 70,
+      "id": 12102859751,
+      "name": "compose-runtime-result",
+      "hash": "a7c1353e2052a8c74878f1a69b2a9cf04064341df732afa2482c5c6267e6173e",
+      "source": "23f23f40f92347d737b87210ce5ea0bb57e181ee",
+      "run": 39040474320,
+      "conclusion": "success",
+      "file": "batch70-compose-runtime-result.zip",
+      "crcVerified": true
+    },
+    {
+      "batch": 70,
+      "id": 12104111216,
+      "name": "v1-security-results",
+      "hash": "b43bf6145898c2be6f95535ae8a655ddb066fa86f0c0b1c460c4b5520b9fd15f",
+      "source": "23f23f40f92347d737b87210ce5ea0bb57e181ee",
+      "run": 39040474325,
+      "conclusion": "success",
+      "file": "batch70-v1-security-results.zip",
+      "crcVerified": true
+    }
+  ],
+  "python": 1789,
+  "postgresql": [
+    22,
+    6,
+    10,
+    5,
+    35,
+    4,
+    23
+  ],
+  "compose": 23,
+  "security": {
+    "files": 1174,
+    "historyBlobs": 2376,
+    "historyCommits": 232,
+    "patternFindings": 0,
+    "pythonPackages": 24,
+    "pubPackages": 44,
+    "knownAdvisories": 0
+  },
+  "externalMarketConnection": false
+}
