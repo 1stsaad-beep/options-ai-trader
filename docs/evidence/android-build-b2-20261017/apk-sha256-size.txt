@@ -1,0 +1,4 @@
+e499e64d325a5d11d8da693afd0a42ac7f40e7db3889c8948b43fc00f7fdb2c4  app-debug.apk
+3e333e81006805ae9ed59560f76800a3a3683217d70f4b318f7fd5e5427b39bd  app-release.apk
+app-debug.apk 165241370 bytes
+app-release.apk 61904547 bytes

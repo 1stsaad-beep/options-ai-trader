@@ -1,0 +1,2 @@
+Native monitor policy: 30 checks passed; no Android device or network used
+Alpaca policy: 44 checks passed; no network

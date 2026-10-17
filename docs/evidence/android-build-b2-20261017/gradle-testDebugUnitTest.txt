@@ -1,0 +1,276 @@
+Downloading https://services.gradle.org/distributions/gradle-9.3.1-all.zip
+................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+Unzipping /workspace/tools/gradle-home/wrapper/dists/gradle-9.3.1-all/9ot9r568e8zfvvd4mn8rbu1j0/gradle-9.3.1-all.zip to /workspace/tools/gradle-home/wrapper/dists/gradle-9.3.1-all/9ot9r568e8zfvvd4mn8rbu1j0
+Set executable permissions for: /workspace/tools/gradle-home/wrapper/dists/gradle-9.3.1-all/9ot9r568e8zfvvd4mn8rbu1j0/gradle-9.3.1/bin/gradle
+
+Welcome to Gradle 9.3.1!
+
+Here are the highlights of this release:
+ - Test reporting improvements
+ - Error and warning improvements
+ - Build authoring improvements
+
+For more details see https://docs.gradle.org/9.3.1/release-notes.html
+
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :gradle:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle:pluginDescriptors
+> Task :gradle:processResources
+
+> Task :gradle:compileKotlin
+w: file:///workspace/tools/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:13:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///workspace/tools/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:15:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///workspace/tools/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:17:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///workspace/tools/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:19:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///workspace/tools/flutter/packages/flutter_tools/gradle/src/main/kotlin/FlutterPlugin.kt:12:8 'interface ApkVariant : Any, BaseVariant, InstallableVariant, AndroidArtifactVariant, InternalBaseVariant' is deprecated. Deprecated in Java.
+w: file:///workspace/tools/flutter/packages/flutter_tools/gradle/src/main/kotlin/FlutterPlugin.kt:664:69 'interface ApkVariant : Any, BaseVariant, InstallableVariant, AndroidArtifactVariant, InternalBaseVariant' is deprecated. Deprecated in Java.
+w: file:///workspace/tools/flutter/packages/flutter_tools/gradle/src/main/kotlin/FlutterPluginUtils.kt:766:29 Condition is always 'true'.
+w: file:///workspace/tools/flutter/packages/flutter_tools/gradle/src/main/kotlin/plugins/PluginHandler.kt:168:70 Unchecked cast of 'NamedDomainObjectContainer<out BuildType>' to 'NamedDomainObjectContainer<BuildType>'.
+w: file:///workspace/tools/flutter/packages/flutter_tools/gradle/src/main/kotlin/plugins/PluginHandler.kt:169:75 Unchecked cast of 'NamedDomainObjectContainer<out BuildType>' to 'NamedDomainObjectContainer<BuildType>'.
+
+> Task :gradle:compileJava NO-SOURCE
+> Task :gradle:compileGroovy NO-SOURCE
+> Task :gradle:classes
+> Task :gradle:jar
+
+> Configure project :app
+WARNING: The option setting 'android.builtInKotlin=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.newDsl=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+w: file:///workspace/options-ai-trader/mobile/android/app/build.gradle.kts:7:1: 'fun Project.android(configure: Action<BaseAppModuleExtension>): Unit' is deprecated. Replaced by com.android.build.api.dsl.ApplicationExtension.
+This class is not used for the public extensions in AGP when android.newDsl=true, which is the default in AGP 9.0, and will be removed in AGP 10.0.
+Checking the license for package NDK (Side by side) 28.2.13676358 in /workspace/tools/android-sdk/licenses
+License for package NDK (Side by side) 28.2.13676358 accepted.
+Preparing "Install NDK (Side by side) 28.2.13676358 v.28.2.13676358".
+"Install NDK (Side by side) 28.2.13676358 v.28.2.13676358" ready.
+Installing NDK (Side by side) 28.2.13676358 in /workspace/tools/android-sdk/ndk/28.2.13676358
+"Install NDK (Side by side) 28.2.13676358 v.28.2.13676358" complete.
+"Install NDK (Side by side) 28.2.13676358 v.28.2.13676358" finished.
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':app' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :flutter_secure_storage
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':flutter_secure_storage' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :jni
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':jni' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :jni_flutter
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':jni_flutter' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+
+> Configure project :shared_preferences_android
+w: file:///home/box/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.28/android/build.gradle.kts:40:1: 'fun Project.android(configure: Action<LibraryExtension>): Unit' is deprecated. Replaced by com.android.build.api.dsl.LibraryExtension.
+This class is not used for the public extensions in AGP when android.newDsl=true, which is the default in AGP 9.0, and will be removed in AGP 10.0.
+w: ⚠️ Deprecated 'org.jetbrains.kotlin.android' plugin usage
+The 'org.jetbrains.kotlin.android' plugin in project ':shared_preferences_android' is no longer required for Kotlin support since AGP 9.0.
+Solution: Remove both `android.builtInKotlin=true` and `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin.
+See https://kotl.in/gradle/agp-built-in-kotlin for more details.
+
+Checking the license for package Android SDK Platform 35 in /workspace/tools/android-sdk/licenses
+License for package Android SDK Platform 35 accepted.
+Preparing "Install Android SDK Platform 35 (revision 2)".
+"Install Android SDK Platform 35 (revision 2)" ready.
+Installing Android SDK Platform 35 in /workspace/tools/android-sdk/platforms/android-35
+"Install Android SDK Platform 35 (revision 2)" complete.
+"Install Android SDK Platform 35 (revision 2)" finished.
+
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:cleanMergeDebugAssets UP-TO-DATE
+> Task :app:compileFlutterBuildDebug
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:validateCompileSdkVersion
+> Task :app:preBuild
+> Task :app:preDebugBuild
+> Task :flutter_secure_storage:generateDebugAssets UP-TO-DATE
+> Task :flutter_secure_storage:preBuild UP-TO-DATE
+> Task :flutter_secure_storage:preDebugBuild UP-TO-DATE
+> Task :flutter_secure_storage:mergeDebugAssets
+> Task :jni:generateDebugAssets UP-TO-DATE
+> Task :jni:preBuild UP-TO-DATE
+> Task :jni:preDebugBuild UP-TO-DATE
+> Task :jni:mergeDebugAssets
+> Task :jni_flutter:generateDebugAssets UP-TO-DATE
+> Task :jni_flutter:preBuild UP-TO-DATE
+> Task :jni_flutter:preDebugBuild UP-TO-DATE
+> Task :jni_flutter:mergeDebugAssets
+> Task :shared_preferences_android:generateDebugAssets UP-TO-DATE
+> Task :shared_preferences_android:preBuild UP-TO-DATE
+> Task :shared_preferences_android:preDebugBuild UP-TO-DATE
+> Task :shared_preferences_android:mergeDebugAssets
+> Task :app:mergeDebugAssets
+> Task :app:copyFlutterAssetsDebug
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :flutter_secure_storage:processDebugNavigationResources
+> Task :jni:processDebugNavigationResources
+> Task :jni_flutter:processDebugNavigationResources
+> Task :shared_preferences_android:processDebugNavigationResources
+> Task :app:processDebugNavigationResources
+> Task :flutter_secure_storage:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :flutter_secure_storage:generateDebugBuildConfig
+> Task :flutter_secure_storage:generateDebugResources
+> Task :flutter_secure_storage:packageDebugResources
+> Task :jni:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :jni:generateDebugResources
+> Task :flutter_secure_storage:javaPreCompileDebug
+> Task :jni:packageDebugResources
+> Task :flutter_secure_storage:parseDebugLocalResources
+> Task :app:parseDebugLocalResources
+> Task :jni:parseDebugLocalResources
+> Task :jni:javaPreCompileDebug
+> Task :jni_flutter:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :jni_flutter:generateDebugResources
+> Task :jni_flutter:packageDebugResources
+> Task :jni:generateDebugRFile
+> Task :app:generateDebugRFile
+> Task :flutter_secure_storage:generateDebugRFile
+> Task :flutter_secure_storage:compileDebugKotlin NO-SOURCE
+> Task :jni_flutter:parseDebugLocalResources
+> Task :flutter_secure_storage:compileDebugJavaWithJavac
+> Task :jni:compileDebugKotlin NO-SOURCE
+> Task :flutter_secure_storage:bundleLibCompileToJarDebug
+> Task :jni:compileDebugJavaWithJavac
+> Task :jni:bundleLibCompileToJarDebug
+> Task :shared_preferences_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :jni_flutter:javaPreCompileDebug
+> Task :jni_flutter:generateDebugRFile
+> Task :shared_preferences_android:generateDebugResources
+> Task :jni_flutter:compileDebugKotlin NO-SOURCE
+> Task :jni_flutter:compileDebugJavaWithJavac
+> Task :jni_flutter:bundleLibCompileToJarDebug
+> Task :shared_preferences_android:packageDebugResources
+> Task :shared_preferences_android:javaPreCompileDebug
+> Task :shared_preferences_android:parseDebugLocalResources
+> Task :app:javaPreCompileDebug
+> Task :shared_preferences_android:generateDebugRFile
+> Task :flutter_secure_storage:writeDebugAarMetadata
+> Task :jni:writeDebugAarMetadata
+> Task :jni_flutter:writeDebugAarMetadata
+> Task :shared_preferences_android:writeDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:checkDebugAarMetadata
+> Task :app:compileDebugNavigationResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :flutter_secure_storage:extractDeepLinksDebug
+> Task :jni:extractDeepLinksDebug
+> Task :app:mergeDebugResources
+> Task :jni_flutter:extractDeepLinksDebug
+
+> Task :jni:processDebugManifest
+package="com.github.dart_lang.jni" found in source AndroidManifest.xml: /home/box/.pub-cache/hosted/pub.dev/jni-1.1.0/android/src/main/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="com.github.dart_lang.jni" from the source AndroidManifest.xml: /home/box/.pub-cache/hosted/pub.dev/jni-1.1.0/android/src/main/AndroidManifest.xml.
+
+> Task :jni_flutter:processDebugManifest
+package="com.github.dart_lang.jni_flutter" found in source AndroidManifest.xml: /home/box/.pub-cache/hosted/pub.dev/jni_flutter-1.0.4+1/android/src/main/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="com.github.dart_lang.jni_flutter" from the source AndroidManifest.xml: /home/box/.pub-cache/hosted/pub.dev/jni_flutter-1.0.4+1/android/src/main/AndroidManifest.xml.
+
+> Task :flutter_secure_storage:processDebugManifest
+> Task :shared_preferences_android:extractDeepLinksDebug
+> Task :flutter_secure_storage:mapDebugSourceSetPaths
+
+> Task :shared_preferences_android:processDebugManifest
+package="io.flutter.plugins.sharedpreferences" found in source AndroidManifest.xml: /home/box/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.28/android/src/main/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="io.flutter.plugins.sharedpreferences" from the source AndroidManifest.xml: /home/box/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.28/android/src/main/AndroidManifest.xml.
+
+> Task :app:processDebugMainManifest
+> Task :app:outputDebugAppLinkSettings
+> Task :app:processDebugManifest
+> Task :flutter_secure_storage:compileDebugLibraryResources
+> Task :app:processDebugManifestForPackage
+> Task :jni:mapDebugSourceSetPaths
+> Task :jni:compileDebugLibraryResources
+> Task :jni_flutter:mapDebugSourceSetPaths
+> Task :jni_flutter:compileDebugLibraryResources
+> Task :shared_preferences_android:mapDebugSourceSetPaths
+> Task :app:preDebugUnitTestBuild
+> Task :shared_preferences_android:compileDebugLibraryResources
+> Task :app:javaPreCompileDebugUnitTest
+> Task :flutter_secure_storage:processDebugJavaRes NO-SOURCE
+> Task :flutter_secure_storage:bundleLibRuntimeToJarDebug
+> Task :jni:bundleLibRuntimeToJarDebug
+> Task :jni:processDebugJavaRes NO-SOURCE
+> Task :jni_flutter:bundleLibRuntimeToJarDebug
+> Task :jni_flutter:processDebugJavaRes NO-SOURCE
+> Task :app:processDebugResources
+
+> Task :shared_preferences_android:compileDebugKotlin
+w: file:///home/box/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.28/android/src/main/kotlin/io/flutter/plugins/sharedpreferences/SharedPreferencesPlugin.kt:450:52 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+
+> Task :shared_preferences_android:compileDebugJavaWithJavac NO-SOURCE
+> Task :shared_preferences_android:bundleLibCompileToJarDebug
+> Task :shared_preferences_android:bundleLibRuntimeToJarDebug
+> Task :shared_preferences_android:processDebugJavaRes
+
+> Task :app:compileDebugKotlin
+w: file:///workspace/options-ai-trader/mobile/android/app/src/main/kotlin/com/optionsaitrader/options_ai_trader/AlpacaMonitorService.kt:42:103 'constructor(p0: Context!): Notification.Builder' is deprecated. Deprecated in Java.
+w: file:///workspace/options-ai-trader/mobile/android/app/src/main/kotlin/com/optionsaitrader/options_ai_trader/AlpacaSession.kt:164:37 The corresponding parameter in the supertype 'WebSocketListener' is named 'webSocket'. This may cause problems when calling this function with named arguments.
+w: file:///workspace/options-ai-trader/mobile/android/app/src/main/kotlin/com/optionsaitrader/options_ai_trader/AlpacaSession.kt:172:40 The corresponding parameter in the supertype 'WebSocketListener' is named 'webSocket'. This may cause problems when calling this function with named arguments.
+w: file:///workspace/options-ai-trader/mobile/android/app/src/main/kotlin/com/optionsaitrader/options_ai_trader/AlpacaSession.kt:175:40 The corresponding parameter in the supertype 'WebSocketListener' is named 'webSocket'. This may cause problems when calling this function with named arguments.
+w: file:///workspace/options-ai-trader/mobile/android/app/src/main/kotlin/com/optionsaitrader/options_ai_trader/AlpacaSession.kt:187:39 The corresponding parameter in the supertype 'WebSocketListener' is named 'webSocket'. This may cause problems when calling this function with named arguments.
+w: file:///workspace/options-ai-trader/mobile/android/app/src/main/kotlin/com/optionsaitrader/options_ai_trader/AlpacaSession.kt:190:40 The corresponding parameter in the supertype 'WebSocketListener' is named 'webSocket'. This may cause problems when calling this function with named arguments.
+w: file:///workspace/options-ai-trader/mobile/android/app/src/main/kotlin/com/optionsaitrader/options_ai_trader/MarketMonitorService.kt:93:110 'constructor(p0: Context!): Notification.Builder' is deprecated. Deprecated in Java.
+w: file:///workspace/options-ai-trader/mobile/android/app/src/main/kotlin/com/optionsaitrader/options_ai_trader/PaperIndependentStore.kt:91:46 Unnecessary non-null assertion (!!) on a non-null receiver of type 'JSONObject'.
+w: file:///workspace/options-ai-trader/mobile/android/app/src/main/kotlin/com/optionsaitrader/options_ai_trader/PaperIndependentStore.kt:98:30 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:processDebugJavaRes
+> Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:compileDebugUnitTestKotlin
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugUnitTestJavaRes
+> Task :app:testDebugUnitTest
+
+[Incubating] Problems report is available at: file:///workspace/options-ai-trader/mobile/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 2m 56s
+97 actionable tasks: 96 executed, 1 up-to-date
+
+real	2m56.683s
+user	0m7.359s
+sys	0m2.002s

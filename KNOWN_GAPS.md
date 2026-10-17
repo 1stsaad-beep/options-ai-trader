@@ -79,3 +79,8 @@ Latest source40 accepted:1460Python; unchanged mobile/native39 accepted905Flutte
 ## 2026-10-17 batch B1 — Paper broker adapters (local, not pushed)
 
 Per the user's approved design, Paper connectivity for Alpaca (`paper-api.alpaca.markets`), IBKR Client Portal (DU Paper accounts only) and TradeStation SIM (`sim-api.tradestation.com`, OAuth refresh token) is implemented in `mobile/lib/brokers/`, with several accounts per broker, simple masked key entry and `flutter_secure_storage` (Android Keystore) storage. Live is hard-locked (`OAT_LIVE_TRADING_APPROVED` defaults false and no Live adapter exists). Local: analyze clean, 1040 Flutter tests passed (baseline 1011). See docs/BROKER_PAPER_ADAPTERS_B1_20261017.md. Still OPEN: real Paper connection evidence, Android build/native/CI acceptance, IBKR gateway TLS/on-device strategy, TradeStation in-app OAuth, wiring Paper orders into the existing admission/risk/ledger path, merging the separate Direct Alpaca data vault. All gaps above remain as recorded.
+
+
+## 2026-10-17 batch B2 — local Android build verification (not pushed)
+
+On the B1 source, the agent box (JDK 17, SDK 36, build-tools 36.0.0, NDK 28.2) passed 61 of 61 JVM unit tests and the 30/44 native policy checks. Debug and CI-style release-preview APKs built, and flutter_secure_storage 11.2.0 integrates at minSdk 24. 94 runtime Maven packages have no OSV advisories. No code changes were needed. See docs/ANDROID_BUILD_B2_20261017.md. Still OPEN: emulator/device and androidTest acceptance, on-device Keystore behaviour, a stable signer (the box APKs are debug-signed and cannot replace Build23), and GitHub CI on this source. All gaps above remain as recorded.
