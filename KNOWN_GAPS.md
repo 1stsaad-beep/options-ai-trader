@@ -74,3 +74,8 @@ Latest source40 accepted:1460Python; unchanged mobile/native39 accepted905Flutte
 
 
 2026-10-17 checkpoint41–47: durable owner-polled alert history/ACK is implemented, with no external push/outage monitor claim. Capture demand rotates within existing bounds and prioritizes owned quotes; partial coverage is explicit, not continuous coverage of every contract. Event page PostgreSQL buffering/wire size and duplicate historical replay are fixed. The phone whole-JSON/64MiB/export16MiB limits, trusted persistent checkpoints, full Greek/deliverable qualification, wave/Demo/trailing parity and daily/delivery valuation remain OPEN. Read docs/STAGE1_STATUS_20261017_AR.md; no overall stage-one closure.
+
+
+## 2026-10-17 batch B1 — Paper broker adapters (local, not pushed)
+
+Per the user's approved design, Paper connectivity for Alpaca (`paper-api.alpaca.markets`), IBKR Client Portal (DU Paper accounts only) and TradeStation SIM (`sim-api.tradestation.com`, OAuth refresh token) is implemented in `mobile/lib/brokers/`, with several accounts per broker, simple masked key entry and `flutter_secure_storage` (Android Keystore) storage. Live is hard-locked (`OAT_LIVE_TRADING_APPROVED` defaults false and no Live adapter exists). Local: analyze clean, 1040 Flutter tests passed (baseline 1011). See docs/BROKER_PAPER_ADAPTERS_B1_20261017.md. Still OPEN: real Paper connection evidence, Android build/native/CI acceptance, IBKR gateway TLS/on-device strategy, TradeStation in-app OAuth, wiring Paper orders into the existing admission/risk/ledger path, merging the separate Direct Alpaca data vault. All gaps above remain as recorded.

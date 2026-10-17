@@ -1,0 +1,1069 @@
+Resolving dependencies...
+Downloading packages...
+  code_assets 1.2.1 (2.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+  hooks 2.0.2 (2.2.0 available)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  objective_c 9.5.0 (9.6.2 available)
+  record_use 0.6.0 (1.1.1 available)
+  shared_preferences_android 2.4.28 (2.5.0 available)
+  shared_preferences_foundation 2.5.7 (2.6.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.3 available)
+  vm_service 15.3.0 (15.4.0 available)
+Got dependencies!
+13 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart
+00:00 +0: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +1: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +2: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +3: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +4: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +5: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +6: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +7: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +8: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +9: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +10: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +11: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +12: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +13: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +14: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +15: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +16: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: exact byte limit and split UTF8 are accepted
+00:00 +17: /workspace/options-ai-trader/mobile/test/bounded_json_test.dart: duplicate and escaped duplicate keys cannot silently overwrite originals
+00:00 +18: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: oversized chunked reply cancels without mutation retry
+00:00 +19: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: oversized chunked reply cancels without mutation retry
+00:00 +20: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: oversized chunked reply cancels without mutation retry
+00:00 +21: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: oversized chunked reply cancels without mutation retry
+00:00 +22: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: oversized declared reply cancels without mutation retry
+00:00 +23: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: ambiguous or deeply nested server JSON of 13 characters is rejected before decode
+00:00 +24: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: ambiguous or deeply nested server JSON of 18 characters is rejected before decode
+00:00 +25: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: ambiguous or deeply nested server JSON of 131 characters is rejected before decode
+00:00 +26: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +26: loading /workspace/options-ai-trader/mobile/test/chart_layers_golden_test.dart
+Warning: A tag was used that wasn't specified in dart_test.yaml.
+  golden was used in the suite itself
+
+00:00 +26: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +27: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +28: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +29: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +30: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +31: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +32: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +33: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +34: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +35: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +36: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +37: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +38: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:00 +39: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +40: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +41: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +42: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +43: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +44: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +45: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +46: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +47: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +48: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +49: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +50: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +51: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +52: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +53: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +54: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +55: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +56: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +57: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +58: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +59: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +60: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +61: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +62: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +63: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +64: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +65: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +66: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +67: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +68: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +69: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +70: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +71: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +72: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +73: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +74: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +75: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +76: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +77: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +78: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +79: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +80: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +81: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +82: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +83: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +84: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +85: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +86: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +87: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +88: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +89: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +90: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +91: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +92: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +93: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +94: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +95: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +96: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +97: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +98: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +99: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +100: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +101: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +102: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +103: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:01 +104: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:02 +105: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:02 +106: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:02 +107: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +108: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +109: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +110: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +111: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +112: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +113: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +114: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +115: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +116: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +117: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +118: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +119: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +120: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +121: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +122: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +123: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +124: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +125: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +126: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +127: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +128: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +129: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +130: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +131: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +132: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +133: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +134: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +135: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +136: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +137: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +138: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +139: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +140: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +141: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +142: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +143: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +144: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +145: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +146: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +147: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +148: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +149: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +150: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +151: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +152: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:03 +153: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +154: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +155: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +156: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +157: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +158: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +159: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +160: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +161: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +162: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +163: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +164: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +165: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +166: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +167: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +168: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +169: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +170: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +171: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +172: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +173: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +174: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +175: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:04 +176: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +177: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +178: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +179: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +180: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +181: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +182: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +183: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +184: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +185: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +186: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +187: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +188: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +189: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +190: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +191: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +192: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +193: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +194: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +195: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +196: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +197: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +198: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:05 +199: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:06 +200: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:06 +201: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:06 +202: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:06 +203: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:07 +204: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:07 +205: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:07 +206: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:07 +207: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:07 +208: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:07 +209: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:07 +210: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:08 +211: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:09 +212: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:09 +213: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:09 +214: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:09 +215: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:09 +216: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:09 +217: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:09 +218: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:10 +219: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:10 +220: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:10 +221: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:10 +222: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:10 +223: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:10 +224: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:10 +225: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:10 +226: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:11 +227: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:11 +228: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:11 +229: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:11 +230: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:11 +231: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:11 +232: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:11 +233: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:11 +234: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:11 +235: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:11 +236: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:12 +237: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:12 +238: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:12 +239: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:12 +240: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: absolute deadline cancels even a slowly arriving body
+00:12 +241: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:12 +242: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:12 +243: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:12 +244: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:12 +245: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:12 +246: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:12 +247: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:12 +248: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:12 +249: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:12 +250: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:12 +251: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +252: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +253: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +254: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +255: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +256: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +257: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +258: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +259: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +260: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +261: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +262: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +263: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +264: /workspace/options-ai-trader/mobile/test/direct_lifecycle_test.dart: route removal and recreation retain the single native connection and restore Connected
+00:13 +265: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:14 +266: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:14 +267: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:14 +268: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:14 +269: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:14 +270: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +271: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +272: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +273: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +274: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +275: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +276: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +277: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +278: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +279: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +280: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +281: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +282: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +283: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +284: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +285: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +286: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +287: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +288: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +289: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +290: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +291: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +292: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +293: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +294: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +295: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +296: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +297: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:15 +298: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +299: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +300: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +301: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +302: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +303: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +304: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +305: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +306: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +307: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +308: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +309: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +310: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +311: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +312: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +313: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +314: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +315: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +316: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +317: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +318: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +319: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +320: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +321: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +322: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +323: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +324: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +325: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +326: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +327: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +328: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +329: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +330: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +331: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +332: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +333: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +334: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +335: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +336: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +337: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +338: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +339: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +340: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +341: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +342: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +343: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +344: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +345: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +346: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +347: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +348: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +349: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +350: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +351: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +352: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +353: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +354: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +355: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +356: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +357: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +358: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +359: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +360: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +361: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +362: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +363: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +364: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +365: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +366: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +367: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +368: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +369: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +370: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +371: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +372: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +373: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:16 +374: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +375: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +376: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +377: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +378: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +379: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +380: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +381: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +382: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +383: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +384: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +385: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +386: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +387: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +388: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +389: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +390: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +391: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +392: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +393: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +394: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +395: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +396: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +397: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +398: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +399: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +400: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +401: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +402: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +403: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +404: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +405: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +406: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +407: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +408: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +409: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +410: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:17 +411: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +412: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +413: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +414: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +415: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +416: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +417: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +418: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +419: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +420: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +421: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +422: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +423: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +424: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +425: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +426: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +427: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +428: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:18 +429: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +430: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +431: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +432: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +433: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +434: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +435: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +436: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +437: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +438: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +439: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +440: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +441: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +442: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +443: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +444: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +445: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:19 +446: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +447: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +448: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +449: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +450: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +451: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +452: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +453: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +454: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +455: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +456: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +457: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +458: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +459: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +460: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +461: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +462: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +463: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +464: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +465: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +466: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +467: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +468: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +469: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +470: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +471: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +472: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +473: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +474: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +475: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +476: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +477: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +478: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +479: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +480: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +481: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:20 +482: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +483: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +484: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +485: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +486: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +487: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +488: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +489: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +490: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +491: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +492: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +493: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +494: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +495: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +496: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +497: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +498: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +499: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +500: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +501: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +502: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +503: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +504: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +505: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +506: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +507: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +508: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +509: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +510: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +511: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +512: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:21 +513: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +514: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +515: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +516: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +517: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +518: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +519: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +520: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +521: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +522: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +523: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +524: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +525: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +526: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +527: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +528: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +529: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +530: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +531: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +532: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +533: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +534: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +535: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +536: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +537: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +538: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +539: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +540: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +541: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +542: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +543: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +544: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +545: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +546: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +547: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +548: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +549: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +550: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +551: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +552: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +553: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +554: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +555: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +556: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +557: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +558: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +559: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +560: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +561: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +562: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +563: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +564: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +565: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +566: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +567: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +568: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +569: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +570: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +571: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +572: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +573: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +574: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +575: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +576: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +577: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +578: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +579: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +580: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +581: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +582: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +583: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +584: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +585: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +586: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:22 +587: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +588: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +589: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +590: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +591: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +592: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +593: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +594: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +595: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +596: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +597: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +598: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +599: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +600: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +601: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +602: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +603: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +604: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +605: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +606: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +607: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +608: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:23 +609: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:24 +610: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:24 +611: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:24 +612: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:24 +613: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:24 +614: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:24 +615: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:24 +616: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:24 +617: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:24 +618: /workspace/options-ai-trader/mobile/test/api_response_bounds_test.dart: headers arriving after deadline are discarded without body consumption
+00:24 +619: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: enable disable and strategy update are versioned account-only requests
+00:24 +620: /workspace/options-ai-trader/mobile/test/observed_bar_archive_test.dart: identical decisions share one original window without modifying inputs
+00:24 +621: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain mutation 409 is not retried and requires reread
+00:24 +622: /workspace/options-ai-trader/mobile/test/observed_bar_archive_test.dart: rolling windows append only new bars while original range is stable
+00:24 +623: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain mutation 503 is not retried and requires reread
+00:24 +624: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain mutation 503 is not retried and requires reread
+00:24 +625: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain mutation 503 is not retried and requires reread
+00:24 +626: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain mutation 503 is not retried and requires reread
+00:24 +627: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain mutation 503 is not retried and requires reread
+00:24 +628: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain mutation 503 is not retried and requires reread
+00:24 +629: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain mutation 503 is not retried and requires reread
+00:24 +630: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain mutation 503 is not retried and requires reread
+00:24 +631: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain mutation 503 is not retried and requires reread
+00:24 +632: /workspace/options-ai-trader/mobile/test/observed_bar_archive_test.dart: capacity never evicts original observations
+00:24 +633: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: auth failure removes previous prices and never substitutes Demo
+00:24 +634: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +635: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +636: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +637: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +638: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +639: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +640: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +641: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +642: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +643: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +644: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +645: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +646: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +647: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +648: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +649: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +650: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +651: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +652: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +653: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +654: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +655: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +656: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +657: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +658: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +659: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +660: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +661: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +662: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +663: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +664: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +665: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +666: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +667: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +668: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +669: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +670: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +671: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: late first-account response cannot overwrite second account
+00:25 +672: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: SQL pages have independently reproduced SHA and explicit ACK only
+00:25 +673: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +674: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +675: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +676: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +677: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +678: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +679: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +680: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +681: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +682: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +683: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +684: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +685: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +686: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +687: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +688: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +689: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +690: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +691: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +692: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +693: /workspace/options-ai-trader/mobile/test/market_runtime_test.dart: uncertain native stop blocks account switch without leaking details
+00:25 +694: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +695: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +696: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +697: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +698: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +699: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +700: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +701: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +702: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +703: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +704: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +705: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +706: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +707: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +708: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +709: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +710: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +711: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +712: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +713: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +714: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +715: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +716: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +717: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +718: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +719: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +720: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +721: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +722: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +723: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +724: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +725: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +726: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +727: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +728: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:25 +729: /workspace/options-ai-trader/mobile/test/observed_server_alerts_test.dart: 360px RTL Brightness.dark explicit ACK lost response and bounded page retry
+00:26 +730: /workspace/options-ai-trader/mobile/test/observed_server_comparison_test.dart: creation requires explicit gesture and only one bounded setup write
+00:26 +731: /workspace/options-ai-trader/mobile/test/observed_server_comparison_test.dart: creation requires explicit gesture and only one bounded setup write
+00:26 +732: /workspace/options-ai-trader/mobile/test/observed_server_comparison_test.dart: creation requires explicit gesture and only one bounded setup write
+00:26 +733: /workspace/options-ai-trader/mobile/test/observed_server_comparison_test.dart: creation requires explicit gesture and only one bounded setup write
+00:26 +734: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +735: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +736: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +737: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +738: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +739: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +740: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +741: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +742: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +743: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +744: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +745: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +746: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +747: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +748: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +749: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +750: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +751: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +752: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +753: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +754: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +755: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +756: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +757: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +758: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +759: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +760: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +761: /workspace/options-ai-trader/mobile/test/observed_server_contracts_test.dart: 360px RTL Brightness.dark contract evidence retries GET and hides invalid claims
+00:26 +762: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:26 +763: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:26 +764: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +765: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +766: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +767: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +768: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +769: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +770: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +771: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +772: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +773: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +774: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +775: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +776: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +777: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +778: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +779: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +780: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +781: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +782: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +783: /workspace/options-ai-trader/mobile/test/observed_server_daily_test.dart: 360px RTL Brightness.dark daily GET retry pins range and hides invalid numbers
+00:27 +784: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +785: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +786: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +787: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +788: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +789: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +790: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +791: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +792: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +793: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +794: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +795: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +796: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +797: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +798: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +799: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +800: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +801: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +802: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +803: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +804: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +805: /workspace/options-ai-trader/mobile/test/observed_server_history_test.dart: 360px RTL Brightness.dark GET pagination retains one page and retry cursor
+00:27 +806: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +807: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +808: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +809: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +810: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +811: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +812: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +813: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +814: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +815: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +816: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +817: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +818: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +819: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +820: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +821: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +822: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +823: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +824: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +825: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +826: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +827: /workspace/options-ai-trader/mobile/test/observed_server_status_test.dart: runtime screen labels persistent auth and UTC backoff using GET only
+00:28 +828: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: 360px RTL Brightness.dark displays separate server account without provider request
+00:28 +829: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +830: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +831: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +832: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +833: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +834: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +835: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +836: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +837: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +838: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +839: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +840: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +841: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +842: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +843: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +844: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +845: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +846: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +847: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +848: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +849: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +850: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +851: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +852: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: 360px RTL Brightness.dark incomplete valuation labels missing stock prices
+00:28 +853: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: explicit enable sends only versioned virtual command then rereads
+00:28 +854: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: explicit enable sends only versioned virtual command then rereads
+00:28 +855: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: server valuation action is authenticated GET only and version-bound
+00:29 +856: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: server valuation action is authenticated GET only and version-bound
+00:29 +857: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: server valuation action is authenticated GET only and version-bound
+00:29 +858: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: server valuation action is authenticated GET only and version-bound
+00:29 +859: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: server valuation action is authenticated GET only and version-bound
+00:29 +860: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: server valuation action is authenticated GET only and version-bound
+00:29 +861: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: server valuation action is authenticated GET only and version-bound
+00:29 +862: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: server valuation action is authenticated GET only and version-bound
+00:29 +863: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: server valuation action is authenticated GET only and version-bound
+00:29 +864: /workspace/options-ai-trader/mobile/test/observed_server_valuation_test.dart: server valuation action is authenticated GET only and version-bound
+00:29 +865: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +866: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +867: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +868: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +869: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +870: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +871: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +872: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +873: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +874: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +875: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +876: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +877: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +878: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +879: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +880: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +881: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +882: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +883: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +884: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +885: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +886: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +887: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +888: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +889: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +890: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +891: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +892: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +893: /workspace/options-ai-trader/mobile/test/observed_server_test.dart: uncertain write 503 invalidates control and never retries
+00:29 +894: /workspace/options-ai-trader/mobile/test/option_observation_archive_test.dart: capacity is explicit without eviction
+00:29 +895: /workspace/options-ai-trader/mobile/test/option_observation_archive_test.dart: capacity is explicit without eviction
+00:29 +896: /workspace/options-ai-trader/mobile/test/option_observation_archive_test.dart: capacity is explicit without eviction
+00:29 +897: /workspace/options-ai-trader/mobile/test/option_observation_archive_test.dart: capacity is explicit without eviction
+00:29 +898: /workspace/options-ai-trader/mobile/test/option_observation_archive_test.dart: capacity is explicit without eviction
+00:29 +899: /workspace/options-ai-trader/mobile/test/option_observation_archive_test.dart: capacity is explicit without eviction
+00:30 +900: /workspace/options-ai-trader/mobile/test/option_observation_archive_test.dart: capacity is explicit without eviction
+00:30 +901: /workspace/options-ai-trader/mobile/test/option_observation_archive_test.dart: capacity is explicit without eviction
+00:30 +902: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +903: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +904: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +905: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +906: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +907: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +908: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +909: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +910: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +911: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +912: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +913: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +914: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +915: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +916: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +917: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +918: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +919: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +920: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +921: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +922: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +923: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +924: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +925: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +926: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +927: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +928: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +929: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +930: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +931: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +932: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +933: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +934: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +935: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +936: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +937: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +938: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +939: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +940: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +941: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +942: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +943: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +944: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +945: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +946: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +947: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +948: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:30 +949: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +950: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +951: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +952: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +953: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +954: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +955: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +956: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +957: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +958: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +959: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +960: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +961: /workspace/options-ai-trader/mobile/test/paper_settlement_dialog_test.dart: paper settlement requires preview; editing invalidates it; save persists owned delivery
+00:31 +962: /workspace/options-ai-trader/mobile/test/research_api_test.dart: Dart accepts the exact Python-generated versioned endpoint fixture
+00:31 +963: /workspace/options-ai-trader/mobile/test/research_api_test.dart: versioned research endpoint lifecycle is account-scoped and explicit
+00:31 +964: /workspace/options-ai-trader/mobile/test/research_api_test.dart: research rejects unsupported versions, scope, authority and future evidence
+00:31 +965: /workspace/options-ai-trader/mobile/test/research_api_test.dart: snapshot list rejects foreign rows and duplicate identifiers
+00:31 +966: /workspace/options-ai-trader/mobile/test/research_api_test.dart: replay rejects identity, decision substitution, fabricated or future outcomes
+00:31 +967: /workspace/options-ai-trader/mobile/test/research_api_test.dart: snapshot mutation is never retried after lost response
+00:31 +968: /workspace/options-ai-trader/mobile/test/research_api_test.dart: saved observation rejects scope, model or future timestamp mismatch
+00:31 +969: /workspace/options-ai-trader/mobile/test/research_api_test.dart: observation response loss does not repeat capture
+00:31 +970: /workspace/options-ai-trader/mobile/test/research_api_test.dart: invalid research identity is rejected before network access
+00:31 +971: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +972: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +973: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +974: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +975: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +976: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +977: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +978: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +979: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +980: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +981: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +982: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +983: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +984: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +985: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +986: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +987: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +988: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +989: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: offline research controls render with no HTTP or ledger mutation
+00:32 +990: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:32 +991: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +992: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +993: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +994: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +995: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +996: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +997: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +998: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +999: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1000: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1001: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1002: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1003: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1004: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1005: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1006: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1007: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1008: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1009: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1010: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1011: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1012: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1013: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1014: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1015: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1016: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1017: /workspace/options-ai-trader/mobile/test/safety_exercises_test.dart: phone exercise route uses no network and leaves saved account bytes intact
+00:33 +1018: /workspace/options-ai-trader/mobile/test/widget_test.dart: appearance menu supports explicit light and system modes
+00:34 +1019: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: server research explicitly saves, captures and replays original evidence
+00:34 +1020: /workspace/options-ai-trader/mobile/test/widget_test.dart: watchlist supports more than default three symbols and account-scoped mutations
+00:34 +1021: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: snapshot response loss is visible and does not retry the write
+00:34 +1022: /workspace/options-ai-trader/mobile/test/widget_test.dart: home aggregates only server-provided realized account performance
+00:34 +1023: /workspace/options-ai-trader/mobile/test/widget_test.dart: home aggregates only server-provided realized account performance
+00:34 +1024: /workspace/options-ai-trader/mobile/test/widget_test.dart: home aggregates only server-provided realized account performance
+00:34 +1025: /workspace/options-ai-trader/mobile/test/widget_test.dart: home aggregates only server-provided realized account performance
+00:34 +1026: /workspace/options-ai-trader/mobile/test/widget_test.dart: home aggregates only server-provided realized account performance
+00:34 +1027: /workspace/options-ai-trader/mobile/test/widget_test.dart: home aggregates only server-provided realized account performance
+00:34 +1028: /workspace/options-ai-trader/mobile/test/widget_test.dart: home aggregates only server-provided realized account performance
+00:34 +1029: /workspace/options-ai-trader/mobile/test/widget_test.dart: home aggregates only server-provided realized account performance
+00:34 +1030: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: late snapshot response cannot replace another account research
+00:34 +1031: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: late snapshot response cannot replace another account research
+00:34 +1032: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: late snapshot response cannot replace another account research
+00:34 +1033: /workspace/options-ai-trader/mobile/test/research_widget_test.dart: late snapshot response cannot replace another account research
+00:35 +1034: /workspace/options-ai-trader/mobile/test/broker_accounts_widget_test.dart: add Alpaca paper account with masked fields and test connection
+00:35 +1035: /workspace/options-ai-trader/mobile/test/broker_accounts_widget_test.dart: add Alpaca paper account with masked fields and test connection
+00:35 +1036: /workspace/options-ai-trader/mobile/test/broker_accounts_widget_test.dart: add Alpaca paper account with masked fields and test connection
+00:36 +1037: /workspace/options-ai-trader/mobile/test/broker_accounts_widget_test.dart: add Alpaca paper account with masked fields and test connection
+00:36 +1038: /workspace/options-ai-trader/mobile/test/widget_test.dart: automation quantity above account maximum is rejected before request
+00:36 +1039: /workspace/options-ai-trader/mobile/test/widget_test.dart: one manual cycle uses the selected account and renders only its server report
+00:36 +1040: All tests passed!
+
+real	0m39.838s
+user	2m4.398s
+sys	0m25.540s

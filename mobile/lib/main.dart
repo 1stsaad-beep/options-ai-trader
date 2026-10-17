@@ -12,6 +12,7 @@ import 'market_monitor.dart';
 import 'demo/screen.dart';
 import 'demo/store.dart';
 import 'direct_screen.dart';
+import 'brokers/broker_accounts_screen.dart';
 
 void main() => runApp(const TraderApp());
 
@@ -759,6 +760,8 @@ class _DashboardState extends State<Dashboard> {
       actions: [
         IconButton(tooltip:'Alpaca مباشر من الهاتف',icon:const Icon(Icons.cloud_outlined),
           onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const DirectAlpacaScreen()))),
+        IconButton(tooltip:'حسابات الوسطاء (Paper)',icon:const Icon(Icons.account_balance_outlined),
+          onPressed:()=>Navigator.of(context).push(MaterialPageRoute<void>(builder:(_)=>const BrokerAccountsScreen()))),
         PopupMenuButton<ThemeMode>(
           tooltip: 'مظهر التطبيق',
           initialValue: widget.themeMode,
