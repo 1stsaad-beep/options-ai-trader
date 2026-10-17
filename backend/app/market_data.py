@@ -13,11 +13,11 @@ import json
 import math
 import os
 import re
-import ssl
 import threading
 import time
 from typing import Protocol
 from urllib.parse import urlencode
+from .provider_https import provider_connection
 from zoneinfo import ZoneInfo
 from .option_greeks import provider_greeks, quality as greeks_quality
 from .option_eligibility import qualify as qualify_option
@@ -134,33 +134,34 @@ class AlpacaDataTransport:
     def get(self, path, params):
         if not allowed_query(path, params, observed_options=self._observed_options):
             raise MarketDataError('DATA_ROUTE_FORBIDDEN')
-        connection = http.client.HTTPSConnection(DATA_HOST, 443, timeout=8, context=ssl.create_default_context())
         try:
-            connection.request('GET', path + '?' + urlencode(params), headers={
-                'APCA-API-KEY-ID': self._credentials.key_id,
-                'APCA-API-SECRET-KEY': self._credentials.secret_key,
-                'Accept': 'application/json',
-            })
-            response = connection.getresponse()
-            headers = {k.lower(): v for k, v in response.getheaders()
-                       if k.lower() in ('retry-after', 'x-ratelimit-limit', 'x-ratelimit-remaining', 'x-ratelimit-reset')}
-            if response.status != 200:
-                return DataResponse(response.status, headers, {})
-            body = response.read(4 * 1024 * 1024 + 1)
-            if len(body) > 4 * 1024 * 1024:
-                raise MarketDataError('DATA_RESPONSE_TOO_LARGE')
-            def reject_constant(_):
-                raise ValueError()
-            value = json.loads(body, parse_constant=reject_constant)
-            if not isinstance(value, dict):
-                raise ValueError()
-            return DataResponse(200, headers, value)
+            with provider_connection(DATA_HOST, timeout=8) as (connection, remaining):
+                connection.request('GET', path + '?' + urlencode(params), headers={
+                    'APCA-API-KEY-ID': self._credentials.key_id,
+                    'APCA-API-SECRET-KEY': self._credentials.secret_key,
+                    'Accept': 'application/json',
+                })
+                remaining()
+                response = connection.getresponse()
+                remaining()
+                headers = {k.lower(): v for k, v in response.getheaders()
+                           if k.lower() in ('retry-after', 'x-ratelimit-limit', 'x-ratelimit-remaining', 'x-ratelimit-reset')}
+                if response.status != 200:
+                    return DataResponse(response.status, headers, {})
+                body = response.read(4 * 1024 * 1024 + 1)
+                remaining()
+                if len(body) > 4 * 1024 * 1024:
+                    raise MarketDataError('DATA_RESPONSE_TOO_LARGE')
+                def reject_constant(_):
+                    raise ValueError()
+                value = json.loads(body, parse_constant=reject_constant)
+                if not isinstance(value, dict):
+                    raise ValueError()
+                return DataResponse(200, headers, value)
         except (OSError, http.client.HTTPException):
             raise MarketDataError('DATA_CONNECTION_UNAVAILABLE') from None
         except (ValueError, UnicodeError):
             raise MarketDataError('INVALID_PROVIDER_RESPONSE') from None
-        finally:
-            connection.close()
 
 
 class DisabledMarketData:

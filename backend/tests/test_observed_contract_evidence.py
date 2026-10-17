@@ -145,6 +145,7 @@ def test_fixed_https_get_host_no_redirect_and_bounded_body(monkeypatch,path,para
     calls=[]
     class Socket:
         def __init__(self,*a,**k):calls.append((a,k));self.status=200
+        def connect(self):pass
         def request(self,*a,**k):calls.append((a,k))
         def getresponse(self):return self
         def getheaders(self):return [('Authorization','private'),('Retry-After','60')]
@@ -160,7 +161,7 @@ def test_fixed_https_get_host_no_redirect_and_bounded_body(monkeypatch,path,para
     (b'{"x":NaN}',200,'INVALID_PROVIDER_RESPONSE'),(b'x'*(MAX_RESPONSE_BYTES+1),200,'DATA_RESPONSE_TOO_LARGE')])
 def test_transport_rejects_ambiguous_or_oversized_json_and_redirects(monkeypatch,body,status,code):
     closed=[]
-    socket=SimpleNamespace(request=lambda *a,**k:None,close=lambda:closed.append(True),
+    socket=SimpleNamespace(connect=lambda:None,request=lambda *a,**k:None,close=lambda:closed.append(True),
         getresponse=lambda:SimpleNamespace(status=status,getheaders=lambda:[],read=lambda _:body))
     monkeypatch.setattr('app.option_metadata.http.client.HTTPSConnection',lambda *a,**k:socket)
     transport=AlpacaMetadataTransport(DataCredentials('fixture-id','fixture-secret'))
