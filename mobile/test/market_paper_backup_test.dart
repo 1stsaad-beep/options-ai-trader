@@ -34,7 +34,7 @@ void main() {
   });
   test('deep and excessive nested string JSON rejected before restore writes',()async{
     final envelope=jsonDecode(paper.exportBackup());
-    envelope['ledger']['accounts'][0]['name']='['*2000+'0'+']'*2000;
+    envelope['ledger']['accounts'][0]['name']='${'['*2000}0${']'*2000}';
     final original=jsonEncode(store.value),writes=store.writes;
     expect(()=>PaperBackup.inspect(jsonEncode(envelope)),throwsFormatException);
     expect(jsonEncode(store.value),original);expect(store.writes,writes);

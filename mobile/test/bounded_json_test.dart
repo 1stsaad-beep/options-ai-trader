@@ -41,7 +41,7 @@ void main() {
     expect(read('{"a":{"cash":1},"b":{"cash":2}}'), {'a': {'cash': 1}, 'b': {'cash': 2}});
   });
   test('braces and escaped quotes inside strings do not count as nesting', () {
-    final text = jsonEncode('[' * 100 + '"\\' + ']' * 100);
+    final text = jsonEncode('${'[' * 100}"\\${']' * 100}');
     expect(read(text, depth: 0, nodes: 1), jsonDecode(text));
   });
   test('1000 deterministic nested JSON values retain exact decoder semantics', () {

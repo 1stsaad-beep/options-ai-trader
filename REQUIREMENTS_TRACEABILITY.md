@@ -182,3 +182,8 @@ Batch49 source `96e842d498e54a6258ef428c4b27dad9f54e04c2` passed1559 Python and 
 Market Paper and Demo now check UTF8 byte size, depth and value count before building decoded JSON; duplicate and escaped-equivalent keys are rejected. Embedded JSON limits/duplicate errors cannot bypass credential screening. Original-event archive validation iterates segments without flattening all events. Existing account/financial checks and stopped empty-target restore remain.9 scanner tests and3 backup regressions were added; Dart SDK3.13.5 was downloaded to scratch but its VM could not start under the executor (stack bounds unavailable), so no local Flutter/Dart success is claimed. Existing CI is the source acceptance gate. Full-file native decoding and existing64/16/2MiB limits remain open, documented in docs/BOUNDED_BACKUP_JSON_20261017.md. No pruning or user-data modification.
 
 Batch50 profile correction saved at `aaad96d48c326c3af94d1c161b682cac67dffde7`;24 affected Python tests passed. Backend39015198908 is running. Batch48 Direct39014634258 completed successfully; raw artifact verification follows.
+
+
+## Batch52 — clear Flutter analyzer gate
+
+Batch51 CI39015331596 /39015331626 stopped at flutter analyze on two prefer_interpolation_to_compose_strings notices in new tests; no Flutter tests ran in those failed runs. Replaced the two concatenations with equivalent interpolation. Parser/financial semantics unchanged. Source acceptance requires the new CI run; no tests or lints disabled. Batch50 backend/Compose39015198908 completed successfully.
