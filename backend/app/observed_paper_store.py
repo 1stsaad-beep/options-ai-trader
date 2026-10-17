@@ -258,4 +258,6 @@ class ObservedPaperStore:
             if mark_stopped:
                 db.execute("INSERT INTO runtime_health VALUES('observed_paper',?,?) ON CONFLICT(name) DO UPDATE SET updated_at=excluded.updated_at,payload=excluded.payload",
                     (at,canonical({'state':'STOPPED','externalOrder':False})))
+                from .observed_paper_alerts import record
+                record(db,self.now())
             return True

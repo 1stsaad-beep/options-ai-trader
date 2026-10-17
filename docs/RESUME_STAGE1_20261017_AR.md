@@ -137,3 +137,12 @@ Flutter يتحقق من قائمة الأسباب والأنواع وعدد ال
 تحديث الحفظ اللاحق وثائق وأدلة فقط. لم يُنتج APK، ولم يُعدل Oracle أو بيانات مستخدم أو حدود Live، ولم تُقرأ مفاتيح أو تُرسل أوامر خارجية. لا جلسات سوق أو اتصال Alpaca فعلي. لا تعِد هذه الدفعات أو تعامل ملاحظات الانتظار التاريخية أعلاه كإخفاقات حالية.
 
 تبدأ المتابعة من أحدث HEAD وتختار نطاقًا صغيرًا من STAGE1_STATUS_20261017_AR.md: أهلية مُسلَّمات العقد وحداثة Greeks (الفحص العددي فقط مكتمل)، تكافؤ الموجات وDemo، أو trailing وأولوية الخروج بعقد جديد دون تغييرv1/v2، أو سعة JSON والنسخ والهجرة المالية، أو التقييم اليومي وأسهم التسليم، أو التنبيه الموثوق. لا تُعلن المرحلة الأولى أوV1.0 مكتملة؛ لا تزال أعمال برمجية ممكنة وليست موانع خارجية فقط. المرحلة الثانية مؤجلة حتى إغلاقها وفق النطاق المعتمد.
+
+
+## Batch41 — durable observed runtime inbox (2026-10-17)
+
+Continued from verified GitHub HEAD c9e5c85588a2aa2f9a2ae3c113ba698bac369b71. Additive migration11 stores immutable, hash-linked sanitized fault/recovery snapshots separately from all financial events. Worker heartbeat and alert writes share one fenced transaction; repeated conditions do not flood the journal. An outage is detected on the next owned tick with detection time, not an invented failure time. Shutdown publishes the unavailable condition atomically with lease release. Owner-authenticated GET pages (1–100 events, fixed through cursor) and explicit monotonic hash-bound ACK support restart and lost-response retries; reading/ACK does not clear a fault or alter credentials or trading state. No remote notification is sent.
+
+Targeted tests cover restart, clock regression, late heartbeat, stale worker fencing, transaction rollback, concurrency, auth/input guards, original-ledger preservation, migration10→11, corruption and SQLite backup/restore. PostgreSQL checks extend to cross-connection pages/ACK/native guards, and the actual dump/restore gate verifies unread events and ACKs. The old migration-count assertion was updated for the additive schema; full Python rerun and source CI results are recorded in the next checkpoint. Mobile inbox integration follows separately. This closes the durable server inbox transport scope, not external push delivery, deployed monitoring, market sessions or overall stage one.
+
+Batch41: full local Python1476 passed, zero failures/skips (one existing Starlette warning).16 inbox tests;50 affected tests initially passed. Final targeted rerun16 passed after portable backup-test import correction. PostgreSQL/Compose/security acceptance pending pushed source CI; no Flutter change in this batch.

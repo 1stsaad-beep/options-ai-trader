@@ -19,8 +19,15 @@ class ObservedPaperRuntime:
         result=self._tick_owned()
         with self.store.repo.transaction() as db:
             if self.store._owns(db,self.lease,self.store.now()):
+                from .observed_paper_alerts import record
+                from .runtime_health import heartbeat_valid
+                now=self.store.now()
+                old=db.one("SELECT * FROM runtime_health WHERE name='observed_paper'")
+                if old and not heartbeat_valid(old,'observed_paper',now):
+                    record(db,now)
                 db.execute("INSERT INTO runtime_health VALUES('observed_paper',?,?) ON CONFLICT(name) DO UPDATE SET updated_at=excluded.updated_at,payload=excluded.payload",
-                    (iso(self.store.now()),canonical(result)))
+                    (iso(now),canonical(result)))
+                record(db,now)
         return result
 
     def _tick_owned(self):

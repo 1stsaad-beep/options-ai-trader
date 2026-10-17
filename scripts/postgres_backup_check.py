@@ -119,6 +119,13 @@ def run():
             saved_observed=observed.snapshot('backup-observed',full=True)
             saved_observed_events=observed.events('backup-observed')
             observed.release(observed_lease)
+            from app.observed_paper_runtime import ObservedPaperRuntime
+            from app.observed_paper_alerts import page as alert_page, acknowledge as alert_ack
+            alert_worker=ObservedPaperRuntime(observed)
+            alert_worker.tick(); alert_worker.close()
+            first_alert=alert_page(observed)['events'][0]
+            alert_ack(observed,first_alert['sequence'],first_alert['eventHash'],0)
+            saved_alerts=alert_page(observed,after=0)
             with tempfile.TemporaryDirectory(prefix="oat-postgres-roundtrip-") as temporary:
                 archive = Path(temporary) / "ledger.dump"
                 metadata = snapshots.backup(fixture, archive)
@@ -185,6 +192,14 @@ def run():
                     recovered_observed=ObservedPaperStore(recovered_repository,lambda:now)
                     assert recovered_observed.snapshot('backup-observed',full=True)==saved_observed
                     assert recovered_observed.events('backup-observed')==saved_observed_events
+                    assert alert_page(recovered_observed,after=0)==saved_alerts
+                    assert alert_page(recovered_observed)['after']==first_alert['sequence']
+                    for sql in ('UPDATE observed_alert_events SET payload=payload','DELETE FROM observed_alert_events'):
+                        try:
+                            with recovered_repository.transaction() as db: db.execute(sql)
+                        except psycopg.Error as error: assert 'immutable' in str(error)
+                        else: raise AssertionError('Restored alert guard missing')
+                    checks.append('observed_alert_original_chain_ack_unread_and_immutable_guards_restored')
                     assert saved_observed['state']['positions']['NVDA']['closeIntent']['quantity']==3
                     checks.append('observed_virtual_balance_original_inputs_pending_close_segments_and_replay_restored')
                     try:

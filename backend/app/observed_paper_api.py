@@ -25,6 +25,13 @@ class CreateExperiment(BaseModel):
     source:str='alpaca'
 
 
+class AcknowledgeAlerts(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    sequence:StrictInt
+    event_hash:str
+    expected_ack:StrictInt
+
+
 def install_observed_paper_routes(app,secured,store_dependency):
     def guarded(operation):
         try: return operation()
@@ -40,6 +47,16 @@ def install_observed_paper_routes(app,secured,store_dependency):
     def runtime_status():
         from .observed_paper_status import status
         return status(store_dependency())
+
+    @app.get('/api/observed-paper/alerts',dependencies=secured)
+    def alerts(after:int|None=None,limit:int=25,through:int|None=None):
+        from .observed_paper_alerts import page
+        return guarded(lambda:page(store_dependency(),after,limit,through))
+
+    @app.post('/api/observed-paper/alerts/ack',dependencies=secured)
+    def acknowledge_alerts(body:AcknowledgeAlerts):
+        from .observed_paper_alerts import acknowledge
+        return guarded(lambda:acknowledge(store_dependency(),body.sequence,body.event_hash,body.expected_ack))
 
     @app.post('/api/observed-paper/accounts',dependencies=secured,status_code=201)
     def create(body:CreateObserved):

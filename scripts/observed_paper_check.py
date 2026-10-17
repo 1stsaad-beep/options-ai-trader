@@ -19,6 +19,7 @@ from app.observed_paper_runtime import ObservedPaperRuntime
 from app.runtime_health import heartbeat_valid
 from app.observed_paper_status import status as runtime_status
 from app.observed_paper_data import ObservedPaperData
+from app.observed_paper_alerts import page as alert_page, acknowledge as alert_ack
 
 
 def seed(store,account):
@@ -115,6 +116,18 @@ def check(repositories):
         assert heartbeat_valid(healthy,'observed_paper',clock[0])
     successor.close();successor.close()
     assert stores[0].snapshot(account,full=True)==before
+    inbox=alert_page(stores[0],after=0,limit=1)
+    event=inbox['events'][0]
+    acknowledgement=alert_ack(stores[1],event['sequence'],event['eventHash'],0)
+    assert alert_ack(stores[0],event['sequence'],event['eventHash'],0)==acknowledgement
+    remaining=alert_page(stores[1],through=inbox['through'])
+    assert remaining['after']==event['sequence'] and remaining['throughHash']==inbox['throughHash']
+    assert remaining['events'][0]['previousHash']==event['eventHash']
+    for sql in ('UPDATE observed_alert_events SET payload=payload','DELETE FROM observed_alert_events'):
+        try:
+            with repositories[0].transaction() as db: db.execute(sql)
+        except Exception as exc: assert 'immutable' in str(exc)
+        else: raise AssertionError('Alert event guard missing')
     with repositories[0].transaction() as db:
         ObservedPaperData._save(db,{'calls':[iso(clock[0])],'authBlocked':True,
             'retryAt':iso(clock[0]+timedelta(seconds=60)),'failures':1})
@@ -128,7 +141,8 @@ def check(repositories):
         'native_update_delete_guards','lease_generation_fencing','independent_account_balances',
         'sealed_segment_rotation','streamed_full_replay','expired_owner_shutdown_health',
         'same_owner_successor_generation_fencing','shutdown_preserves_original_ledger',
-        'read_only_version_bound_net_valuation','causal_history_two_connection_pagination','read_only_durable_diagnostics_across_connections']}
+        'read_only_version_bound_net_valuation','causal_history_two_connection_pagination','read_only_durable_diagnostics_across_connections',
+        'alert_inbox_cross_connection_pinned_pages','alert_ack_lost_response_retry','alert_native_immutable_guards']}
 
 
 def run():

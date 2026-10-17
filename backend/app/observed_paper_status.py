@@ -18,8 +18,13 @@ def safe_diagnostic(code):
 def status(store):
     now = store.now()
     with store.repo.transaction() as db:
-        row = db.one("SELECT * FROM runtime_health WHERE name='observed_paper'")
-        budget = db.one("SELECT payload FROM observed_paper_data_state WHERE name='budget'")
+        return read_status(db, now)
+
+
+def read_status(db, now):
+    """Same-transaction projection for the worker's durable alert journal."""
+    row = db.one("SELECT * FROM runtime_health WHERE name='observed_paper'")
+    budget = db.one("SELECT payload FROM observed_paper_data_state WHERE name='budget'")
     fresh = heartbeat_valid(row, 'observed_paper', now)
     payload = json.loads(row['payload']) if fresh else {}
     state = payload.get('state', 'WORKER_UNAVAILABLE')
