@@ -18,6 +18,7 @@ import 'delivery_valuation.dart';
 import 'paper_execution.dart';
 import 'paper_return.dart';
 import 'protective_exit.dart';
+import 'daily_nav.dart';
 import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
@@ -259,6 +260,9 @@ class MarketPaper extends ChangeNotifier {
       if(a['peakEquity'] is! int)continue;
       final equity=paperPerformance(a,now())['equityCents'] as int?;
       if(equity==null)continue;
+      // B13: pre-close daily NAV (current session date only; earlier dates frozen).
+      final nav=updateDailyNav(a['dailyNav'],equity,now());
+      if(nav!=null)a['dailyNav']=nav;
       if(equity>(a['peakEquity'] as int))a['peakEquity']=equity;
       final drawdown=(a['peakEquity'] as int)-equity;
       if(drawdown>(a['maxDrawdown'] as int))a['maxDrawdown']=drawdown;

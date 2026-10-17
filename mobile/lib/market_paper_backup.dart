@@ -24,7 +24,7 @@ class PaperBackup {
       'stopPercent','takePercent','trailPercent','addEnabled','lastSignal','ledgerPolicy','strategy','watchlist','fees',
       'closedTrades','winningTrades','peakEquity','maxDrawdown','dailyRealized','allocationPercent','dailyLossPercent',
       'maxPositions','maxContracts','holdingMode','maxHoldingDays','partialPercent','scenarioExit',
-      'executionPolicy','deliveryMarks','deliveryMarkSource','deliveryPositions','settlementCount','settlementRealizedPnl'};
+      'executionPolicy','deliveryMarks','deliveryMarkSource','deliveryPositions','settlementCount','settlementRealizedPnl','dailyNav'};
     var count=0;
     void check(Object? value,int depth) {
       if(++count>500000||depth>40)throw const FormatException('Backup exceeds structural bounds');

@@ -16,6 +16,7 @@ import 'option_eligibility.dart';
 import 'broker_order_ticket.dart';
 import 'broker_portfolio.dart';
 import 'broker_protective.dart';
+import '../daily_nav.dart';
 import 'broker_store.dart';
 import 'live_gate.dart';
 
@@ -40,6 +41,9 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
   String? error;
   bool loading = false;
   Map<String, ProtectiveStatus> protective = const {};
+  DailyPerformance? daily;
+  late final DailyNavStore navStore = DailyNavStore(widget.registry.storage.read, widget.registry.storage.write,
+      'oat.brokers.nav.v1.${widget.account.id}');
   ProtectivePolicy protectivePolicy = const ProtectivePolicy();
   late final BrokerProtectiveTracker tracker = BrokerProtectiveTracker(widget.registry.storage, widget.account.id, clock: _now);
   DateTime _now() => (widget.clock ?? DateTime.now)();
@@ -66,7 +70,14 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
       } catch (_) {
         prot = const {}; // monitoring unavailable; never blocks viewing or manual closes
       }
-      if (mounted) setState(() { portfolio = p; orders = o; protective = prot; protectivePolicy = pol; loading = false; });
+      DailyPerformance? perf;
+      try {
+        // Broker-reported equity is the complete account NAV for this sample.
+        perf = dailyPerformance(await navStore.sample(decimalCents(p.snapshot.equity), _now()), _now());
+      } catch (_) {
+        perf = null; // never blocks viewing; shown as unavailable
+      }
+      if (mounted) setState(() { portfolio = p; orders = o; protective = prot; protectivePolicy = pol; daily = perf; loading = false; });
     } on BrokerException catch (e) {
       _fail(e.code);
     } on BrokerStoreException catch (e) {
@@ -253,6 +264,9 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
                 trailing: o.unresolved ? IconButton(tooltip: 'حسم يدوي', onPressed: () => _resolve(o),
                     icon: const Icon(Icons.rule)) : null,
               )),
+            Card(child: Padding(padding: const EdgeInsets.all(8), child: Text(
+                daily == null ? 'NAV اليومي غير متاح.' : dailyPerformanceText(daily!, (c) => c == null ? 'غير متاح' : centsText(c)),
+                key: const ValueKey('broker-daily-nav')))),
           ],
         ]),
       ),

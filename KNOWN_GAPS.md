@@ -124,3 +124,8 @@ The Demo labs now default to the same strict 3/1 pivots, wave contract, harmonic
 ## 2026-10-17 batch B12 — segmented broker journal + Direct vault merge
 
 The Broker Paper order journal now uses v2 segments (250 events each, 50,000 cap). An append rewrites one segment plus the head. Migration from v1 happens on first append and leaves the v1 value byte-identical; corrupt v1 data is never migrated. The older Direct Alpaca vault can be merged explicitly into a broker account, with confirmation, de-duplication and an append-only fingerprint record. The vault is never modified, so Direct data keeps working. 1113 Flutter tests, 62 JVM tests and the 30/44 policy checks pass, and the debug APK builds. See docs/STORAGE_VAULT_MERGE_B12_20261017.md. Still OPEN: Market Paper 64MiB/16MiB limits, on-device Keystore evidence, full-journal in-memory reads. All gaps above remain as recorded.
+
+
+## 2026-10-17 batch B13 — daily NAV, Sharpe and drawdown on the phone
+
+Market Paper and Broker Paper accounts now record one NAV value per NY session date. Past dates are frozen and incomplete valuations are never recorded. Sharpe and drawdown use the server daily-report rules (252, rf 0, ddof 1, at least 20 returns, same status codes) and match all five shared server fixtures. 1120 Flutter tests pass and the debug APK builds. See docs/DAILY_NAV_B13_20261017.md. Still OPEN: no background sampler (days the app is not opened stay missing and block Sharpe), broker equity is not independently re-valued, no device or real-Paper evidence. All gaps above remain as recorded.

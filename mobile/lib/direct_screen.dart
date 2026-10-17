@@ -8,6 +8,7 @@ import 'market_monitor.dart';
 import 'market_paper.dart';
 import 'paper_execution.dart';
 import 'market_paper_reports.dart';
+import 'daily_nav.dart';
 import 'market_paper_backup.dart';
 import 'direct_replay.dart';
 import 'direct_decision_view.dart';
@@ -346,6 +347,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
         Text('الرسوم: ${money(report['totalFeesCents'])} • الصفقات المغلقة: ${report['closedTrades']??"غير متاح"} • النجاح: ${report['winRatePercent']??"—"}%'),
         if((report['settlementEvents'] as int)>0)Text('إيصالات التسوية: ${report['settlementEvents']} • الربح المحقق منها: ${money(report['settlementRealizedPnlCents'])}. معدل نجاح مختلط للتحويلات والصفقات غير محسوب.'),
         Text('العائد: ${report['returnPercent']??"غير متاح"}% • التراجع المرصود: ${money(report['sampledMaxDrawdownCents'])}؛ لا تقدير خلال انقطاع الأسعار.'),
+        Text(dailyPerformanceText(dailyPerformance(a['dailyNav'],DateTime.now()),(v)=>money(v)),key:const Key('paper-daily-nav')),
         DropdownButtonFormField<String>(isExpanded:true,key:ValueKey('paper-strategy-$selectedAccount-${a['strategy']}'),
           initialValue:a['strategy'] as String? ?? 'confluence',decoration:const InputDecoration(labelText:'استراتيجية هذا الحساب'),
           items:paperStrategyLabels.entries.map((e)=>DropdownMenuItem(value:e.key,child:Text(e.value))).toList(),

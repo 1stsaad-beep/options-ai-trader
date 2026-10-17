@@ -4,6 +4,7 @@ import 'market_paper_reports.dart';
 import 'paper_settlement.dart';
 import 'paper_money.dart';
 import 'paper_execution.dart';
+import 'daily_nav.dart';
 
 Map<String, dynamic> copyPaper(Map<String, dynamic> value) =>
     jsonDecode(jsonEncode(value)) as Map<String, dynamic>;
@@ -62,6 +63,7 @@ void validatePaper(Map<String, dynamic> book) {
     // Optional market marks do not authorize cash changes or veto owned protection.
     // Each mark is validated at valuation/admission time, including its source and age.
     if(a.containsKey('deliveryMarks')&&a['deliveryMarks'] is! Map)invalid();
+    if(a.containsKey('dailyNav')&&!validDailyNav(a['dailyNav']))invalid();
     if(a.containsKey('deliveryMarkSource')&&!['fixture','alpaca'].contains(a['deliveryMarkSource']))invalid();
     if(a.containsKey('executionPolicy')&&![legacyExecution,conservativeExecution].contains(a['executionPolicy']))invalid();
     if (a.containsKey('strategy') && !paperStrategyLabels.containsKey(a['strategy'])) invalid();
