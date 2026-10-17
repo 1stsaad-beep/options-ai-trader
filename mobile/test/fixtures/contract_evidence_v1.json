@@ -1,0 +1,1188 @@
+{
+  "contract": "contract-evidence-fixture-v1",
+  "source": "synthetic_fixture",
+  "cases": [
+    {
+      "name": "missing",
+      "snapshot": {
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "state": {
+          "cash": 1000000,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "AAPL": {
+                "CALL": "AAPL261120C00200000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 1,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {},
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 0,
+          "id": "metadata",
+          "initialCash": 1000000,
+          "lastAt": "2026-10-12T15:00:00.000Z",
+          "lastSignals": {},
+          "name": "Offline metadata fixture",
+          "positions": {},
+          "realized": 0,
+          "source": "alpaca",
+          "winningTrades": 0
+        }
+      },
+      "report": {
+        "contract": "observed-contract-report-v1",
+        "account": "metadata",
+        "source": "alpaca",
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "asOf": "2026-10-12T15:00:00.000Z",
+        "externalOrder": false,
+        "entryEligible": false,
+        "settlementEligible": false,
+        "contracts": [
+          {
+            "symbol": "AAPL261120C00200000",
+            "throughSequence": 0,
+            "throughHash": "0000000000000000000000000000000000000000000000000000000000000000",
+            "terms": null,
+            "greeks": null,
+            "qualification": {
+              "contract": "option-eligibility-v1",
+              "symbol": "AAPL261120C00200000",
+              "provider": "alpaca",
+              "termsHash": null,
+              "standardDeliverableObserved": false,
+              "greeksStatus": "MISSING",
+              "greeksProviderTimestamp": null,
+              "greeksFreshnessVerified": false,
+              "entryEligible": false,
+              "settlementEligible": false,
+              "externalOrder": false,
+              "reasons": [
+                "GREEKS_MISSING",
+                "GREEKS_PROVIDER_TIME_UNAVAILABLE",
+                "CONTRACT_TERMS_UNAVAILABLE"
+              ]
+            }
+          }
+        ],
+        "reportHash": "9ca4c927059b43259e33720f864201e68ffc499c8ae2120ef5dc64e310cd6ede",
+        "reportPayload": "{\"account\":\"metadata\",\"asOf\":\"2026-10-12T15:00:00.000Z\",\"contract\":\"observed-contract-report-v1\",\"contracts\":[{\"greeks\":null,\"qualification\":{\"contract\":\"option-eligibility-v1\",\"entryEligible\":false,\"externalOrder\":false,\"greeksFreshnessVerified\":false,\"greeksProviderTimestamp\":null,\"greeksStatus\":\"MISSING\",\"provider\":\"alpaca\",\"reasons\":[\"GREEKS_MISSING\",\"GREEKS_PROVIDER_TIME_UNAVAILABLE\",\"CONTRACT_TERMS_UNAVAILABLE\"],\"settlementEligible\":false,\"standardDeliverableObserved\":false,\"symbol\":\"AAPL261120C00200000\",\"termsHash\":null},\"symbol\":\"AAPL261120C00200000\",\"terms\":null,\"throughHash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"throughSequence\":0}],\"entryEligible\":false,\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"externalOrder\":false,\"settlementEligible\":false,\"source\":\"alpaca\",\"version\":1}"
+      }
+    },
+    {
+      "name": "terms",
+      "snapshot": {
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "state": {
+          "cash": 1000000,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "AAPL": {
+                "CALL": "AAPL261120C00200000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 1,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {},
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 0,
+          "id": "metadata",
+          "initialCash": 1000000,
+          "lastAt": "2026-10-12T15:00:00.000Z",
+          "lastSignals": {},
+          "name": "Offline metadata fixture",
+          "positions": {},
+          "realized": 0,
+          "source": "alpaca",
+          "winningTrades": 0
+        }
+      },
+      "report": {
+        "contract": "observed-contract-report-v1",
+        "account": "metadata",
+        "source": "alpaca",
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "asOf": "2026-10-12T15:00:00.000Z",
+        "externalOrder": false,
+        "entryEligible": false,
+        "settlementEligible": false,
+        "contracts": [
+          {
+            "symbol": "AAPL261120C00200000",
+            "throughSequence": 1,
+            "throughHash": "8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557",
+            "terms": {
+              "sequence": 1,
+              "eventHash": "8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "contract": "alpaca-contract-terms-v1",
+                "provider": "alpaca",
+                "source": "GET_OPTION_CONTRACT",
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "providerEffectiveAt": null,
+                "rawHash": "b206cb67446d2082e2592ac9f62fbf6c6ee34acf7cca78672924aa8ce1c16b09",
+                "termsHash": "e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8",
+                "terms": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "symbol": "AAPL261120C00200000",
+                  "root": "AAPL",
+                  "underlying": "AAPL",
+                  "underlyingAssetId": "00000000-0000-4000-8000-000000000001",
+                  "expiry": "2026-11-20",
+                  "right": "C",
+                  "strikeMillis": 200000,
+                  "status": "active",
+                  "tradable": true,
+                  "style": "american",
+                  "multiplier": "100",
+                  "size": "100",
+                  "deliverables": [
+                    {
+                      "type": "equity",
+                      "symbol": "AAPL",
+                      "amount": "100",
+                      "allocationPercentage": "100",
+                      "settlementType": "T+1",
+                      "settlementMethod": "BTOB",
+                      "delayedSettlement": false,
+                      "assetId": "00000000-0000-4000-8000-000000000001"
+                    }
+                  ]
+                }
+              }
+            },
+            "greeks": null,
+            "qualification": {
+              "contract": "option-eligibility-v1",
+              "symbol": "AAPL261120C00200000",
+              "provider": "alpaca",
+              "termsHash": "e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8",
+              "standardDeliverableObserved": true,
+              "greeksStatus": "MISSING",
+              "greeksProviderTimestamp": null,
+              "greeksFreshnessVerified": false,
+              "entryEligible": false,
+              "settlementEligible": false,
+              "externalOrder": false,
+              "reasons": [
+                "GREEKS_MISSING",
+                "GREEKS_PROVIDER_TIME_UNAVAILABLE"
+              ]
+            }
+          }
+        ],
+        "reportHash": "b5b4ad6cbe2da06c1c2d71c4086ea4de1d4ed41b2017800beef5152bbb73f175",
+        "reportPayload": "{\"account\":\"metadata\",\"asOf\":\"2026-10-12T15:00:00.000Z\",\"contract\":\"observed-contract-report-v1\",\"contracts\":[{\"greeks\":null,\"qualification\":{\"contract\":\"option-eligibility-v1\",\"entryEligible\":false,\"externalOrder\":false,\"greeksFreshnessVerified\":false,\"greeksProviderTimestamp\":null,\"greeksStatus\":\"MISSING\",\"provider\":\"alpaca\",\"reasons\":[\"GREEKS_MISSING\",\"GREEKS_PROVIDER_TIME_UNAVAILABLE\"],\"settlementEligible\":false,\"standardDeliverableObserved\":true,\"symbol\":\"AAPL261120C00200000\",\"termsHash\":\"e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8\"},\"symbol\":\"AAPL261120C00200000\",\"terms\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"contract\":\"alpaca-contract-terms-v1\",\"provider\":\"alpaca\",\"providerEffectiveAt\":null,\"rawHash\":\"b206cb67446d2082e2592ac9f62fbf6c6ee34acf7cca78672924aa8ce1c16b09\",\"source\":\"GET_OPTION_CONTRACT\",\"terms\":{\"deliverables\":[{\"allocationPercentage\":\"100\",\"amount\":\"100\",\"assetId\":\"00000000-0000-4000-8000-000000000001\",\"delayedSettlement\":false,\"settlementMethod\":\"BTOB\",\"settlementType\":\"T+1\",\"symbol\":\"AAPL\",\"type\":\"equity\"}],\"expiry\":\"2026-11-20\",\"id\":\"00000000-0000-4000-8000-000000000002\",\"multiplier\":\"100\",\"right\":\"C\",\"root\":\"AAPL\",\"size\":\"100\",\"status\":\"active\",\"strikeMillis\":200000,\"style\":\"american\",\"symbol\":\"AAPL261120C00200000\",\"tradable\":true,\"underlying\":\"AAPL\",\"underlyingAssetId\":\"00000000-0000-4000-8000-000000000001\"},\"termsHash\":\"e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8\"},\"eventHash\":\"8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557\",\"sequence\":1},\"throughHash\":\"8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557\",\"throughSequence\":1}],\"entryEligible\":false,\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"externalOrder\":false,\"settlementEligible\":false,\"source\":\"alpaca\",\"version\":1}"
+      }
+    },
+    {
+      "name": "complete",
+      "snapshot": {
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "state": {
+          "cash": 1000000,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "AAPL": {
+                "CALL": "AAPL261120C00200000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 1,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {},
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 0,
+          "id": "metadata",
+          "initialCash": 1000000,
+          "lastAt": "2026-10-12T15:00:00.000Z",
+          "lastSignals": {},
+          "name": "Offline metadata fixture",
+          "positions": {},
+          "realized": 0,
+          "source": "alpaca",
+          "winningTrades": 0
+        }
+      },
+      "report": {
+        "contract": "observed-contract-report-v1",
+        "account": "metadata",
+        "source": "alpaca",
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "asOf": "2026-10-12T15:00:00.000Z",
+        "externalOrder": false,
+        "entryEligible": false,
+        "settlementEligible": false,
+        "contracts": [
+          {
+            "symbol": "AAPL261120C00200000",
+            "throughSequence": 2,
+            "throughHash": "82bc82ecbaab80e515dd12ce5a1ea79b1ca40a0172b03c2c2c02b00153d94295",
+            "terms": {
+              "sequence": 1,
+              "eventHash": "8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "contract": "alpaca-contract-terms-v1",
+                "provider": "alpaca",
+                "source": "GET_OPTION_CONTRACT",
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "providerEffectiveAt": null,
+                "rawHash": "b206cb67446d2082e2592ac9f62fbf6c6ee34acf7cca78672924aa8ce1c16b09",
+                "termsHash": "e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8",
+                "terms": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "symbol": "AAPL261120C00200000",
+                  "root": "AAPL",
+                  "underlying": "AAPL",
+                  "underlyingAssetId": "00000000-0000-4000-8000-000000000001",
+                  "expiry": "2026-11-20",
+                  "right": "C",
+                  "strikeMillis": 200000,
+                  "status": "active",
+                  "tradable": true,
+                  "style": "american",
+                  "multiplier": "100",
+                  "size": "100",
+                  "deliverables": [
+                    {
+                      "type": "equity",
+                      "symbol": "AAPL",
+                      "amount": "100",
+                      "allocationPercentage": "100",
+                      "settlementType": "T+1",
+                      "settlementMethod": "BTOB",
+                      "delayedSettlement": false,
+                      "assetId": "00000000-0000-4000-8000-000000000001"
+                    }
+                  ]
+                }
+              }
+            },
+            "greeks": {
+              "sequence": 2,
+              "eventHash": "82bc82ecbaab80e515dd12ce5a1ea79b1ca40a0172b03c2c2c02b00153d94295",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "values": {
+                  "delta": 0.5,
+                  "gamma": 0.01,
+                  "theta": -0.1,
+                  "vega": 0.2,
+                  "rho": 0.01
+                },
+                "providerTimestamp": null,
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "rawHash": "65cb60e6e5be932aa8dfd14217498db38cd5a9ba2b429bdf34bba6d978b11947",
+                "feed": "opra",
+                "freshnessVerified": false
+              }
+            },
+            "qualification": {
+              "contract": "option-eligibility-v1",
+              "symbol": "AAPL261120C00200000",
+              "provider": "alpaca",
+              "termsHash": "e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8",
+              "standardDeliverableObserved": true,
+              "greeksStatus": "VALUES_ONLY",
+              "greeksProviderTimestamp": null,
+              "greeksFreshnessVerified": false,
+              "entryEligible": false,
+              "settlementEligible": false,
+              "externalOrder": false,
+              "reasons": [
+                "GREEKS_PROVIDER_TIME_UNAVAILABLE"
+              ]
+            }
+          }
+        ],
+        "reportHash": "311e8ed1dcb7f1621f559ff9a9437106df694f8c37f666d67013979527baf089",
+        "reportPayload": "{\"account\":\"metadata\",\"asOf\":\"2026-10-12T15:00:00.000Z\",\"contract\":\"observed-contract-report-v1\",\"contracts\":[{\"greeks\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"feed\":\"opra\",\"freshnessVerified\":false,\"providerTimestamp\":null,\"rawHash\":\"65cb60e6e5be932aa8dfd14217498db38cd5a9ba2b429bdf34bba6d978b11947\",\"values\":{\"delta\":0.5,\"gamma\":0.01,\"rho\":0.01,\"theta\":-0.1,\"vega\":0.2}},\"eventHash\":\"82bc82ecbaab80e515dd12ce5a1ea79b1ca40a0172b03c2c2c02b00153d94295\",\"sequence\":2},\"qualification\":{\"contract\":\"option-eligibility-v1\",\"entryEligible\":false,\"externalOrder\":false,\"greeksFreshnessVerified\":false,\"greeksProviderTimestamp\":null,\"greeksStatus\":\"VALUES_ONLY\",\"provider\":\"alpaca\",\"reasons\":[\"GREEKS_PROVIDER_TIME_UNAVAILABLE\"],\"settlementEligible\":false,\"standardDeliverableObserved\":true,\"symbol\":\"AAPL261120C00200000\",\"termsHash\":\"e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8\"},\"symbol\":\"AAPL261120C00200000\",\"terms\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"contract\":\"alpaca-contract-terms-v1\",\"provider\":\"alpaca\",\"providerEffectiveAt\":null,\"rawHash\":\"b206cb67446d2082e2592ac9f62fbf6c6ee34acf7cca78672924aa8ce1c16b09\",\"source\":\"GET_OPTION_CONTRACT\",\"terms\":{\"deliverables\":[{\"allocationPercentage\":\"100\",\"amount\":\"100\",\"assetId\":\"00000000-0000-4000-8000-000000000001\",\"delayedSettlement\":false,\"settlementMethod\":\"BTOB\",\"settlementType\":\"T+1\",\"symbol\":\"AAPL\",\"type\":\"equity\"}],\"expiry\":\"2026-11-20\",\"id\":\"00000000-0000-4000-8000-000000000002\",\"multiplier\":\"100\",\"right\":\"C\",\"root\":\"AAPL\",\"size\":\"100\",\"status\":\"active\",\"strikeMillis\":200000,\"style\":\"american\",\"symbol\":\"AAPL261120C00200000\",\"tradable\":true,\"underlying\":\"AAPL\",\"underlyingAssetId\":\"00000000-0000-4000-8000-000000000001\"},\"termsHash\":\"e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8\"},\"eventHash\":\"8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557\",\"sequence\":1},\"throughHash\":\"82bc82ecbaab80e515dd12ce5a1ea79b1ca40a0172b03c2c2c02b00153d94295\",\"throughSequence\":2}],\"entryEligible\":false,\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"externalOrder\":false,\"settlementEligible\":false,\"source\":\"alpaca\",\"version\":1}"
+      }
+    },
+    {
+      "name": "adjusted",
+      "snapshot": {
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "state": {
+          "cash": 1000000,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "AAPL": {
+                "CALL": "AAPL261120C00200000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 1,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {},
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 0,
+          "id": "metadata",
+          "initialCash": 1000000,
+          "lastAt": "2026-10-12T15:00:00.000Z",
+          "lastSignals": {},
+          "name": "Offline metadata fixture",
+          "positions": {},
+          "realized": 0,
+          "source": "alpaca",
+          "winningTrades": 0
+        }
+      },
+      "report": {
+        "contract": "observed-contract-report-v1",
+        "account": "metadata",
+        "source": "alpaca",
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "asOf": "2026-10-12T15:00:00.000Z",
+        "externalOrder": false,
+        "entryEligible": false,
+        "settlementEligible": false,
+        "contracts": [
+          {
+            "symbol": "AAPL261120C00200000",
+            "throughSequence": 2,
+            "throughHash": "94cfdea351cf816b045394c359561c0319b31f2c2a364a56cbe9f0c1f7489df4",
+            "terms": {
+              "sequence": 1,
+              "eventHash": "97289f6b6f2cc1e3e0f359eeb1d10d62018ee8751e77b752ebb55ae7bd1f13a8",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "contract": "alpaca-contract-terms-v1",
+                "provider": "alpaca",
+                "source": "GET_OPTION_CONTRACT",
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "providerEffectiveAt": null,
+                "rawHash": "47125f7ce208bb26ffcef1a69bf3973a385d11fa0bbfde0632bbb1a5f5d9a880",
+                "termsHash": "2b43d414d16648a0e816ec136b68a27875bc3e7f132c613a4b6bb86668ccfc9a",
+                "terms": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "symbol": "AAPL261120C00200000",
+                  "root": "AAPL",
+                  "underlying": "AAPL",
+                  "underlyingAssetId": "00000000-0000-4000-8000-000000000001",
+                  "expiry": "2026-11-20",
+                  "right": "C",
+                  "strikeMillis": 200000,
+                  "status": "active",
+                  "tradable": true,
+                  "style": "american",
+                  "multiplier": "100",
+                  "size": "100",
+                  "deliverables": [
+                    {
+                      "type": "equity",
+                      "symbol": "AAPL",
+                      "amount": "150",
+                      "allocationPercentage": "100",
+                      "settlementType": "T+1",
+                      "settlementMethod": "BTOB",
+                      "delayedSettlement": false,
+                      "assetId": "00000000-0000-4000-8000-000000000001"
+                    }
+                  ]
+                }
+              }
+            },
+            "greeks": {
+              "sequence": 2,
+              "eventHash": "94cfdea351cf816b045394c359561c0319b31f2c2a364a56cbe9f0c1f7489df4",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "values": {
+                  "delta": 0.5,
+                  "gamma": 0.01,
+                  "theta": -0.1,
+                  "vega": 0.2,
+                  "rho": 0.01
+                },
+                "providerTimestamp": null,
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "rawHash": "65cb60e6e5be932aa8dfd14217498db38cd5a9ba2b429bdf34bba6d978b11947",
+                "feed": "opra",
+                "freshnessVerified": false
+              }
+            },
+            "qualification": {
+              "contract": "option-eligibility-v1",
+              "symbol": "AAPL261120C00200000",
+              "provider": "alpaca",
+              "termsHash": "2b43d414d16648a0e816ec136b68a27875bc3e7f132c613a4b6bb86668ccfc9a",
+              "standardDeliverableObserved": false,
+              "greeksStatus": "VALUES_ONLY",
+              "greeksProviderTimestamp": null,
+              "greeksFreshnessVerified": false,
+              "entryEligible": false,
+              "settlementEligible": false,
+              "externalOrder": false,
+              "reasons": [
+                "GREEKS_PROVIDER_TIME_UNAVAILABLE",
+                "ADJUSTED_OR_UNSUPPORTED_CONTRACT"
+              ]
+            }
+          }
+        ],
+        "reportHash": "cb21635b3abaef7880fd288e323a9c400a9c433967d611d0bb1dcd49f95448c7",
+        "reportPayload": "{\"account\":\"metadata\",\"asOf\":\"2026-10-12T15:00:00.000Z\",\"contract\":\"observed-contract-report-v1\",\"contracts\":[{\"greeks\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"feed\":\"opra\",\"freshnessVerified\":false,\"providerTimestamp\":null,\"rawHash\":\"65cb60e6e5be932aa8dfd14217498db38cd5a9ba2b429bdf34bba6d978b11947\",\"values\":{\"delta\":0.5,\"gamma\":0.01,\"rho\":0.01,\"theta\":-0.1,\"vega\":0.2}},\"eventHash\":\"94cfdea351cf816b045394c359561c0319b31f2c2a364a56cbe9f0c1f7489df4\",\"sequence\":2},\"qualification\":{\"contract\":\"option-eligibility-v1\",\"entryEligible\":false,\"externalOrder\":false,\"greeksFreshnessVerified\":false,\"greeksProviderTimestamp\":null,\"greeksStatus\":\"VALUES_ONLY\",\"provider\":\"alpaca\",\"reasons\":[\"GREEKS_PROVIDER_TIME_UNAVAILABLE\",\"ADJUSTED_OR_UNSUPPORTED_CONTRACT\"],\"settlementEligible\":false,\"standardDeliverableObserved\":false,\"symbol\":\"AAPL261120C00200000\",\"termsHash\":\"2b43d414d16648a0e816ec136b68a27875bc3e7f132c613a4b6bb86668ccfc9a\"},\"symbol\":\"AAPL261120C00200000\",\"terms\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"contract\":\"alpaca-contract-terms-v1\",\"provider\":\"alpaca\",\"providerEffectiveAt\":null,\"rawHash\":\"47125f7ce208bb26ffcef1a69bf3973a385d11fa0bbfde0632bbb1a5f5d9a880\",\"source\":\"GET_OPTION_CONTRACT\",\"terms\":{\"deliverables\":[{\"allocationPercentage\":\"100\",\"amount\":\"150\",\"assetId\":\"00000000-0000-4000-8000-000000000001\",\"delayedSettlement\":false,\"settlementMethod\":\"BTOB\",\"settlementType\":\"T+1\",\"symbol\":\"AAPL\",\"type\":\"equity\"}],\"expiry\":\"2026-11-20\",\"id\":\"00000000-0000-4000-8000-000000000002\",\"multiplier\":\"100\",\"right\":\"C\",\"root\":\"AAPL\",\"size\":\"100\",\"status\":\"active\",\"strikeMillis\":200000,\"style\":\"american\",\"symbol\":\"AAPL261120C00200000\",\"tradable\":true,\"underlying\":\"AAPL\",\"underlyingAssetId\":\"00000000-0000-4000-8000-000000000001\"},\"termsHash\":\"2b43d414d16648a0e816ec136b68a27875bc3e7f132c613a4b6bb86668ccfc9a\"},\"eventHash\":\"97289f6b6f2cc1e3e0f359eeb1d10d62018ee8751e77b752ebb55ae7bd1f13a8\",\"sequence\":1},\"throughHash\":\"94cfdea351cf816b045394c359561c0319b31f2c2a364a56cbe9f0c1f7489df4\",\"throughSequence\":2}],\"entryEligible\":false,\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"externalOrder\":false,\"settlementEligible\":false,\"source\":\"alpaca\",\"version\":1}"
+      }
+    },
+    {
+      "name": "delayed",
+      "snapshot": {
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "state": {
+          "cash": 1000000,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "AAPL": {
+                "CALL": "AAPL261120C00200000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 1,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {},
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 0,
+          "id": "metadata",
+          "initialCash": 1000000,
+          "lastAt": "2026-10-12T15:00:00.000Z",
+          "lastSignals": {},
+          "name": "Offline metadata fixture",
+          "positions": {},
+          "realized": 0,
+          "source": "alpaca",
+          "winningTrades": 0
+        }
+      },
+      "report": {
+        "contract": "observed-contract-report-v1",
+        "account": "metadata",
+        "source": "alpaca",
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "asOf": "2026-10-12T15:00:00.000Z",
+        "externalOrder": false,
+        "entryEligible": false,
+        "settlementEligible": false,
+        "contracts": [
+          {
+            "symbol": "AAPL261120C00200000",
+            "throughSequence": 2,
+            "throughHash": "d3e13ca77cc65a8f9513c701ac70007e67bcab0c3741e8333148920d8d703656",
+            "terms": {
+              "sequence": 1,
+              "eventHash": "724841ef5cf1b4a2dd162c4c4d276af4c9f7e77a09ae3c4685fc3dd81c55a564",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "contract": "alpaca-contract-terms-v1",
+                "provider": "alpaca",
+                "source": "GET_OPTION_CONTRACT",
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "providerEffectiveAt": null,
+                "rawHash": "821c8cb9645a654adc33d0fd1838faa8d77dab1f4dd33bfaee1b873944337563",
+                "termsHash": "1076281a35ce70af57321275899b87c123a279b4d0f4d92767a268b7516f754e",
+                "terms": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "symbol": "AAPL261120C00200000",
+                  "root": "AAPL",
+                  "underlying": "AAPL",
+                  "underlyingAssetId": "00000000-0000-4000-8000-000000000001",
+                  "expiry": "2026-11-20",
+                  "right": "C",
+                  "strikeMillis": 200000,
+                  "status": "active",
+                  "tradable": true,
+                  "style": "american",
+                  "multiplier": "100",
+                  "size": "100",
+                  "deliverables": [
+                    {
+                      "type": "equity",
+                      "symbol": "AAPL",
+                      "amount": null,
+                      "allocationPercentage": "100",
+                      "settlementType": "T+1",
+                      "settlementMethod": "BTOB",
+                      "delayedSettlement": true,
+                      "assetId": "00000000-0000-4000-8000-000000000001"
+                    }
+                  ]
+                }
+              }
+            },
+            "greeks": {
+              "sequence": 2,
+              "eventHash": "d3e13ca77cc65a8f9513c701ac70007e67bcab0c3741e8333148920d8d703656",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "values": {
+                  "delta": 0.5,
+                  "gamma": 0.01,
+                  "theta": -0.1,
+                  "vega": 0.2,
+                  "rho": 0.01
+                },
+                "providerTimestamp": null,
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "rawHash": "65cb60e6e5be932aa8dfd14217498db38cd5a9ba2b429bdf34bba6d978b11947",
+                "feed": "opra",
+                "freshnessVerified": false
+              }
+            },
+            "qualification": {
+              "contract": "option-eligibility-v1",
+              "symbol": "AAPL261120C00200000",
+              "provider": "alpaca",
+              "termsHash": "1076281a35ce70af57321275899b87c123a279b4d0f4d92767a268b7516f754e",
+              "standardDeliverableObserved": false,
+              "greeksStatus": "VALUES_ONLY",
+              "greeksProviderTimestamp": null,
+              "greeksFreshnessVerified": false,
+              "entryEligible": false,
+              "settlementEligible": false,
+              "externalOrder": false,
+              "reasons": [
+                "GREEKS_PROVIDER_TIME_UNAVAILABLE",
+                "CONTRACT_DELIVERY_DELAYED"
+              ]
+            }
+          }
+        ],
+        "reportHash": "c1f2e466c339b4e86148ff3605569f2c6e9a27592496aadd73ea8d3be0ad6ea3",
+        "reportPayload": "{\"account\":\"metadata\",\"asOf\":\"2026-10-12T15:00:00.000Z\",\"contract\":\"observed-contract-report-v1\",\"contracts\":[{\"greeks\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"feed\":\"opra\",\"freshnessVerified\":false,\"providerTimestamp\":null,\"rawHash\":\"65cb60e6e5be932aa8dfd14217498db38cd5a9ba2b429bdf34bba6d978b11947\",\"values\":{\"delta\":0.5,\"gamma\":0.01,\"rho\":0.01,\"theta\":-0.1,\"vega\":0.2}},\"eventHash\":\"d3e13ca77cc65a8f9513c701ac70007e67bcab0c3741e8333148920d8d703656\",\"sequence\":2},\"qualification\":{\"contract\":\"option-eligibility-v1\",\"entryEligible\":false,\"externalOrder\":false,\"greeksFreshnessVerified\":false,\"greeksProviderTimestamp\":null,\"greeksStatus\":\"VALUES_ONLY\",\"provider\":\"alpaca\",\"reasons\":[\"GREEKS_PROVIDER_TIME_UNAVAILABLE\",\"CONTRACT_DELIVERY_DELAYED\"],\"settlementEligible\":false,\"standardDeliverableObserved\":false,\"symbol\":\"AAPL261120C00200000\",\"termsHash\":\"1076281a35ce70af57321275899b87c123a279b4d0f4d92767a268b7516f754e\"},\"symbol\":\"AAPL261120C00200000\",\"terms\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"contract\":\"alpaca-contract-terms-v1\",\"provider\":\"alpaca\",\"providerEffectiveAt\":null,\"rawHash\":\"821c8cb9645a654adc33d0fd1838faa8d77dab1f4dd33bfaee1b873944337563\",\"source\":\"GET_OPTION_CONTRACT\",\"terms\":{\"deliverables\":[{\"allocationPercentage\":\"100\",\"amount\":null,\"assetId\":\"00000000-0000-4000-8000-000000000001\",\"delayedSettlement\":true,\"settlementMethod\":\"BTOB\",\"settlementType\":\"T+1\",\"symbol\":\"AAPL\",\"type\":\"equity\"}],\"expiry\":\"2026-11-20\",\"id\":\"00000000-0000-4000-8000-000000000002\",\"multiplier\":\"100\",\"right\":\"C\",\"root\":\"AAPL\",\"size\":\"100\",\"status\":\"active\",\"strikeMillis\":200000,\"style\":\"american\",\"symbol\":\"AAPL261120C00200000\",\"tradable\":true,\"underlying\":\"AAPL\",\"underlyingAssetId\":\"00000000-0000-4000-8000-000000000001\"},\"termsHash\":\"1076281a35ce70af57321275899b87c123a279b4d0f4d92767a268b7516f754e\"},\"eventHash\":\"724841ef5cf1b4a2dd162c4c4d276af4c9f7e77a09ae3c4685fc3dd81c55a564\",\"sequence\":1},\"throughHash\":\"d3e13ca77cc65a8f9513c701ac70007e67bcab0c3741e8333148920d8d703656\",\"throughSequence\":2}],\"entryEligible\":false,\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"externalOrder\":false,\"settlementEligible\":false,\"source\":\"alpaca\",\"version\":1}"
+      }
+    },
+    {
+      "name": "stale",
+      "snapshot": {
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "state": {
+          "cash": 1000000,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "AAPL": {
+                "CALL": "AAPL261120C00200000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 1,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {},
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 0,
+          "id": "metadata",
+          "initialCash": 1000000,
+          "lastAt": "2026-10-12T15:00:00.000Z",
+          "lastSignals": {},
+          "name": "Offline metadata fixture",
+          "positions": {},
+          "realized": 0,
+          "source": "alpaca",
+          "winningTrades": 0
+        }
+      },
+      "report": {
+        "contract": "observed-contract-report-v1",
+        "account": "metadata",
+        "source": "alpaca",
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "asOf": "2026-10-14T15:00:00.000Z",
+        "externalOrder": false,
+        "entryEligible": false,
+        "settlementEligible": false,
+        "contracts": [
+          {
+            "symbol": "AAPL261120C00200000",
+            "throughSequence": 2,
+            "throughHash": "82bc82ecbaab80e515dd12ce5a1ea79b1ca40a0172b03c2c2c02b00153d94295",
+            "terms": {
+              "sequence": 1,
+              "eventHash": "8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "contract": "alpaca-contract-terms-v1",
+                "provider": "alpaca",
+                "source": "GET_OPTION_CONTRACT",
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "providerEffectiveAt": null,
+                "rawHash": "b206cb67446d2082e2592ac9f62fbf6c6ee34acf7cca78672924aa8ce1c16b09",
+                "termsHash": "e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8",
+                "terms": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "symbol": "AAPL261120C00200000",
+                  "root": "AAPL",
+                  "underlying": "AAPL",
+                  "underlyingAssetId": "00000000-0000-4000-8000-000000000001",
+                  "expiry": "2026-11-20",
+                  "right": "C",
+                  "strikeMillis": 200000,
+                  "status": "active",
+                  "tradable": true,
+                  "style": "american",
+                  "multiplier": "100",
+                  "size": "100",
+                  "deliverables": [
+                    {
+                      "type": "equity",
+                      "symbol": "AAPL",
+                      "amount": "100",
+                      "allocationPercentage": "100",
+                      "settlementType": "T+1",
+                      "settlementMethod": "BTOB",
+                      "delayedSettlement": false,
+                      "assetId": "00000000-0000-4000-8000-000000000001"
+                    }
+                  ]
+                }
+              }
+            },
+            "greeks": {
+              "sequence": 2,
+              "eventHash": "82bc82ecbaab80e515dd12ce5a1ea79b1ca40a0172b03c2c2c02b00153d94295",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "values": {
+                  "delta": 0.5,
+                  "gamma": 0.01,
+                  "theta": -0.1,
+                  "vega": 0.2,
+                  "rho": 0.01
+                },
+                "providerTimestamp": null,
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "rawHash": "65cb60e6e5be932aa8dfd14217498db38cd5a9ba2b429bdf34bba6d978b11947",
+                "feed": "opra",
+                "freshnessVerified": false
+              }
+            },
+            "qualification": {
+              "contract": "option-eligibility-v1",
+              "symbol": "AAPL261120C00200000",
+              "provider": "alpaca",
+              "termsHash": "e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8",
+              "standardDeliverableObserved": false,
+              "greeksStatus": "VALUES_ONLY",
+              "greeksProviderTimestamp": null,
+              "greeksFreshnessVerified": false,
+              "entryEligible": false,
+              "settlementEligible": false,
+              "externalOrder": false,
+              "reasons": [
+                "GREEKS_PROVIDER_TIME_UNAVAILABLE",
+                "CONTRACT_TERMS_STALE_OR_FUTURE"
+              ]
+            }
+          }
+        ],
+        "reportHash": "12d5881edcddf83f4edc9f5fef58f1596a5a82103434cca6820a46948234fa74",
+        "reportPayload": "{\"account\":\"metadata\",\"asOf\":\"2026-10-14T15:00:00.000Z\",\"contract\":\"observed-contract-report-v1\",\"contracts\":[{\"greeks\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"feed\":\"opra\",\"freshnessVerified\":false,\"providerTimestamp\":null,\"rawHash\":\"65cb60e6e5be932aa8dfd14217498db38cd5a9ba2b429bdf34bba6d978b11947\",\"values\":{\"delta\":0.5,\"gamma\":0.01,\"rho\":0.01,\"theta\":-0.1,\"vega\":0.2}},\"eventHash\":\"82bc82ecbaab80e515dd12ce5a1ea79b1ca40a0172b03c2c2c02b00153d94295\",\"sequence\":2},\"qualification\":{\"contract\":\"option-eligibility-v1\",\"entryEligible\":false,\"externalOrder\":false,\"greeksFreshnessVerified\":false,\"greeksProviderTimestamp\":null,\"greeksStatus\":\"VALUES_ONLY\",\"provider\":\"alpaca\",\"reasons\":[\"GREEKS_PROVIDER_TIME_UNAVAILABLE\",\"CONTRACT_TERMS_STALE_OR_FUTURE\"],\"settlementEligible\":false,\"standardDeliverableObserved\":false,\"symbol\":\"AAPL261120C00200000\",\"termsHash\":\"e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8\"},\"symbol\":\"AAPL261120C00200000\",\"terms\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"contract\":\"alpaca-contract-terms-v1\",\"provider\":\"alpaca\",\"providerEffectiveAt\":null,\"rawHash\":\"b206cb67446d2082e2592ac9f62fbf6c6ee34acf7cca78672924aa8ce1c16b09\",\"source\":\"GET_OPTION_CONTRACT\",\"terms\":{\"deliverables\":[{\"allocationPercentage\":\"100\",\"amount\":\"100\",\"assetId\":\"00000000-0000-4000-8000-000000000001\",\"delayedSettlement\":false,\"settlementMethod\":\"BTOB\",\"settlementType\":\"T+1\",\"symbol\":\"AAPL\",\"type\":\"equity\"}],\"expiry\":\"2026-11-20\",\"id\":\"00000000-0000-4000-8000-000000000002\",\"multiplier\":\"100\",\"right\":\"C\",\"root\":\"AAPL\",\"size\":\"100\",\"status\":\"active\",\"strikeMillis\":200000,\"style\":\"american\",\"symbol\":\"AAPL261120C00200000\",\"tradable\":true,\"underlying\":\"AAPL\",\"underlyingAssetId\":\"00000000-0000-4000-8000-000000000001\"},\"termsHash\":\"e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8\"},\"eventHash\":\"8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557\",\"sequence\":1},\"throughHash\":\"82bc82ecbaab80e515dd12ce5a1ea79b1ca40a0172b03c2c2c02b00153d94295\",\"throughSequence\":2}],\"entryEligible\":false,\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"externalOrder\":false,\"settlementEligible\":false,\"source\":\"alpaca\",\"version\":1}"
+      }
+    },
+    {
+      "name": "partial",
+      "snapshot": {
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "state": {
+          "cash": 1000000,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "AAPL": {
+                "CALL": "AAPL261120C00200000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 1,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {},
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 0,
+          "id": "metadata",
+          "initialCash": 1000000,
+          "lastAt": "2026-10-12T15:00:00.000Z",
+          "lastSignals": {},
+          "name": "Offline metadata fixture",
+          "positions": {},
+          "realized": 0,
+          "source": "alpaca",
+          "winningTrades": 0
+        }
+      },
+      "report": {
+        "contract": "observed-contract-report-v1",
+        "account": "metadata",
+        "source": "alpaca",
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "asOf": "2026-10-12T15:00:00.000Z",
+        "externalOrder": false,
+        "entryEligible": false,
+        "settlementEligible": false,
+        "contracts": [
+          {
+            "symbol": "AAPL261120C00200000",
+            "throughSequence": 2,
+            "throughHash": "d7eaa751d6d6e46c948c18189ccfd4d02aea501bb911fcfb37e1b0313aba7982",
+            "terms": {
+              "sequence": 1,
+              "eventHash": "8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "contract": "alpaca-contract-terms-v1",
+                "provider": "alpaca",
+                "source": "GET_OPTION_CONTRACT",
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "providerEffectiveAt": null,
+                "rawHash": "b206cb67446d2082e2592ac9f62fbf6c6ee34acf7cca78672924aa8ce1c16b09",
+                "termsHash": "e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8",
+                "terms": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "symbol": "AAPL261120C00200000",
+                  "root": "AAPL",
+                  "underlying": "AAPL",
+                  "underlyingAssetId": "00000000-0000-4000-8000-000000000001",
+                  "expiry": "2026-11-20",
+                  "right": "C",
+                  "strikeMillis": 200000,
+                  "status": "active",
+                  "tradable": true,
+                  "style": "american",
+                  "multiplier": "100",
+                  "size": "100",
+                  "deliverables": [
+                    {
+                      "type": "equity",
+                      "symbol": "AAPL",
+                      "amount": "100",
+                      "allocationPercentage": "100",
+                      "settlementType": "T+1",
+                      "settlementMethod": "BTOB",
+                      "delayedSettlement": false,
+                      "assetId": "00000000-0000-4000-8000-000000000001"
+                    }
+                  ]
+                }
+              }
+            },
+            "greeks": {
+              "sequence": 2,
+              "eventHash": "d7eaa751d6d6e46c948c18189ccfd4d02aea501bb911fcfb37e1b0313aba7982",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "values": {
+                  "delta": 0.5,
+                  "gamma": 0.01,
+                  "theta": -0.1,
+                  "vega": 0.2,
+                  "rho": null
+                },
+                "providerTimestamp": null,
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "rawHash": "9d746e30486f1d24859a63d812895233e0a8a96fe6fcfefb9b0a4a2432d1ab13",
+                "feed": "opra",
+                "freshnessVerified": false
+              }
+            },
+            "qualification": {
+              "contract": "option-eligibility-v1",
+              "symbol": "AAPL261120C00200000",
+              "provider": "alpaca",
+              "termsHash": "e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8",
+              "standardDeliverableObserved": true,
+              "greeksStatus": "PARTIAL",
+              "greeksProviderTimestamp": null,
+              "greeksFreshnessVerified": false,
+              "entryEligible": false,
+              "settlementEligible": false,
+              "externalOrder": false,
+              "reasons": [
+                "GREEKS_PARTIAL",
+                "GREEKS_PROVIDER_TIME_UNAVAILABLE"
+              ]
+            }
+          }
+        ],
+        "reportHash": "6a3f874aa8281ee4d750aa4b90c5afd538deb8af1778c1c9591ada305fe354bf",
+        "reportPayload": "{\"account\":\"metadata\",\"asOf\":\"2026-10-12T15:00:00.000Z\",\"contract\":\"observed-contract-report-v1\",\"contracts\":[{\"greeks\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"feed\":\"opra\",\"freshnessVerified\":false,\"providerTimestamp\":null,\"rawHash\":\"9d746e30486f1d24859a63d812895233e0a8a96fe6fcfefb9b0a4a2432d1ab13\",\"values\":{\"delta\":0.5,\"gamma\":0.01,\"rho\":null,\"theta\":-0.1,\"vega\":0.2}},\"eventHash\":\"d7eaa751d6d6e46c948c18189ccfd4d02aea501bb911fcfb37e1b0313aba7982\",\"sequence\":2},\"qualification\":{\"contract\":\"option-eligibility-v1\",\"entryEligible\":false,\"externalOrder\":false,\"greeksFreshnessVerified\":false,\"greeksProviderTimestamp\":null,\"greeksStatus\":\"PARTIAL\",\"provider\":\"alpaca\",\"reasons\":[\"GREEKS_PARTIAL\",\"GREEKS_PROVIDER_TIME_UNAVAILABLE\"],\"settlementEligible\":false,\"standardDeliverableObserved\":true,\"symbol\":\"AAPL261120C00200000\",\"termsHash\":\"e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8\"},\"symbol\":\"AAPL261120C00200000\",\"terms\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"contract\":\"alpaca-contract-terms-v1\",\"provider\":\"alpaca\",\"providerEffectiveAt\":null,\"rawHash\":\"b206cb67446d2082e2592ac9f62fbf6c6ee34acf7cca78672924aa8ce1c16b09\",\"source\":\"GET_OPTION_CONTRACT\",\"terms\":{\"deliverables\":[{\"allocationPercentage\":\"100\",\"amount\":\"100\",\"assetId\":\"00000000-0000-4000-8000-000000000001\",\"delayedSettlement\":false,\"settlementMethod\":\"BTOB\",\"settlementType\":\"T+1\",\"symbol\":\"AAPL\",\"type\":\"equity\"}],\"expiry\":\"2026-11-20\",\"id\":\"00000000-0000-4000-8000-000000000002\",\"multiplier\":\"100\",\"right\":\"C\",\"root\":\"AAPL\",\"size\":\"100\",\"status\":\"active\",\"strikeMillis\":200000,\"style\":\"american\",\"symbol\":\"AAPL261120C00200000\",\"tradable\":true,\"underlying\":\"AAPL\",\"underlyingAssetId\":\"00000000-0000-4000-8000-000000000001\"},\"termsHash\":\"e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8\"},\"eventHash\":\"8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557\",\"sequence\":1},\"throughHash\":\"d7eaa751d6d6e46c948c18189ccfd4d02aea501bb911fcfb37e1b0313aba7982\",\"throughSequence\":2}],\"entryEligible\":false,\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"externalOrder\":false,\"settlementEligible\":false,\"source\":\"alpaca\",\"version\":1}"
+      }
+    },
+    {
+      "name": "tiny",
+      "snapshot": {
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "state": {
+          "cash": 1000000,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "AAPL": {
+                "CALL": "AAPL261120C00200000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 1,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {},
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 0,
+          "id": "metadata",
+          "initialCash": 1000000,
+          "lastAt": "2026-10-12T15:00:00.000Z",
+          "lastSignals": {},
+          "name": "Offline metadata fixture",
+          "positions": {},
+          "realized": 0,
+          "source": "alpaca",
+          "winningTrades": 0
+        }
+      },
+      "report": {
+        "contract": "observed-contract-report-v1",
+        "account": "metadata",
+        "source": "alpaca",
+        "version": 1,
+        "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+        "asOf": "2026-10-12T15:00:00.000Z",
+        "externalOrder": false,
+        "entryEligible": false,
+        "settlementEligible": false,
+        "contracts": [
+          {
+            "symbol": "AAPL261120C00200000",
+            "throughSequence": 2,
+            "throughHash": "2a2ca95aed386d311725d9f7d8c24a30358a70f98fe0e9357587a75194f0dffa",
+            "terms": {
+              "sequence": 1,
+              "eventHash": "8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "contract": "alpaca-contract-terms-v1",
+                "provider": "alpaca",
+                "source": "GET_OPTION_CONTRACT",
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "providerEffectiveAt": null,
+                "rawHash": "b206cb67446d2082e2592ac9f62fbf6c6ee34acf7cca78672924aa8ce1c16b09",
+                "termsHash": "e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8",
+                "terms": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "symbol": "AAPL261120C00200000",
+                  "root": "AAPL",
+                  "underlying": "AAPL",
+                  "underlyingAssetId": "00000000-0000-4000-8000-000000000001",
+                  "expiry": "2026-11-20",
+                  "right": "C",
+                  "strikeMillis": 200000,
+                  "status": "active",
+                  "tradable": true,
+                  "style": "american",
+                  "multiplier": "100",
+                  "size": "100",
+                  "deliverables": [
+                    {
+                      "type": "equity",
+                      "symbol": "AAPL",
+                      "amount": "100",
+                      "allocationPercentage": "100",
+                      "settlementType": "T+1",
+                      "settlementMethod": "BTOB",
+                      "delayedSettlement": false,
+                      "assetId": "00000000-0000-4000-8000-000000000001"
+                    }
+                  ]
+                }
+              }
+            },
+            "greeks": {
+              "sequence": 2,
+              "eventHash": "2a2ca95aed386d311725d9f7d8c24a30358a70f98fe0e9357587a75194f0dffa",
+              "capturedAt": "2026-10-12T15:00:00+00:00",
+              "bindings": [
+                {
+                  "account": "metadata",
+                  "eventHash": "863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93",
+                  "version": 1
+                }
+              ],
+              "data": {
+                "values": {
+                  "delta": 0.5,
+                  "gamma": 1e-07,
+                  "theta": -0.1,
+                  "vega": 0.2,
+                  "rho": -0.0
+                },
+                "providerTimestamp": null,
+                "capturedAt": "2026-10-12T15:00:00+00:00",
+                "rawHash": "813c7d34d1a68c3d2ea4e755f96e60f30d96b802b6264a73c9b124135de38614",
+                "feed": "opra",
+                "freshnessVerified": false
+              }
+            },
+            "qualification": {
+              "contract": "option-eligibility-v1",
+              "symbol": "AAPL261120C00200000",
+              "provider": "alpaca",
+              "termsHash": "e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8",
+              "standardDeliverableObserved": true,
+              "greeksStatus": "VALUES_ONLY",
+              "greeksProviderTimestamp": null,
+              "greeksFreshnessVerified": false,
+              "entryEligible": false,
+              "settlementEligible": false,
+              "externalOrder": false,
+              "reasons": [
+                "GREEKS_PROVIDER_TIME_UNAVAILABLE"
+              ]
+            }
+          }
+        ],
+        "reportHash": "621650ea41e009eed77cdf701bd90fbb73ee536a54038a19241d47bfd7146644",
+        "reportPayload": "{\"account\":\"metadata\",\"asOf\":\"2026-10-12T15:00:00.000Z\",\"contract\":\"observed-contract-report-v1\",\"contracts\":[{\"greeks\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"feed\":\"opra\",\"freshnessVerified\":false,\"providerTimestamp\":null,\"rawHash\":\"813c7d34d1a68c3d2ea4e755f96e60f30d96b802b6264a73c9b124135de38614\",\"values\":{\"delta\":0.5,\"gamma\":1e-07,\"rho\":-0.0,\"theta\":-0.1,\"vega\":0.2}},\"eventHash\":\"2a2ca95aed386d311725d9f7d8c24a30358a70f98fe0e9357587a75194f0dffa\",\"sequence\":2},\"qualification\":{\"contract\":\"option-eligibility-v1\",\"entryEligible\":false,\"externalOrder\":false,\"greeksFreshnessVerified\":false,\"greeksProviderTimestamp\":null,\"greeksStatus\":\"VALUES_ONLY\",\"provider\":\"alpaca\",\"reasons\":[\"GREEKS_PROVIDER_TIME_UNAVAILABLE\"],\"settlementEligible\":false,\"standardDeliverableObserved\":true,\"symbol\":\"AAPL261120C00200000\",\"termsHash\":\"e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8\"},\"symbol\":\"AAPL261120C00200000\",\"terms\":{\"bindings\":[{\"account\":\"metadata\",\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"version\":1}],\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"data\":{\"capturedAt\":\"2026-10-12T15:00:00+00:00\",\"contract\":\"alpaca-contract-terms-v1\",\"provider\":\"alpaca\",\"providerEffectiveAt\":null,\"rawHash\":\"b206cb67446d2082e2592ac9f62fbf6c6ee34acf7cca78672924aa8ce1c16b09\",\"source\":\"GET_OPTION_CONTRACT\",\"terms\":{\"deliverables\":[{\"allocationPercentage\":\"100\",\"amount\":\"100\",\"assetId\":\"00000000-0000-4000-8000-000000000001\",\"delayedSettlement\":false,\"settlementMethod\":\"BTOB\",\"settlementType\":\"T+1\",\"symbol\":\"AAPL\",\"type\":\"equity\"}],\"expiry\":\"2026-11-20\",\"id\":\"00000000-0000-4000-8000-000000000002\",\"multiplier\":\"100\",\"right\":\"C\",\"root\":\"AAPL\",\"size\":\"100\",\"status\":\"active\",\"strikeMillis\":200000,\"style\":\"american\",\"symbol\":\"AAPL261120C00200000\",\"tradable\":true,\"underlying\":\"AAPL\",\"underlyingAssetId\":\"00000000-0000-4000-8000-000000000001\"},\"termsHash\":\"e3c3484aa728e7f8f4c311974110bc8ce70bff98c747da562ea4b1a179a949f8\"},\"eventHash\":\"8379d6fad37fb1378181e958ec50c33e8db755d5c7d2e860a1f3ae8b03744557\",\"sequence\":1},\"throughHash\":\"2a2ca95aed386d311725d9f7d8c24a30358a70f98fe0e9357587a75194f0dffa\",\"throughSequence\":2}],\"entryEligible\":false,\"eventHash\":\"863363c5ae33799f4fc86b438acbd4452c4c6318b28cce10bd7de78023018f93\",\"externalOrder\":false,\"settlementEligible\":false,\"source\":\"alpaca\",\"version\":1}"
+      }
+    }
+  ]
+}

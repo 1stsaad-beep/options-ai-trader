@@ -161,4 +161,4 @@ def report(store, account):
                   'version': head['version'], 'eventHash': head['event_hash'], 'asOf': iso(now),
                   'externalOrder': False, 'entryEligible': False, 'settlementEligible': False,
                   'contracts': contracts}
-        return result | {'reportHash': digest(result)}
+        return result | {'reportHash': digest(result), 'reportPayload': canonical(result)}

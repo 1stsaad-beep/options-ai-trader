@@ -214,3 +214,12 @@ def test_later_other_account_metadata_cannot_hide_bound_original(tmp_path):
     assert report(store,'a')['contracts'][0]['terms']['eventHash']==first['eventHash']
     assert not report(store,'b')['contracts'][0]['qualification']['standardDeliverableObserved']
     repo.close()
+
+
+def test_shared_metadata_fixture_is_generated_by_actual_sql():
+    from pathlib import Path
+    import sys,json
+    sys.path.insert(0,str(Path(__file__).parents[2]/'scripts'))
+    from generate_contract_evidence_fixture import generate
+    expected=json.loads((Path(__file__).parents[2]/'mobile/test/fixtures/contract_evidence_v1.json').read_text())
+    assert generate()==expected
