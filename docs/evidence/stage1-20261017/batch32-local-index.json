@@ -1,0 +1,18 @@
+{
+  "source": "batch32 worktree before publication",
+  "python": {
+    "tests": "1385",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0"
+  },
+  "security": {
+    "head": "7499fcb5e41695638dffb453f35a5f883b737bf5",
+    "run": 39005363451,
+    "artifact": 12090477115
+  },
+  "artifacts": {
+    "batch31-security.zip": "0e33deb7a2a0f907f76558e7b687fdbbcdbba0a2851301a2bf548a7f1b1eb0df",
+    "batch32-local-python.zip": "bcca8ff4b8296013a76e382c9a33f177393da06c19e9b73c1dc5987971c78f38"
+  }
+}

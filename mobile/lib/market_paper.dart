@@ -16,6 +16,7 @@ import 'observed_bar_archive.dart';
 import 'paper_money.dart';
 import 'delivery_valuation.dart';
 import 'paper_execution.dart';
+import 'paper_return.dart';
 import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
@@ -488,13 +489,19 @@ class MarketPaper extends ChangeNotifier {
       return current();
     }
     String? risk(int qty,int price,{bool adding=false}) {
+      // OPRA quote validity does not establish Greeks or deliverable identity.
+      // Only explicit fixtures have standard-contract assumptions. No public
+      // input or indicative quote can unlock market-priced entry or addition.
+      if(_decisionEvidence?['source']!='fixture')return 'CONTRACT_ELIGIBILITY_UNVERIFIED';
       if(!paperSession(now()).entry)return 'SESSION_ENTRY_BLOCKED';
       if(!paperExpiry(marks.values.firstWhere((q)=>q.underlying==symbol&&q.direction==signal).contract,now()).entry)return 'EXPIRY_ENTRY_BLOCKED';
       if((account(id)['positions'] as Map).values.any((p)=>p['closeIntent']!=null))return 'PENDING_CLOSE_RISK_LIMIT';
       return paperRiskReason(account(id),symbol,qty,price,marks,now(),journal:journal,adding:adding,source:_decisionEvidence?['source'] as String? ?? 'fixture',feePerContract:executionFee(account(id)));
     }
     _decisionEvidence={...copyPaper(evidence??{'source':'fixture'}),'observation':observation,
-      'signal':signal,'stockDataValid':stockValid(),'strategy':account(id)['strategy']??'confluence'};
+      'signal':signal,'stockDataValid':stockValid(),'strategy':account(id)['strategy']??'confluence',
+      'admissionContract':'observed-contract-admission-v1',
+      'protectionContract':account(id)['executionPolicy']==conservativeExecution?'net-liquidation-protection-v1':'legacy-price-thresholds'};
     try {
       var a=account(id);var positions=Map<String,dynamic>.from(a['positions'] as Map);
       final position=positions[symbol] as PaperRow?;
@@ -530,13 +537,15 @@ class MarketPaper extends ChangeNotifier {
         }
         marks[q.contract]=q;
         final average=position['cost']/(qty*100),highest=(position['highBid'] as num).toDouble();
+        final net=PaperReturn(a,position,q.bid),costed=a['executionPolicy']==conservativeExecution;
+        final stop=costed?net.lossAtLeast(a['stopPercent'] as int):q.bid<=average*(1-(a['stopPercent'] as int)/100);
+        final take=costed?net.gainAtLeast(a['takePercent'] as int):q.bid>=average*(1+(a['takePercent'] as int)/100);
+        final trail=costed?net.trailingAtLeast(a['trailPercent'] as int):highest>average&&q.bid<=highest*(1-(a['trailPercent'] as int)/100);
         // Independent price protection has priority over optional analysis.
         closeReason=forceClose?'MANUAL':
-          (q.bid<=average*(1-(a['stopPercent'] as int)/100)?'STOP_LOSS':
-          q.bid>=average*(1+(a['takePercent'] as int)/100)?'TAKE_PROFIT':
-          highest>average&&q.bid<=highest*(1-(a['trailPercent'] as int)/100)?'TRAILING_STOP':closeReason);
+          (stop?'STOP_LOSS':take?'TAKE_PROFIT':trail?'TRAILING_STOP':closeReason);
         if(closeReason==null&&qty>=2&&position['partialTaken']!=true&&((a['partialPercent']??0) as int)>0&&
-          q.bid>=average*(1+((a['partialPercent']??0) as int)/100)) {
+          (costed?net.gainAtLeast(a['partialPercent'] as int):q.bid>=average*(1+((a['partialPercent']??0) as int)/100))) {
           closeReason='PARTIAL_PROFIT';
         }
         if(closeReason!=null) {
@@ -586,18 +595,20 @@ class MarketPaper extends ChangeNotifier {
           final next=copy();final target=_in(next,id);final p=(target['positions'] as Map)[symbol] as PaperRow;
           p['mark']=_quote(q);
           if(q.bid>highest)p['highBid']=q.bid;
-          if(a['addEnabled']==true&&p['added']!=true&&q.bid>=average*1.10&&signal==p['direction']&&signalCurrent()&&
+          if(a['addEnabled']==true&&p['added']!=true&&(costed?net.gainAtLeast(10):q.bid>=average*1.10)&&signal==p['direction']&&signalCurrent()&&
               (a['watchlist'] is! List||(a['watchlist'] as List).contains(symbol))) {
             if(!await collectMarks())return;
             final modeled=execution(q,'BUY',1),fillPrice=q.ask+executionSlippage(a),fee=executionFee(a);
             final cost=fillPrice*100+fee;
-            if((modeled==null||modeled['quantity']==1)&&risk(1,fillPrice,adding:true)==null) {
+            final additionRisk=risk(1,fillPrice,adding:true);
+            final additionBlock=additionRisk=='CONTRACT_ELIGIBILITY_UNVERIFIED'?'CONTRACT_ELIGIBILITY_UNVERIFIED':'ADD_RISK_LIMIT';
+            if((modeled==null||modeled['quantity']==1)&&additionRisk==null) {
               p['quantity']=qty+1;p['cost']=(p['cost'] as int)+fillPrice*100;p['added']=true;target['cash']=(target['cash'] as int)-cost;
               p['entryFees']=((p['entryFees']??qty*65) as int)+fee;
               if(target['fees'] is int)target['fees']=(target['fees'] as int)+fee;
               _log(next,id,symbol,'ADD_ON_OPRA',quote:q,fill:{'side':'BUY','quantity':1,'price':fillPrice,'fee':fee,if(modeled!=null)'execution':modeled,'cashAfter':target['cash']});
-            } else if(journal.isEmpty||journal.last['account']!=id||journal.last['symbol']!=symbol||journal.last['decision']!='ADD_RISK_LIMIT') {
-              _log(next,id,symbol,'ADD_RISK_LIMIT',quote:q);
+            } else if(journal.isEmpty||journal.last['account']!=id||journal.last['symbol']!=symbol||journal.last['decision']!=additionBlock) {
+              _log(next,id,symbol,additionBlock,quote:q);
             }
           }
           final adds=p['quantity']!=qty;
@@ -614,6 +625,7 @@ class MarketPaper extends ChangeNotifier {
       final contract=(a['contracts'] as Map)['$symbol:$signal'] as String?;
       if(contract==null){await _record(id,symbol,'QUALIFIED_OPTION_CONTRACT_REQUIRED');return;}
       if(!paperExpiry(contract,now()).entry){await _record(id,symbol,'EXPIRY_ENTRY_BLOCKED');return;}
+      if(_decisionEvidence?['source']!='fixture'){await _record(id,symbol,'CONTRACT_ELIGIBILITY_UNVERIFIED');return;}
       final q=await readQuote(contract);
       if(!current())return;
       final requested=a['quantity'] as int;

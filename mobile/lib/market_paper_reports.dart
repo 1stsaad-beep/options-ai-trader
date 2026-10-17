@@ -80,6 +80,7 @@ Map<String, dynamic> paperComparison(Map<String, dynamic> book, DateTime now) {
       'riskViolations': null,
       'riskViolationPolicy': 'Not measured; rejected admissions are riskBlocks, not proven violations',
       'riskBlocks': events.where((e) => e['account'] == a['id'] && (e['decision'] as String).contains('RISK')).length,
+      'eligibilityBlocks': events.where((e) => e['account'] == a['id'] && e['decision'] == 'CONTRACT_ELIGIBILITY_UNVERIFIED').length,
       'dataInterruptions': events.where((e) => e['account'] == a['id'] &&
         ['INVALID_OR_STALE_STOCK_DATA', 'OPRA_QUOTE_REQUIRED_NO_FILL', 'CLOSE_UNCONFIRMED_NO_REVERSAL'].contains(e['decision'])).length,
     }],

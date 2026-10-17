@@ -310,6 +310,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
     return [
       const Text('Market Paper • أموال افتراضية مستقلة • OPRA مؤهل فقط. النموذج المحافظ: Ask + سنت للشراء وBid − سنت للإغلاق؛ رسوم مفترضة 0.70 USD للعقد لكل جهة، وحد أقصى 25% من أصغر حجم معروض. لا يحاكي موضعًا حقيقيًا في طابور السوق أو يضمن التنفيذ.'),
       const Text('بدون OPRA حديث وصالح: إشارات فقط، لا تعبئة Call/Put. IEX/SIP للأسهم لا يمنحان بيانات الخيارات. لا استخدام للأسعار الإرشادية indicative.'),
+      const Text('دخول Alpaca والتعزيز مقفلان حتى تحقق Greeks وأهلية مُسلَّمات العقد؛ OPRA وحده لا يكفي. إغلاق المركز المملوك يظل مشروطًا بعرض خيار صالح. حدود الوقف والربح للنموذج المحافظ تشمل رسوم الدخول والخروج والانزلاق.'),
       const Text('معامل العقد القياسي 100 فقط. لا ممارسة أو تخصيص تلقائي؛ بعد الانتهاء يبقى التعرض للمراجعة دون تسوية مختلقة. التعبئات ضمن جلسات الخيارات المحافظة 2026–2027 فقط، مع منع دخول يوم الانتهاء وإغلاق Intraday قبل نهاية الجلسة بـ15 دقيقة.'),
       const Text('يمكن للحساب المتوقف تسجيل إيصال ورقي يدوي للممارسة أو الانتهاء أو بيع أسهم التسليم. هذه الإيصالات لا تُحسب تنفيذًا سوقيًا موثقًا أو رصد OPRA.'),
       if(paper.error!=null)Text(paper.error!),
@@ -381,7 +382,7 @@ class _DirectAlpacaScreenState extends State<DirectAlpacaScreen> with WidgetsBin
           final value=contract.text.trim().toUpperCase(),match=OptionQuote.pattern.firstMatch(contract.text.trim().toUpperCase());
           if(match==null||match[1]!=selectedSymbol||match[5]!=(direction=='CALL'?'C':'P')){setState(()=>notice='العقد لا يطابق السهم والاتجاه.');return;}
           await paper.configure(selectedAccount!,{'contracts':{...Map<String,dynamic>.from(a['contracts'] as Map),'$selectedSymbol:$direction':value}});contract.clear();
-        },child:const Text('تعيين عقد للمحاكاة المشروطة بـOPRA')),
+        },child:const Text('تعيين عقد للمراقبة والتحقق')),
         Text('العقود المحددة: ${a['contracts']}'),
         OutlinedButton(onPressed:paper.busy?null:()=>paperCycle(),child:const Text('تقييم الحسابات المفعلة الآن')),
         for(final p in (a['positions'] as Map).entries)...[
