@@ -1,4 +1,6 @@
-# Completion traceability — reassessed 2026-10-14
+# Completion traceability — continued 2026-10-17
+
+Latest continuation: `docs/RESUME_STAGE1_20261017_AR.md`. Batch30 extends R01/R10/R14 with atomic idempotent server setup of four independent USD1,000 accounts and a transaction-consistent, streamed receipt comparison API. Genesis membership prevents collision adoption; retries cannot reset balances/configuration. Fixture and market comparisons cannot mix, missing NAV remains null, three-session acceptance remains NOT_RUN. Added failure/rollback/concurrency/authentication tests and a disposable PostgreSQL gate. Source CI pending; requirements remain PARTIAL. The older entries below retain their historical evidence scope.
 
 This table maps the attached mission to source and executable checks. A source implementation or fixture pass is not evidence of a live provider connection. Build23 is an engineering checkpoint, not a final V1.0 candidate. No new APK or phone acceptance request is authorized at this stage. Current assignment-level status and source-linked acceptance are in docs/RESUME_POST_BUILD23_20261014_AR.md and docs/CONTINUATION_20261014.md; docs/POST_BUILD23_AUDIT_20261014_AR.md remains the historical audit baseline.
 

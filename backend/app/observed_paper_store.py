@@ -67,6 +67,20 @@ class ObservedPaperStore:
         with self.repo.transaction() as db:
             return [r['id'] for r in db.all('SELECT id FROM observed_paper_accounts ORDER BY id')]
 
+    def experiment(self, source='alpaca'):
+        """Explicit, atomic four-account setup; retries never reset an account.
+
+        Membership is bound to the original genesis request key, not a mutable
+        name or a matching balance. A colliding or partial set requires review.
+        No worker is enabled and no account in another namespace is modified.
+        """
+        from .observed_paper_experiment import bootstrap
+        return bootstrap(self, source)
+
+    def comparison(self, accounts):
+        from .observed_paper_experiment import compare
+        return compare(self, accounts)
+
     def snapshot(self, account, *, full=False):
         with self.repo.transaction() as db:
             row,state=self._read(db,account,full=full)

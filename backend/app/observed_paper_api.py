@@ -23,6 +23,11 @@ class ControlObserved(BaseModel):
     command:dict
 
 
+class CreateExperiment(BaseModel):
+    model_config=ConfigDict(extra='forbid')
+    source:str='alpaca'
+
+
 def install_observed_paper_routes(app,secured,store_dependency):
     def guarded(operation):
         try: return operation()
@@ -49,6 +54,14 @@ def install_observed_paper_routes(app,secured,store_dependency):
     @app.post('/api/observed-paper/accounts',dependencies=secured,status_code=201)
     def create(body:CreateObserved):
         return guarded(lambda:store_dependency().create(body.id,body.name,body.initial_cash_cents,body.source))
+
+    @app.post('/api/observed-paper/experiment',dependencies=secured)
+    def experiment(body:CreateExperiment):
+        return guarded(lambda:store_dependency().experiment(body.source))
+
+    @app.get('/api/observed-paper/comparison',dependencies=secured)
+    def comparison(accounts:str):
+        return guarded(lambda:store_dependency().comparison(accounts.split(',')))
 
     @app.get('/api/observed-paper/accounts/{account}/state',dependencies=secured)
     def state(account:str):
