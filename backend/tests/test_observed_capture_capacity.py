@@ -153,3 +153,20 @@ def test_sustained_bounded_selection_uses_original_quotes_and_retains_all_receip
     assert len(calls)==480
     assert store.snapshot('a',full=True)==before
     repo.close()
+
+
+def test_oversized_peer_quote_cannot_suppress_valid_owned_quote(tmp_path):
+    repo,store,clock=stored(tmp_path)
+    store.command('a','open',{'kind':'CYCLE','observation':observation()},expected_version=2,lease=store.acquire('fixture'))
+    clock.step()
+    from test_observed_paper import PUT
+    def get(path,params):
+        if path.endswith('/bars'):return DataResponse(200,{}, {'bars':{},'next_page_token':None})
+        valid={'t':iso(clock()),'bp':1,'ap':1.05,'bs':40,'as':40}
+        return DataResponse(200,{}, {'quotes':{PUT:valid|{'bp':10**400},CALL:valid}})
+    provider=ObservedPaperData(store,SimpleNamespace(get=get))
+    result=provider.capture([store.snapshot('a')['state']],store.acquire('fixture'))
+    assert [q['contract'] for q in result['quotes']]==[CALL]
+    assert provider.coverage_limited
+    assert store.snapshot('a',full=True)['state']['positions']['NVDA']['quantity']==3
+    repo.close()

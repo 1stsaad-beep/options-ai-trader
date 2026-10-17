@@ -143,3 +143,12 @@ HistoryProjection now consumes each already-validated transition during the full
 Publication still waits for verification of the entire ledger tail, segments and account head, even for through=0/limit=1 and a warm cache. A new corruption regression proves that an invalid later original cannot yield a valid-looking earlier page or leak its raw content. A323-event regression verifies exactly one full streamed scan and the original page/anchor/prefix result. This reduces redundant work; it is still O(history), not a persistent trusted checkpoint or constant-time pagination.
 
 Batch46 full1494 Python passed, zero failures/skips;57 affected history/valuation/ledger/runtime tests. Source45 backend39011875611 and security39011875779 succeeded, including actual PostgreSQL large-receipt pages. Mobile source42 raw ZIP verified SHA256/CRC:928 visible Flutter tests (63 hidden framework records excluded),61 JVM, all passed. Source44 mobile diagnostic-label CI remains separate.
+
+
+## Batch47 — non-Greek oversized provider numbers cannot abort peer protection
+
+Four failing regressions reproduced OverflowError from market_data.number(10**400) in quote prices, trades, implied volatility and an otherwise-valid OPRA capture containing one malformed peer quote. Batch40 covered the separate Greek validator; these price/IV paths were still vulnerable. Numeric validation now catches representability overflow and returns only INVALID_PROVIDER_NUMBER. The observed adapter discards that malformed member, preserves the original valid owned quote and reports partial coverage; no rounding, replacement value or eligibility grant.
+
+The original failed JUnit (four failures/four existing passes) is retained separately from fixed-source results.92 affected market-data/capture/runtime tests pass after correction. Full Python/source CI follows. Source44 Flutter/JVM and chart checks completed successfully; original artifacts are being verified and archived. No new APK or external connection.
+
+Batch47 full local1498 Python passed, zero failures/skips. Source46 backend39012060142 and security39012060138 passed. Raw source44 artifacts verified SHA256/CRC:928 Flutter (63 hidden framework entries excluded),61 JVM,23 chart and6 Golden; all passed. No mobile/native/workflow changes in45–47.

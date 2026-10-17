@@ -70,7 +70,11 @@ def timestamp(value):
 
 
 def number(value, *, signed=False):
-    if type(value) not in (int, float) or not math.isfinite(value) or (not signed and value < 0):
+    try:
+        finite=type(value) in (int,float) and math.isfinite(value)
+    except OverflowError:
+        finite=False
+    if not finite or (not signed and value < 0):
         raise MarketDataError('INVALID_PROVIDER_NUMBER')
     return value
 

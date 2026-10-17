@@ -341,3 +341,17 @@ def test_bad_symbols_do_not_reach_transport(ticker):
     with pytest.raises(MarketDataError, match='INVALID_SYMBOL'):
         client.stock_snapshot(ticker)
     assert not transport.calls
+
+
+@pytest.mark.parametrize('kind',['quote','trade','implied_volatility'])
+def test_oversized_provider_integer_has_fixed_numeric_diagnostic(kind):
+    huge=10**400
+    if kind=='implied_volatility':
+        client,_,_=adapter(chain({'impliedVolatility':huge}))
+        operation=lambda:client.option_chain('AAPL')
+    else:
+        q=quote(bp=huge) if kind=='quote' else quote()
+        t=trade(p=huge) if kind=='trade' else trade()
+        client,_,_=adapter(*stock_responses(q,t))
+        operation=lambda:client.stock_snapshot('AAPL')
+    with pytest.raises(MarketDataError,match='^INVALID_PROVIDER_NUMBER$'):operation()
