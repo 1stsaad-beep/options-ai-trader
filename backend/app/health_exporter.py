@@ -36,13 +36,16 @@ def validate_token(token):
 def token_file(path):
     descriptor = None
     try:
-        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
         info = os.fstat(descriptor)
         if not stat.S_ISREG(info.st_mode) or info.st_mode & 0o007 or info.st_size > 4096:
             raise ValueError()
         with os.fdopen(descriptor, 'r') as source:
             descriptor = None
-            value = strict_json(source.read(4097))
+            raw = source.read(4097)
+            if len(raw) > 4096:
+                raise ValueError()
+            value = strict_json(raw)
         if not isinstance(value, dict) or set(value) != {'token'}:
             raise ValueError()
         return validate_token(value['token'])

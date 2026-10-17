@@ -152,7 +152,7 @@ def from_file(path):
     """Read exactly the explicitly mounted receiver file; never discover keys."""
     descriptor=None
     try:
-        descriptor=os.open(path,os.O_RDONLY|os.O_NOFOLLOW)
+        descriptor=os.open(path,os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK)
         info=os.fstat(descriptor)
         if not stat.S_ISREG(info.st_mode) or info.st_size>4096 or info.st_mode&0o007:
             raise ValueError()

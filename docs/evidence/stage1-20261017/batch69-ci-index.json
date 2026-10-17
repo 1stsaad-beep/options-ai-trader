@@ -1,0 +1,49 @@
+{
+  "artifacts": [
+    {
+      "batch": 69,
+      "id": 12104125333,
+      "name": "backend-test-results",
+      "hash": "a8b2aa5a71eb158e6dcbadef0d4686296d1d82b1413e20b7b18d76b317d799d1",
+      "source": "9a3320901a96ea891a4270890f6d9e3a59d43c8c",
+      "run": 39040186145,
+      "conclusion": "success",
+      "file": "batch69-backend-test-results.zip",
+      "crcVerified": true
+    },
+    {
+      "batch": 69,
+      "id": 12103841700,
+      "name": "compose-runtime-result",
+      "hash": "385fffd0e09ebf18e5bb01f73a84389be391dbc000bd3a1a9745cb8896bd4e6c",
+      "source": "9a3320901a96ea891a4270890f6d9e3a59d43c8c",
+      "run": 39040186145,
+      "conclusion": "success",
+      "file": "batch69-compose-runtime-result.zip",
+      "crcVerified": true
+    },
+    {
+      "batch": 69,
+      "id": 12104075330,
+      "name": "v1-security-results",
+      "hash": "1322d3b12c6e40c45f3eebfeabb6a8d85e5757ebdf05c83462b9a5db8786396f",
+      "source": "9a3320901a96ea891a4270890f6d9e3a59d43c8c",
+      "run": 39040186162,
+      "conclusion": "success",
+      "file": "batch69-v1-security-results.zip",
+      "crcVerified": true
+    }
+  ],
+  "python": 1786,
+  "postgresql": [
+    22,
+    6,
+    10,
+    5,
+    35,
+    4,
+    23
+  ],
+  "compose": 23,
+  "externalMarketConnection": false
+}
