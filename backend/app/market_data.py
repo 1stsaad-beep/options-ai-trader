@@ -20,6 +20,7 @@ from typing import Protocol
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 from .option_greeks import provider_greeks, quality as greeks_quality
+from .option_eligibility import qualify as qualify_option
 
 UTC = timezone.utc
 DATA_HOST = 'data.alpaca.markets'
@@ -354,6 +355,7 @@ class AlpacaBasicData:
                     'trade': self._event(raw.get('latestTrade'), 'trade'),
                     'greeks': greeks, 'greeks_source': 'provider' if greeks is not None else None,
                     'greeks_timestamp': None, 'greeks_freshness_verified': False, 'greeks_quality': greeks_quality(greeks),
+                    'eligibility': qualify_option(contract, greeks, timestamp(self._now())),
                     'implied_volatility': number(raw['impliedVolatility']) if raw.get('impliedVolatility') is not None else None}
         return self._envelope('indicative', {'symbol': underlying, 'contracts': list(result.values()),
             'quote_quality': 'MODIFIED_INDICATIVE_NOT_OPRA', 'quote_delay_seconds': None,

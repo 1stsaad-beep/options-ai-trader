@@ -120,6 +120,24 @@
               "INDICATIVE_OPTIONS_NOT_EXECUTABLE"
             ]
           },
+          "eligibility": {
+            "contract": "option-eligibility-v1",
+            "symbol": "AAPL261016C00200000",
+            "provider": "alpaca",
+            "termsHash": null,
+            "standardDeliverableObserved": false,
+            "greeksStatus": "MISSING",
+            "greeksProviderTimestamp": null,
+            "greeksFreshnessVerified": false,
+            "entryEligible": false,
+            "settlementEligible": false,
+            "externalOrder": false,
+            "reasons": [
+              "GREEKS_MISSING",
+              "GREEKS_PROVIDER_TIME_UNAVAILABLE",
+              "CONTRACT_TERMS_UNAVAILABLE"
+            ]
+          },
           "implied_volatility": null
         }
       ],
