@@ -103,12 +103,17 @@ class _ObservedHistoryScreenState extends State<ObservedHistoryScreen> {
   }
   String money(dynamic value) => value == null ? 'غير متاح' : '${(value / 100).toStringAsFixed(2)} USD';
   @override Widget build(BuildContext context) => Directionality(textDirection: TextDirection.rtl,
-    child: Scaffold(appBar: AppBar(title: const Text('تاريخ قيمة المحفظة')), body: ListView(padding: const EdgeInsets.all(16), children: [
+    child: Scaffold(appBar: AppBar(title: const Text('تاريخ قيمة المحفظة')),
+      bottomNavigationBar: page == null || page!['hasMore'] == true || error != null ? SafeArea(
+        child: Padding(padding: const EdgeInsets.all(12), child: Column(mainAxisSize: MainAxisSize.min, children: [
+          if (error != null) Text(error!, key: const Key('history-error')),
+          OutlinedButton(key: const Key('history-next'), onPressed: busy ? null : load,
+            child: Text(error != null ? 'إعادة محاولة القراءة' : 'الصفحة التالية')),
+        ]))) : null, body: ListView(padding: const EdgeInsets.all(16), children: [
       Text(widget.saved.state['source'] == 'fixture' ? 'بيانات اختبار مصطنعة • ليست رصد سوق' : 'ملخص أحداث Alpaca المحفوظة على الخادم'),
       const Text('تقييم بعد الأحداث المسجلة فقط. لا أسعار بين الأحداث ولا ملء للفجوات. التراجع أدناه ليس تراجعًا يوميًا أو ضمان تنفيذ. Sharpe غير متاح.'),
       Text('قراءة مثبتة عند الحدث ${widget.saved.version}؛ لمراجعة أحداث أحدث ارجع وحدّث الحساب.'),
       if (busy) const LinearProgressIndicator(),
-      if (error != null) Text(error!, key: const Key('history-error')),
       if (page != null) ...[
         Text('التراجع عند الأحداث منذ البداية: ${money((page!['points'] as List).lastOrNull?['prefix']['maximumSampledDrawdownCents'])}'),
         if (cursor.missing > 0) Text('نقاط تقييم ناقصة منذ البداية: ${cursor.missing}؛ لا يُعرض تراجع كامل من تاريخ ناقص.'),
@@ -120,8 +125,5 @@ class _ObservedHistoryScreenState extends State<ObservedHistoryScreen> {
             if (p['complete'] != true) const Text('عرض مؤهل أو سيولة كافية غير متاحين؛ لم تُفترض قيمة للمركز.'),
           ]))),
       ],
-      if (page == null || page!['hasMore'] == true || error != null)
-        OutlinedButton(key: const Key('history-next'), onPressed: busy ? null : load,
-          child: Text(error != null ? 'إعادة محاولة القراءة' : 'الصفحة التالية')),
     ])));
 }

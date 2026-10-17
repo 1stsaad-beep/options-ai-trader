@@ -71,7 +71,9 @@ void main() {
       await tester.pumpAndSettle(); expect(find.textContaining('بيانات اختبار مصطنعة'), findsOneWidget);
       await tester.scrollUntilVisible(find.byKey(const Key('history-next')), 600);
       await tester.tap(find.byKey(const Key('history-next'))); await tester.pumpAndSettle();
+      expect(calls, [-1, 24]);
       expect(find.text('إعادة محاولة القراءة'), findsOneWidget);
+      expect(find.byKey(const Key('history-error')), findsOneWidget);
       await tester.tap(find.byKey(const Key('history-next'))); await tester.pumpAndSettle();
       expect(calls, [-1, 24, 24]);
       await tester.drag(find.byType(ListView), const Offset(0, 10000)); await tester.pumpAndSettle();
