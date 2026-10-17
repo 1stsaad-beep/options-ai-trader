@@ -8,6 +8,7 @@ import 'strategy_replay.dart';
 import 'observed_server_controls.dart';
 import 'observed_server_comparison.dart';
 import 'observed_server_valuation.dart';
+import 'observed_server_history.dart';
 
 Map<String,dynamic> observedObject(dynamic value) {
   if(value is! Map||value.keys.any((key)=>key is! String))throw const FormatException('Invalid server object');
@@ -233,6 +234,7 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
             trailing:TextButton(onPressed:busy||value['enabled']==true?null:()=>settle(null,deliverySymbol:entry.key),child:const Text('تصرف افتراضي')))),
           OutlinedButton(key:const Key('observed-performance'),onPressed:busy?null:performance,child:const Text('أداء الإيصالات الأصلية')),
           OutlinedButton(key:const Key('observed-valuation'),onPressed:busy?null:valuation,child:const Text('تقييم العروض المحفوظة')),
+          OutlinedButton(key:const Key('observed-history'),onPressed:busy?null:()=>Navigator.push(context,MaterialPageRoute<void>(builder:(_)=>ObservedHistoryScreen(api:widget.api,saved:saved!))),child:const Text('تاريخ قيمة المحفظة')),
           OutlinedButton(key:const Key('observed-events'),onPressed:busy?null:loadEvents,child:const Text('تحميل صفحة القرارات الأصلية التالية')),
           for(final event in events)ListTile(title:Text('#${event.version} • ${event.original['command']['kind']}'),subtitle:Text(event.original['at'] as String),
             onTap:()=>Navigator.push(context,MaterialPageRoute<void>(builder:(_)=>ObservedServerReplay(account:account!,event:event)))),

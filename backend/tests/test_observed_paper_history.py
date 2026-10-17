@@ -104,3 +104,13 @@ def test_history_route_auth_read_only_and_bounds(tmp_path):
         assert client.get(path+'?through=99',headers=HEADERS).status_code == 422
         assert client.get(path.replace('/a/','/missing/'),headers=HEADERS).status_code == 409
         assert store.snapshot('a',full=True) == before
+
+
+def test_saved_history_fixture_is_actual_sql_replay():
+    import json
+    import sys
+    from pathlib import Path
+    root=Path(__file__).parents[2]
+    sys.path.insert(0,str(root/'scripts'))
+    from generate_observed_history_fixture import generate
+    assert generate()==json.loads((root/'mobile/test/fixtures/observed_history_v1.json').read_text())

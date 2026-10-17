@@ -1,0 +1,1524 @@
+{
+  "contract": "observed-history-fixture-v1",
+  "source": "synthetic_fixture",
+  "cases": [
+    {
+      "name": "complete",
+      "snapshot": {
+        "version": 6,
+        "eventHash": "dd347b4a0dbaca6b60cb8e41c1643f11d9792d603694aa5e37104716891202c8",
+        "state": {
+          "cash": 9988480,
+          "closedTrades": 1,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "NVDA": {
+                "CALL": "NVDA261023C00150000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 3,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {
+            "NVDA261023C00150000": {
+              "at": "2026-10-13T15:00:01.000Z",
+              "identity": "e07a95c2b2b953e06284ce7a73ed2a5e69c097d1bdc1777a5a1452714cad904c",
+              "quantity": 3
+            }
+          },
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {
+            "2026-10-13": -11520
+          },
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 420,
+          "id": "history",
+          "initialCash": 10000000,
+          "lastAt": "2026-10-13T15:00:01.000Z",
+          "lastSignals": {
+            "NVDA": "trend|2026-10-13T14:59:00.000Z"
+          },
+          "name": "Observed fixture",
+          "positions": {},
+          "realized": -11520,
+          "source": "fixture",
+          "winningTrades": 0
+        }
+      },
+      "pages": [
+        {
+          "contract": "observed-paper-history-v1",
+          "account": "history",
+          "source": "fixture",
+          "externalOrder": false,
+          "executionAllowed": false,
+          "throughVersion": 6,
+          "throughEventHash": "dd347b4a0dbaca6b60cb8e41c1643f11d9792d603694aa5e37104716891202c8",
+          "points": [
+            {
+              "version": 0,
+              "eventHash": "50280aa4ca9f256f67e747b61e9f1e8c447b74aff23d84e9530a053afccb015c",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 1,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 1,
+              "eventHash": "fab83bc9eb59866335b37924c23b0eb4f5556bed838deac4aabb0eb10be907fe",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 2,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 2,
+              "eventHash": "eb5b29a772222bfe5d8e1938d0e69cf11418344e487b85614ca2d97ec0779465",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 3,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 3,
+              "eventHash": "fd01d2ef66fcaabc17c7b80369c4a488ef3e58d8892d432721869806401328cc",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "OBSERVED_MODEL",
+              "complete": true,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": 9997480,
+              "totalPnlCents": -2520,
+              "unrealizedPnlCents": -2520,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 4,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 2520
+              }
+            },
+            {
+              "version": 4,
+              "eventHash": "d56bdd9106f01f0db66daf98518bae01a604abdd6f686aec8e8881bb237de670",
+              "asOf": "2026-10-13T15:00:01.000Z",
+              "status": "OBSERVED_MODEL",
+              "complete": true,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": 9997480,
+              "totalPnlCents": -2520,
+              "unrealizedPnlCents": -2520,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 5,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 2520
+              }
+            },
+            {
+              "version": 5,
+              "eventHash": "3a32beab63e6fa2a6b8102666b287aebf92081c0a32a7ba168d1d1b61f566514",
+              "asOf": "2026-10-13T15:00:01.000Z",
+              "status": "OBSERVED_MODEL",
+              "complete": true,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": 9997480,
+              "totalPnlCents": -2520,
+              "unrealizedPnlCents": -2520,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 6,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 2520
+              }
+            },
+            {
+              "version": 6,
+              "eventHash": "dd347b4a0dbaca6b60cb8e41c1643f11d9792d603694aa5e37104716891202c8",
+              "asOf": "2026-10-13T15:00:01.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 9988480,
+              "feesCents": 420,
+              "realizedPnlCents": -11520,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 9988480,
+              "totalPnlCents": -11520,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 7,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 11520
+              }
+            }
+          ],
+          "nextAfter": 6,
+          "hasMore": false,
+          "sampling": "AFTER_RECORDED_EVENT",
+          "sharpe": null,
+          "limitations": [
+            "Event-sampled valuations; no marks between recorded events",
+            "Missing marks invalidate full-prefix drawdown; no interpolation",
+            "Irregular event samples cannot establish daily returns or Sharpe",
+            "Replay streams from genesis; bounded output is not constant-time pagination"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "gap",
+      "snapshot": {
+        "version": 6,
+        "eventHash": "94d103577f6b6b06443bd697fcdc7202eb457b94f469007109c746b2d0d64827",
+        "state": {
+          "cash": 9988480,
+          "closedTrades": 1,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "NVDA": {
+                "CALL": "NVDA261023C00150000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 3,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {
+            "NVDA261023C00150000": {
+              "at": "2026-10-13T15:00:31.000Z",
+              "identity": "929f0d99200a23dc146c0d31f21bed57fb28a8a117c5e0b7c4eea783be1dd6d3",
+              "quantity": 3
+            }
+          },
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {
+            "2026-10-13": -11520
+          },
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 420,
+          "id": "history",
+          "initialCash": 10000000,
+          "lastAt": "2026-10-13T15:00:31.000Z",
+          "lastSignals": {
+            "NVDA": "trend|2026-10-13T14:59:00.000Z"
+          },
+          "name": "Observed fixture",
+          "positions": {},
+          "realized": -11520,
+          "source": "fixture",
+          "winningTrades": 0
+        }
+      },
+      "pages": [
+        {
+          "contract": "observed-paper-history-v1",
+          "account": "history",
+          "source": "fixture",
+          "externalOrder": false,
+          "executionAllowed": false,
+          "throughVersion": 6,
+          "throughEventHash": "94d103577f6b6b06443bd697fcdc7202eb457b94f469007109c746b2d0d64827",
+          "points": [
+            {
+              "version": 0,
+              "eventHash": "50280aa4ca9f256f67e747b61e9f1e8c447b74aff23d84e9530a053afccb015c",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 1,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 1,
+              "eventHash": "fab83bc9eb59866335b37924c23b0eb4f5556bed838deac4aabb0eb10be907fe",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 2,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 2,
+              "eventHash": "eb5b29a772222bfe5d8e1938d0e69cf11418344e487b85614ca2d97ec0779465",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 3,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 3,
+              "eventHash": "fd01d2ef66fcaabc17c7b80369c4a488ef3e58d8892d432721869806401328cc",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "OBSERVED_MODEL",
+              "complete": true,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": 9997480,
+              "totalPnlCents": -2520,
+              "unrealizedPnlCents": -2520,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 4,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 2520
+              }
+            },
+            {
+              "version": 4,
+              "eventHash": "95bed8dc28209a615b7df30a810ebe9fd8ca12e83835cae6885da86faec2481b",
+              "asOf": "2026-10-13T15:00:31.000Z",
+              "status": "INCOMPLETE",
+              "complete": false,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": null,
+              "totalPnlCents": null,
+              "unrealizedPnlCents": null,
+              "incompleteReasons": [
+                "QUALIFIED_ORIGINAL_QUOTE_UNAVAILABLE"
+              ],
+              "prefix": {
+                "eventSamples": 5,
+                "incompleteSamples": 1,
+                "complete": false,
+                "maximumSampledDrawdownCents": null
+              }
+            },
+            {
+              "version": 5,
+              "eventHash": "78b51aff965b648f475729eab667ccb3ffc85bd225759dd5722fd621770ab8bc",
+              "asOf": "2026-10-13T15:00:31.000Z",
+              "status": "INCOMPLETE",
+              "complete": false,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": null,
+              "totalPnlCents": null,
+              "unrealizedPnlCents": null,
+              "incompleteReasons": [
+                "QUALIFIED_ORIGINAL_QUOTE_UNAVAILABLE"
+              ],
+              "prefix": {
+                "eventSamples": 6,
+                "incompleteSamples": 2,
+                "complete": false,
+                "maximumSampledDrawdownCents": null
+              }
+            },
+            {
+              "version": 6,
+              "eventHash": "94d103577f6b6b06443bd697fcdc7202eb457b94f469007109c746b2d0d64827",
+              "asOf": "2026-10-13T15:00:31.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 9988480,
+              "feesCents": 420,
+              "realizedPnlCents": -11520,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 9988480,
+              "totalPnlCents": -11520,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 7,
+                "incompleteSamples": 2,
+                "complete": false,
+                "maximumSampledDrawdownCents": null
+              }
+            }
+          ],
+          "nextAfter": 6,
+          "hasMore": false,
+          "sampling": "AFTER_RECORDED_EVENT",
+          "sharpe": null,
+          "limitations": [
+            "Event-sampled valuations; no marks between recorded events",
+            "Missing marks invalidate full-prefix drawdown; no interpolation",
+            "Irregular event samples cannot establish daily returns or Sharpe",
+            "Replay streams from genesis; bounded output is not constant-time pagination"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "liquidity",
+      "snapshot": {
+        "version": 6,
+        "eventHash": "4f8175ab2a954fe43ee25bb510f7110d8fa1f38ed5e3a3463e2ee64b0374e543",
+        "state": {
+          "cash": 9988480,
+          "closedTrades": 1,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "NVDA": {
+                "CALL": "NVDA261023C00150000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 3,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {
+            "NVDA261023C00150000": {
+              "at": "2026-10-13T15:00:01.000Z",
+              "identity": "e07a95c2b2b953e06284ce7a73ed2a5e69c097d1bdc1777a5a1452714cad904c",
+              "quantity": 3
+            }
+          },
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {
+            "2026-10-13": -11520
+          },
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 420,
+          "id": "history",
+          "initialCash": 10000000,
+          "lastAt": "2026-10-13T15:00:01.000Z",
+          "lastSignals": {
+            "NVDA": "trend|2026-10-13T14:59:00.000Z"
+          },
+          "name": "Observed fixture",
+          "positions": {},
+          "realized": -11520,
+          "source": "fixture",
+          "winningTrades": 0
+        }
+      },
+      "pages": [
+        {
+          "contract": "observed-paper-history-v1",
+          "account": "history",
+          "source": "fixture",
+          "externalOrder": false,
+          "executionAllowed": false,
+          "throughVersion": 6,
+          "throughEventHash": "4f8175ab2a954fe43ee25bb510f7110d8fa1f38ed5e3a3463e2ee64b0374e543",
+          "points": [
+            {
+              "version": 0,
+              "eventHash": "50280aa4ca9f256f67e747b61e9f1e8c447b74aff23d84e9530a053afccb015c",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 1,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 1,
+              "eventHash": "fab83bc9eb59866335b37924c23b0eb4f5556bed838deac4aabb0eb10be907fe",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 2,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 2,
+              "eventHash": "eb5b29a772222bfe5d8e1938d0e69cf11418344e487b85614ca2d97ec0779465",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 3,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 3,
+              "eventHash": "d0129b3b3850f320c276e93e6117892e8750ba890d34e53c947bd914b6a495ee",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "INCOMPLETE",
+              "complete": false,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": null,
+              "totalPnlCents": null,
+              "unrealizedPnlCents": null,
+              "incompleteReasons": [
+                "INSUFFICIENT_REMAINING_LIQUIDITY"
+              ],
+              "prefix": {
+                "eventSamples": 4,
+                "incompleteSamples": 1,
+                "complete": false,
+                "maximumSampledDrawdownCents": null
+              }
+            },
+            {
+              "version": 4,
+              "eventHash": "48ca62896e3717cf7b927672790ade029399e5f701415b58db1c7e0c4d814c3f",
+              "asOf": "2026-10-13T15:00:01.000Z",
+              "status": "INCOMPLETE",
+              "complete": false,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": null,
+              "totalPnlCents": null,
+              "unrealizedPnlCents": null,
+              "incompleteReasons": [
+                "INSUFFICIENT_REMAINING_LIQUIDITY"
+              ],
+              "prefix": {
+                "eventSamples": 5,
+                "incompleteSamples": 2,
+                "complete": false,
+                "maximumSampledDrawdownCents": null
+              }
+            },
+            {
+              "version": 5,
+              "eventHash": "2fdab3663a81f27c9f4cb594866e219838619e3b40d401107ab5a36c5f9b0030",
+              "asOf": "2026-10-13T15:00:01.000Z",
+              "status": "INCOMPLETE",
+              "complete": false,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": null,
+              "totalPnlCents": null,
+              "unrealizedPnlCents": null,
+              "incompleteReasons": [
+                "INSUFFICIENT_REMAINING_LIQUIDITY"
+              ],
+              "prefix": {
+                "eventSamples": 6,
+                "incompleteSamples": 3,
+                "complete": false,
+                "maximumSampledDrawdownCents": null
+              }
+            },
+            {
+              "version": 6,
+              "eventHash": "4f8175ab2a954fe43ee25bb510f7110d8fa1f38ed5e3a3463e2ee64b0374e543",
+              "asOf": "2026-10-13T15:00:01.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 9988480,
+              "feesCents": 420,
+              "realizedPnlCents": -11520,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 9988480,
+              "totalPnlCents": -11520,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 7,
+                "incompleteSamples": 3,
+                "complete": false,
+                "maximumSampledDrawdownCents": null
+              }
+            }
+          ],
+          "nextAfter": 6,
+          "hasMore": false,
+          "sampling": "AFTER_RECORDED_EVENT",
+          "sharpe": null,
+          "limitations": [
+            "Event-sampled valuations; no marks between recorded events",
+            "Missing marks invalidate full-prefix drawdown; no interpolation",
+            "Irregular event samples cannot establish daily returns or Sharpe",
+            "Replay streams from genesis; bounded output is not constant-time pagination"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pages",
+      "snapshot": {
+        "version": 33,
+        "eventHash": "4714f90f5334d4fbbe8ed4b66f195bcd0d3592fa7fe4640212c7fd02666d93e2",
+        "state": {
+          "cash": 9988480,
+          "closedTrades": 1,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "NVDA": {
+                "CALL": "NVDA261023C00150000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 3,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {
+            "NVDA261023C00150000": {
+              "at": "2026-10-13T15:00:31.000Z",
+              "identity": "929f0d99200a23dc146c0d31f21bed57fb28a8a117c5e0b7c4eea783be1dd6d3",
+              "quantity": 3
+            }
+          },
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {
+            "2026-10-13": -11520
+          },
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 420,
+          "id": "history",
+          "initialCash": 10000000,
+          "lastAt": "2026-10-13T15:00:31.000Z",
+          "lastSignals": {
+            "NVDA": "trend|2026-10-13T14:59:00.000Z"
+          },
+          "name": "Observed fixture",
+          "positions": {},
+          "realized": -11520,
+          "source": "fixture",
+          "winningTrades": 0
+        }
+      },
+      "pages": [
+        {
+          "contract": "observed-paper-history-v1",
+          "account": "history",
+          "source": "fixture",
+          "externalOrder": false,
+          "executionAllowed": false,
+          "throughVersion": 33,
+          "throughEventHash": "4714f90f5334d4fbbe8ed4b66f195bcd0d3592fa7fe4640212c7fd02666d93e2",
+          "points": [
+            {
+              "version": 0,
+              "eventHash": "50280aa4ca9f256f67e747b61e9f1e8c447b74aff23d84e9530a053afccb015c",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 1,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 1,
+              "eventHash": "fab83bc9eb59866335b37924c23b0eb4f5556bed838deac4aabb0eb10be907fe",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 2,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 2,
+              "eventHash": "eb5b29a772222bfe5d8e1938d0e69cf11418344e487b85614ca2d97ec0779465",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 3,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 3,
+              "eventHash": "83e5415d8c031ce6e85e86c6f02104f1c0d07e835beb005de31991a06053a567",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 4,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 4,
+              "eventHash": "69307d5fc500307b878f5d9ddef8ec58f03597d772ded9d9c19946ff4ac5a6ef",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 5,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 5,
+              "eventHash": "60a40a1a572715e358e2ae36c4fed8b12ece6bd75db95501b249e444c5c3aa80",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 6,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 6,
+              "eventHash": "925b7c81354d022337a91a1008c5ec712388f857f4361172208aefdf876aeacb",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 7,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 7,
+              "eventHash": "ffad433e53859d1ea2a62346a5d0daad23d454e40968cf29f23fdcc23edb62b4",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 8,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 8,
+              "eventHash": "e1c6064447fc007d6408280dd56a9fc25033b61665920eb7620ec7c43c05a62d",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 9,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 9,
+              "eventHash": "9eac7af6d2db513d49bc8f4e6783fde2b8df67378c36d2284769bdfe743b2ed3",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 10,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 10,
+              "eventHash": "91ce20958891e3741b686c99e80c1a4a4a719e4dd880aaeb7bc53c292a85c5f4",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 11,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 11,
+              "eventHash": "4f9e30dea8ed010e98785378970b1cc86c3d51e8be08d03f29ad20bdc49e1090",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 12,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 12,
+              "eventHash": "c852a97196bb3a996450aa2ba4072ac5ab3f5bedddda2375a5441b3e45ebba01",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 13,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 13,
+              "eventHash": "437514f7abce94b60643b9fc836641c44ee5a8efb1d105b09d906ca11327738f",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 14,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 14,
+              "eventHash": "b262d29a225b04e4eea6432b8055c83a0e71fd162d7153d215b9e5f13df115e8",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 15,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 15,
+              "eventHash": "db5303b9a62db6254c3148d29173b223a9c1e4bbdd38034811b8df14158dd5ad",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 16,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 16,
+              "eventHash": "c57bc29f3f4ddc79265804b768cf53a14e474d8e463c8b750664f2f17d268e00",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 17,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 17,
+              "eventHash": "37b73e9509cde0c614dbc02266a80dce84ea77c67f8b23445aae4811f76d3645",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 18,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 18,
+              "eventHash": "d7d74f0b015fe79b4c2ccba8815dbfd5a9dd4b95b9ba4e950948ba630d87334a",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 19,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 19,
+              "eventHash": "8c3f6aa331e6ca04b1a97d8931368255afd22ba1e2b2efb4b2a29bc44be1756c",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 20,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 20,
+              "eventHash": "b9b2747d8b4e8944dcf9f34b18cd5966cc30cd3cde5d9aaf0ded137d3f3167ab",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 21,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 21,
+              "eventHash": "35d456e83684fabebb289b3a2b42af5daef6b236fe77c344c345e2cb567ebde9",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 22,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 22,
+              "eventHash": "410156f90e9314520e056385382f334e0e70d94bd389257e991cbf04eec8d0fd",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 23,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 23,
+              "eventHash": "dd52770b1b2068995f0bb17d068e6e9760e5513a5c9db3c7d7168279d68ae21c",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 24,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 24,
+              "eventHash": "e018d4a50cc8df6defc719db5458ea060897b127ca73702b88a7db2a2c7405dd",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 25,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            }
+          ],
+          "nextAfter": 24,
+          "hasMore": true,
+          "sampling": "AFTER_RECORDED_EVENT",
+          "sharpe": null,
+          "limitations": [
+            "Event-sampled valuations; no marks between recorded events",
+            "Missing marks invalidate full-prefix drawdown; no interpolation",
+            "Irregular event samples cannot establish daily returns or Sharpe",
+            "Replay streams from genesis; bounded output is not constant-time pagination"
+          ]
+        },
+        {
+          "contract": "observed-paper-history-v1",
+          "account": "history",
+          "source": "fixture",
+          "externalOrder": false,
+          "executionAllowed": false,
+          "throughVersion": 33,
+          "throughEventHash": "4714f90f5334d4fbbe8ed4b66f195bcd0d3592fa7fe4640212c7fd02666d93e2",
+          "points": [
+            {
+              "version": 25,
+              "eventHash": "14569631f89a76dd0738fa3902cb44c474f60643a3094b4f2620727cf81a4efa",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 26,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 26,
+              "eventHash": "9b668b9670472e6c9e312198ee2274f7db289fb35b83a5a715b75940b492c95a",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 27,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 27,
+              "eventHash": "04dc91334632d6762aed3f0f877be73c353b2f4ddfcf90d50e47e3e969d358ad",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 28,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 28,
+              "eventHash": "f08cb4e68d09a0dfc7ac0f205c0955ccab6792cb9a9696c7e92180093cfa1c84",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 29,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 29,
+              "eventHash": "bb1b066b3c177ca89cbbe2992108dfb56ffeb1e92482c49d00e5d176e0dcc2d8",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 10000000,
+              "feesCents": 0,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 10000000,
+              "totalPnlCents": 0,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 30,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 0
+              }
+            },
+            {
+              "version": 30,
+              "eventHash": "f1d724d59d44023ad3075f7e06b106e7b534b59a46c1dd10776c2e14bd42d0bb",
+              "asOf": "2026-10-13T15:00:00.000Z",
+              "status": "OBSERVED_MODEL",
+              "complete": true,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": 9997480,
+              "totalPnlCents": -2520,
+              "unrealizedPnlCents": -2520,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 31,
+                "incompleteSamples": 0,
+                "complete": true,
+                "maximumSampledDrawdownCents": 2520
+              }
+            },
+            {
+              "version": 31,
+              "eventHash": "626969e0dcf8fa8262ed19ff855cafdf8e37e96a55ae1a203964dff97b9af7fa",
+              "asOf": "2026-10-13T15:00:31.000Z",
+              "status": "INCOMPLETE",
+              "complete": false,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": null,
+              "totalPnlCents": null,
+              "unrealizedPnlCents": null,
+              "incompleteReasons": [
+                "QUALIFIED_ORIGINAL_QUOTE_UNAVAILABLE"
+              ],
+              "prefix": {
+                "eventSamples": 32,
+                "incompleteSamples": 1,
+                "complete": false,
+                "maximumSampledDrawdownCents": null
+              }
+            },
+            {
+              "version": 32,
+              "eventHash": "111203ce15b44299997c760dab806c69c1986ce298cb95dd97424a1ff49f0b2b",
+              "asOf": "2026-10-13T15:00:31.000Z",
+              "status": "INCOMPLETE",
+              "complete": false,
+              "cashCents": 9967990,
+              "feesCents": 210,
+              "realizedPnlCents": 0,
+              "ownedBasisCents": 32010,
+              "liquidationEquityCents": null,
+              "totalPnlCents": null,
+              "unrealizedPnlCents": null,
+              "incompleteReasons": [
+                "QUALIFIED_ORIGINAL_QUOTE_UNAVAILABLE"
+              ],
+              "prefix": {
+                "eventSamples": 33,
+                "incompleteSamples": 2,
+                "complete": false,
+                "maximumSampledDrawdownCents": null
+              }
+            },
+            {
+              "version": 33,
+              "eventHash": "4714f90f5334d4fbbe8ed4b66f195bcd0d3592fa7fe4640212c7fd02666d93e2",
+              "asOf": "2026-10-13T15:00:31.000Z",
+              "status": "CASH_ONLY",
+              "complete": true,
+              "cashCents": 9988480,
+              "feesCents": 420,
+              "realizedPnlCents": -11520,
+              "ownedBasisCents": 0,
+              "liquidationEquityCents": 9988480,
+              "totalPnlCents": -11520,
+              "unrealizedPnlCents": 0,
+              "incompleteReasons": [],
+              "prefix": {
+                "eventSamples": 34,
+                "incompleteSamples": 2,
+                "complete": false,
+                "maximumSampledDrawdownCents": null
+              }
+            }
+          ],
+          "nextAfter": 33,
+          "hasMore": false,
+          "sampling": "AFTER_RECORDED_EVENT",
+          "sharpe": null,
+          "limitations": [
+            "Event-sampled valuations; no marks between recorded events",
+            "Missing marks invalidate full-prefix drawdown; no interpolation",
+            "Irregular event samples cannot establish daily returns or Sharpe",
+            "Replay streams from genesis; bounded output is not constant-time pagination"
+          ]
+        }
+      ]
+    }
+  ]
+}

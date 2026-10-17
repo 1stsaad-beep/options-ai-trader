@@ -1,5 +1,7 @@
 # Completion traceability — continued 2026-10-17
 
+Batch36 adds a bounded 25-point Flutter historical valuation screen and independent summary arithmetic/causal-cursor validation, with four original SQL fixtures and 19 new Flutter tests (source CI pending). Failed reads cannot advance the cursor. Python fixture/history16 passed locally. No full-provider attestation or complete historical coverage claim.
+
 Batch35 extends historical valuation with authenticated, end-version/hash-bound event pages and causal original-quote replay. A missing mark invalidates whole-prefix sampled drawdown; Sharpe remains null. Output/live-state memory is bounded; replay still starts at genesis (long-history checkpoint work remains open). 30 targeted Python tests passed, including 15 new historical cases; PostgreSQL two-connection acceptance added, source CI pending. See docs/RESUME_STAGE1_20261017_AR.md. Stage one remains PARTIAL.
 
 **Current acceptance:** code805694fca13131494232e0f58b64899c7bd4d7f2 passed1405 Python/848 Flutter/61 JVM/23 chart/6 Golden, PostgreSQL execution22/journal6/runtime10/settlement5/observed13/experiment4/backup18, and20 Compose. Original artifacts SHA256/CRC verified in docs/evidence/stage1-20261017/batch34-ci-index.json. Source security passed within its stated scope. Older pending statements below are historical and superseded only for these completed gates. Overall stage one and V1.0 remain PARTIAL; current gaps and phase-two prerequisites: docs/STAGE1_STATUS_20261017_AR.md.
