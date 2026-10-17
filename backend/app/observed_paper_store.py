@@ -5,6 +5,7 @@ Hashes detect accidental corruption; they do not attest a broker or stop a DB
 administrator from deliberately replacing both an entire history and its root.
 """
 from datetime import datetime, timedelta, timezone
+from contextlib import closing
 import json
 import re
 
@@ -16,6 +17,8 @@ ZERO = '0' * 64
 SEGMENT_BYTES = 4 * 1024 * 1024
 SEGMENT_EVENTS = 256
 MAX_EVENT_BYTES = 1024 * 1024
+# Leave room for the small API envelope around the serialized event array.
+EVENT_PAGE_BYTES = 4 * 1024 * 1024 - 1024
 
 
 class LedgerConflict(ValueError):
@@ -224,12 +227,21 @@ class ObservedPaperStore:
             raise ValueError('Bounded event cursor required')
         with self.repo.transaction() as db:
             self._read(db,account)
-            result=[]; size=0
-            for raw in db.execute('SELECT * FROM observed_paper_events WHERE account_id=? AND sequence>? ORDER BY sequence LIMIT ?',
-                    (account,after,limit)):
-                row=dict(raw)
-                if size+row['size_bytes']>SEGMENT_BYTES: break
-                size+=row['size_bytes']; result.append(self._receipt(row)|{'original':json.loads(row['payload'])})
+            result=[]; size=2  # JSON array brackets, then commas and full receipts.
+            # PostgreSQL's default client cursor buffers the whole result. A
+            # named server cursor fetches only bounded batches, even if100
+            # original events would be much larger than the response budget.
+            with closing(db.stream('SELECT * FROM observed_paper_events WHERE account_id=? AND sequence>? ORDER BY sequence LIMIT ?',
+                    (account,after,limit))) as rows:
+                for row in rows:
+                    original=json.loads(row['payload'])
+                    receipt={'version':row['sequence'],'eventHash':row['digest'],'afterHash':row['after_hash'],
+                        'at':row['created'],'facts':original['facts'],'original':original}
+                    needed=len(canonical(receipt).encode())+int(bool(result))
+                    if size+needed>EVENT_PAGE_BYTES:
+                        if not result: raise LedgerConflict('Original event exceeds response page capacity')
+                        break
+                    size+=needed; result.append(receipt)
             return result
 
     def acquire(self, owner):

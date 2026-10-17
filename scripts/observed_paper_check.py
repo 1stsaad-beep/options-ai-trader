@@ -14,6 +14,7 @@ import uuid
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'backend'))
 from app.repository import Repository
 from app.observed_paper import DEFAULTS
+from app.observed_paper import canonical
 from app.observed_paper_store import ObservedPaperStore, LedgerConflict
 from app.observed_option_replay import iso
 from app.observed_paper_runtime import ObservedPaperRuntime
@@ -143,6 +144,21 @@ def check(repositories):
         assert data.capture(demand,capture_lease)['quotes']==[] and data.coverage_limited
         s.release(capture_lease)
     assert len(requested)==2 and all(len(batch)==30 for batch in requested) and len(set.union(*requested))==40
+    capacity_account=account+'-capacity'
+    stores[0].create(capacity_account,'Large original offline fixture')
+    large={'source':'fixture','capturedAt':iso(clock[0]),'stockFeed':'iex','quotes':[],
+        'bars':{'X'*190000:[]}}  # Invalid optional evidence, no quote/fill invented.
+    capacity_lease=stores[0].acquire('capacity-worker')
+    for i in range(12):
+        stores[0].command(capacity_account,'large'+str(i),{'kind':'CYCLE','observation':large},
+            expected_version=i,lease=capacity_lease)
+    page_one=stores[1].events(capacity_account,after=0,limit=100)
+    page_two=stores[0].events(capacity_account,after=page_one[-1]['version'],limit=100)
+    assert len(page_one)<12 and len(canonical(page_one).encode())<4*1024*1024
+    assert len(canonical(page_two).encode())<4*1024*1024
+    assert [r['version'] for r in page_one+page_two]==list(range(1,13))
+    assert stores[1].snapshot(capacity_account,full=True)['state']['cash']==1000000
+    stores[0].release(capacity_lease)
     with repositories[0].transaction() as db:
         ObservedPaperData._save(db,{'calls':[iso(clock[0])],'authBlocked':True,
             'retryAt':iso(clock[0]+timedelta(seconds=60)),'failures':1})
@@ -158,7 +174,7 @@ def check(repositories):
         'same_owner_successor_generation_fencing','shutdown_preserves_original_ledger',
         'read_only_version_bound_net_valuation','causal_history_two_connection_pagination','read_only_durable_diagnostics_across_connections',
         'alert_inbox_cross_connection_pinned_pages','alert_ack_lost_response_retry','alert_native_immutable_guards',
-        'bounded_owned_quote_rotation_across_connections']}
+        'bounded_owned_quote_rotation_across_connections','large_original_receipts_streamed_without_page_loss']}
 
 
 def run():

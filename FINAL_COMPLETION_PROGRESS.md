@@ -250,3 +250,12 @@ A safe OBSERVED_PARTIAL_COVERAGE diagnostic reaches the status API and durable i
 Batch43 fb3a99de8c53bdc01cd6f53fc26341d9b34e649a passed backend39011271368 (including actual PostgreSQL restore) and security39011271375. Source42 Flutter analyze/tests completed successfully; JVM still running at this checkpoint. No APK.
 
 Batch44 local full suite:1489 Python passed, zero failures/skips. Existing PostgreSQL acceptance now includes19 observed checks and20 backup/restore checks; these counts are pending actual CI, not claimed local PostgreSQL results.
+
+
+## Batch45 — bounded original-event SQL and wire pages
+
+Fixed a capacity defect in observed-paper event reads: a PostgreSQL client cursor could buffer100 large rows before the Python4MiB cutoff. Reads now use the existing bounded named server cursor, explicitly closed on cutoff/error. The budget counts the complete serialized receipt, including duplicated facts and JSON framing, not only original payload bytes;1024 bytes are reserved for the API envelope. Original events, hashes and segment limits are unchanged. Pagination never drops the first record that does not fit; it is returned by the next cursor request.
+
+Three new tests retain12 deliberately malformed optional-analysis originals (~4.5MiB stored / ~6.8MiB receipt data), verify two HTTP pages remain below4MiB without loss/hash changes, preserve all balances, and close the stream on early exit and decode error. PostgreSQL's actual two-connection gate adds the same large-original case. This fixes an eager read/response bound, not phone full-JSON memory, persistent incremental history checkpoints or unlimited archive capacity. No market data was invented: malformed inputs are explicit offline fixtures, with no valid quote or fill. Full tests and source CI follow.
+
+Batch45 local full1492 Python passed, zero failures/skips;27 targeted ledger/capacity tests passed. Actual PostgreSQL large-receipt streaming acceptance pending source CI.
