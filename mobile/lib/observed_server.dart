@@ -10,6 +10,7 @@ import 'observed_server_comparison.dart';
 import 'observed_server_valuation.dart';
 import 'observed_server_history.dart';
 import 'observed_server_status.dart';
+import 'observed_server_alerts.dart';
 
 Map<String,dynamic> observedObject(dynamic value) {
   if(value is! Map||value.keys.any((key)=>key is! String))throw const FormatException('Invalid server object');
@@ -209,6 +210,7 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
         if(runtime!=null)for(final code in runtime!['alerts'] as List? ?? [])Text(observedAlertLabels[code]!,key:Key('observed-alert-$code')),
         if(runtime?['dataAccess']?['retryAt']!=null)Text('وقت انتهاء الانتظار UTC: ${runtime!['dataAccess']['retryAt']}'),
         if(runtime?['alerts']!=null)const Text('تنبيهات حالة عند القراءة؛ لا توجد خدمة دفع تنبيهات مفعلة بهذا العرض.'),
+        OutlinedButton(key:const Key('observed-alert-inbox'),onPressed:busy?null:()=>Navigator.push(context,MaterialPageRoute<void>(builder:(_)=>ObservedAlertsScreen(api:widget.api))),child:const Text('سجل التنبيهات وإقرار القراءة')),
         if(runtime!=null)Text('وقت قراءة الخادم: ${runtime!['serverTime']} • حدّث الصفحة للتحقق مجددًا.'),
         const Text('الدخول السوقي الجديد مقفل حاليًا حتى اكتمال تحقق أهلية العقد وGreeks. تشغيل الحساب لا يثبت تشغيل العامل أو صلاحية بيانات السوق.'),
         if(busy)const LinearProgressIndicator(),

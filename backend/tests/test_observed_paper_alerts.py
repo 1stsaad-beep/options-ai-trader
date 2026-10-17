@@ -191,3 +191,12 @@ def test_sqlite_backup_restore_keeps_ack_and_unread_original_events(tmp_path):
     assert page(other,after=0)==original and page(other)['after']==1
     assert other.snapshot('a',full=True)==store.snapshot('a',full=True)
     recovered.close(); repo.close()
+
+
+def test_shared_mobile_fixture_is_exact_actual_sql_output():
+    import sys
+    from pathlib import Path
+    root=Path(__file__).parents[2]
+    sys.path.insert(0,str(root/'scripts'))
+    from generate_observed_alert_fixture import generate
+    assert json.loads((root/'mobile/test/fixtures/observed_alert_v1.json').read_text()) == generate()
