@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import 'broker_adapter.dart';
 import 'broker_models.dart';
+import 'broker_portfolio_screen.dart';
 import 'broker_store.dart';
 import 'live_gate.dart';
 
@@ -144,6 +145,8 @@ class _BrokerAccountsScreenState extends State<BrokerAccountsScreen> {
                       status[a.id] ?? 'لم يُفحص الاتصال',
                     ].join('\n')),
                     isThreeLine: true,
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) =>
+                        BrokerPortfolioScreen(account: a, registry: registry, client: widget.client))),
                     trailing: Wrap(spacing: 4, children: [
                       IconButton(tooltip: 'فحص الاتصال', onPressed: busy.contains(a.id) ? null : () => _test(a),
                           icon: const Icon(Icons.wifi_tethering)),
