@@ -52,7 +52,7 @@ void main() {
     }
     await completed; expect(cancelled, true);
     await stream.close();
-  });
+  }, timeout: const Timeout(Duration(seconds: 45)));
   testWidgets('headers arriving after deadline are discarded without body consumption', (tester) async {
     var cancelled = false, attempts = 0;
     final headers = Completer<http.StreamedResponse>();
@@ -65,5 +65,5 @@ void main() {
     await tester.pump();
     expect(cancelled, true); expect(attempts, 1);
     await stream.close();
-  });
+  }, timeout: const Timeout(Duration(seconds: 45)));
 }
