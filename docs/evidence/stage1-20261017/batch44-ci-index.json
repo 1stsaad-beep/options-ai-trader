@@ -1,0 +1,45 @@
+{
+  "source": "50b0d942b950906b126fc392b407f483c14d0cf1",
+  "artifacts": [
+    {
+      "id": 12092563838,
+      "run": 39011564858,
+      "source": "50b0d942b950906b126fc392b407f483c14d0cf1",
+      "archive": "batch44-direct.zip",
+      "sha256": "sha256:3a5aceea955cd2b2c68a65a200743973895d6ba28eb5b90e780eb588d20f08c0",
+      "sha256AndCrcVerified": true
+    },
+    {
+      "id": 12093222147,
+      "run": 39011564854,
+      "source": "50b0d942b950906b126fc392b407f483c14d0cf1",
+      "archive": "batch44-chart.zip",
+      "sha256": "sha256:fdf8894c3c893ef6e1f7084a878efd38020d54802ef110ad1a779c9e8c418f82",
+      "sha256AndCrcVerified": true
+    }
+  ],
+  "flutter": 928,
+  "hiddenFlutterFrameworkEntriesExcluded": 63,
+  "jvm": 61,
+  "jvmSuites": {
+    "AlpacaAccessTest": 12,
+    "AlpacaSessionTest": 31,
+    "PaperIndependentStoreTest": 10,
+    "PaperSegmentsTest": 8
+  },
+  "chart": 23,
+  "hiddenChartFrameworkEntriesExcluded": 2,
+  "golden": 6,
+  "hiddenGoldenFrameworkEntriesExcluded": 64,
+  "failures": 0,
+  "skipped": 0,
+  "sameFilesAtSource": "99a81e829e1f7822a46c598a4355b1f12c500aed",
+  "sameFilesScope": [
+    "mobile",
+    ".github/workflows"
+  ],
+  "sameFilesVerifiedBy": "git diff 50b0d942b950906b126fc392b407f483c14d0cf1 99a81e829e1f7822a46c598a4355b1f12c500aed -- mobile .github/workflows (empty)",
+  "apkProduced": false,
+  "marketConnection": false,
+  "actualMarketSessions": 0
+}

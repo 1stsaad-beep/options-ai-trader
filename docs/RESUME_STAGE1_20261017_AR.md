@@ -200,3 +200,18 @@ Four failing regressions reproduced OverflowError from market_data.number(10**40
 The original failed JUnit (four failures/four existing passes) is retained separately from fixed-source results.92 affected market-data/capture/runtime tests pass after correction. Full Python/source CI follows. Source44 Flutter/JVM and chart checks completed successfully; original artifacts are being verified and archived. No new APK or external connection.
 
 Batch47 full local1498 Python passed, zero failures/skips. Source46 backend39012060142 and security39012060138 passed. Raw source44 artifacts verified SHA256/CRC:928 Flutter (63 hidden framework entries excluded),61 JVM,23 chart and6 Golden; all passed. No mobile/native/workflow changes in45–47.
+
+
+## نقطة الحفظ النهائية للمتابعة41–47
+
+أحدث كود محفوظ ومقبول: `99a81e829e1f7822a46c598a4355b1f12c500aed`، بعد استئناف HEAD `c9e5c85588a2aa2f9a2ae3c113ba698bac369b71`. يتبعه حفظ وثائق وأدلة فقط؛ تحقق من HEAD البعيد قبل أي عمل جديد. لا تعِد إصلاحات41–47 أو إخفاقات41–42 التي أغلقتها المصادر التالية. لا توجد مهمة مستمرة بعد انتهاء الجلسة.
+
+قبول47 النهائي:1498 Python محليًا وفيCI، صفر إخفاق/تخطٍّ؛ PostgreSQL22 تنفيذًا/6 سجلًا/10 runtime/5 تسوية/20 دفتر رصد/4 تجربة/20 نسخًا واستعادة؛20 Docker Compose. بوابة الخادم39012213620 والأمان39012213612 ناجحتان. الأدلة الأصلية ZIP فُحصت SHA256/CRC وحُفظت مع فهرس `batch47-ci-index.json`. الأمان1108 ملفات و2158 blob تاريخيًا عبر205 commits، دون نتائج أنماط أسرار؛24 Python/44 Pub دون ثغرات معروفة ضمن الفحص.
+
+الهاتف/native/workflows لم تتغير منذ المصدر44 `50b0d942b950906b126fc392b407f483c14d0cf1`:928 Flutter و61 JVM،23 شارت و6 Golden ناجحة من النتائج الخام؛ فهرس `batch44-ci-index.json`. لا تُحسب سجلات إطار Flutter المخفية كاختبارات إضافية. فهرس `batch41-43-ci-index.json` يحتفظ بأدلة إخفاق شرط ترقية11 ثم فحص restore بسبب حجب sql، وإصلاحهما وقبولهما الفعلي في43. أربعة إخفاقات إعادة إنتاج overflow منفصلة عن نتائج47 المصححة في `batch47-local-python.zip`.
+
+**المرحلة الأولى لم تُغلق.** هذه نقطة توقف لحفظ العمل عند اقتراب حد الجلسة، وليست حصرًا للنواقص في صلاحيات خارجية. راجع جدول النواقص الحالي في `STAGE1_STATUS_20261017_AR.md` ومصفوفة المتطلبات. البداية المقترحة للدفعة التالية: مهايئ أهلية عقد ذي إصدار ومصدر يثبت المُسلَّمات وحداثة Greeks عندما يوفرهما المزود، مع رفض صريح للحقول الناقصة/القديمة/العقود المعدلة غير المفهومة؛ لا تفتح الدخول اعتمادًا على العدد الصحيح وحده. لا تغيّر انتقالاتv1/v2 أو أصولها عند إضافة عقد أهلية أو trailing جديد.
+
+بعد ذلك تبقى هوية الموجات وترتيبها ونوافذها وتكافؤ Demo/trailing، وسعة JSON كاملة في الهاتف والهجرة الآمنة، ونقاط تحقق تاريخية موثوقة وNAV اليومي وأسهم التسليم، ومراقب توقف مستقل وتنبيهات خارجية موثوقة وقبول الواجهات. بيانات OPRA والنشر المخول وثلاث جلسات سوق فعلية والتوقيع والمراجعة المستقلة قيود منفصلة. الأهلية غير المثبتة مقفلة؛ لا أسعار أو Greeks أو أزمنة مختلقة.
+
+لم يُبن APK، ولم تُطلب تجربة هاتف، ولم يُعدل Oracle أو مشروع آخر أو تُحذف بيانات مستخدم أو تُرسل أوامر مالية. لا force push/reset --hard أو أتمتة جديدة. حافظ على `[chart-check]` وعلى الأصل السابق للشجرة والأدلة عند النشر. إذا كان الاستنساخ جزئيًا فاحفظ الملفات الغائبة في الشجرة البعيدة؛ لا تعامل غيابها المحلي كحذف.

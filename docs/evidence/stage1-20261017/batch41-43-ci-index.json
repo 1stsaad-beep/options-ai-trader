@@ -1,0 +1,100 @@
+{
+  "scope": "Historical failures and subsequent corrected-source acceptance; not final-source acceptance",
+  "artifacts": [
+    {
+      "id": 12092278639,
+      "run": 39010837566,
+      "source": "be5328796337e1a5c20e558ea5bc4b1574347198",
+      "archive": "batch41-failed-pg-gate.zip",
+      "sha256": "sha256:2f42332ced71dbb4032d0cfabf07d9eac857b64b48d7c559de979efc28c72afd",
+      "sha256AndCrcVerified": true
+    },
+    {
+      "id": 12091999576,
+      "run": 39011082777,
+      "source": "e76deafbb3d87f32605eebb2e5a0f6f89dce3b2a",
+      "archive": "batch42-failed-restore-gate.zip",
+      "sha256": "sha256:9facc2bea4ba2342b385f08c218c2ae2b6008cfff188afaf72072246c3fe9f16",
+      "sha256AndCrcVerified": true
+    },
+    {
+      "id": 12092099827,
+      "run": 39011082724,
+      "source": "e76deafbb3d87f32605eebb2e5a0f6f89dce3b2a",
+      "archive": "batch42-direct.zip",
+      "sha256": "sha256:c69af2d6599c5137b6ba2882c0199064ae1766915c1d2b333fb3e4d47ab13e50",
+      "sha256AndCrcVerified": true
+    },
+    {
+      "id": 12093330621,
+      "run": 39011271368,
+      "source": "fb3a99de8c53bdc01cd6f53fc26341d9b34e649a",
+      "archive": "batch43-backend-test-results.zip",
+      "sha256": "sha256:734ce0c6d8201193ca0328c94f91bc0677990142389179e8a2c321b9507394c9",
+      "sha256AndCrcVerified": true
+    },
+    {
+      "id": 12091939821,
+      "run": 39011271368,
+      "source": "fb3a99de8c53bdc01cd6f53fc26341d9b34e649a",
+      "archive": "batch43-compose-runtime-result.zip",
+      "sha256": "sha256:4fd2c024697281a86bc9a4097075f6139ade4a1628586ca65df3837d7e51d466",
+      "sha256AndCrcVerified": true
+    },
+    {
+      "id": 12093191650,
+      "run": 39011271375,
+      "source": "fb3a99de8c53bdc01cd6f53fc26341d9b34e649a",
+      "archive": "batch43-v1-security-results.zip",
+      "sha256": "sha256:89a74eb5de5bcc2e9e31a7cf2bbb63ef2c4cc8a5dafe98150b62c69456171e5f",
+      "sha256AndCrcVerified": true
+    }
+  ],
+  "failures": [
+    {
+      "source": "be5328796337e1a5c20e558ea5bc4b1574347198",
+      "pythonPassed": 1476,
+      "failedGate": "PostgreSQL basic schema check expected 10 migrations after migration 11 was added",
+      "fixedIn": "e76deafbb3d87f32605eebb2e5a0f6f89dce3b2a",
+      "postgresAccepted": false
+    },
+    {
+      "source": "e76deafbb3d87f32605eebb2e5a0f6f89dce3b2a",
+      "pythonPassed": 1477,
+      "failedGate": "PostgreSQL backup fixture setup: local sql loop variable shadowed psycopg.sql (UnboundLocalError); backup result artifact is empty",
+      "fixedIn": "fb3a99de8c53bdc01cd6f53fc26341d9b34e649a",
+      "backupAccepted": false
+    }
+  ],
+  "correctedAcceptance43": {
+    "python": 1477,
+    "postgres": {
+      "execution": 22,
+      "journal": 6,
+      "runtime": 10,
+      "settlement": 5,
+      "observed": 18,
+      "experiment": 4,
+      "backup": 19
+    },
+    "compose": 20,
+    "security": {
+      "files": 1105,
+      "historyBlobs": 2129,
+      "historyCommits": 201,
+      "patternFindings": 0,
+      "pythonPackages": 24,
+      "pubPackages": 44,
+      "knownAdvisories": 0
+    }
+  },
+  "mobileAcceptance42": {
+    "flutter": 928,
+    "hiddenFrameworkEntriesExcluded": 63,
+    "jvm": 61,
+    "failures": 0,
+    "skipped": 0
+  },
+  "marketConnection": false,
+  "actualMarketSessions": 0
+}

@@ -1,0 +1,80 @@
+{
+  "source": "99a81e829e1f7822a46c598a4355b1f12c500aed",
+  "artifacts": [
+    {
+      "id": 12092914551,
+      "run": 39012213620,
+      "source": "99a81e829e1f7822a46c598a4355b1f12c500aed",
+      "archive": "batch47-backend-test-results.zip",
+      "sha256": "sha256:2b3c143f053ec82cf87834221e554aefff1bfbd7b43d610879281b162020e249",
+      "sha256AndCrcVerified": true
+    },
+    {
+      "id": 12093257915,
+      "run": 39012213620,
+      "source": "99a81e829e1f7822a46c598a4355b1f12c500aed",
+      "archive": "batch47-compose-runtime-result.zip",
+      "sha256": "sha256:6c4b468a752534925e1fdbe298260f1a168fb931d630af0b3cc16cf603adea32",
+      "sha256AndCrcVerified": true
+    },
+    {
+      "id": 12093063787,
+      "run": 39012213612,
+      "source": "99a81e829e1f7822a46c598a4355b1f12c500aed",
+      "archive": "batch47-v1-security-results.zip",
+      "sha256": "sha256:9edaa30a28b85d195d532d1481e51a4bed37bfddaa34d3dfa23bcb05a893ff9a",
+      "sha256AndCrcVerified": true
+    }
+  ],
+  "python": 1498,
+  "pythonFailures": 0,
+  "pythonErrors": 0,
+  "pythonSkipped": 0,
+  "postgres": {
+    "execution": 22,
+    "journal": 6,
+    "runtime": 10,
+    "settlement": 5,
+    "observed": 20,
+    "experiment": 4,
+    "backup": 20
+  },
+  "compose": 20,
+  "security": {
+    "files": 1108,
+    "historyBlobs": 2158,
+    "historyCommits": 205,
+    "patternFindings": 0,
+    "pythonPackages": 24,
+    "pubPackages": 44,
+    "knownAdvisories": 0,
+    "limitations": "Pattern-based secrets detection and known advisories only; no full native/SDK or independent penetration-test coverage"
+  },
+  "localArchive": {
+    "archive": "batch47-local-python.zip",
+    "sha256": "sha256:7381b7da1e3ddd1e57dddec9e0a22fe50b79a52583d4123f27b5769db7baed8f",
+    "sourceSuites": {
+      "41": 1476,
+      "42": 1477,
+      "44": 1489,
+      "45": 1492,
+      "46": 1494,
+      "47": 1498
+    },
+    "separatePreFixReproduction": {
+      "file": "batch47-reproduction.xml",
+      "tests": 8,
+      "failures": 4,
+      "passed": 4
+    }
+  },
+  "mobileSource": "50b0d942b950906b126fc392b407f483c14d0cf1",
+  "mobileEvidenceIndex": "batch44-ci-index.json",
+  "historicalEvidenceIndex": "batch41-43-ci-index.json",
+  "marketConnection": false,
+  "actualMarketSessions": 0,
+  "deploymentSoakAccepted": false,
+  "apkProduced": false,
+  "stageOne": "PARTIAL_SOFTWARE_GAPS_REMAIN",
+  "stageTwoReady": false
+}
