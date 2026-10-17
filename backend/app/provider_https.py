@@ -53,10 +53,19 @@ class Resolver:
 _RESOLVERS = {host: Resolver() for host in ('data.alpaca.markets', 'paper-api.alpaca.markets')}
 
 
-@contextmanager
 def provider_connection(host, *, timeout):
     if host not in _RESOLVERS:
         raise OSError('Provider host forbidden')
+    return pinned_connection(host, _RESOLVERS[host], timeout=timeout)
+
+
+@contextmanager
+def pinned_connection(host, resolver, *, timeout):
+    """Caller validates its fixed destination; DNS/TLS/deadline stay bounded.
+
+    This internal lifecycle does not choose hosts, routes, credentials or HTTP
+    methods. Provider callers retain their immutable two-host allowlist.
+    """
     deadline = time.monotonic() + timeout
     expired = threading.Event()
     lock = threading.Lock()
@@ -95,7 +104,7 @@ def provider_connection(host, *, timeout):
         def create_socket(address, timeout=None, source_address=None):
             if address != (host, 443) or source_address is not None:
                 raise OSError('Provider destination forbidden')
-            answers = _RESOLVERS[host].resolve(host, min(DNS_SECONDS, remaining()))
+            answers = resolver.resolve(host, min(DNS_SECONDS, remaining()))
             try:
                 addresses = list(dict.fromkeys(row[4][0] for row in answers))
                 if not 1 <= len(addresses) <= 16 or any(
