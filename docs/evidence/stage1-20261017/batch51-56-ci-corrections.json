@@ -1,0 +1,32 @@
+{
+  "baseline": "d8e6821757f506e0889d3a053d68b60efcc908d5",
+  "batch51": {
+    "source": "e1f94ba50dba20bf04d2d1ba0b82e57cc848cb8b",
+    "directRun": 39015331596,
+    "chartRun": 39015331626,
+    "failure": "two prefer_interpolation_to_compose_strings analyzer notices; tests skipped",
+    "fixedBy": "259579ee9dcc24089d1bc0972346e4d65309e1d8",
+    "acceptedRun": 39015638752
+  },
+  "batch54": {
+    "source": "d06b0fdde9607ccbcc2ec53e03c3e61d2511483e",
+    "directRun": 39016378511,
+    "chartRun": 39016378506,
+    "failure": "four curly_braces_in_flow_control_structures analyzer notices; tests skipped",
+    "fixedBy": "554cf4e3fb8d6cba37de93a2f3f79f946f1389b4"
+  },
+  "batch55": {
+    "source": "554cf4e3fb8d6cba37de93a2f3f79f946f1389b4",
+    "run": 39016488917,
+    "flutterVisiblePassed": 969,
+    "flutterVisibleFailed": 1,
+    "newDailyPassed": 30,
+    "native": "NOT_RUN",
+    "failure": "mixed source response never opens a comparison: observed-error outside lazy scroll viewport",
+    "artifact": "batch55-failed-direct.zip",
+    "artifactId": 12095062499,
+    "sha256": "7c7a4188675ae343713fdf5f899b00dcdcb5151b7f6d8b7f08ec48a7b4777a24",
+    "crcVerified": true,
+    "fixedBy": "a5426bb9e6a9e5bc53fabc0846aec5db49146f29"
+  }
+}

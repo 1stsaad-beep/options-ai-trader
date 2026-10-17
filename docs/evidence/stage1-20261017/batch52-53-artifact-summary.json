@@ -1,0 +1,148 @@
+{
+  "batch52-direct-alpaca-mock-results.zip": {
+    "sha256": "9f27003a70883b3168eeedb2eac8214720a3199f120d59b8a4248fb50eebf45a",
+    "files": {
+      "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.AlpacaAccessTest.xml": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.AlpacaSessionTest.xml": {
+        "tests": 31,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest.xml": {
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "mobile/build/app/test-results/testDebugUnitTest/TEST-com.optionsaitrader.options_ai_trader.PaperSegmentsTest.xml": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "mobile/direct-flutter-tests.json": {
+        "visible": 940,
+        "hidden": 64,
+        "failed": 0,
+        "final": {
+          "success": true,
+          "type": "done",
+          "time": 117432
+        }
+      }
+    }
+  },
+  "batch52-chart-repair-evidence.zip": {
+    "sha256": "9300fe1d5ebfe384a33c49ebc15ec07108833aa4e3a233417b5301d4f075a1ac",
+    "files": {
+      "chart-tests.json": {
+        "visible": 23,
+        "hidden": 2,
+        "failed": 0,
+        "final": {
+          "success": true,
+          "type": "done",
+          "time": 11616
+        }
+      },
+      "golden-tests.json": {
+        "visible": 6,
+        "hidden": 65,
+        "failed": 0,
+        "final": {
+          "success": true,
+          "type": "done",
+          "time": 46662
+        }
+      }
+    }
+  },
+  "batch53-backend-test-results.zip": {
+    "sha256": "c4b7a3fa68d07a78596c1d62726c54875bb0e43bd1ae79b0206f26d2f56679db",
+    "files": {
+      "test-results.xml": {
+        "tests": 1584,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "postgres-backup-restore.json": {
+        "status": "passed",
+        "checks": 20,
+        "failed": 0
+      },
+      "postgres-v1-results.json": {
+        "status": "passed",
+        "checks": 22,
+        "failed": 0
+      },
+      "market-data-journal-postgres.json": {
+        "status": "passed",
+        "checks": 6,
+        "failed": 0
+      },
+      "market-runtime-postgres.json": {
+        "status": "passed",
+        "checks": 10,
+        "failed": 0
+      },
+      "paper-settlement-postgres.json": {
+        "status": "passed",
+        "checks": 5,
+        "failed": 0
+      },
+      "observed-paper-postgres.json": {
+        "status": "passed",
+        "checks": 25,
+        "failed": null
+      },
+      "observed-experiment-postgres.json": {
+        "status": "passed",
+        "checks": 4,
+        "failed": null
+      }
+    }
+  },
+  "batch53-compose-runtime-result.zip": {
+    "sha256": "45dd46bc94f00f6a86318bba90c710416470600c09ca3c526d36baf4e0bba3c7",
+    "files": {
+      "compose-smoke.json": {
+        "status": "passed",
+        "checks": 20,
+        "failed": null
+      }
+    }
+  },
+  "batch53-v1-security-results.zip": {
+    "sha256": "f39a86f2adac141798a6f19e71930e0dca431aaa5785f32a4e759b7780f32428",
+    "files": {
+      "secret-scan.json": {
+        "files_scanned": 1125,
+        "finding_count": 0,
+        "history_blobs_scanned": 2218,
+        "history_commits": 212,
+        "limitations": [
+          "Pattern matching does not prove absence of secrets or vulnerabilities.",
+          "Untracked and ignored files, unreachable Git objects, submodules and archived/binary contents are not scanned.",
+          "No remote secret validation, dependency vulnerability lookup or paid service is used."
+        ],
+        "scope": "tracked_working_tree_and_all_reachable_history",
+        "status": "no_matching_patterns_found"
+      },
+      "dependency-audit.json": {
+        "packages": 24,
+        "vulns": 0
+      },
+      "dart-dependency-audit.json": {
+        "packages": 44,
+        "vulns": 0
+      }
+    }
+  }
+}
