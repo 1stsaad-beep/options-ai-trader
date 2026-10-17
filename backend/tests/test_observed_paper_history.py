@@ -114,3 +114,37 @@ def test_saved_history_fixture_is_actual_sql_replay():
     sys.path.insert(0,str(root/'scripts'))
     from generate_observed_history_fixture import generate
     assert generate()==json.loads((root/'mobile/test/fixtures/observed_history_v1.json').read_text())
+
+
+def test_long_history_projects_one_page_in_one_verified_scan(tmp_path,monkeypatch):
+    from app.repository import Session
+    repo,store,clock=stored(tmp_path)
+    for i in range(320):store.command('a','toggle'+str(i),{'kind':'ENABLE','enabled':bool(i%2)})
+    before=store.snapshot('a',full=True); streams=[]; original=Session.stream
+    def count(self,sql,parameters=(),batch_size=2):
+        entry={'sql':sql,'rows':0};streams.append(entry)
+        for row in original(self,sql,parameters,batch_size):
+            entry['rows']+=1;yield row
+    monkeypatch.setattr(Session,'stream',count)
+    result=store.valuation_history('a',after=300,limit=5,through=310)
+    assert [p['version'] for p in result['points']]==list(range(301,306))
+    assert len(streams)==1 and streams[0]['rows']==before['version']+1
+    assert result['points'][-1]['prefix']=={'eventSamples':306,'incompleteSamples':0,
+        'complete':True,'maximumSampledDrawdownCents':0}
+    assert result['hasMore'] and result['throughVersion']==310
+    assert store.snapshot('a')==before
+    repo.close()
+
+
+def test_corrupt_tail_cannot_publish_even_a_valid_earlier_projection(tmp_path):
+    repo,store,_=opened(tmp_path)
+    store.command('a','stop',{'kind':'ENABLE','enabled':False})
+    assert store.valuation_history('a',through=0,limit=1)['points'][0]['version']==0
+    with repo.transaction() as db:
+        db.execute('DROP TRIGGER immutable_observed_paper_event_update')
+        db.execute("UPDATE observed_paper_events SET payload='private corrupted tail' WHERE account_id='a' AND sequence=4")
+    with pytest.raises(LedgerConflict,match='offline review'):store.valuation_history('a',through=0,limit=1)
+    with TestClient(create_app(repo,TOKEN)) as client:
+        response=client.get('/api/observed-paper/accounts/a/valuation-history?through=0&limit=1',headers=HEADERS)
+        assert response.status_code==409 and 'private' not in response.text and 'points' not in response.text
+    repo.close()

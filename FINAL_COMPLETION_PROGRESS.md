@@ -259,3 +259,12 @@ Fixed a capacity defect in observed-paper event reads: a PostgreSQL client curso
 Three new tests retain12 deliberately malformed optional-analysis originals (~4.5MiB stored / ~6.8MiB receipt data), verify two HTTP pages remain below4MiB without loss/hash changes, preserve all balances, and close the stream on early exit and decode error. PostgreSQL's actual two-connection gate adds the same large-original case. This fixes an eager read/response bound, not phone full-JSON memory, persistent incremental history checkpoints or unlimited archive capacity. No market data was invented: malformed inputs are explicit offline fixtures, with no valid quote or fill. Full tests and source CI follow.
 
 Batch45 local full1492 Python passed, zero failures/skips;27 targeted ledger/capacity tests passed. Actual PostgreSQL large-receipt streaming acceptance pending source CI.
+
+
+## Batch46 — historical valuation during verified replay
+
+HistoryProjection now consumes each already-validated transition during the full immutable ledger scan. It retains only the bounded output page, running prefix counters and latest accepted original quote per owned contract. This removes the second SQL scan and duplicate application of all prefix financial transitions. The response contract and every saved shared history fixture stay byte-equivalent; no stored financial event or mark is rewritten.
+
+Publication still waits for verification of the entire ledger tail, segments and account head, even for through=0/limit=1 and a warm cache. A new corruption regression proves that an invalid later original cannot yield a valid-looking earlier page or leak its raw content. A323-event regression verifies exactly one full streamed scan and the original page/anchor/prefix result. This reduces redundant work; it is still O(history), not a persistent trusted checkpoint or constant-time pagination.
+
+Batch46 full1494 Python passed, zero failures/skips;57 affected history/valuation/ledger/runtime tests. Source45 backend39011875611 and security39011875779 succeeded, including actual PostgreSQL large-receipt pages. Mobile source42 raw ZIP verified SHA256/CRC:928 visible Flutter tests (63 hidden framework records excluded),61 JVM, all passed. Source44 mobile diagnostic-label CI remains separate.

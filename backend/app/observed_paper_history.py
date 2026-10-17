@@ -1,28 +1,32 @@
 """Causal, event-sampled net valuation; no interpolated or future market data.
 
-The caller verifies the immutable ledger in the same transaction. Replay is
-streamed from genesis, retaining live state and at most one accepted original
-quote per owned contract. Pages bind to an immutable end event, so appends cannot
+The verified replay passes each original and its rebuilt state to this bounded
+projection in the same transaction. No second ledger replay or SQL scan is
+needed. Retains at most one accepted original quote per owned contract.
+Pages bind to an immutable end event, so appends cannot
 silently change the result. This is not a daily return series or a Sharpe model.
 """
 import json
 
-from .observed_paper import apply, digest
+from .observed_paper import digest
 from .observed_paper_valuation import summarize
 from .paper_settlement import stamp
 
 VERSION = 'observed-paper-history-v1'
 
 
-def history(rows, *, after, limit, through):
-    points = []; saved = {}; state = None; peak = None; drawdown = 0
-    complete = True; missing = 0; samples = 0
-    for row in rows:
-        sequence = row['sequence']
-        if sequence > through or len(points) == limit:
-            break
-        original = json.loads(row['payload']); command = original['command']
-        state = command['state'] if sequence == 0 else apply(state, command, original['at'])[0]
+class HistoryProjection:
+    """Consumes validated transitions; publication waits for full ledger checks."""
+    def __init__(self, *, after, limit, through):
+        self.after=after; self.limit=limit; self.through=through
+        self.points=[]; self.saved={}; self.peak=None; self.drawdown=0
+        self.complete=True; self.missing=0; self.samples=0
+
+    def observe(self, row, original, state):
+        sequence=row['sequence']
+        if (self.through is not None and sequence>self.through) or len(self.points)==self.limit:
+            return
+        command=original['command']
         wanted = {}
         for p in state['positions'].values():
             authority = {'at': p['markAt'], 'identity': p['markIdentity']}
@@ -30,7 +34,7 @@ def history(rows, *, after, limit, through):
             if consumed and stamp(consumed['at']) > stamp(authority['at']):
                 authority = consumed
             wanted[p['contract']] = authority
-        saved = {key: value for key, value in saved.items() if key in wanted}
+        self.saved = {key: value for key, value in self.saved.items() if key in wanted}
         if command['kind'] == 'CYCLE':
             obs = command['observation']
             for q in obs['quotes']:
@@ -40,19 +44,19 @@ def history(rows, *, after, limit, through):
                 if authority and q.get('at') == authority['at'] and digest(q) == authority['identity']:
                     # Only discard unrelated bars/quotes in this read projection;
                     # the complete original event remains unchanged in SQL.
-                    saved[q['contract']] = {'payload': json.dumps({'at': original['at'],
+                    self.saved[q['contract']] = {'payload': json.dumps({'at': original['at'],
                         'command': {'kind': 'CYCLE', 'observation': {'source': obs['source'],
                             'capturedAt': obs['capturedAt'], 'quotes': [q]}}})}
-        quote_rows = sorted(saved.values(), key=lambda r: stamp(json.loads(r['payload'])['at']), reverse=True)
+        quote_rows = sorted(self.saved.values(), key=lambda r: stamp(json.loads(r['payload'])['at']), reverse=True)
         value = summarize(iter(quote_rows), state, stamp(original['at']))
-        equity = value['liquidationEquityCents']; samples += 1
+        equity = value['liquidationEquityCents']; self.samples += 1
         if equity is None:
-            missing += 1; complete = False
-        elif complete:
-            peak = max(peak if peak is not None else equity, equity)
-            drawdown = max(drawdown, peak-equity)
-        if sequence > after:
-            points.append({'version': sequence, 'eventHash': row['digest'], 'asOf': original['at'],
+            self.missing += 1; self.complete = False
+        elif self.complete:
+            self.peak = max(self.peak if self.peak is not None else equity, equity)
+            self.drawdown = max(self.drawdown, self.peak-equity)
+        if sequence > self.after:
+            self.points.append({'version': sequence, 'eventHash': row['digest'], 'asOf': original['at'],
                 'status': value['status'], 'complete': value['complete'],
                 'cashCents': state['cash'], 'feesCents': state['fees'],
                 'realizedPnlCents': state['realized'], 'ownedBasisCents': value['ownedBasisCents'],
@@ -60,6 +64,5 @@ def history(rows, *, after, limit, through):
                 'unrealizedPnlCents': value['unrealizedPnlCents'],
                 'incompleteReasons': sorted({leg['status'] for leg in value['options'] + value['deliveries']
                     if leg['valueCents'] is None}),
-                'prefix': {'eventSamples': samples, 'incompleteSamples': missing,
-                    'complete': complete, 'maximumSampledDrawdownCents': drawdown if complete else None}})
-    return points
+                'prefix': {'eventSamples': self.samples, 'incompleteSamples': self.missing,
+                    'complete': self.complete, 'maximumSampledDrawdownCents': self.drawdown if self.complete else None}})
