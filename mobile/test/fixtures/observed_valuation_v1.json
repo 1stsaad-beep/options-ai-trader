@@ -1,0 +1,699 @@
+{
+  "contract": "observed-valuation-fixture-v1",
+  "source": "synthetic_fixture",
+  "cases": [
+    {
+      "name": "cash",
+      "snapshot": {
+        "version": 2,
+        "eventHash": "f07ca293af3098a54534cbeaa3efc1e5f96588a2df0c31cdfa42c51b16f6fe0d",
+        "state": {
+          "cash": 10000000,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "NVDA": {
+                "CALL": "NVDA261023C00150000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 3,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {},
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": true,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 0,
+          "id": "valuation",
+          "initialCash": 10000000,
+          "lastAt": "2026-10-13T15:00:00.000Z",
+          "lastSignals": {},
+          "name": "Observed fixture",
+          "positions": {},
+          "realized": 0,
+          "source": "fixture",
+          "winningTrades": 0
+        }
+      },
+      "valuation": {
+        "contract": "observed-paper-valuation-v1",
+        "account": "valuation",
+        "source": "fixture",
+        "asOf": "2026-10-13T15:00:00.000Z",
+        "externalOrder": false,
+        "executionAllowed": false,
+        "newEntryAllowed": false,
+        "status": "CASH_ONLY",
+        "complete": true,
+        "cashCents": 10000000,
+        "ownedBasisCents": 0,
+        "liquidationEquityCents": 10000000,
+        "unrealizedPnlCents": 0,
+        "totalPnlCents": 0,
+        "options": [],
+        "deliveries": [],
+        "policy": "original_opra_bid_minus_one_cent_and_70_cent_exit_fee_remaining_25pct_size",
+        "limitations": [
+          "Read-only model; no guaranteed fill, queue priority or new risk authority",
+          "Complete current valuation does not establish a historical equity drawdown or Sharpe",
+          "Missing delivery stock quotes make the whole portfolio incomplete"
+        ],
+        "version": 2,
+        "eventHash": "f07ca293af3098a54534cbeaa3efc1e5f96588a2df0c31cdfa42c51b16f6fe0d"
+      }
+    },
+    {
+      "name": "quoted",
+      "snapshot": {
+        "version": 3,
+        "eventHash": "f68730426b80b110f832c31196b57415c7d0fcc406f672d1ff72dbcf4c1f258a",
+        "state": {
+          "cash": 9967990,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "NVDA": {
+                "CALL": "NVDA261023C00150000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 3,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {
+            "NVDA261023C00150000": {
+              "at": "2026-10-13T15:00:00.000Z",
+              "identity": "3de03d9401717b72921e0c7eb1ff04a11181e45a03e61f65824e6a08606251c0",
+              "quantity": 3
+            }
+          },
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": true,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 210,
+          "id": "valuation",
+          "initialCash": 10000000,
+          "lastAt": "2026-10-13T15:00:00.000Z",
+          "lastSignals": {
+            "NVDA": "trend|2026-10-13T14:59:00.000Z"
+          },
+          "name": "Observed fixture",
+          "positions": {
+            "NVDA": {
+              "added": false,
+              "changedAt": "2026-10-13T15:00:00.000Z",
+              "closeIntent": null,
+              "contract": "NVDA261023C00150000",
+              "cost": 32010,
+              "highBid": 99,
+              "markAt": "2026-10-13T15:00:00.000Z",
+              "markIdentity": "3de03d9401717b72921e0c7eb1ff04a11181e45a03e61f65824e6a08606251c0",
+              "opened": "2026-10-13T15:00:00.000Z",
+              "partialTaken": false,
+              "quantity": 3,
+              "roundPnl": 0,
+              "scenarioLevel": 98.40791435266814
+            }
+          },
+          "realized": 0,
+          "source": "fixture",
+          "winningTrades": 0
+        }
+      },
+      "valuation": {
+        "contract": "observed-paper-valuation-v1",
+        "account": "valuation",
+        "source": "fixture",
+        "asOf": "2026-10-13T15:00:00.000Z",
+        "externalOrder": false,
+        "executionAllowed": false,
+        "newEntryAllowed": false,
+        "status": "OBSERVED_MODEL",
+        "complete": true,
+        "cashCents": 9967990,
+        "ownedBasisCents": 32010,
+        "liquidationEquityCents": 9997480,
+        "unrealizedPnlCents": -2520,
+        "totalPnlCents": -2520,
+        "options": [
+          {
+            "symbol": "NVDA",
+            "contract": "NVDA261023C00150000",
+            "quantity": 3,
+            "basisCents": 32010,
+            "status": "OBSERVED_MODEL",
+            "valueCents": 29490,
+            "unrealizedPnlCents": -2520,
+            "quote": {
+              "ask": 105,
+              "askSize": 40,
+              "at": "2026-10-13T15:00:00.000Z",
+              "bid": 100,
+              "bidSize": 40,
+              "contract": "NVDA261023C00150000",
+              "feed": "opra"
+            },
+            "capturedAt": "2026-10-13T15:00:00.000Z",
+            "modeledExitFeeCents": 210,
+            "modeledAvailableQuantity": 3
+          }
+        ],
+        "deliveries": [],
+        "policy": "original_opra_bid_minus_one_cent_and_70_cent_exit_fee_remaining_25pct_size",
+        "limitations": [
+          "Read-only model; no guaranteed fill, queue priority or new risk authority",
+          "Complete current valuation does not establish a historical equity drawdown or Sharpe",
+          "Missing delivery stock quotes make the whole portfolio incomplete"
+        ],
+        "version": 3,
+        "eventHash": "f68730426b80b110f832c31196b57415c7d0fcc406f672d1ff72dbcf4c1f258a"
+      }
+    },
+    {
+      "name": "stale",
+      "snapshot": {
+        "version": 3,
+        "eventHash": "f68730426b80b110f832c31196b57415c7d0fcc406f672d1ff72dbcf4c1f258a",
+        "state": {
+          "cash": 9967990,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "NVDA": {
+                "CALL": "NVDA261023C00150000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 3,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {
+            "NVDA261023C00150000": {
+              "at": "2026-10-13T15:00:00.000Z",
+              "identity": "3de03d9401717b72921e0c7eb1ff04a11181e45a03e61f65824e6a08606251c0",
+              "quantity": 3
+            }
+          },
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": true,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 210,
+          "id": "valuation",
+          "initialCash": 10000000,
+          "lastAt": "2026-10-13T15:00:00.000Z",
+          "lastSignals": {
+            "NVDA": "trend|2026-10-13T14:59:00.000Z"
+          },
+          "name": "Observed fixture",
+          "positions": {
+            "NVDA": {
+              "added": false,
+              "changedAt": "2026-10-13T15:00:00.000Z",
+              "closeIntent": null,
+              "contract": "NVDA261023C00150000",
+              "cost": 32010,
+              "highBid": 99,
+              "markAt": "2026-10-13T15:00:00.000Z",
+              "markIdentity": "3de03d9401717b72921e0c7eb1ff04a11181e45a03e61f65824e6a08606251c0",
+              "opened": "2026-10-13T15:00:00.000Z",
+              "partialTaken": false,
+              "quantity": 3,
+              "roundPnl": 0,
+              "scenarioLevel": 98.40791435266814
+            }
+          },
+          "realized": 0,
+          "source": "fixture",
+          "winningTrades": 0
+        }
+      },
+      "valuation": {
+        "contract": "observed-paper-valuation-v1",
+        "account": "valuation",
+        "source": "fixture",
+        "asOf": "2026-10-13T15:00:31.000Z",
+        "externalOrder": false,
+        "executionAllowed": false,
+        "newEntryAllowed": false,
+        "status": "INCOMPLETE",
+        "complete": false,
+        "cashCents": 9967990,
+        "ownedBasisCents": 32010,
+        "liquidationEquityCents": null,
+        "unrealizedPnlCents": null,
+        "totalPnlCents": null,
+        "options": [
+          {
+            "symbol": "NVDA",
+            "contract": "NVDA261023C00150000",
+            "quantity": 3,
+            "basisCents": 32010,
+            "status": "QUALIFIED_ORIGINAL_QUOTE_UNAVAILABLE",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "quote": null,
+            "capturedAt": null,
+            "modeledExitFeeCents": null,
+            "modeledAvailableQuantity": 0
+          }
+        ],
+        "deliveries": [],
+        "policy": "original_opra_bid_minus_one_cent_and_70_cent_exit_fee_remaining_25pct_size",
+        "limitations": [
+          "Read-only model; no guaranteed fill, queue priority or new risk authority",
+          "Complete current valuation does not establish a historical equity drawdown or Sharpe",
+          "Missing delivery stock quotes make the whole portfolio incomplete"
+        ],
+        "version": 3,
+        "eventHash": "f68730426b80b110f832c31196b57415c7d0fcc406f672d1ff72dbcf4c1f258a"
+      }
+    },
+    {
+      "name": "liquidity",
+      "snapshot": {
+        "version": 3,
+        "eventHash": "9f1fc6f516f426d08d237989cea42983a730141239ee1f6d0b92e197d7b550ec",
+        "state": {
+          "cash": 9967990,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "NVDA": {
+                "CALL": "NVDA261023C00150000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 3,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {
+            "NVDA261023C00150000": {
+              "at": "2026-10-13T15:00:00.000Z",
+              "identity": "997f1a7dfe7ac3a4eac83aad211325705e5fa31b86c24d39bae31232b7ac0c88",
+              "quantity": 3
+            }
+          },
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {},
+          "deliveries": {},
+          "enabled": true,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 210,
+          "id": "valuation",
+          "initialCash": 10000000,
+          "lastAt": "2026-10-13T15:00:00.000Z",
+          "lastSignals": {
+            "NVDA": "trend|2026-10-13T14:59:00.000Z"
+          },
+          "name": "Observed fixture",
+          "positions": {
+            "NVDA": {
+              "added": false,
+              "changedAt": "2026-10-13T15:00:00.000Z",
+              "closeIntent": null,
+              "contract": "NVDA261023C00150000",
+              "cost": 32010,
+              "highBid": 99,
+              "markAt": "2026-10-13T15:00:00.000Z",
+              "markIdentity": "997f1a7dfe7ac3a4eac83aad211325705e5fa31b86c24d39bae31232b7ac0c88",
+              "opened": "2026-10-13T15:00:00.000Z",
+              "partialTaken": false,
+              "quantity": 3,
+              "roundPnl": 0,
+              "scenarioLevel": 98.40791435266814
+            }
+          },
+          "realized": 0,
+          "source": "fixture",
+          "winningTrades": 0
+        }
+      },
+      "valuation": {
+        "contract": "observed-paper-valuation-v1",
+        "account": "valuation",
+        "source": "fixture",
+        "asOf": "2026-10-13T15:00:00.000Z",
+        "externalOrder": false,
+        "executionAllowed": false,
+        "newEntryAllowed": false,
+        "status": "INCOMPLETE",
+        "complete": false,
+        "cashCents": 9967990,
+        "ownedBasisCents": 32010,
+        "liquidationEquityCents": null,
+        "unrealizedPnlCents": null,
+        "totalPnlCents": null,
+        "options": [
+          {
+            "symbol": "NVDA",
+            "contract": "NVDA261023C00150000",
+            "quantity": 3,
+            "basisCents": 32010,
+            "status": "INSUFFICIENT_REMAINING_LIQUIDITY",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "quote": {
+              "ask": 105,
+              "askSize": 12,
+              "at": "2026-10-13T15:00:00.000Z",
+              "bid": 100,
+              "bidSize": 12,
+              "contract": "NVDA261023C00150000",
+              "feed": "opra"
+            },
+            "capturedAt": "2026-10-13T15:00:00.000Z",
+            "modeledExitFeeCents": null,
+            "modeledAvailableQuantity": 0
+          }
+        ],
+        "deliveries": [],
+        "policy": "original_opra_bid_minus_one_cent_and_70_cent_exit_fee_remaining_25pct_size",
+        "limitations": [
+          "Read-only model; no guaranteed fill, queue priority or new risk authority",
+          "Complete current valuation does not establish a historical equity drawdown or Sharpe",
+          "Missing delivery stock quotes make the whole portfolio incomplete"
+        ],
+        "version": 3,
+        "eventHash": "9f1fc6f516f426d08d237989cea42983a730141239ee1f6d0b92e197d7b550ec"
+      }
+    },
+    {
+      "name": "delivery",
+      "snapshot": {
+        "version": 5,
+        "eventHash": "2cdfcc90f9b774f402df18df88ffa2ea17f109a0f7e6e693132a4e7e84f76434",
+        "state": {
+          "cash": 8467990,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "NVDA": {
+                "CALL": "NVDA261023C00150000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 3,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {
+            "NVDA261023C00150000": {
+              "at": "2026-10-13T15:00:00.000Z",
+              "identity": "3de03d9401717b72921e0c7eb1ff04a11181e45a03e61f65824e6a08606251c0",
+              "quantity": 3
+            }
+          },
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {
+            "2026-10-13": 0
+          },
+          "deliveries": {
+            "NVDA": {
+              "changedAt": "2026-10-13T15:00:00.000Z",
+              "cost": 1510670,
+              "quantity": 100
+            }
+          },
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 210,
+          "id": "valuation",
+          "initialCash": 10000000,
+          "lastAt": "2026-10-13T15:00:00.000Z",
+          "lastSignals": {
+            "NVDA": "trend|2026-10-13T14:59:00.000Z"
+          },
+          "name": "Observed fixture",
+          "positions": {
+            "NVDA": {
+              "added": false,
+              "changedAt": "2026-10-13T15:00:00.000Z",
+              "closeIntent": null,
+              "contract": "NVDA261023C00150000",
+              "cost": 21340,
+              "highBid": 99,
+              "markAt": "2026-10-13T15:00:00.000Z",
+              "markIdentity": "3de03d9401717b72921e0c7eb1ff04a11181e45a03e61f65824e6a08606251c0",
+              "opened": "2026-10-13T15:00:00.000Z",
+              "partialTaken": false,
+              "quantity": 2,
+              "roundPnl": 0,
+              "scenarioLevel": 98.40791435266814
+            }
+          },
+          "realized": 0,
+          "source": "fixture",
+          "winningTrades": 0
+        }
+      },
+      "valuation": {
+        "contract": "observed-paper-valuation-v1",
+        "account": "valuation",
+        "source": "fixture",
+        "asOf": "2026-10-13T15:00:00.000Z",
+        "externalOrder": false,
+        "executionAllowed": false,
+        "newEntryAllowed": false,
+        "status": "INCOMPLETE",
+        "complete": false,
+        "cashCents": 8467990,
+        "ownedBasisCents": 1532010,
+        "liquidationEquityCents": null,
+        "unrealizedPnlCents": null,
+        "totalPnlCents": null,
+        "options": [
+          {
+            "symbol": "NVDA",
+            "contract": "NVDA261023C00150000",
+            "quantity": 2,
+            "basisCents": 21340,
+            "status": "OBSERVED_MODEL",
+            "valueCents": 19660,
+            "unrealizedPnlCents": -1680,
+            "quote": {
+              "ask": 105,
+              "askSize": 40,
+              "at": "2026-10-13T15:00:00.000Z",
+              "bid": 100,
+              "bidSize": 40,
+              "contract": "NVDA261023C00150000",
+              "feed": "opra"
+            },
+            "capturedAt": "2026-10-13T15:00:00.000Z",
+            "modeledExitFeeCents": 140,
+            "modeledAvailableQuantity": 2
+          }
+        ],
+        "deliveries": [
+          {
+            "symbol": "NVDA",
+            "quantity": 100,
+            "basisCents": 1510670,
+            "status": "QUALIFIED_STOCK_QUOTE_UNAVAILABLE",
+            "valueCents": null
+          }
+        ],
+        "policy": "original_opra_bid_minus_one_cent_and_70_cent_exit_fee_remaining_25pct_size",
+        "limitations": [
+          "Read-only model; no guaranteed fill, queue priority or new risk authority",
+          "Complete current valuation does not establish a historical equity drawdown or Sharpe",
+          "Missing delivery stock quotes make the whole portfolio incomplete"
+        ],
+        "version": 5,
+        "eventHash": "2cdfcc90f9b774f402df18df88ffa2ea17f109a0f7e6e693132a4e7e84f76434"
+      }
+    },
+    {
+      "name": "stopped_partial",
+      "snapshot": {
+        "version": 6,
+        "eventHash": "ebf042f96b7bdc2858d974ea9a0e3c08f2adeaf675d364808a40707a2d6e86fd",
+        "state": {
+          "cash": 9978820,
+          "closedTrades": 0,
+          "config": {
+            "addEnabled": false,
+            "allocationPercent": 30,
+            "contracts": {
+              "NVDA": {
+                "CALL": "NVDA261023C00150000"
+              }
+            },
+            "dailyLossPercent": 3,
+            "holdingMode": "intraday",
+            "maxContracts": 10,
+            "maxHoldingDays": 3,
+            "maxPositions": 4,
+            "partialPercent": 20,
+            "quantity": 3,
+            "riskPercent": 5,
+            "scenarioExit": false,
+            "stopPercent": 20,
+            "strategy": "trend",
+            "takePercent": 40,
+            "trailPercent": 15
+          },
+          "consumption": {
+            "NVDA261023C00150000": {
+              "at": "2026-10-13T15:00:01.000Z",
+              "identity": "0d9d5ec4be91002afa501ea16340f5532863b34cef237e9a6c98d5027529edaa",
+              "quantity": 1
+            }
+          },
+          "contract": "observed-paper-ledger-v2",
+          "dailyRealized": {
+            "2026-10-13": 160
+          },
+          "deliveries": {},
+          "enabled": false,
+          "executionContract": "paper-option-execution-v2",
+          "fees": 280,
+          "id": "valuation",
+          "initialCash": 10000000,
+          "lastAt": "2026-10-13T15:00:01.000Z",
+          "lastSignals": {
+            "NVDA": "trend|2026-10-13T14:59:00.000Z"
+          },
+          "name": "Observed fixture",
+          "positions": {
+            "NVDA": {
+              "added": false,
+              "changedAt": "2026-10-13T15:00:01.000Z",
+              "closeIntent": {
+                "quantity": 2,
+                "reason": "MANUAL_CLOSE"
+              },
+              "contract": "NVDA261023C00150000",
+              "cost": 21340,
+              "highBid": 99,
+              "markAt": "2026-10-13T15:00:00.000Z",
+              "markIdentity": "3de03d9401717b72921e0c7eb1ff04a11181e45a03e61f65824e6a08606251c0",
+              "opened": "2026-10-13T15:00:00.000Z",
+              "partialTaken": false,
+              "quantity": 2,
+              "roundPnl": 160,
+              "scenarioLevel": 98.40791435266814
+            }
+          },
+          "realized": 160,
+          "source": "fixture",
+          "winningTrades": 0
+        }
+      },
+      "valuation": {
+        "contract": "observed-paper-valuation-v1",
+        "account": "valuation",
+        "source": "fixture",
+        "asOf": "2026-10-13T15:00:01.000Z",
+        "externalOrder": false,
+        "executionAllowed": false,
+        "newEntryAllowed": false,
+        "status": "INCOMPLETE",
+        "complete": false,
+        "cashCents": 9978820,
+        "ownedBasisCents": 21340,
+        "liquidationEquityCents": null,
+        "unrealizedPnlCents": null,
+        "totalPnlCents": null,
+        "options": [
+          {
+            "symbol": "NVDA",
+            "contract": "NVDA261023C00150000",
+            "quantity": 2,
+            "basisCents": 21340,
+            "status": "INSUFFICIENT_REMAINING_LIQUIDITY",
+            "valueCents": null,
+            "unrealizedPnlCents": null,
+            "quote": {
+              "ask": 115,
+              "askSize": 4,
+              "at": "2026-10-13T15:00:01.000Z",
+              "bid": 110,
+              "bidSize": 4,
+              "contract": "NVDA261023C00150000",
+              "feed": "opra"
+            },
+            "capturedAt": "2026-10-13T15:00:01.000Z",
+            "modeledExitFeeCents": null,
+            "modeledAvailableQuantity": 0
+          }
+        ],
+        "deliveries": [],
+        "policy": "original_opra_bid_minus_one_cent_and_70_cent_exit_fee_remaining_25pct_size",
+        "limitations": [
+          "Read-only model; no guaranteed fill, queue priority or new risk authority",
+          "Complete current valuation does not establish a historical equity drawdown or Sharpe",
+          "Missing delivery stock quotes make the whole portfolio incomplete"
+        ],
+        "version": 6,
+        "eventHash": "ebf042f96b7bdc2858d974ea9a0e3c08f2adeaf675d364808a40707a2d6e86fd"
+      }
+    }
+  ]
+}

@@ -86,3 +86,7 @@ def install_observed_paper_routes(app,secured,store_dependency):
     @app.get('/api/observed-paper/accounts/{account}/performance',dependencies=secured)
     def performance(account:str):
         return guarded(lambda:store_dependency().performance(account))
+
+    @app.get('/api/observed-paper/accounts/{account}/valuation',dependencies=secured)
+    def valuation(account:str):
+        return guarded(lambda:store_dependency().valuation(account))

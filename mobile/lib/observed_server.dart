@@ -7,6 +7,7 @@ import 'paper_time.dart';
 import 'strategy_replay.dart';
 import 'observed_server_controls.dart';
 import 'observed_server_comparison.dart';
+import 'observed_server_valuation.dart';
 
 Map<String,dynamic> observedObject(dynamic value) {
   if(value is! Map||value.keys.any((key)=>key is! String))throw const FormatException('Invalid server object');
@@ -231,11 +232,24 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
           for(final entry in observedObject(value['deliveries']).entries)Card(child:ListTile(title:Text('${entry.key} • ${entry.value['quantity']} أسهم تسليم'),
             trailing:TextButton(onPressed:busy||value['enabled']==true?null:()=>settle(null,deliverySymbol:entry.key),child:const Text('تصرف افتراضي')))),
           OutlinedButton(key:const Key('observed-performance'),onPressed:busy?null:performance,child:const Text('أداء الإيصالات الأصلية')),
+          OutlinedButton(key:const Key('observed-valuation'),onPressed:busy?null:valuation,child:const Text('تقييم العروض المحفوظة')),
           OutlinedButton(key:const Key('observed-events'),onPressed:busy?null:loadEvents,child:const Text('تحميل صفحة القرارات الأصلية التالية')),
           for(final event in events)ListTile(title:Text('#${event.version} • ${event.original['command']['kind']}'),subtitle:Text(event.original['at'] as String),
             onTap:()=>Navigator.push(context,MaterialPageRoute<void>(builder:(_)=>ObservedServerReplay(account:account!,event:event)))),
         ],
       ]));
+  }
+  Future<void> valuation() async {
+    final current=saved,id=account;if(current==null||id==null||busy)return;
+    setState(()=>busy=true);
+    Map<String,dynamic>? report;
+    try {
+      report=parseObservedValuation(await widget.api.request('GET','${path(id)}/valuation'),current);
+    }catch(_){if(mounted)setState(()=>error='تعذر التحقق من تقييم مطابق لإصدار الحساب؛ حدّث الحالة ثم أعد الطلب.');}
+    finally{if(mounted)setState(()=>busy=false);}
+    if(!mounted||report==null)return;
+    final verified=report;
+    await Navigator.push(context,MaterialPageRoute<void>(builder:(_)=>ObservedValuationScreen(report:verified)));
   }
   Future<void> performance() async {
     final current=saved,id=account;if(current==null||id==null||busy)return;

@@ -1,0 +1,38 @@
+{
+  "batch32": {
+    "source": "36bdbbc0cd5a3e1bfaacaadb6babbeb3d6beef08",
+    "directRun": 39005864769,
+    "flutter": 825,
+    "hiddenFrameworkEntries": 58,
+    "jvm": 61
+  },
+  "batch33": {
+    "source": "d84c61f3315f3dc6171edae495bdbb673cae0be0",
+    "backendRun": 39006095034,
+    "securityRun": 39006094973,
+    "python": 1390,
+    "postgres": {
+      "execution": 22,
+      "journal": 6,
+      "runtime": 10,
+      "settlement": 5,
+      "observed": 12,
+      "experiment": 4,
+      "backup_restore": 18
+    },
+    "compose": 20
+  },
+  "batch34LocalPython": {
+    "passed": 1405,
+    "targeted": 36,
+    "failures": 0,
+    "skipped": 0
+  },
+  "actualMarketConnection": false,
+  "artifacts": {
+    "batch32-direct.zip": "a98ff26ec0fbbc5fdf38af3b65d2dda8ef16fc0fd1dd2f4384d14b095935fb97",
+    "batch33-backend.zip": "c33cf62eb4e1574027c7b00caa95534aded5954bce60c09c441c6fd338631d5d",
+    "batch33-compose.zip": "eeaa99c194a2b3f08dcae0fd50913e6997967c7959e7a1be9771ab2db885d30c",
+    "batch34-local-python.zip": "8a5df3d9fb3d5097e26d702babc5f0d2c2ccc3a207d3437f27d568e54041ef25"
+  }
+}

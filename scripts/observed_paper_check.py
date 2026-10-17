@@ -50,6 +50,11 @@ def check(repositories):
     owner=next(i for i,x in enumerate(leases) if x); store=stores[owner]; lease=leases[owner]
     event=store.command(account,'open',{'kind':'CYCLE','observation':observation(clock[0])},expected_version=2,lease=lease)
     assert event['facts']['fills'][0]['execution']['quantity']==3
+    valuation=stores[1-owner].valuation(account)
+    assert valuation['complete'] and valuation['liquidationEquityCents']==9997480
+    assert valuation['unrealizedPnlCents']==-2520 and valuation['version']==event['version']
+    assert valuation['eventHash']==event['eventHash'] and not valuation['executionAllowed']
+    assert stores[1-owner].valuation(account)==valuation
     stores[1-owner].command(account,'close',{'kind':'REQUEST_CLOSE','symbol':'NVDA'})
     stores[1-owner].command(account,'stop',{'kind':'ENABLE','enabled':False})
     clock[0]+=timedelta(seconds=1)
@@ -104,7 +109,8 @@ def check(repositories):
         'two_connections_single_lease','owned_opra_fixture_fill','partial_close_restart','lost_ack_exactly_once',
         'native_update_delete_guards','lease_generation_fencing','independent_account_balances',
         'sealed_segment_rotation','streamed_full_replay','expired_owner_shutdown_health',
-        'same_owner_successor_generation_fencing','shutdown_preserves_original_ledger']}
+        'same_owner_successor_generation_fencing','shutdown_preserves_original_ledger',
+        'read_only_version_bound_net_valuation']}
 
 
 def run():

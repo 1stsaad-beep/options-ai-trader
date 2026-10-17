@@ -1,5 +1,7 @@
 # Completion traceability — continued 2026-10-17
 
+Batch34 extends performance/valuation scope with `observed_paper_valuation.py` and `observed_server_valuation.dart`: authenticated version/hash-bound original-quote net model, independent Dart arithmetic, consumed-liquidity/freshness/source/chronology guards and explicit incomplete whole-portfolio status. Cash-only equity is exact; delivery quotes remain unavailable on this server adapter. Existing performance/comparison-v1 meanings and old event transitions are unchanged. Historical equity drawdown/Sharpe and full valuation coverage remain PARTIAL.36 targeted Python passed; new source CI pending. Batch32 verified825 Flutter/61 JVM; batch33 verified1390 Python/12 observed PostgreSQL/20 Compose plus existing gates.
+
 Batch33 extends R12 runtime recovery: observed-worker one-shot/SIGTERM/error cleanup invalidates health atomically with lease release, fenced by owner+generation; stale shutdown cannot replace a successor heartbeat.54 targeted/1390 full Python passed, including actual isolated processes and rollback. PostgreSQL acceptance now includes3 shutdown/fencing checks, pending source CI. Batch31 UI accepted:809 Flutter/61 JVM, raw ZIP verified. Deployment, continuous market soak and independent acceptance remain open.
 
 Batch32 extends R02/R06/R09 safety: mobile market entry/addition requires contract eligibility which the current provider adapter cannot yet verify, so it remains locked. Owned protective exits continue. Conservative-v2 thresholds include entry/exit fees and slippage with exact integer comparisons; eight unchanged-server-v2 fixtures cover stop/target/addition/partial thresholds. Local Python1385 passed; Flutter source CI pending. Qualified Greek/deliverable implementation and full V1.0 acceptance remain PARTIAL.
@@ -70,3 +72,5 @@ Batch28 source6f32da0 analyzer failure was corrected in1178247; its subsequent D
 ### Batch30 acceptance / batch31 UI — 2026-10-17
 
 R01/R05/R10/R14: source c5ef1bba passed1383 Python locally and CI; original ZIP hashes/CRC verified for PostgreSQL concurrent experiment, existing financial/risk/backup suites and20 Compose checks. Flutter explicit four-account setup and read-only comparison now validate source/account/version/hash/accounting, with uncertain-write and360px RTL tests plus actual SQL genesis fixture. Local1384 Python passed after fixture round-trip test. Flutter/JVM CI pending for batch31. Full eligibility, parity, capacity, valuation and operational acceptance remain PARTIAL.
+
+Batch34 local full suite: 1405 passed, zero failures/skips; raw JUnit retained in docs/evidence/stage1-20261017/batch34-local-python.zip. Source CI remains pending.

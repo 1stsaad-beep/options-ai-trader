@@ -93,6 +93,13 @@ class ObservedPaperStore:
             result=summarize(db.stream('SELECT payload FROM observed_paper_events WHERE account_id=? ORDER BY sequence',(account,)),state)
             return result|{'version':row['version'],'eventHash':row['event_hash']}
 
+    def valuation(self, account):
+        from .observed_paper_valuation import summarize
+        with self.repo.transaction() as db:
+            row,state=self._read(db,account)
+            result=summarize(db.stream('SELECT payload FROM observed_paper_events WHERE account_id=? ORDER BY sequence DESC',(account,)),state,self.now())
+            return result|{'version':row['version'],'eventHash':row['event_hash']}
+
     def _read(self, db, account, *, full=False):
         row=db.one('SELECT * FROM observed_paper_accounts WHERE id=?',(account,))
         if row is None: raise LedgerConflict('Unknown observed-paper account')
