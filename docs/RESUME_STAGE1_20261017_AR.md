@@ -231,3 +231,8 @@ Added a separate opt-in watchdog opening only an existing database, without Repo
 Batch48 source `795adbcc4fcb5814c356791391196ff019136195` passed backend39014634327, security39014634223, mobile data contract39014634255 and chart39014634266. Full Direct Flutter/JVM39014634258 is still running at this checkpoint. Android/iOS packaging skipped as required. Raw artifact verification is in progress; no unverified counts attributed to those runs.
 
 Batch49 full local acceptance:1559 Python passed, zero failures/skips (one existing Starlette warning).45 affected tests passed. Raw JUnit retained in batch49-local-python.zip. Source-specific PostgreSQL/Compose/security remains pending CI.
+
+
+## Batch50 — isolate explicit watchdog startup
+
+Batch49 source `96e842d498e54a6258ef428c4b27dad9f54e04c2` passed1559 Python and all PostgreSQL checks (including3 new watchdog checks), actual backup/restore and security39014912887. Compose39014912873 failed at build_and_start with COMMAND_FAILED; its sanitized raw artifact is retained in batch49-failed-compose.zip with verified SHA256/CRC. The new monitor shared the observed-paper profile although default monitor startup is disabled and exits without a health heartbeat. Separated its profile to observed-watchdog, so existing worker startup does not implicitly launch an unapproved monitor. Explicit monitor use still requires the approval variable. No safety gate was removed and no workflow was added. Existing smoke guard tests pass; actual Compose acceptance requires the next CI run. Mobile JSON preflight work is uncommitted and excluded from this correction.

@@ -33,7 +33,7 @@ services:
       retries: 3
       start_period: 30s
   observed-watchdog:
-    profiles: [observed-paper]
+    profiles: [observed-watchdog]
     build:
       context: ..
       dockerfile: infra/Dockerfile
