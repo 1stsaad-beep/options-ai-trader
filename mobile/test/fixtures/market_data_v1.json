@@ -107,6 +107,19 @@
           "greeks_source": null,
           "greeks_timestamp": null,
           "greeks_freshness_verified": false,
+          "greeks_quality": {
+            "contract": "option-greeks-quality-v1",
+            "valuesStatus": "MISSING",
+            "providerTimestampAvailable": false,
+            "freshnessVerified": false,
+            "entryEligible": false,
+            "reasons": [
+              "GREEKS_MISSING_VALUES",
+              "GREEKS_PROVIDER_TIME_UNAVAILABLE",
+              "CONTRACT_TERMS_UNAVAILABLE",
+              "INDICATIVE_OPTIONS_NOT_EXECUTABLE"
+            ]
+          },
           "implied_volatility": null
         }
       ],

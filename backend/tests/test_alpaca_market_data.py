@@ -257,7 +257,7 @@ def test_basic_options_are_explicitly_modified_with_unknown_greeks():
 
 
 def test_only_provider_greeks_preserved_and_no_freshness_invented():
-    client, _, _ = adapter(chain({'greeks': {'delta': -.32}, 'impliedVolatility': .4}))
+    client, _, _ = adapter(chain({'greeks': {'delta': -.32}, 'impliedVolatility': .4}, contract='AAPL261016P00200000'))
     result = client.option_chain('AAPL')['data']['contracts'][0]
     assert result['greeks']['delta'] == -.32 and result['greeks']['gamma'] is None
     assert result['greeks_timestamp'] is None and not result['greeks_freshness_verified']

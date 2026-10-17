@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import 'api.dart';
+import 'option_greeks.dart';
 
 Map<String, dynamic> _object(dynamic value) {
   if (value is! Map || value.keys.any((key) => key is! String)) {
@@ -126,8 +127,19 @@ class MarketObservation {
         event(contract['quote'], true);
         event(contract['trade'], false);
         _number(contract['implied_volatility'], nullable: true);
-        if (contract['greeks'] != null) {
-          for (final v in _object(contract['greeks']).values) { _number(v, nullable: true); }
+        if (contract['greeks_timestamp'] != null ||
+            contract['implied_volatility'] != null && contract['implied_volatility'] < 0) {
+          throw const FormatException('Unverified Greek time or invalid volatility');
+        }
+        final match = RegExp(r'([CP])\d{8}$').firstMatch(contract['symbol'] as String)!;
+        final values = providerGreeks(contract['greeks'], match.group(1)!);
+        final quality = providerGreeksQuality(values);
+        if (contract['greeks_quality'] != null && jsonEncode(contract['greeks_quality']) != jsonEncode(quality)) {
+          // Compare object fields independently of JSON key order.
+          final provided = _object(contract['greeks_quality']);
+          if (provided.length != quality.length || quality.keys.any((k) => jsonEncode(provided[k]) != jsonEncode(quality[k]))) {
+            throw const FormatException('Untrusted Greeks qualification');
+          }
         }
       }
     } else {
@@ -293,6 +305,7 @@ class _MarketDataScreenState extends State<MarketDataScreen> {
             Text('Bid ${amount(raw['quote']?['bp'])} / Ask ${amount(raw['quote']?['ap'])} — إرشادي'),
             Text('توقيت العرض UTC: ${raw['quote']?['timestamp'] ?? 'غير متاح'}'),
             Text('Greeks: ${raw['greeks'] == null ? 'غير متاحة؛ لم تُقدّر محليًا' : jsonEncode(raw['greeks'])}'),
+            const Text('قيم المزود لا تثبت حداثة Greeks أو مُسلَّمات العقد؛ لا يُستخدم وقت السعر بدل وقت Greeks. الدخول غير مؤهل.'),
             const Text('حداثة Greeks غير مثبتة؛ لا إذن تنفيذ'),
           ]))),
         if ((data['contracts'] as List).length > 20) line('عرض أول 20 عقدًا من ${(data['contracts'] as List).length} عقدًا مستلمًا.'),

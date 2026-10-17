@@ -1,5 +1,7 @@
 # Stage-one continuation — 2026-10-17
 
+Batch37 hardens actual provider Greek numeric domains and matching Dart chain validation:21 shared cases, no invented values/timestamps, explicit missing/partial/values-only diagnostics, all freshness/entry claims remain false.122 targeted Python passed. Fixes two Flutter analyzer block-style findings in batch36; Flutter/JVM acceptance remains pending rerun. Full deliverable/contract qualification remains open.
+
 Batch36 adds a bounded 25-point Flutter historical valuation screen and independent summary arithmetic/causal-cursor validation, with four original SQL fixtures and 19 new Flutter tests (source CI pending). Failed reads cannot advance the cursor. Python fixture/history16 passed locally. No full-provider attestation or complete historical coverage claim.
 
 Batch35 extends historical valuation with authenticated, end-version/hash-bound event pages and causal original-quote replay. A missing mark invalidates whole-prefix sampled drawdown; Sharpe remains null. Output/live-state memory is bounded; replay still starts at genesis (long-history checkpoint work remains open). 30 targeted Python tests passed, including 15 new historical cases; PostgreSQL two-connection acceptance added, source CI pending. See docs/RESUME_STAGE1_20261017_AR.md. Stage one remains PARTIAL.

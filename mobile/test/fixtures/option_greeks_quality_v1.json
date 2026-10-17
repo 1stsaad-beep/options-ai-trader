@@ -1,0 +1,197 @@
+{
+  "source": "synthetic_fixture",
+  "cases": [
+    {
+      "name": "missing",
+      "right": "C",
+      "raw": null,
+      "valid": true,
+      "status": "MISSING"
+    },
+    {
+      "name": "empty",
+      "right": "C",
+      "raw": {},
+      "valid": true,
+      "status": "PARTIAL"
+    },
+    {
+      "name": "C0",
+      "right": "C",
+      "raw": {
+        "delta": 0
+      },
+      "valid": true,
+      "status": "PARTIAL"
+    },
+    {
+      "name": "C1",
+      "right": "C",
+      "raw": {
+        "delta": 1
+      },
+      "valid": true,
+      "status": "PARTIAL"
+    },
+    {
+      "name": "C-0.0001",
+      "right": "C",
+      "raw": {
+        "delta": -0.0001
+      },
+      "valid": false,
+      "status": null
+    },
+    {
+      "name": "C1.0001",
+      "right": "C",
+      "raw": {
+        "delta": 1.0001
+      },
+      "valid": false,
+      "status": null
+    },
+    {
+      "name": "P0",
+      "right": "P",
+      "raw": {
+        "delta": 0
+      },
+      "valid": true,
+      "status": "PARTIAL"
+    },
+    {
+      "name": "P-1",
+      "right": "P",
+      "raw": {
+        "delta": -1
+      },
+      "valid": true,
+      "status": "PARTIAL"
+    },
+    {
+      "name": "P0.0001",
+      "right": "P",
+      "raw": {
+        "delta": 0.0001
+      },
+      "valid": false,
+      "status": null
+    },
+    {
+      "name": "P-1.0001",
+      "right": "P",
+      "raw": {
+        "delta": -1.0001
+      },
+      "valid": false,
+      "status": null
+    },
+    {
+      "name": "gamma0",
+      "right": "C",
+      "raw": {
+        "gamma": 0
+      },
+      "valid": true,
+      "status": "PARTIAL"
+    },
+    {
+      "name": "gamma-0.0001",
+      "right": "C",
+      "raw": {
+        "gamma": -0.0001
+      },
+      "valid": false,
+      "status": null
+    },
+    {
+      "name": "vega0",
+      "right": "C",
+      "raw": {
+        "vega": 0
+      },
+      "valid": true,
+      "status": "PARTIAL"
+    },
+    {
+      "name": "vega-0.0001",
+      "right": "C",
+      "raw": {
+        "vega": -0.0001
+      },
+      "valid": false,
+      "status": null
+    },
+    {
+      "name": "boolean",
+      "right": "C",
+      "raw": {
+        "delta": true
+      },
+      "valid": false,
+      "status": null
+    },
+    {
+      "name": "string",
+      "right": "C",
+      "raw": {
+        "delta": "0.5"
+      },
+      "valid": false,
+      "status": null
+    },
+    {
+      "name": "array",
+      "right": "C",
+      "raw": [],
+      "valid": false,
+      "status": null
+    },
+    {
+      "name": "nested",
+      "right": "C",
+      "raw": {
+        "vega": {}
+      },
+      "valid": false,
+      "status": null
+    },
+    {
+      "name": "positive_theta",
+      "right": "P",
+      "raw": {
+        "delta": -0.5,
+        "gamma": 0.1,
+        "vega": 0.2,
+        "theta": 0.01,
+        "rho": -0.1
+      },
+      "valid": true,
+      "status": "VALUES_ONLY"
+    },
+    {
+      "name": "negative_theta",
+      "right": "C",
+      "raw": {
+        "delta": 0.5,
+        "gamma": 0.1,
+        "vega": 0.2,
+        "theta": -0.01,
+        "rho": 0.1
+      },
+      "valid": true,
+      "status": "VALUES_ONLY"
+    },
+    {
+      "name": "timestamp_does_not_qualify",
+      "right": "C",
+      "raw": {
+        "delta": 0.5,
+        "timestamp": "2026-10-17T15:00:00Z"
+      },
+      "valid": true,
+      "status": "PARTIAL"
+    }
+  ]
+}

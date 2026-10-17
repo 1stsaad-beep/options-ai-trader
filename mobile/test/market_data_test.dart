@@ -61,6 +61,21 @@ void main() {
     expect(() => MarketObservation.parse(raw, 'account-one', 'AAPL', 'chain'), throwsFormatException);
   });
 
+  for (final mutation in ['delta', 'gamma', 'vega', 'iv', 'time', 'eligibility']) {
+    test('chain rejects unqualified provider Greeks $mutation', () {
+      final raw = fixture()['chain'], contract = raw['data']['contracts'][0];
+      switch (mutation) {
+        case 'delta': contract['greeks'] = {'delta': -.5}; break;
+        case 'gamma': contract['greeks'] = {'gamma': -.01}; break;
+        case 'vega': contract['greeks'] = {'vega': -.01}; break;
+        case 'iv': contract['implied_volatility'] = -.2; break;
+        case 'time': contract['greeks_timestamp'] = '2026-10-12T15:00:00Z'; break;
+        case 'eligibility': contract['greeks_quality'] = {'entryEligible': true}; break;
+      }
+      expect(() => MarketObservation.parse(raw, 'account-one', 'AAPL', 'chain'), throwsFormatException);
+    });
+  }
+
   Future<void> mount(WidgetTester tester, TraderApi api) async {
     await tester.pumpWidget(MaterialApp(home: Directionality(textDirection: TextDirection.rtl,
       child: MarketDataScreen(api: api, initialAccount: 'account-one', accounts: const [

@@ -45,10 +45,10 @@ class ObservedHistoryCursor {
       final reasons = p['incompleteReasons'] as List, equity = p['liquidationEquityCents'];
       if (reasons.toSet().length != reasons.length || reasons.any((x) => ![
         'QUALIFIED_ORIGINAL_QUOTE_UNAVAILABLE', 'INSUFFICIENT_REMAINING_LIQUIDITY',
-        'QUALIFIED_STOCK_QUOTE_UNAVAILABLE'].contains(x))) throw const FormatException('Invalid gap reason');
+        'QUALIFIED_STOCK_QUOTE_UNAVAILABLE'].contains(x))) { throw const FormatException('Invalid gap reason'); }
       if (equity == null) {
         if (p['complete'] != false || p['status'] != 'INCOMPLETE' || reasons.isEmpty ||
-            p['totalPnlCents'] != null || p['unrealizedPnlCents'] != null) throw const FormatException('Hidden missing mark');
+            p['totalPnlCents'] != null || p['unrealizedPnlCents'] != null) { throw const FormatException('Hidden missing mark'); }
         gaps++;
       } else {
         if (p['complete'] != true || reasons.isNotEmpty || !['CASH_ONLY', 'OBSERVED_MODEL'].contains(p['status']) ||

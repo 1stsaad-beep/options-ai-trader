@@ -19,6 +19,7 @@ import time
 from typing import Protocol
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
+from .option_greeks import provider_greeks, quality as greeks_quality
 
 UTC = timezone.utc
 DATA_HOST = 'data.alpaca.markets'
@@ -340,16 +341,15 @@ class AlpacaBasicData:
                     raise MarketDataError('PROVIDER_SYMBOL_MISMATCH')
                 if not isinstance(raw, dict) or contract in result:
                     raise MarketDataError('INVALID_PROVIDER_RESPONSE')
-                greeks = raw.get('greeks')
-                if greeks is not None and not isinstance(greeks, dict):
-                    raise MarketDataError('INVALID_PROVIDER_RESPONSE')
-                greeks = None if greeks is None else {k: number(greeks[k], signed=True) if greeks.get(k) is not None else None
-                    for k in ('delta', 'gamma', 'theta', 'vega', 'rho')}
+                try:
+                    greeks = provider_greeks(raw.get('greeks'), OPTION.fullmatch(contract)[3])
+                except ValueError:
+                    raise MarketDataError('INVALID_PROVIDER_GREEKS') from None
                 result[contract] = {'symbol': contract,
                     'quote': self._event(raw.get('latestQuote'), 'quote'),
                     'trade': self._event(raw.get('latestTrade'), 'trade'),
                     'greeks': greeks, 'greeks_source': 'provider' if greeks is not None else None,
-                    'greeks_timestamp': None, 'greeks_freshness_verified': False,
+                    'greeks_timestamp': None, 'greeks_freshness_verified': False, 'greeks_quality': greeks_quality(greeks),
                     'implied_volatility': number(raw['impliedVolatility']) if raw.get('impliedVolatility') is not None else None}
         return self._envelope('indicative', {'symbol': underlying, 'contracts': list(result.values()),
             'quote_quality': 'MODIFIED_INDICATIVE_NOT_OPRA', 'quote_delay_seconds': None,
