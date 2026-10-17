@@ -9,6 +9,7 @@ import 'observed_server_controls.dart';
 import 'observed_server_comparison.dart';
 import 'observed_server_valuation.dart';
 import 'observed_server_history.dart';
+import 'observed_server_status.dart';
 
 Map<String,dynamic> observedObject(dynamic value) {
   if(value is! Map||value.keys.any((key)=>key is! String))throw const FormatException('Invalid server object');
@@ -112,6 +113,7 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
       final status=observedObject(await widget.api.request('GET','/api/observed-paper/status'));
       if(status['mode']!='observed_market_virtual'||status['externalOrder']!=false||status['newMarketEntryAllowed']!=false||status['heartbeatFresh'] is! bool)throw const FormatException();
       observationStamp(status['serverTime']);
+      validateObservedDiagnostics(status);
       final target=values.contains(selected??account)?selected??account:values.firstOrNull;
       final value=target==null?null:ObservedServerAccount.parse(await widget.api.request('GET','${path(target)}/state'),target);
       if(!mounted)return;
@@ -204,6 +206,9 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
       body:ListView(padding:const EdgeInsets.all(16),children:[
         const Text('حسابات مستقلة عن Demo ودفتر الهاتف. الأرصدة افتراضية، ولا تُرسل أوامر إلى وسيط.'),
         if(runtime!=null)Text('العامل: ${observedRuntimeLabel(runtime!['state'])} • نبض حديث: ${runtime!['heartbeatFresh']==true?"نعم":"لا"}'),
+        if(runtime!=null)for(final code in runtime!['alerts'] as List? ?? [])Text(observedAlertLabels[code]!,key:Key('observed-alert-$code')),
+        if(runtime?['dataAccess']?['retryAt']!=null)Text('وقت انتهاء الانتظار UTC: ${runtime!['dataAccess']['retryAt']}'),
+        if(runtime?['alerts']!=null)const Text('تنبيهات حالة عند القراءة؛ لا توجد خدمة دفع تنبيهات مفعلة بهذا العرض.'),
         if(runtime!=null)Text('وقت قراءة الخادم: ${runtime!['serverTime']} • حدّث الصفحة للتحقق مجددًا.'),
         const Text('الدخول السوقي الجديد مقفل حاليًا حتى اكتمال تحقق أهلية العقد وGreeks. تشغيل الحساب لا يثبت تشغيل العامل أو صلاحية بيانات السوق.'),
         if(busy)const LinearProgressIndicator(),

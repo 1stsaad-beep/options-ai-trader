@@ -17,6 +17,8 @@ from app.observed_paper_store import ObservedPaperStore, LedgerConflict
 from app.observed_option_replay import iso
 from app.observed_paper_runtime import ObservedPaperRuntime
 from app.runtime_health import heartbeat_valid
+from app.observed_paper_status import status as runtime_status
+from app.observed_paper_data import ObservedPaperData
 
 
 def seed(store,account):
@@ -113,12 +115,20 @@ def check(repositories):
         assert heartbeat_valid(healthy,'observed_paper',clock[0])
     successor.close();successor.close()
     assert stores[0].snapshot(account,full=True)==before
+    with repositories[0].transaction() as db:
+        ObservedPaperData._save(db,{'calls':[iso(clock[0])],'authBlocked':True,
+            'retryAt':iso(clock[0]+timedelta(seconds=60)),'failures':1})
+    read=runtime_status(stores[1])
+    assert read['dataAccess']['authBlocked'] is True and read['dataAccess']['chargedRequestsLastMinute']==1
+    assert read['alerts']==['WORKER_UNAVAILABLE','DATA_AUTH_OR_ENTITLEMENT_DENIED','DATA_BACKOFF']
+    assert not read['newMarketEntryAllowed']
+    assert stores[0].snapshot(account,full=True)==before
     return {'status':'passed','source':'synthetic_fixture','externalOrder':False,'checks':[
         'two_connections_single_lease','owned_opra_fixture_fill','partial_close_restart','lost_ack_exactly_once',
         'native_update_delete_guards','lease_generation_fencing','independent_account_balances',
         'sealed_segment_rotation','streamed_full_replay','expired_owner_shutdown_health',
         'same_owner_successor_generation_fencing','shutdown_preserves_original_ledger',
-        'read_only_version_bound_net_valuation','causal_history_two_connection_pagination']}
+        'read_only_version_bound_net_valuation','causal_history_two_connection_pagination','read_only_durable_diagnostics_across_connections']}
 
 
 def run():

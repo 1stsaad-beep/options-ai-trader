@@ -1,5 +1,7 @@
 # Completion traceability — continued 2026-10-17
 
+Batch38 adds sanitized durable worker failure codes and read-only authentication/backoff/request-budget diagnostics, with validated Arabic Flutter labels. Corrupt provider state stays unverified and unmodified; stale heartbeat cannot attest a current diagnostic.39 targeted Python passed,13 new cases;10 Flutter tests and a PostgreSQL two-connection check added. Current-state alerts do not implement push delivery or a deployed soak. Source CI pending.
+
 Batch37 hardens actual provider Greek numeric domains and matching Dart chain validation:21 shared cases, no invented values/timestamps, explicit missing/partial/values-only diagnostics, all freshness/entry claims remain false.122 targeted Python passed. Fixes two Flutter analyzer block-style findings in batch36; Flutter/JVM acceptance remains pending rerun. Full deliverable/contract qualification remains open.
 
 Batch36 adds a bounded 25-point Flutter historical valuation screen and independent summary arithmetic/causal-cursor validation, with four original SQL fixtures and 19 new Flutter tests (source CI pending). Failed reads cannot advance the cursor. Python fixture/history16 passed locally. No full-provider attestation or complete historical coverage claim.

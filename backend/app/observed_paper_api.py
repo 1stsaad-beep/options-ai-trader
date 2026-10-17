@@ -3,9 +3,6 @@ from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, StrictInt
 
 from .observed_paper_store import LedgerConflict
-from .runtime_health import heartbeat_valid
-from .observed_option_replay import iso
-import json
 
 
 class CreateObserved(BaseModel):
@@ -41,15 +38,8 @@ def install_observed_paper_routes(app,secured,store_dependency):
 
     @app.get('/api/observed-paper/status',dependencies=secured)
     def runtime_status():
-        store=store_dependency();now=store.now()
-        with store.repo.transaction() as db:
-            row=db.one("SELECT * FROM runtime_health WHERE name='observed_paper'")
-        fresh=heartbeat_valid(row,'observed_paper',now)
-        payload=json.loads(row['payload']) if fresh else {}
-        return {'mode':'observed_market_virtual','externalOrder':False,'serverTime':iso(now),
-                'heartbeatFresh':fresh,'state':payload.get('state','WORKER_UNAVAILABLE'),
-                'newMarketEntryAllowed':False,'entryBlockReason':'CONTRACT_ELIGIBILITY_UNVERIFIED',
-                'processed':payload.get('processed',0),'blocked':payload.get('blocked',0)}
+        from .observed_paper_status import status
+        return status(store_dependency())
 
     @app.post('/api/observed-paper/accounts',dependencies=secured,status_code=201)
     def create(body:CreateObserved):

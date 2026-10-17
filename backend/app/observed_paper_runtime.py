@@ -6,6 +6,7 @@ from .market_sessions import evaluate_session, US_EQUITY_OPTIONS_POLICY
 from .observed_paper import canonical
 from .observed_option_replay import iso
 from .observed_paper_store import LedgerConflict
+from .observed_paper_status import safe_diagnostic
 
 
 class ObservedPaperRuntime:
@@ -42,8 +43,8 @@ class ObservedPaperRuntime:
             return result|{'state':'SESSION_CLOSED'}
         try:
             observation=self.provider.capture([s['state'] for s in snapshots],self.lease)
-        except MarketDataError:
-            return result|{'state':'DATA_UNAVAILABLE'}
+        except MarketDataError as exc:
+            return result|{'state':'DATA_UNAVAILABLE','diagnosticCode':safe_diagnostic(exc.code)}
         for snapshot in snapshots:
             state=snapshot['state']; account=state['id']
             # Bound each account's original evidence to its own current demand.
