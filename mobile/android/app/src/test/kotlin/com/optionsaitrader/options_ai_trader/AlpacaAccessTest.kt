@@ -32,5 +32,6 @@ class AlpacaAccessTest {
     @Test fun explicitConsentAndSavedPreferenceAreBothRequired(){saved();access.saveSettings(AlpacaSettings(real=true));failure("CONSENT_REQUIRED"){access.start(false){fail("network")}}}
     @Test fun explicitStartUsesSavedConfigurationOnce(){saved();val value=AlpacaSettings(true,"iex","regular",listOf("TSLA"));access.saveSettings(value);var starts=0;access.start(true){assertEquals(value,it);starts++};assertEquals(1,starts)}
     @Test fun failedSettingsWritePreservesOldPreference(){saved();prefs.fail=true;failure("SETTINGS_SAVE_FAILED"){access.saveSettings(AlpacaSettings(real=true))};assertFalse(access.readSettings().real)}
+    @Test fun migrationExportNeedsConsentAndReadableKeysAndLeavesVaultUnchanged(){failure("CONSENT_REQUIRED"){access.exportForMigration(false)};failure("KEYS_MISSING"){access.exportForMigration(true)};saved();val before=keys.value;assertEquals(Pair("mock-public-id","mock-private-value"),access.exportForMigration(true));assertEquals(before,keys.value);keys.corrupt=true;failure("KEYSTORE_UNAVAILABLE"){access.exportForMigration(true)}}
     @Test fun turningOffNeverRequiresDecryptableKeys(){saved();access.saveSettings(AlpacaSettings(real=true));keys.corrupt=true;access.saveSettings(AlpacaSettings(real=false));assertFalse(access.readSettings().real)}
 }

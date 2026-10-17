@@ -1,5 +1,6 @@
 package com.optionsaitrader.options_ai_trader
 
+import org.json.JSONObject
 import android.Manifest
 import android.app.NotificationManager
 import android.content.pm.PackageManager
@@ -43,6 +44,11 @@ class MainActivity : FlutterActivity() {
                         AlpacaMonitorService.stop(this)
                         access.save(call.argument<String>("key")?:"",call.argument<String>("secret")?:"")
                         result.success(true)
+                    }
+                    "exportKeysForMigration" -> {
+                        if(!hasWindowFocus())throw AlpacaAccessFailure("FOREGROUND_REQUIRED")
+                        val pair=access.exportForMigration(call.argument<Boolean>("confirmed")==true)
+                        result.success(JSONObject().put("key",pair.first).put("secret",pair.second).toString())
                     }
                     "secureScreen" -> {
                         if(call.argument<Boolean>("enabled")==true)window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)

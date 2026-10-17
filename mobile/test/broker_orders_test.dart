@@ -193,7 +193,10 @@ void main() {
       expect(orders.single.state, OrderState.open);
       expect(orders.single.brokerOrderId, 'alp-1');
       expect(orders.single.events.map((e) => e['seq']), [1, 2]);
-      expect(jsonEncode(mem.data[BrokerOrderJournal.key(a.id)]), isNot(contains('fixturesecret1')));
+      // B12: the journal now lives in v2 segments; none of its stored values may carry key material.
+      final journalValues = mem.data.entries.where((e) => e.key.startsWith('oat.brokers.orders.')).map((e) => e.value).toList();
+      expect(journalValues, isNotEmpty);
+      expect(jsonEncode(journalValues), isNot(contains('fixturesecret1')));
     });
 
     test('timeouts become UNKNOWN and block the account; definitive rejects do not', () async {

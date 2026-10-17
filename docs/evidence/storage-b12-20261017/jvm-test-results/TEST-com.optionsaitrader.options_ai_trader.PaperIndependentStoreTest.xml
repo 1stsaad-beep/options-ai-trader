@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-10-17T18:21:24.462Z" hostname="grok-bot-vm-439069130" time="0.206">
+  <properties/>
+  <testcase name="unavailableReferencesCannotBeImportedOrRepointed" classname="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" time="0.034"/>
+  <testcase name="duplicateRootKeysUnknownManifestAndBrokenTemplateAreRejected" classname="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" time="0.026"/>
+  <testcase name="damagedFinancialChunkNeverBecomesAnEmptyOrWritableBook" classname="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" time="0.009"/>
+  <testcase name="exactLexemesWhitespaceFieldOrderAndUnicodeRoundTrip" classname="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" time="0.009"/>
+  <testcase name="optionalWritePressureRetainsOldArchiveAndPermitsCoreOnlyRetry" classname="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" time="0.018"/>
+  <testcase name="corruptedOptionalChunkIsPreservedWhileCoreCanAdvance" classname="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" time="0.011"/>
+  <testcase name="interruptedStageCannotChangePublishedRootOrOriginalChunks" classname="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" time="0.012"/>
+  <testcase name="unchangedOptionalArchivesAreNotRewrittenByFinancialUpdates" classname="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" time="0.056"/>
+  <testcase name="financialWriteFailureCannotBeMisclassifiedAsOptional" classname="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" time="0.017"/>
+  <testcase name="missingOptionalChunkKeepsFinancialOriginalAndOpaqueReference" classname="com.optionsaitrader.options_ai_trader.PaperIndependentStoreTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

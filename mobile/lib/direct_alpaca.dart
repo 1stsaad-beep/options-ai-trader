@@ -177,5 +177,12 @@ class DirectAlpaca {
     final text=await channel.invokeMethod<String>('stockQuote',{'symbol':symbol});
     return text==null?null:jsonDecode(text) as Map<String,dynamic>;
   }
+  /// B12: explicit one-time copy of the Direct vault keys for broker-account migration.
+  Future<(String,String)?> exportKeysForMigration() async {
+    final text=await channel.invokeMethod<String>('exportKeysForMigration',{'confirmed':true});
+    if(text==null)return null;
+    final j=jsonDecode(text) as Map<String,dynamic>;
+    return (j['key'] as String,j['secret'] as String);
+  }
   Future<OptionQuote?> quote(String contract) async {final text=await channel.invokeMethod<String>('quote',{'contract':contract});return text==null?null:OptionQuote.parse(text);}
 }

@@ -45,6 +45,12 @@ internal class AlpacaAccess(private val keys:AlpacaCredentials,private val setti
         try {keys.save(id,secret);check(keys.read()==Pair(id,secret))}
         catch(_:Exception){throw AlpacaAccessFailure("KEY_SAVE_FAILED")}
     }
+    /** B12: one explicit, user-confirmed copy into the app's broker-account store. The vault is not modified. */
+    fun exportForMigration(confirmed:Boolean):Pair<String,String> {
+        if(!confirmed)throw AlpacaAccessFailure("CONSENT_REQUIRED")
+        requireReadableKeys()
+        return try{keys.read()}catch(_:Exception){throw AlpacaAccessFailure("KEYSTORE_UNAVAILABLE")}
+    }
     fun readSettings():AlpacaSettings = try {settings.read().validated()}
         catch(_:Exception){throw AlpacaAccessFailure("SETTINGS_UNAVAILABLE")}
     fun saveSettings(value:AlpacaSettings) {

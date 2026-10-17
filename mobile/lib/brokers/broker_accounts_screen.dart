@@ -8,6 +8,8 @@ import 'broker_adapter.dart';
 import 'broker_models.dart';
 import 'broker_portfolio_screen.dart';
 import 'broker_store.dart';
+import 'vault_migration.dart';
+import '../direct_alpaca.dart' show DirectAlpaca;
 import 'live_gate.dart';
 
 String brokerMessage(String code) => const {
@@ -41,7 +43,9 @@ String brokerMessage(String code) => const {
 class BrokerAccountsScreen extends StatefulWidget {
   final BrokerAccountRegistry? registry;
   final http.Client? client;
-  const BrokerAccountsScreen({super.key, this.registry, this.client});
+  /// Source of the older Direct vault keys (defaults to the native channel).
+  final VaultExport? vaultExport;
+  const BrokerAccountsScreen({super.key, this.registry, this.client, this.vaultExport});
   @override
   State<BrokerAccountsScreen> createState() => _BrokerAccountsScreenState();
 }
@@ -54,6 +58,7 @@ class _BrokerAccountsScreenState extends State<BrokerAccountsScreen> {
   final Set<String> busy = {};
   String? error;
   bool loading = true;
+  String? notice;
 
   @override
   void initState() {
@@ -96,6 +101,35 @@ class _BrokerAccountsScreenState extends State<BrokerAccountsScreen> {
     if (added == true) await _load();
   }
 
+  Future<void> _importVault() async {
+    final ok = await showDialog<bool>(context: context, builder: (c) => AlertDialog(
+      title: const Text('نقل مفاتيح Direct إلى حسابات الوسطاء؟'),
+      content: const Text('تُنسخ مفاتيح Alpaca المحفوظة في خزنة Direct إلى حساب Paper جديد هنا (أو تُربط بحساب يحمل المفتاح نفسه). '
+          'خزنة Direct لا تُعدّل ولا تُحذف، ويُسجل النقل في سجل دائم دون أي مفتاح.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('إلغاء')),
+        FilledButton(key: const ValueKey('confirm-vault-import'), onPressed: () => Navigator.pop(c, true), child: const Text('نقل')),
+      ]));
+    if (ok != true) return;
+    String message;
+    try {
+      final r = await VaultMigration(registry).migrate(widget.vaultExport ?? () => DirectAlpaca().exportKeysForMigration());
+      message = const {
+        'MIGRATED': 'نُقلت المفاتيح إلى حساب Alpaca Paper جديد. اختبر الاتصال للتأكد أنها مفاتيح Paper.',
+        'LINKED_EXISTING': 'المفتاح موجود مسبقًا في حساب هنا؛ رُبط دون تكرار.',
+        'ALREADY_MIGRATED': 'نُقلت هذه المفاتيح سابقًا؛ لا تكرار.',
+        'NO_VAULT_KEYS': 'لا توجد مفاتيح محفوظة في خزنة Direct.',
+        'INCOMPATIBLE_KEYS': 'صيغة مفاتيح الخزنة لا تناسب حساب Paper؛ لم يُنقل شيء.',
+      }[r.status]!;
+    } on BrokerStoreException catch (e) {
+      message = brokerMessage(e.code);
+    } catch (_) {
+      message = 'تعذر قراءة خزنة Direct (Keystore). لم يتغير شيء.';
+    }
+    await _load();
+    if (mounted) setState(() => notice = message);
+  }
+
   Future<void> _archive(BrokerAccount a) async {
     final ok = await showDialog<bool>(context: context, builder: (c) => AlertDialog(
       title: const Text('أرشفة الحساب ونسيان المفاتيح؟'),
@@ -118,7 +152,10 @@ class _BrokerAccountsScreenState extends State<BrokerAccountsScreen> {
     final active = accounts.where((a) => !a.archived).toList();
     final archived = accounts.length - active.length;
     return Scaffold(
-      appBar: AppBar(title: const Text('حسابات الوسطاء (Paper)')),
+      appBar: AppBar(title: const Text('حسابات الوسطاء (Paper)'), actions: [
+        IconButton(key: const ValueKey('import-direct-vault'), tooltip: 'نقل مفاتيح Direct',
+            onPressed: loading ? null : _importVault, icon: const Icon(Icons.move_down)),
+      ]),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: loading ? null : _add, icon: const Icon(Icons.add), label: const Text('إضافة حساب')),
       body: loading
@@ -131,6 +168,8 @@ class _BrokerAccountsScreenState extends State<BrokerAccountsScreen> {
               )),
               SwitchListTile(value: LiveTradingGate.liveAvailable, onChanged: null,
                   title: const Text('Live Trading'), subtitle: const Text('معطل — يتطلب موافقة صريحة لاحقًا')),
+              if (notice != null) Padding(padding: const EdgeInsets.all(8),
+                  child: Text(notice!, key: const ValueKey('vault-import-notice'))),
               if (error != null) Padding(padding: const EdgeInsets.all(8), child: Text(error!,
                   style: TextStyle(color: Theme.of(context).colorScheme.error))),
               for (final kind in BrokerKind.values) ...[
