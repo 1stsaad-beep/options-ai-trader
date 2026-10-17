@@ -1,0 +1,28 @@
+{
+  "source": "aaad96d48c326c3af94d1c161b682cac67dffde7",
+  "backendRun": 39015198908,
+  "status": "success",
+  "pythonPassed": 1559,
+  "postgresChecks": {
+    "execution": 22,
+    "journal": 6,
+    "runtime": 10,
+    "settlement": 5,
+    "observed": 23,
+    "experiment": 4,
+    "backup": 20
+  },
+  "composeChecks": 20,
+  "artifacts": [
+    {
+      "file": "batch50-backend.zip",
+      "sha256": "fb7a2db687fc5aff4b89af512d8a20d4d596a438093433332ebaa3ef9c53424e",
+      "crcVerified": true
+    },
+    {
+      "file": "batch50-compose.zip",
+      "sha256": "b5ed554df954262e00418b31d0bdfb4493c0d1ca4fc15790ebe78daf5f965a68",
+      "crcVerified": true
+    }
+  ]
+}

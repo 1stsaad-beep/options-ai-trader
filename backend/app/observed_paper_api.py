@@ -101,3 +101,7 @@ def install_observed_paper_routes(app,secured,store_dependency):
     @app.get('/api/observed-paper/accounts/{account}/valuation-history',dependencies=secured)
     def valuation_history(account:str,after:int=-1,limit:int=50,through:int|None=None):
         return guarded(lambda:store_dependency().valuation_history(account,after,limit,through))
+
+    @app.get('/api/observed-paper/accounts/{account}/daily-performance',dependencies=secured)
+    def daily_performance(account:str,start:str,end:str,through:int|None=None):
+        return guarded(lambda:store_dependency().daily_performance(account,start,end,through))

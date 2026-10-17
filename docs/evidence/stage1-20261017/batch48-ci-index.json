@@ -14,7 +14,7 @@
   },
   "composeChecks": 20,
   "mobileDirectRun": 39014634258,
-  "mobileDirectStatus": "PENDING_ARTIFACT_VERIFICATION",
+  "mobileDirectStatus": "SUCCESS_RAW_VERIFIED",
   "artifacts": [
     {
       "file": "batch48-backend.zip",
@@ -35,6 +35,14 @@
       "file": "batch48-security.zip",
       "sha256": "8f10437b37d31e7a408db4e3c90861db7aa5d950c4370e5470b3caf18b987f2e",
       "crcVerified": true
+    },
+    {
+      "file": "batch48-direct.zip",
+      "sha256": "5e929450f3b5cbcd154f760cca59a8de1f9a29d8453b7b6582cab6cdba812a66",
+      "crcVerified": true
     }
-  ]
+  ],
+  "flutterVisiblePassed": 928,
+  "flutterHiddenFrameworkRecords": 63,
+  "jvmPassed": 61
 }

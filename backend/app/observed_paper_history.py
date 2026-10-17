@@ -15,6 +15,31 @@ from .paper_settlement import stamp
 VERSION = 'observed-paper-history-v1'
 
 
+def retain_original_quotes(saved, original, state):
+    command=original['command']
+    wanted = {}
+    for p in state['positions'].values():
+        authority = {'at': p['markAt'], 'identity': p['markIdentity']}
+        consumed = state['consumption'].get(p['contract'])
+        if consumed and stamp(consumed['at']) > stamp(authority['at']):
+            authority = consumed
+        wanted[p['contract']] = authority
+    saved = {key: value for key, value in saved.items() if key in wanted}
+    if command['kind'] == 'CYCLE':
+        obs = command['observation']
+        for q in obs['quotes']:
+            if not isinstance(q, dict) or not isinstance(q.get('contract'), str):
+                continue
+            authority = wanted.get(q['contract'])
+            if authority and q.get('at') == authority['at'] and digest(q) == authority['identity']:
+                # Only discard unrelated bars/quotes in this read projection;
+                # the complete original event remains unchanged in SQL.
+                saved[q['contract']] = {'payload': json.dumps({'at': original['at'],
+                    'command': {'kind': 'CYCLE', 'observation': {'source': obs['source'],
+                        'capturedAt': obs['capturedAt'], 'quotes': [q]}}})}
+    return saved
+
+
 class HistoryProjection:
     """Consumes validated transitions; publication waits for full ledger checks."""
     def __init__(self, *, after, limit, through):
@@ -26,27 +51,7 @@ class HistoryProjection:
         sequence=row['sequence']
         if (self.through is not None and sequence>self.through) or len(self.points)==self.limit:
             return
-        command=original['command']
-        wanted = {}
-        for p in state['positions'].values():
-            authority = {'at': p['markAt'], 'identity': p['markIdentity']}
-            consumed = state['consumption'].get(p['contract'])
-            if consumed and stamp(consumed['at']) > stamp(authority['at']):
-                authority = consumed
-            wanted[p['contract']] = authority
-        self.saved = {key: value for key, value in self.saved.items() if key in wanted}
-        if command['kind'] == 'CYCLE':
-            obs = command['observation']
-            for q in obs['quotes']:
-                if not isinstance(q, dict) or not isinstance(q.get('contract'), str):
-                    continue
-                authority = wanted.get(q['contract'])
-                if authority and q.get('at') == authority['at'] and digest(q) == authority['identity']:
-                    # Only discard unrelated bars/quotes in this read projection;
-                    # the complete original event remains unchanged in SQL.
-                    self.saved[q['contract']] = {'payload': json.dumps({'at': original['at'],
-                        'command': {'kind': 'CYCLE', 'observation': {'source': obs['source'],
-                            'capturedAt': obs['capturedAt'], 'quotes': [q]}}})}
+        self.saved = retain_original_quotes(self.saved, original, state)
         quote_rows = sorted(self.saved.values(), key=lambda r: stamp(json.loads(r['payload'])['at']), reverse=True)
         value = summarize(iter(quote_rows), state, stamp(original['at']))
         equity = value['liquidationEquityCents']; self.samples += 1

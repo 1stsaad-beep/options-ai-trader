@@ -167,6 +167,13 @@ def check(repositories):
     assert read['alerts']==['WORKER_UNAVAILABLE','DATA_AUTH_OR_ENTITLEMENT_DENIED','DATA_BACKOFF']
     assert not read['newMarketEntryAllowed']
     assert stores[0].snapshot(account,full=True)==before
+    daily_clock=lambda:datetime(2026,10,13,20,tzinfo=timezone.utc)
+    daily=ObservedPaperStore(repositories[0],daily_clock).daily_performance(account,'2026-10-13','2026-10-13')
+    assert daily['points'][0]['liquidationEquityCents']==before['state']['cash']
+    assert daily['points'][0]['status']=='CASH_ONLY' and daily['performance']['sharpe'] is None
+    assert ObservedPaperStore(repositories[1],daily_clock).daily_performance(account,'2026-10-13','2026-10-13',
+        through=daily['throughVersion'])==daily
+    assert stores[0].snapshot(account,full=True)==before
     return {'status':'passed','source':'synthetic_fixture','externalOrder':False,'checks':[
         'two_connections_single_lease','owned_opra_fixture_fill','partial_close_restart','lost_ack_exactly_once',
         'native_update_delete_guards','lease_generation_fencing','independent_account_balances',
@@ -174,7 +181,8 @@ def check(repositories):
         'same_owner_successor_generation_fencing','shutdown_preserves_original_ledger',
         'read_only_version_bound_net_valuation','causal_history_two_connection_pagination','read_only_durable_diagnostics_across_connections',
         'alert_inbox_cross_connection_pinned_pages','alert_ack_lost_response_retry','alert_native_immutable_guards',
-        'bounded_owned_quote_rotation_across_connections','large_original_receipts_streamed_without_page_loss']}
+        'bounded_owned_quote_rotation_across_connections','large_original_receipts_streamed_without_page_loss',
+        'causal_daily_net_valuation_across_connections','pinned_daily_report_hash_restart_and_no_financial_writes']}
 
 
 def run():

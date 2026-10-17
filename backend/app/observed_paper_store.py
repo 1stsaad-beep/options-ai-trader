@@ -128,6 +128,35 @@ class ObservedPaperStore:
                     'Irregular event samples cannot establish daily returns or Sharpe',
                     'Replay streams from genesis; bounded output is not constant-time pagination']}
 
+    def daily_performance(self, account, start, end, through=None):
+        from .observed_paper_daily import DailyProjection, sessions, performance, VERSION as DAILY_VERSION, SAMPLING
+        from .market_sessions import CALENDAR_VERSION
+        if through is not None and (type(through) is not int or through < 0):
+            raise ValueError('Valid historical end version required')
+        now = self.now()
+        projection = DailyProjection(sessions(start, end, now), through)
+        with self.repo.transaction() as db:
+            # An early valid prefix never authorizes publication of a corrupt
+            # ledger; even pinned reports verify the entire current tail.
+            head, state = self._read(db, account, full=True, observer=projection.observe)
+            version = head['version'] if through is None else through
+            if version > head['version']:
+                raise ValueError('Historical end exceeds available events')
+            anchor = db.one('SELECT digest FROM observed_paper_events WHERE account_id=? AND sequence=?', (account, version))
+            projection.flush(now)
+            report = {'contract': DAILY_VERSION, 'account': account, 'source': state['source'],
+                'externalOrder': False, 'executionAllowed': False, 'newEntryAllowed': False,
+                'start': start, 'end': end, 'calendarVersion': CALENDAR_VERSION,
+                'throughVersion': version, 'throughEventHash': anchor['digest'], 'sampling': SAMPLING,
+                'points': projection.points, 'performance': performance(projection.points),
+                'limitations': ['Pre-close liquidation model; not an official closing price or post-settlement NAV',
+                    'Only recorded state and accepted original quotes at or before each sample',
+                    'Stale or missing option/stock marks remain null; no interpolation',
+                    'Pinned history may exclude later recorded evidence; source end hash is explicit',
+                    '252-session zero-rate Sharpe is a model, not market performance evidence',
+                    'Full verified replay from genesis; no persistent trusted checkpoint']}
+            return report | {'reportHash': digest(report)}
+
     def _read(self, db, account, *, full=False, observer=None):
         row=db.one('SELECT * FROM observed_paper_accounts WHERE id=?',(account,))
         if row is None: raise LedgerConflict('Unknown observed-paper account')

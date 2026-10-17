@@ -187,3 +187,10 @@ Batch50 profile correction saved at `aaad96d48c326c3af94d1c161b682cac67dffde7`;2
 ## Batch52 — clear Flutter analyzer gate
 
 Batch51 CI39015331596 /39015331626 stopped at flutter analyze on two prefer_interpolation_to_compose_strings notices in new tests; no Flutter tests ran in those failed runs. Replaced the two concatenations with equivalent interpolation. Parser/financial semantics unchanged. Source acceptance requires the new CI run; no tests or lints disabled. Batch50 backend/Compose39015198908 completed successfully.
+
+
+## Batch53 — causal daily paper valuation and performance
+
+Added a bounded read-only daily report with explicit pre-close sample time, existing calendar/DST/early closes, pinned source event/hash, full-tail verification, causal original quote retention, missing-mark propagation, adjacent returns/daily drawdown and an explicit guarded Sharpe model. No post-settlement or official-close claim.25 new tests;58 affected and1584 full Python passed locally. Initial5 fixture setup failures preserved separately in batch53-local-python.zip and corrected without weakening stop-before-configure. Existing event-history fixtures unchanged; PostgreSQL script adds2 cross-connection checks. Source CI pending. See docs/DAILY_NAV_20261017.md. Persistent trusted checkpoints, delivery-stock quotes and phone daily UI remain open.
+
+Verified raw artifacts: batch48 Direct928 visible Flutter/63 hidden framework records/61 JVM, all successful. Batch50 backend1559 Python; PostgreSQL22/6/10/5/23/4/20 and20 Compose checks passed. Updated batch48-ci-index.json and new batch50-ci-index.json bind hashes and CRC-verified original archives. Batch52 analyzer correction259579ee9dcc24089d1bc0972346e4d65309e1d8 passed chart39015638740 and security39015638722; full Direct39015638752 still running at this checkpoint. Android/iOS packaging skipped.
