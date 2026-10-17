@@ -63,7 +63,8 @@ def latest(db):
 
 
 def record(db, now):
-    """Caller must hold repository transaction and current worker ownership."""
+    """Caller must hold the serialized alert transaction. A worker also needs
+    current ownership; the independent watchdog only projects current status."""
     active = sorted(read_status(db, now)['alerts'])
     old = latest(db)
     prior = old['active'] if old else []

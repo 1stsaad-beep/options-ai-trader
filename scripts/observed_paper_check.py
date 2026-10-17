@@ -183,7 +183,28 @@ def run():
             or urlparse(url).hostname not in {'localhost','127.0.0.1','::1','postgres'}):
         raise SystemExit('Explicit local disposable PostgreSQL required')
     repositories=[Repository(url,invalidate_accounts=False) for _ in range(2)]
-    try: print(json.dumps(check(repositories),sort_keys=True))
+    try:
+        result=check(repositories)
+        from app.observed_paper_watchdog import observe, stop_health
+        now=datetime.now(timezone.utc)
+        with repositories[0].transaction() as db:
+            before={table:db.all('SELECT * FROM '+table+' ORDER BY 1') for table in
+                ('observed_paper_accounts','observed_paper_events','observed_paper_lease','observed_paper_data_state')}
+        assert 'WORKER_UNAVAILABLE' in observe(url,now,'pg-monitor')['alerts']
+        store=ObservedPaperStore(repositories[1],lambda:now)
+        first=alert_page(store)
+        observe(url,now,'pg-successor');stop_health(url,'pg-monitor')
+        assert alert_page(store)==first
+        with repositories[1].transaction() as db:
+            row=db.one("SELECT * FROM runtime_health WHERE name='observed_watchdog'")
+            assert heartbeat_valid(row,'observed_watchdog',now)
+            assert before=={table:db.all('SELECT * FROM '+table+' ORDER BY 1') for table in before}
+        stop_health(url,'pg-successor')
+        with repositories[1].transaction() as db:
+            assert not heartbeat_valid(db.one("SELECT * FROM runtime_health WHERE name='observed_watchdog'"),'observed_watchdog',now)
+        result['checks']+=['independent_watchdog_existing_database_outage','watchdog_dedup_and_successor_shutdown',
+            'watchdog_preserves_accounts_events_leases_and_provider_state']
+        print(json.dumps(result,sort_keys=True))
     finally:
         for repo in repositories: repo.close()
 

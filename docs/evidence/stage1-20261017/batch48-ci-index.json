@@ -1,0 +1,40 @@
+{
+  "source": "795adbcc4fcb5814c356791391196ff019136195",
+  "backendRun": 39014634327,
+  "securityRun": 39014634223,
+  "pythonPassed": 1550,
+  "postgresChecks": {
+    "execution": 22,
+    "journal": 6,
+    "runtime": 10,
+    "settlement": 5,
+    "observed": 20,
+    "experiment": 4,
+    "backup": 20
+  },
+  "composeChecks": 20,
+  "mobileDirectRun": 39014634258,
+  "mobileDirectStatus": "PENDING_ARTIFACT_VERIFICATION",
+  "artifacts": [
+    {
+      "file": "batch48-backend.zip",
+      "sha256": "3d40aae7105c7ba0352b8668773ca1b6934d0d537c53c9bd50ed762c47f2574a",
+      "crcVerified": true
+    },
+    {
+      "file": "batch48-compose.zip",
+      "sha256": "6815da3e1470b7a88f607a95c1d7e32dfce6608f1d9feb0fe2a32518fa47e19c",
+      "crcVerified": true
+    },
+    {
+      "file": "batch48-local-python.zip",
+      "sha256": "7e2272ec9761735522e53cfc68806389894196d538d73188fc4f17c25ae6c775",
+      "crcVerified": true
+    },
+    {
+      "file": "batch48-security.zip",
+      "sha256": "8f10437b37d31e7a408db4e3c90861db7aa5d950c4370e5470b3caf18b987f2e",
+      "crcVerified": true
+    }
+  ]
+}

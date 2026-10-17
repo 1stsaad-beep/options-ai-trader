@@ -27,6 +27,8 @@ def heartbeat_valid(row, name, now):
             state_ok, seconds = value.get('status') == 'OK', 120
         elif name == 'market_collector':
             state_ok, seconds = value.get('state') in COLLECTOR_STATES, 30
+        elif name == 'observed_watchdog':
+            state_ok, seconds = value.get('state') == 'MONITORING', 60
         elif name == 'observed_paper':
             state_ok, seconds = value.get('state') in {'DISABLED','NO_ACTIVE_DEMAND','LEDGER_BLOCKED',
                 'SESSION_CLOSED','DATA_UNAVAILABLE','RUNNING_VIRTUAL','PARTIALLY_BLOCKED'}, 60
@@ -60,7 +62,7 @@ def readonly_connection(url):
 
 
 def probe_heartbeat(url, name, now):
-    if name not in {'worker', 'market_collector', 'observed_paper'}:
+    if name not in {'worker', 'market_collector', 'observed_paper', 'observed_watchdog'}:
         return False
     try:
         with readonly_connection(url) as connection:
