@@ -18,14 +18,17 @@ from .paper_settlement import stamp, PATTERN
 class ObservedPaperData:
     source='alpaca'
 
-    def __init__(self, store, transport, *, requests_per_minute=10):
+    def __init__(self, store, transport, *, requests_per_minute=10, metadata_transport=None):
         if type(requests_per_minute) is not int or not 2 <= requests_per_minute <= 30:
             raise ValueError('Invalid observed-paper request budget')
         self.store=store; self.transport=transport; self.budget=requests_per_minute
         self.lease=None; self.coverage_limited=False
+        self.metadata_transport=metadata_transport
 
-    def request(self,path,params,*,cursor_kind=None,cursor_after=None):
-        if not allowed_query(path,params,observed_options=True):
+    def request(self,path,params,*,cursor_kind=None,cursor_after=None,metadata=False):
+        from .option_metadata import allowed_metadata_query
+        allowed = (self.metadata_transport is not None and allowed_metadata_query(path,params)) if metadata else allowed_query(path,params,observed_options=True)
+        if not allowed:
             raise MarketDataError('DATA_ROUTE_FORBIDDEN')
         now=self.store.now()
         with self.store.repo.transaction() as db:
@@ -36,9 +39,16 @@ class ObservedPaperData:
             if state['retryAt'] and stamp(state['retryAt'])>now: raise MarketDataError('DATA_RATE_LIMITED')
             # Future timestamps after a clock regression remain charged.
             state['calls']=[t for t in state['calls'] if now-stamp(t)<timedelta(seconds=60)]
-            if len(state['calls'])>=self.budget: raise MarketDataError('DATA_RATE_LIMITED')
+            if len(state['calls'])>=self.budget-int(metadata): raise MarketDataError('DATA_RATE_LIMITED')
             state['calls'].append(iso(now)); self._save(db,state)
-            if cursor_kind is not None:
+            if metadata:
+                from .option_eligibility import identity
+                identity(cursor_after)
+                if cursor_kind not in ('terms','greeks'): raise ValueError('Invalid metadata cursor')
+                self._metadata_cursor(db)
+                db.execute("INSERT INTO observed_paper_data_state VALUES('metadata_cursor',?) ON CONFLICT(name) DO UPDATE SET payload=excluded.payload",
+                    (canonical({'version':1,'after':cursor_after,'kind':cursor_kind}),))
+            elif cursor_kind is not None:
                 cursor=self._cursor(db)
                 if cursor_kind not in ('quotes','bars'): raise ValueError('Invalid capture cursor')
                 cursor[cursor_kind]=cursor_after
@@ -48,7 +58,7 @@ class ObservedPaperData:
                 db.execute("INSERT INTO observed_paper_data_state VALUES('capture_cursor',?) ON CONFLICT(name) DO UPDATE SET payload=excluded.payload",
                     (canonical(cursor),))
         try:
-            response=self.transport.get(path,params)
+            response=(self.metadata_transport if metadata else self.transport).get(path,params)
         except Exception:
             # Connection/decoding errors retain a durable bounded backoff, never
             # provider text, headers containing credentials or exception bodies.
@@ -168,6 +178,57 @@ class ObservedPaperData:
                     continue
         if len(quotes)!=len(requested): self.coverage_limited=True
         return {'source':'alpaca','capturedAt':iso(self.store.now()),'stockFeed':'iex','bars':bars,'quotes':quotes}
+
+
+    @staticmethod
+    def _metadata_cursor(db):
+        from .option_eligibility import identity
+        row=db.one("SELECT payload FROM observed_paper_data_state WHERE name='metadata_cursor'")
+        try:
+            value=json.loads(row['payload']) if row else {'version':1,'after':None,'kind':'greeks'}
+            if (not isinstance(value,dict) or set(value)!={'version','after','kind'} or
+                    type(value['version']) is not int or value['version']!=1 or value['kind'] not in ('terms','greeks')):
+                raise ValueError()
+            if value['after'] is not None: identity(value['after'])
+            return value
+        except (ValueError,TypeError,KeyError):
+            raise MarketDataError('DATA_STATE_REVIEW_REQUIRED') from None
+
+    def capture_metadata(self, accounts, lease):
+        """One optional read AFTER all protective cycles, sharing durable budget.
+
+        Reserve one remaining slot for the next quote read. An uncertain request
+        advances the cursor and remains charged; no hidden retry or backdating.
+        """
+        from .observed_contract_evidence import append, demand
+        from .option_metadata import TERMS_PREFIX, SNAPSHOTS
+        if self.metadata_transport is None: return
+        self.lease=lease
+        with self.store.repo.transaction() as db:
+            if not self.store._owns(db,lease,self.store.now()): raise MarketDataError('WORKER_LEASE_LOST')
+            cursor=self._metadata_cursor(db)
+            by_contract={}
+            for account in accounts:
+                _,state=self.store._read(db,account)
+                if state['source']!='alpaca': continue
+                for symbol in demand(state): by_contract.setdefault(symbol,[]).append(account)
+        if not by_contract: return
+        if cursor['kind']=='terms' and cursor['after'] in by_contract:
+            symbol,kind=cursor['after'],'greeks'
+        else:
+            symbol,kind=self._rotate(set(by_contract),cursor['after'],1)[0],'terms'
+        path=TERMS_PREFIX+symbol if kind=='terms' else SNAPSHOTS
+        params={} if kind=='terms' else {'symbols':symbol,'feed':'opra'}
+        started=self.store.now()
+        raw=self.request(path,params,metadata=True,cursor_kind=kind,cursor_after=symbol)
+        captured=self.store.now()
+        if captured < started: raise MarketDataError('INVALID_TIMESTAMP')
+        if kind=='greeks':
+            mapping=raw.get('snapshots')
+            if raw.get('next_page_token') is not None or not isinstance(mapping,dict) or set(mapping)!={symbol}:
+                raise MarketDataError('INVALID_PROVIDER_RESPONSE')
+            raw=mapping[symbol]
+        append(self.store,lease,kind,symbol,raw,iso(captured),by_contract[symbol])
 
 
 def cents(value):

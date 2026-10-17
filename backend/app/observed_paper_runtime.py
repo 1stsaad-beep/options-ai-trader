@@ -67,6 +67,16 @@ class ObservedPaperRuntime:
                 result['processed']+=1
             except (LedgerConflict,ValueError):
                 result['blocked']+=1
+        # Optional metadata cannot delay use of an already captured protective
+        # quote or veto a successful account cycle. Its network budget is shared.
+        capture_metadata=getattr(self.provider,'capture_metadata',None)
+        if callable(capture_metadata):
+            try:
+                capture_metadata([s['state']['id'] for s in snapshots],self.lease)
+            except MarketDataError as exc:
+                result['diagnosticCode']=safe_diagnostic(exc.code)
+            except (ValueError,TypeError,KeyError,OverflowError):
+                result['diagnosticCode']='DATA_UNAVAILABLE'
         return result|{'state':'RUNNING_VIRTUAL' if not result['blocked'] else 'PARTIALLY_BLOCKED'}
 
     def close(self):

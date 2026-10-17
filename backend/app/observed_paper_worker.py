@@ -11,6 +11,7 @@ from .observed_paper_store import ObservedPaperStore, LedgerConflict
 from .observed_paper_runtime import ObservedPaperRuntime
 from .observed_paper_data import ObservedPaperData
 from .market_data import AlpacaDataTransport
+from .option_metadata import AlpacaMetadataTransport
 from .market_runtime_worker import credentials_from_file
 
 
@@ -20,7 +21,8 @@ def build_provider(store):
         return None
     credentials=credentials_from_file(os.getenv('OAT_ALPACA_DATA_CREDENTIALS_FILE',''))
     budget=int(os.getenv('OAT_OBSERVED_PAPER_REQUESTS_PER_MINUTE','10'))
-    return ObservedPaperData(store,AlpacaDataTransport(credentials,observed_options=True),requests_per_minute=budget)
+    metadata=AlpacaMetadataTransport(credentials) if os.getenv('OAT_OPTION_METADATA_APPROVAL')=='read_only_approved' else None
+    return ObservedPaperData(store,AlpacaDataTransport(credentials,observed_options=True),requests_per_minute=budget,metadata_transport=metadata)
 
 
 def reset_auth_lock(store):

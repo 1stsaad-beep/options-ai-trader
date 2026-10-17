@@ -1,0 +1,433 @@
+{
+  "source": "971d7f820ac6a222acff6de9eb7b5881036fb85d",
+  "runs": [
+    39019672153,
+    39019672164
+  ],
+  "artifacts": [
+    {
+      "file": "batch57-backend.zip",
+      "sha256": "bb44ff336b8209604a23bcf86036f6063205ffa1f72f8603726b568467dd7a11",
+      "crc": "passed",
+      "contents": {
+        "test-results.xml": [
+          {
+            "name": "pytest",
+            "errors": "0",
+            "failures": "0",
+            "skipped": "0",
+            "tests": "1618",
+            "time": "31.179",
+            "timestamp": "2026-10-17T09:03:56.990225+00:00",
+            "hostname": "runnervm8k3b6"
+          }
+        ],
+        "http-smoke.json": {
+          "http_server": "passed",
+          "authentication": "passed",
+          "account_isolation": "passed",
+          "idempotency": "passed",
+          "partial_fill_duplicate": "passed",
+          "disconnect_reconcile": "passed",
+          "independent_shadow_worker": "passed",
+          "emergency_stop": "passed",
+          "worker_preserves_untrusted_state": "passed",
+          "market_data_outage": "passed",
+          "safe_emergency_owned_close": "passed",
+          "version": "1.0.0-rc.2",
+          "automatic_mock_partial_entry_stop_loss_close": "passed",
+          "automatic_daily_entry_replay": "passed",
+          "research_snapshot_list_original_replay_http": "passed",
+          "research_journal_process_restart": "passed",
+          "live_orders_sent": 0,
+          "data_source": "synthetic",
+          "database": "SQLite"
+        },
+        "lifecycle-synthetic.json": {
+          "keys": [
+            "version",
+            "source",
+            "live_enabled",
+            "purpose",
+            "scenarios"
+          ],
+          "count": 5
+        },
+        "postgres-backup-restore.json": {
+          "status": "passed",
+          "checks_passed": 21,
+          "checks_failed": 0,
+          "checks": [
+            "matching_postgresql_client_and_server_versions",
+            "custom_dump_checksum_and_offline_verification",
+            "source_changes_after_snapshot_are_independent",
+            "non_superuser_restore_to_new_database_only",
+            "second_restore_refuses_existing_target",
+            "four_account_ledger_fills_positions_migrations_and_validated_constraints_restored",
+            "restored_immutable_decisions_and_account_foreign_keys_enforced",
+            "bounded_capture_rotation_cursor_restored_without_invented_quotes",
+            "observed_alert_original_chain_ack_unread_and_immutable_guards_restored",
+            "contract_metadata_originals_and_account_bindings_restored",
+            "observed_virtual_balance_original_inputs_pending_close_segments_and_replay_restored",
+            "market_journal_exact_payload_hash_and_receipt_restored",
+            "restored_market_journal_update_delete_guards",
+            "runtime_config_inbox_ack_cache_link_budget_backoff_restored",
+            "restored_runtime_event_immutable_guard",
+            "streaming_market_archive_restores_post_backup_original_without_overwriting_prior_rows",
+            "market_archive_idempotent_restore_preserves_disabled_runtime_and_orders",
+            "application_invalidates_account_trust_and_reconciles_without_resubmission",
+            "settlement_receipt_clock_delivery_and_exact_retry_survive_backup_restore",
+            "tampered_archive_rejected_before_database_creation",
+            "only_owned_disposable_fixtures_cleaned_up"
+          ],
+          "database": "PostgreSQL",
+          "postgresql_major": 16,
+          "broker": "none",
+          "data": "synthetic"
+        },
+        "postgres-v1-results.json": {
+          "status": "passed",
+          "checks_passed": 22,
+          "checks_failed": 0,
+          "checks": [
+            "concurrent_opposite_direction_admission_serialized",
+            "concurrent_duplicate_has_one_receipt",
+            "owned_plus_pending_contract_cap",
+            "same_symbol_opposite_in_independent_account_allowed",
+            "emergency_preserves_owned_close",
+            "cross_account_fill_denied",
+            "owned_close_reaches_flat",
+            "decision_update_and_delete_guards",
+            "snapshot_rollback_and_cross_connection_visibility",
+            "additive_migrations",
+            "concurrent_research_observation_has_one_immutable_receipt",
+            "cross_connection_research_replay_uses_saved_observations",
+            "research_observation_update_delete_guards",
+            "research_observation_account_isolation",
+            "us_final_session_owned_partial_close_and_fees",
+            "concurrent_us_expiry_review_has_one_event_without_writeoff",
+            "us_expiry_preserves_inventory_basis_policy_and_reconciled_ledger",
+            "us_expiry_preserves_lost_reply_order_and_partial_fill_receipts",
+            "us_expiry_blocks_new_close_fill_at_cutoff",
+            "us_expiry_fresh_mark_cannot_fabricate_pnl_or_complete_valuation",
+            "us_expiry_policy_downgrade_blocked_with_owned_exposure",
+            "us_expiry_reconciled_same_and_opposite_new_entries_stay_blocked"
+          ],
+          "database": "PostgreSQL",
+          "broker": "none"
+        },
+        "market-data-journal-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "checks_passed": 6,
+          "checks_failed": 0,
+          "checks": [
+            "two_connection_duplicate_capture_has_one_receipt_and_audit",
+            "native_update_delete_guards_and_cross_connection_exact_replay",
+            "account_isolation",
+            "native_account_foreign_key",
+            "as_of_cannot_backdate_provider_history",
+            "capture_and_audit_atomic_rollback"
+          ],
+          "provider": "mock_contract_fixture",
+          "external_market_connection": false
+        },
+        "market-runtime-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "checks_passed": 10,
+          "checks_failed": 0,
+          "checks": [
+            "postgres_two_worker_lease_and_shared_symbol_single_fetch",
+            "demo_account_trust_and_ledger_unchanged",
+            "native_postgres_event_update_delete_guards",
+            "account_scoped_idempotent_notification_ack",
+            "native_account_observation_composite_foreign_key",
+            "expired_lease_takeover_without_duplicate_orders",
+            "postgres_shared_budget_and_retry_after_survive_connection_change",
+            "restart_backoff_recovery_and_no_fabricated_stop_fills",
+            "readonly_probe_has_no_advisory_lock_and_database_rejects_writes",
+            "graceful_owner_shutdown_immediately_invalidates_probe_and_api"
+          ],
+          "external_market_connection": false,
+          "provider": "explicit_mock_contract"
+        },
+        "paper-settlement-postgres.json": {
+          "status": "passed",
+          "database": "PostgreSQL",
+          "broker": "none",
+          "checks_passed": 5,
+          "checks_failed": 0,
+          "checks": [
+            "two_connection_duplicate_settlement_commits_once",
+            "postgres_native_receipt_and_clock_immutability",
+            "delivery_account_foreign_key",
+            "interleaved_fill_and_delivery_reconcile_across_connections",
+            "tampered_balance_locks_reconciliation"
+          ]
+        },
+        "observed-paper-postgres.json": {
+          "checks": [
+            "two_connections_single_lease",
+            "owned_opra_fixture_fill",
+            "partial_close_restart",
+            "lost_ack_exactly_once",
+            "native_update_delete_guards",
+            "lease_generation_fencing",
+            "independent_account_balances",
+            "sealed_segment_rotation",
+            "streamed_full_replay",
+            "expired_owner_shutdown_health",
+            "same_owner_successor_generation_fencing",
+            "shutdown_preserves_original_ledger",
+            "read_only_version_bound_net_valuation",
+            "causal_history_two_connection_pagination",
+            "read_only_durable_diagnostics_across_connections",
+            "alert_inbox_cross_connection_pinned_pages",
+            "alert_ack_lost_response_retry",
+            "alert_native_immutable_guards",
+            "bounded_owned_quote_rotation_across_connections",
+            "large_original_receipts_streamed_without_page_loss",
+            "causal_daily_net_valuation_across_connections",
+            "pinned_daily_report_hash_restart_and_no_financial_writes",
+            "independent_watchdog_existing_database_outage",
+            "watchdog_dedup_and_successor_shutdown",
+            "watchdog_preserves_accounts_events_leases_and_provider_state",
+            "metadata_originals_cross_connection_binding",
+            "metadata_native_immutable_guards",
+            "metadata_no_financial_write_or_eligibility"
+          ],
+          "externalOrder": false,
+          "source": "synthetic_fixture",
+          "status": "passed"
+        },
+        "observed-experiment-postgres.json": {
+          "checks": [
+            "concurrent_atomic_four_account_setup",
+            "idempotent_retry_after_control",
+            "independent_controls_and_capital",
+            "snapshot_bound_receipt_comparison"
+          ],
+          "externalOrder": false,
+          "source": "synthetic_fixture",
+          "status": "passed"
+        }
+      }
+    },
+    {
+      "file": "batch57-compose.zip",
+      "sha256": "9a1d440e72f078c2e3c5f1ecb494838a5168bd49599b284de9950814f4ddcfe8",
+      "crc": "passed",
+      "contents": {
+        "compose-smoke.json": {
+          "accounts_created": 0,
+          "checks": [
+            "owned_services_running",
+            "postgres_healthy",
+            "loopback_only_ports",
+            "api_worker_nonroot_readonly",
+            "paper_mock_live_false",
+            "public_health_safe",
+            "authenticated_database_readiness",
+            "fresh_worker_heartbeat",
+            "trading_not_ready_without_accounts",
+            "unauthorized_endpoints_401",
+            "authenticated_accounts_empty",
+            "postgres_account_order_position_counts_zero",
+            "collector_heartbeat_advances_without_api_or_phone",
+            "new_collector_process_resumes_persisted_postgres_state",
+            "database_outage_fails_healthcheck_then_worker_recovers",
+            "collector_disabled_without_secret_or_approval",
+            "api_has_no_alpaca_secret_or_transport",
+            "observed_worker_disabled_without_secret_read",
+            "observed_worker_restart_without_api_or_phone",
+            "observed_worker_independent_healthcheck"
+          ],
+          "cleanup": "owned_resources_removed",
+          "live_enabled": false,
+          "market_connection_tested": false,
+          "orders_created": 0,
+          "project": "oat-smoke-bf47fd905cd1f285f53d5314",
+          "schema_versions": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "source": "isolated_synthetic_mock",
+          "status": "passed",
+          "test": "compose_base_plus_disabled_market_runtime",
+          "worker_age_seconds": 4.762299
+        }
+      }
+    },
+    {
+      "file": "batch57-security.zip",
+      "sha256": "12ca24ac274f731815c6f1ed5fa6e1f09184cc903065015c1818324b17679ff0",
+      "crc": "passed",
+      "contents": {
+        "secret-scan.json": {
+          "keys": [
+            "files_scanned",
+            "finding_count",
+            "findings",
+            "format_version",
+            "history_blobs_scanned",
+            "history_commits",
+            "limitations",
+            "scope",
+            "skipped",
+            "status"
+          ],
+          "count": 10
+        },
+        "dependency-audit.json": {
+          "dependencies": [
+            {
+              "name": "annotated-doc",
+              "version": "0.0.5",
+              "vulns": []
+            },
+            {
+              "name": "annotated-types",
+              "version": "0.8.0",
+              "vulns": []
+            },
+            {
+              "name": "anyio",
+              "version": "4.15.1",
+              "vulns": []
+            },
+            {
+              "name": "certifi",
+              "version": "2026.7.22",
+              "vulns": []
+            },
+            {
+              "name": "click",
+              "version": "8.5.0",
+              "vulns": []
+            },
+            {
+              "name": "fastapi",
+              "version": "0.143.0",
+              "vulns": []
+            },
+            {
+              "name": "h11",
+              "version": "0.16.0",
+              "vulns": []
+            },
+            {
+              "name": "httpcore",
+              "version": "1.0.9",
+              "vulns": []
+            },
+            {
+              "name": "httpx",
+              "version": "0.28.1",
+              "vulns": []
+            },
+            {
+              "name": "idna",
+              "version": "3.20",
+              "vulns": []
+            },
+            {
+              "name": "iniconfig",
+              "version": "2.3.1",
+              "vulns": []
+            },
+            {
+              "name": "opentelemetry-api",
+              "version": "1.45.1",
+              "vulns": []
+            },
+            {
+              "name": "packaging",
+              "version": "26.3",
+              "vulns": []
+            },
+            {
+              "name": "pluggy",
+              "version": "1.6.0",
+              "vulns": []
+            },
+            {
+              "name": "psycopg",
+              "version": "3.3.6",
+              "vulns": []
+            },
+            {
+              "name": "psycopg-binary",
+              "version": "3.3.6",
+              "vulns": []
+            },
+            {
+              "name": "pydantic",
+              "version": "2.14.0",
+              "vulns": []
+            },
+            {
+              "name": "pydantic-core",
+              "version": "2.50.0",
+              "vulns": []
+            },
+            {
+              "name": "pygments",
+              "version": "2.21.0",
+              "vulns": []
+            },
+            {
+              "name": "pytest",
+              "version": "9.1.1",
+              "vulns": []
+            },
+            {
+              "name": "starlette",
+              "version": "1.7.0",
+              "vulns": []
+            },
+            {
+              "name": "typing-extensions",
+              "version": "4.16.0",
+              "vulns": []
+            },
+            {
+              "name": "typing-inspection",
+              "version": "0.4.4",
+              "vulns": []
+            },
+            {
+              "name": "uvicorn",
+              "version": "0.54.0",
+              "vulns": []
+            }
+          ],
+          "fixes": []
+        },
+        "dart-dependency-audit.json": {
+          "keys": [
+            "status",
+            "checked_at",
+            "source",
+            "ecosystem",
+            "packages_checked",
+            "dependencies",
+            "skipped",
+            "limitation"
+          ],
+          "count": 8
+        }
+      }
+    }
+  ]
+}
