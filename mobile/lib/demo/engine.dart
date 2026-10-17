@@ -1,6 +1,7 @@
 // Entirely local simulation. No imports of HTTP, sockets, TraderApi or brokers.
 import 'dart:convert';
 import 'dart:math' as math;
+import '../protective_exit.dart';
 
 class DemoRejected implements Exception {
   final String message;
@@ -849,14 +850,11 @@ class DemoEngine {
         final mark = p['last_bid'] * p['quantity'] * 100;
         String? reason;
         var exitQty = p['quantity'] as int;
-        if (mark * 100 <= p['cost'] * (100 - r['stop_pct'])) {
-          reason = 'وقف خسارة';
-        }
-        if (mark * 100 >= p['cost'] * (100 + r['take_pct'])) reason = 'جني ربح';
-        if (r['trailing_pct'] > 0 && p['high_bid'] > p['cost'] / p['quantity'] / 100 &&
-            p['last_bid'] * 100 <= p['high_bid'] * (100 - r['trailing_pct'])) {
-          reason = 'وقف متحرك';
-        }
+        // Shared rule and priority (STOP > TAKE > TRAIL) with Market Paper and Broker Paper.
+        reason = const {stopLossExit: 'وقف خسارة', takeProfitExit: 'جني ربح', trailingStopExit: 'وقف متحرك'}[
+            protectiveExitCents(basis: p['cost'] as int, value: mark as int,
+                peak: (p['high_bid'] as int) * (p['quantity'] as int) * 100,
+                stopPercent: r['stop_pct'] as int, takePercent: r['take_pct'] as int, trailPercent: r['trailing_pct'] as int)];
         if (reason == null && r['partial_take_pct'] > 0 && p['partial_taken'] != true &&
             p['quantity'] >= 2 && mark * 100 >= p['cost'] * (100 + r['partial_take_pct'])) {
           reason = 'جني ربح مرحلي'; exitQty = p['quantity'] ~/ 2;

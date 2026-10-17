@@ -17,6 +17,7 @@ import 'paper_money.dart';
 import 'delivery_valuation.dart';
 import 'paper_execution.dart';
 import 'paper_return.dart';
+import 'protective_exit.dart';
 import 'dart:math' as math;
 
 typedef PaperRow=Map<String,dynamic>;
@@ -538,12 +539,16 @@ class MarketPaper extends ChangeNotifier {
         marks[q.contract]=q;
         final average=position['cost']/(qty*100),highest=(position['highBid'] as num).toDouble();
         final net=PaperReturn(a,position,q.bid),costed=a['executionPolicy']==conservativeExecution;
-        final stop=costed?net.lossAtLeast(a['stopPercent'] as int):q.bid<=average*(1-(a['stopPercent'] as int)/100);
-        final take=costed?net.gainAtLeast(a['takePercent'] as int):q.bid>=average*(1+(a['takePercent'] as int)/100);
-        final trail=costed?net.trailingAtLeast(a['trailPercent'] as int):highest>average&&q.bid<=highest*(1-(a['trailPercent'] as int)/100);
+        // Shared rule (protective_exit.dart): raw bid or costed liquidation, same priority everywhere.
+        final hundred=BigInt.from(qty*100);
+        final protective=costed
+            ?protectiveExit(basis:net.basis,value:net.liquidation,peak:net.peak>net.liquidation?net.peak:net.liquidation,
+                stopPercent:a['stopPercent'] as int,takePercent:a['takePercent'] as int,trailPercent:a['trailPercent'] as int)
+            :protectiveExit(basis:BigInt.from(position['cost'] as int),value:BigInt.from(q.bid)*hundred,
+                peak:BigInt.from(math.max(highest.toInt(),q.bid))*hundred,
+                stopPercent:a['stopPercent'] as int,takePercent:a['takePercent'] as int,trailPercent:a['trailPercent'] as int);
         // Independent price protection has priority over optional analysis.
-        closeReason=forceClose?'MANUAL':
-          (stop?'STOP_LOSS':take?'TAKE_PROFIT':trail?'TRAILING_STOP':closeReason);
+        closeReason=forceClose?'MANUAL':(protective??closeReason);
         if(closeReason==null&&qty>=2&&position['partialTaken']!=true&&((a['partialPercent']??0) as int)>0&&
           (costed?net.gainAtLeast(a['partialPercent'] as int):q.bid>=average*(1+((a['partialPercent']??0) as int)/100))) {
           closeReason='PARTIAL_PROFIT';

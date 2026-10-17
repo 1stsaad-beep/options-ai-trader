@@ -15,6 +15,7 @@ import 'broker_order_service.dart';
 import 'option_eligibility.dart';
 import 'broker_order_ticket.dart';
 import 'broker_portfolio.dart';
+import 'broker_protective.dart';
 import 'broker_store.dart';
 import 'live_gate.dart';
 
@@ -38,6 +39,9 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
       underlyingQuote: (u) async => UnderlyingQuote.fromDirect(await DirectAlpaca().stockQuote(u)));
   String? error;
   bool loading = false;
+  Map<String, ProtectiveStatus> protective = const {};
+  ProtectivePolicy protectivePolicy = const ProtectivePolicy();
+  late final BrokerProtectiveTracker tracker = BrokerProtectiveTracker(widget.registry.storage, widget.account.id, clock: _now);
   DateTime _now() => (widget.clock ?? DateTime.now)();
 
   @override
@@ -55,7 +59,14 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
           onRefreshTokenRotated: (t) => widget.registry.updateSecret(a.id, 'refreshToken', t));
       final p = await loadPortfolio(a, adapter, clock: widget.clock);
       final o = await service.journal(a).orders();
-      if (mounted) setState(() { portfolio = p; orders = o; loading = false; });
+      var prot = protective, pol = protectivePolicy;
+      try {
+        prot = {for (final s in await tracker.observe(a.broker, p.positions)) s.contract: s};
+        pol = await tracker.policy();
+      } catch (_) {
+        prot = const {}; // monitoring unavailable; never blocks viewing or manual closes
+      }
+      if (mounted) setState(() { portfolio = p; orders = o; protective = prot; protectivePolicy = pol; loading = false; });
     } on BrokerException catch (e) {
       _fail(e.code);
     } on BrokerStoreException catch (e) {
@@ -115,6 +126,31 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
     }
     final list = await service.journal(widget.account).orders();
     if (mounted) setState(() => orders = list);
+  }
+
+  static const _exitLabels = {'STOP_LOSS': 'وقف خسارة', 'TAKE_PROFIT': 'جني ربح', 'TRAILING_STOP': 'وقف متحرك'};
+  String _exitText(ProtectiveStatus? s) => s?.exit == null ? '' : '\n⚠ اقتراح إغلاق: ${_exitLabels[s!.exit]} (اضغط مطولًا)';
+
+  Future<void> _editPolicy() async {
+    final c = [protectivePolicy.stopPercent, protectivePolicy.takePercent, protectivePolicy.trailPercent]
+        .map((v) => TextEditingController(text: '$v')).toList();
+    final ok = await showDialog<bool>(context: context, builder: (ctx) => AlertDialog(
+      title: const Text('حدود الحماية'),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        for (final (i, label) in ['وقف الخسارة %', 'جني الربح %', 'وقف متحرك % (0 = إيقاف)'].indexed)
+          TextField(key: ValueKey('protective-$i'), controller: c[i], keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: label)),
+      ]),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
+        FilledButton(key: const ValueKey('save-protective'), onPressed: () => Navigator.pop(ctx, true), child: const Text('حفظ')),
+      ]));
+    if (ok != true) return;
+    final v = c.map((x) => int.tryParse(x.text.trim()) ?? -1).toList();
+    final p = ProtectivePolicy(stopPercent: v[0], takePercent: v[1], trailPercent: v[2]);
+    if (!p.valid) { _fail('INVALID_POLICY'); return; }
+    await tracker.setPolicy(p);
+    if (mounted) setState(() => protectivePolicy = p);
   }
 
   // Keep the previous observation visible but clearly marked; never merge it with failed data.
@@ -178,6 +214,12 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
                     style: TextStyle(color: Theme.of(context).colorScheme.error)),
               ],
             ))),
+            Row(children: [
+              Expanded(child: Text('حماية: SL ${protectivePolicy.stopPercent}% • TP ${protectivePolicy.takePercent}% • '
+                  'Trailing ${protectivePolicy.trailPercent}% (اقتراح فقط، الإرسال بتأكيدك)', key: const ValueKey('protective-policy'))),
+              IconButton(key: const ValueKey('edit-protective'), tooltip: 'تعديل الحماية', onPressed: loading ? null : _editPolicy,
+                  icon: const Icon(Icons.shield_outlined)),
+            ]),
             Padding(padding: const EdgeInsets.only(top: 8, bottom: 4),
                 child: Text('المراكز (${p.positions.length})', style: Theme.of(context).textTheme.titleMedium)),
             if (p.positions.isEmpty) const Text('لا توجد مراكز مفتوحة.'),
@@ -187,7 +229,8 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
                     contract: positionOcc(widget.account.broker, pos), side: TicketSide.sellToClose,
                     quantity: (decimalCents(pos.quantity) ?? 0) ~/ 100, conid: pos.contractId),
                 title: Text(pos.symbol, textDirection: TextDirection.ltr),
-                subtitle: Text('الكمية ${pos.quantity} • متوسط ${pos.averagePrice ?? '—'} • القيمة ${pos.marketValue ?? '—'}'),
+                subtitle: Text('الكمية ${pos.quantity} • متوسط ${pos.averagePrice ?? '—'} • القيمة ${pos.marketValue ?? '—'}'
+                    '${_exitText(protective[positionOcc(widget.account.broker, pos)])}'),
                 trailing: Text(pos.unrealizedPl ?? '—', textDirection: TextDirection.ltr,
                     style: TextStyle(color: _plColor(context, pos.unrealizedPl))),
               )),

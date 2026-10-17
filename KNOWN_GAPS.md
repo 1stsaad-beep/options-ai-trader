@@ -109,3 +109,8 @@ Paper broker order status and fills (Alpaca, IBKR, TradeStation) are reconciled 
 ## 2026-10-17 batch B9 — on-phone option eligibility
 
 Paper broker entries (all three brokers) now require on-phone eligibility, run at review and again at re-admission: standard deliverable and tradable contract (same server rule), open interest and its age, spread, a fresh underlying quote, and model IV/delta from B8. Ineligible entries are refused with explicit reasons; closes are not vetoed. Evidence is stored in the INTENT. 1093 Flutter tests pass and the debug APK builds. See docs/OPTION_ELIGIBILITY_B9_20261017.md. User decisions needed: policy thresholds, the rate/dividend inputs, and the terms source for IBKR/TS. Still OPEN: real Paper evidence, adjusted contracts, discrete dividends. B6/B7 are deferred. All gaps above remain as recorded.
+
+
+## 2026-10-17 batch B10 — unified trailing/protective exits
+
+Market Paper, Demo and Broker Paper now use one integer rule (`protective_exit.dart`): stop > take > trail, trailing armed only after the peak exceeds the basis, and the current peak included. Market Paper behaviour is unchanged (randomized equivalence test). Demo priority now matches the others: stop wins when stop and trailing both hit. Broker Paper shows close suggestions only, with no auto-send. 1099 Flutter tests pass and the debug APK builds. See docs/TRAILING_CONSISTENCY_B10_20261017.md. Still OPEN: server trailing has no arming (server out of scope this phase), no background Broker Paper monitor, partial/time-exit unification. All gaps above remain as recorded.

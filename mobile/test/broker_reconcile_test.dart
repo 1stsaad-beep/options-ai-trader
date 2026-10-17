@@ -241,6 +241,8 @@ void main() {
       await tester.pumpAndSettle();
     }
     await settle();
+    await tester.ensureVisible(find.byKey(const ValueKey('reconcile-orders')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('reconcile-orders')));
     await settle();
     expect(find.textContaining('غير محسوم 1'), findsOneWidget);
