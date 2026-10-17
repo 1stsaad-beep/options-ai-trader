@@ -214,6 +214,8 @@ def run():
             'watchdog_preserves_accounts_events_leases_and_provider_state']
         from contract_evidence_check import check as metadata_check
         result['checks'] += metadata_check(repositories)
+        from alert_delivery_check import check as notification_check
+        result['checks'] += notification_check(repositories)
         print(json.dumps(result,sort_keys=True))
     finally:
         for repo in repositories: repo.close()

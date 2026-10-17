@@ -204,7 +204,17 @@ def observed_contract_schema(db, postgres):
             db.execute(f"CREATE TRIGGER immutable_contract_evidence_{action.lower()} BEFORE {action} ON observed_contract_evidence BEGIN SELECT RAISE(ABORT, 'contract evidence is immutable'); END")
 
 
-MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema), (7, 'v1_market_runtime', market_runtime_schema), (8, 'v1_market_segments', market_segments_schema), (9, 'v1_paper_settlement', paper_settlement_schema), (10, 'v1_observed_paper_runtime', observed_paper_schema), (11, 'v1_observed_alert_inbox', observed_alert_schema), (12, 'v1_observed_contract_evidence', observed_contract_schema)]
+def observed_delivery_schema(db, postgres):
+    db.execute('CREATE TABLE observed_alert_delivery_state (target_hash TEXT PRIMARY KEY, payload TEXT NOT NULL)')
+    db.execute('CREATE TABLE observed_alert_delivery_receipts (target_hash TEXT NOT NULL, sequence BIGINT NOT NULL REFERENCES observed_alert_events(sequence), event_hash TEXT NOT NULL, payload TEXT NOT NULL, PRIMARY KEY(target_hash,sequence))')
+    if postgres:
+        db.execute('CREATE TRIGGER immutable_alert_delivery BEFORE UPDATE OR DELETE ON observed_alert_delivery_receipts FOR EACH ROW EXECUTE FUNCTION immutable_decision_v1()')
+    else:
+        for action in ('UPDATE','DELETE'):
+            db.execute(f"CREATE TRIGGER immutable_alert_delivery_{action.lower()} BEFORE {action} ON observed_alert_delivery_receipts BEGIN SELECT RAISE(ABORT, 'alert delivery receipts are immutable'); END")
+
+
+MIGRATIONS = [(1, 'v02_baseline', base), (2, 'v03_safety_relations_market', safety_schema), (3, 'v03_import_balance_baseline', balance_baseline), (4, 'v1_decisions_lifecycle', lifecycle_schema), (5, 'v1_research_observations', research_observation_schema), (6, 'v1_market_data_journal', market_data_journal_schema), (7, 'v1_market_runtime', market_runtime_schema), (8, 'v1_market_segments', market_segments_schema), (9, 'v1_paper_settlement', paper_settlement_schema), (10, 'v1_observed_paper_runtime', observed_paper_schema), (11, 'v1_observed_alert_inbox', observed_alert_schema), (12, 'v1_observed_contract_evidence', observed_contract_schema), (13, 'v1_observed_alert_delivery', observed_delivery_schema)]
 
 
 def migrate(db, postgres):

@@ -135,6 +135,19 @@ def run():
             first_alert=alert_page(observed)['events'][0]
             alert_ack(observed,first_alert['sequence'],first_alert['eventHash'],0)
             saved_alerts=alert_page(observed,after=0)
+            from alert_delivery_check import FixtureReceiver
+            from app.observed_alert_delivery import AlertDelivery
+            from app.observed_paper import digest
+            notification_target=digest('offline-backup-notification-fixture')
+            notification_wire=FixtureReceiver()
+            notifier=AlertDelivery(repository.transaction,lambda:now,notification_wire,notification_target)
+            assert notifier.tick()['state']=='DELIVERED'
+            notification_wire.status=429
+            assert notifier.tick()['state']=='RETRY_PENDING'
+            pending_notification=notification_wire.calls[-1]
+            with repository.transaction() as db:
+                saved_notifications={table:db.all('SELECT * FROM '+table+' ORDER BY 1') for table in
+                    ('observed_alert_delivery_state','observed_alert_delivery_receipts')}
             with tempfile.TemporaryDirectory(prefix="oat-postgres-roundtrip-") as temporary:
                 archive = Path(temporary) / "ledger.dump"
                 metadata = snapshots.backup(fixture, archive)
@@ -211,6 +224,22 @@ def run():
                         except psycopg.Error as error: assert 'immutable' in str(error)
                         else: raise AssertionError('Restored alert guard missing')
                     checks.append('observed_alert_original_chain_ack_unread_and_immutable_guards_restored')
+                    with recovered_repository.transaction() as db:
+                        assert saved_notifications=={table:db.all('SELECT * FROM '+table+' ORDER BY 1') for table in saved_notifications}
+                    for statement in ('UPDATE observed_alert_delivery_receipts SET payload=payload','DELETE FROM observed_alert_delivery_receipts'):
+                        try:
+                            with recovered_repository.transaction() as db:db.execute(statement)
+                        except psycopg.Error as error:assert 'immutable' in str(error)
+                        else:raise AssertionError('Restored notification receipt guard missing')
+                    checks.append('notification_receipts_backoff_and_immutable_guards_restored')
+                    restored_wire=FixtureReceiver()
+                    restored_notifier=AlertDelivery(recovered_repository.transaction,lambda:now,restored_wire,notification_target)
+                    assert restored_notifier.tick()['state']=='BACKOFF' and not restored_wire.calls
+                    restored_notifier.now=lambda:now+timedelta(seconds=61)
+                    assert restored_notifier.tick()['state']=='DELIVERED'
+                    assert restored_wire.calls==[pending_notification]
+                    assert alert_page(recovered_observed,after=0)==saved_alerts
+                    checks.append('notification_pending_exact_event_and_key_resume_after_restore_without_owner_ack')
                     # Verify the restored originals and their original financial anchors.
                     metadata_store=ObservedPaperStore(recovered_repository,lambda:now)
                     assert metadata_report(metadata_store,'backup-metadata')==saved_metadata

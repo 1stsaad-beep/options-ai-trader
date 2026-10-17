@@ -215,3 +215,7 @@ Batch55 Direct39016488917 passed969 visible Flutter tests and failed one existin
 ## Batch57 — R09/R14 durable contract evidence
 
 Additive migration12, exact immutable metadata originals, per-contract chain/head validation and account-version bindings, read-only authenticated report, fixed-host GET-only transport. Financial v1/v2 semantics and all prior receipts are unchanged.33 new cases;92 targeted and1618 complete Python passed locally. Source PostgreSQL/Compose/security pending. Runtime capture/mobile integration follows; independently timed Greeks, effective historical deliverables and legacy lot qualification remain blocked, never inferred from receipt/quote timestamps. Stage one remains PARTIAL. See docs/CONTRACT_EVIDENCE_20261017.md.
+
+### Update2026-10-17 — batch61 notification transport
+
+The existing alert journal now feeds a separate opt-in, durable at-least-once HTTPS sender: exact-event ACK, stable receiver key, restart backoff, owner-generation fencing, immutable receipt migration13, bounded DNS/body/deadline and independent liveness. Owner inbox ACK and financial ledgers are unchanged.35 new synthetic tests;1664 full local Python passes. Actual PostgreSQL/restore/security gates pending source61. No external message was sent. Receiver provisioning, independent host/DB-outage monitoring and trusted constant-time history checkpoints remain open; requirement status stays PARTIAL. See `docs/ALERT_DELIVERY_20261017.md`.

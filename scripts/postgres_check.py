@@ -18,7 +18,7 @@ if urlparse(url).hostname not in {'localhost', '127.0.0.1', '::1', 'postgres'}:
     raise SystemExit('Only a local/container disposable PostgreSQL host is permitted')
 repo = Repository(url)
 with repo.transaction() as db:
-    assert [row['version'] for row in db.all('SELECT version FROM schema_migrations ORDER BY version')] == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    assert [row['version'] for row in db.all('SELECT version FROM schema_migrations ORDER BY version')] == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
     constraints = db.all("SELECT constraint_name FROM information_schema.table_constraints WHERE table_schema=current_schema() AND constraint_type='FOREIGN KEY'")
     assert len(constraints) >= 8
 
