@@ -42,3 +42,8 @@
 ## 2026-10-16 observed-paper runtime isolation
 
 Routine implementation decision: durable market virtual execution gets an explicit independent account namespace and versioned immutable input ledger. It does not reinterpret synthetic accounts or import device balances. Operator controls cannot inject execution observations. New alpaca risk remains blocked until the missing qualified deliverable/Greek contract is implemented. A disabled persistent worker and opt-in Compose profile are implemented without deployment or reading credentials. This preserves approved mode separation and real-order prohibition.
+
+
+## 2026-10-17 D35 — Android-only phase (B14)
+
+| D35 | This phase delivers the Android Flutter app only, with no persistent server. iOS (`mobile/ios`), the server (`backend`), `infra` and server CI are paused: kept intact, not deleted or disabled, and not acceptance criteria. Server divergences are documented, not fixed. | User instruction 2026-10-17. Guard: `mobile/test/android_scope_test.dart`. Details: docs/ANDROID_ONLY_SCOPE_B14_20261017.md. Resuming them needs an explicit user decision. |

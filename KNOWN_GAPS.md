@@ -129,3 +129,8 @@ The Broker Paper order journal now uses v2 segments (250 events each, 50,000 cap
 ## 2026-10-17 batch B13 — daily NAV, Sharpe and drawdown on the phone
 
 Market Paper and Broker Paper accounts now record one NAV value per NY session date. Past dates are frozen and incomplete valuations are never recorded. Sharpe and drawdown use the server daily-report rules (252, rf 0, ddof 1, at least 20 returns, same status codes) and match all five shared server fixtures. 1120 Flutter tests pass and the debug APK builds. See docs/DAILY_NAV_B13_20261017.md. Still OPEN: no background sampler (days the app is not opened stay missing and block Sharpe), broker equity is not independently re-valued, no device or real-Paper evidence. All gaps above remain as recorded.
+
+
+## 2026-10-17 batch B14 — Android-only scope (documentation)
+
+This phase is Android only and has no persistent server. iOS, `backend`, `infra` and server CI are paused: kept intact, not deleted or disabled (D35). A guard test now ensures the Android core does not import the server client and that the paused sources still exist. B13's doc listed a status code as `NON_POSITIVE_EQUITY`; the correct name is `NONPOSITIVE_RETURN_BASE`, now fixed. 1122 Flutter tests pass and the debug APK builds. See docs/ANDROID_ONLY_SCOPE_B14_20261017.md. Still OPEN: server-only 24/7 features have no Android equivalent; iOS is not signed or accepted. All gaps above remain as recorded.
