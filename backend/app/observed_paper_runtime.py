@@ -60,4 +60,6 @@ class ObservedPaperRuntime:
         return result|{'state':'RUNNING_VIRTUAL' if not result['blocked'] else 'PARTIALLY_BLOCKED'}
 
     def close(self):
-        if self.lease: self.store.release(self.lease)
+        if self.lease:
+            self.store.release(self.lease,mark_stopped=True)
+            self.lease=None

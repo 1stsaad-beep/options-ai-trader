@@ -214,7 +214,16 @@ class ObservedPaperStore:
         row=db.one("SELECT * FROM observed_paper_lease WHERE name='worker'")
         return bool(isinstance(lease,dict) and row and lease=={'owner':row['owner'],'generation':row['generation']} and stamp(row['expires_at'])>now)
 
-    def release(self, lease):
+    def release(self, lease, *, mark_stopped=False):
         with self.repo.transaction() as db:
-            if self._owns(db,lease,self.now()):
-                db.execute("UPDATE observed_paper_lease SET expires_at=? WHERE name='worker'",(iso(self.now()),))
+            row=db.one("SELECT * FROM observed_paper_lease WHERE name='worker'")
+            # An expired owner may invalidate its old heartbeat, but never a
+            # successor's generation (even if the owner label was reused).
+            if not (isinstance(lease,dict) and row and lease=={'owner':row['owner'],'generation':row['generation']}):
+                return False
+            at=iso(self.now())
+            db.execute("UPDATE observed_paper_lease SET expires_at=? WHERE name='worker'",(at,))
+            if mark_stopped:
+                db.execute("INSERT INTO runtime_health VALUES('observed_paper',?,?) ON CONFLICT(name) DO UPDATE SET updated_at=excluded.updated_at,payload=excluded.payload",
+                    (at,canonical({'state':'STOPPED','externalOrder':False})))
+            return True

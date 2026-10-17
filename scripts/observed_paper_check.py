@@ -15,6 +15,8 @@ from app.repository import Repository
 from app.observed_paper import DEFAULTS
 from app.observed_paper_store import ObservedPaperStore, LedgerConflict
 from app.observed_option_replay import iso
+from app.observed_paper_runtime import ObservedPaperRuntime
+from app.runtime_health import heartbeat_valid
 
 
 def seed(store,account):
@@ -78,10 +80,31 @@ def check(repositories):
     with repositories[0].transaction() as db:
         assert db.one('SELECT COUNT(*) AS n FROM observed_paper_segments WHERE account_id=?',(other,))['n']==2
     stores[1-owner].release(lease2)
+    before=stores[0].snapshot(account,full=True)
+    first=ObservedPaperRuntime(stores[0],owner='reused-worker')
+    assert first.tick()['state']=='DISABLED'
+    clock[0]+=timedelta(seconds=31)
+    first.close()
+    with repositories[1].transaction() as db:
+        stopped=db.one("SELECT * FROM runtime_health WHERE name='observed_paper'")
+        assert json.loads(stopped['payload'])['state']=='STOPPED'
+        assert not heartbeat_valid(stopped,'observed_paper',clock[0])
+    first.tick();clock[0]+=timedelta(seconds=31)
+    successor=ObservedPaperRuntime(stores[1],owner='reused-worker')
+    successor.tick()
+    with repositories[1].transaction() as db:
+        healthy=db.one("SELECT * FROM runtime_health WHERE name='observed_paper'")
+    first.close()
+    with repositories[0].transaction() as db:
+        assert db.one("SELECT * FROM runtime_health WHERE name='observed_paper'")==healthy
+        assert heartbeat_valid(healthy,'observed_paper',clock[0])
+    successor.close();successor.close()
+    assert stores[0].snapshot(account,full=True)==before
     return {'status':'passed','source':'synthetic_fixture','externalOrder':False,'checks':[
         'two_connections_single_lease','owned_opra_fixture_fill','partial_close_restart','lost_ack_exactly_once',
         'native_update_delete_guards','lease_generation_fencing','independent_account_balances',
-        'sealed_segment_rotation','streamed_full_replay']}
+        'sealed_segment_rotation','streamed_full_replay','expired_owner_shutdown_health',
+        'same_owner_successor_generation_fencing','shutdown_preserves_original_ledger']}
 
 
 def run():

@@ -66,6 +66,9 @@ def main(argv=None):
                 if args.once: return 0
             except Exception:
                 print(json.dumps({'component':'observed_paper','state':'WORKER_UNAVAILABLE','externalOrder':False}),flush=True)
+                if runtime is not None:
+                    try: runtime.close()
+                    except Exception: pass
                 if repo is not None:
                     try: repo.close()
                     except Exception: pass

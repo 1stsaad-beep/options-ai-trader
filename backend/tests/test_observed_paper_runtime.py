@@ -85,7 +85,7 @@ def test_disabled_cli_and_health_do_not_create_probe_database(tmp_path,monkeypat
     assert main(['--healthcheck'])==1 and not path.exists()
     assert main(['--once'])==0
     assert 'DISABLED' in capsys.readouterr().out
-    assert main(['--healthcheck'])==0
+    assert main(['--healthcheck'])==1
     monkeypatch.setenv('ENABLE_LIVE','true')
     with pytest.raises(SystemExit,match='hard locked'): main(['--once'])
 

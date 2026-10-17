@@ -1,0 +1,20 @@
+{
+  "source": "7499fcb5e41695638dffb453f35a5f883b737bf5",
+  "run": 39005363661,
+  "artifact": 12091140984,
+  "file": "batch31-direct.zip",
+  "sha256": "f0e1851e1cf826c1b8e7ce1dda7acc2779d7156e6752b628d52ef9813fbec654",
+  "crcVerified": true,
+  "flutter": {
+    "passed": 809,
+    "hiddenFrameworkEntries": 56,
+    "failed": 0,
+    "skipped": 0
+  },
+  "jvm": {
+    "passed": 61,
+    "failed": 0,
+    "skipped": 0
+  },
+  "actualProviderConnection": false
+}
