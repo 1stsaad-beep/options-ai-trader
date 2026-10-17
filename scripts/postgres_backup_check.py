@@ -194,9 +194,9 @@ def run():
                     assert recovered_observed.events('backup-observed')==saved_observed_events
                     assert alert_page(recovered_observed,after=0)==saved_alerts
                     assert alert_page(recovered_observed)['after']==first_alert['sequence']
-                    for sql in ('UPDATE observed_alert_events SET payload=payload','DELETE FROM observed_alert_events'):
+                    for statement in ('UPDATE observed_alert_events SET payload=payload','DELETE FROM observed_alert_events'):
                         try:
-                            with recovered_repository.transaction() as db: db.execute(sql)
+                            with recovered_repository.transaction() as db: db.execute(statement)
                         except psycopg.Error as error: assert 'immutable' in str(error)
                         else: raise AssertionError('Restored alert guard missing')
                     checks.append('observed_alert_original_chain_ack_unread_and_immutable_guards_restored')

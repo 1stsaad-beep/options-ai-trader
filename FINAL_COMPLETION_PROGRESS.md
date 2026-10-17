@@ -232,3 +232,8 @@ Batch41 saved at be5328796337e1a5c20e558ea5bc4b1574347198. CI39010837566 passed1
 Flutter adds one-page alert reading with independent canonical SHA256/sequence/transition/anchor validation, explicit owner-wide ACK and manual exact retry after uncertain response. Reading never ACKs; page advancement requires the displayed page ACK. Fixed bottom controls remain visible at360px RTL in both themes; no automatic polling, external push or phone test request. Shared fixture is generated from30 actual isolated SQL transitions and verified by Python;23 Dart/widget cases cover valid chains,18 malformed responses, ACK conflicts, lost response and page retry. Flutter/JVM acceptance pending CI. Entry eligibility remains locked.
 
 Batch42 local acceptance:1477 Python passed from the backend working directory used in CI, zero failures/skips;17 affected alert tests. Batch41 failed-PG ZIP verified SHA256/CRC; its raw JUnit confirms1476 passes, not PG acceptance. Flutter/Dart is unavailable locally, so source validation follows through existing GitHub Actions without APK packaging.
+
+
+## Batch43 — PostgreSQL restore harness name collision
+
+Source42 e76deafbb3d87f32605eebb2e5a0f6f89dce3b2a passed1477 Python, the PostgreSQL execution/journal/runtime/settlement/observed/experiment checks and Compose. The extended restore script failed before creating its fixture role: the new loop variable sql shadowed psycopg.sql throughout run(). Renamed that local loop variable to statement; no financial/runtime code or migration changed. Actual dump/restore rerun remains required in CI. Direct Flutter/JVM42 remains running; no mobile change in43.
