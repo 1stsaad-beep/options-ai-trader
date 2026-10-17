@@ -21,3 +21,9 @@ POST bodies are bounded to8192 bytes during streaming, with an absolute2-second 
 ## Evidence
 
 34 new Python cases;1729 full Python tests passed locally, no failures/skips (existing Starlette deprecation warning). Tests cover the real sender→ASGI receiver contract, lost ACK/retry, exact original deduplication across16 concurrent accepts/two connections, head-write rollback, abrupt process exit after commit, immutability, corrupted tail/head/removal, endpoint identity, private/missing/symlink files, invalid/future authority claims, authentication, bounded/slow/chunked bodies, strict JSON, pagination and disabled/explicit CLI initialization. These are synthetic isolated tests, not deployment or real-message acceptance. Source GitHub CI is pending this save. Existing mobile/native/financial-v1/v2/workflows remain unchanged.
+
+## Batch67: reviewed synthetic fixture finding
+
+Source66 `9b3d33963758d64c97aaf1225cfb35c0b1c55472` passed backend/Compose39038925851. Security39038925996 failed at the pattern scanner: the synthetic ASGI receiver token assignment matched the high-entropy rule in the current file and reachable original. It was written for these isolated tests and was never provisioned or used as a real credential. This is not an accepted security run or a hidden test failure.
+
+67 records an exact SHA256/value AND original test-path exception in the existing reviewed-fixture mechanism. No workflow, pattern, history scope or arbitrary test file is exempted. A regression proves changed values, another test path, production paths and provider-token patterns remain findings; the exact historical fixture is recognized. History is retained; no rewriting or force push.1730 full local Python tests pass; the local partial checkout pattern scan has zero findings, while full remote-history CI remains pending.

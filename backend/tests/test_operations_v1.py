@@ -250,6 +250,18 @@ def test_reviewed_documentation_fixture_exception_is_value_and_path_specific():
     assert scanner.scan_text("docs/DATABASE.md", changed)
 
 
+def test_receiver_fixture_review_exempts_only_exact_value_in_original_path():
+    path = "backend/tests/test_alert_receiver.py"
+    fixture = "synthetic-receiver-token-123456789"
+    content = "TOKEN = '" + fixture + "'"
+    assert scanner.scan_text(path, content) == []
+    assert scanner.scan_text(path, content, ref="historical-batch66") == []
+    assert scanner.scan_text("backend/tests/another_receiver.py", content)
+    assert scanner.scan_text("app/receiver_config.py", content)
+    assert scanner.scan_text(path, content.replace(fixture, fixture + "-replacement"))
+    assert scanner.scan_text(path, fake_github())
+
+
 @pytest.mark.parametrize("path", [".env", "infra/.env.local", "android/key.properties", "keys/signing.jks", "id_ed25519", "certs/server.pem"])
 def test_sensitive_paths_flagged(path):
     assert scanner.path_findings(path, "HEAD")[0]["rule"] == "sensitive_file_path"

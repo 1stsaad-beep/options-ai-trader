@@ -44,6 +44,9 @@ FIXTURE_TOKENS = frozenset({
 # Reviewed baseline disposable CI password and local documentation placeholder.
 # Exact path + digest exceptions do not exempt an arbitrary replacement value.
 FIXTURE_CREDENTIAL_DIGESTS = {
+    # Reviewed batch66 in-process ASGI fixture; never issued or used as a real credential.
+    # Exact path/value also covers its reachable original; no history is removed.
+    "backend/tests/test_alert_receiver.py": "2d5b510ba44491734f8b1fcabf206f0a9da3907114470f27daa99793b681745f",
     ".github/workflows/checks.yaml": "3e17fbc6521e18184bbdee3883b7046707f8f112a44487514194c01711d3d628",
     "docs/DATABASE.md": "edc57f2c6a1f6ad3c9325288a57b74883ed4b9b24d4f00ff23df7808e221c75a",
     "docs/DATABASE_V03.md": "edc57f2c6a1f6ad3c9325288a57b74883ed4b9b24d4f00ff23df7808e221c75a",
