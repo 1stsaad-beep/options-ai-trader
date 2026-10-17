@@ -56,6 +56,35 @@ class AlpacaPaperAdapter implements BrokerAdapter {
   @override
   Future<BrokerQuote?> optionQuote(OccContract contract, {String? conid}) async => null;
 
+  static const _states = {
+    'filled': 'FILLED', 'partially_filled': 'PARTIALLY_FILLED', 'canceled': 'CANCELED', 'expired': 'EXPIRED',
+    'rejected': 'REJECTED', 'done_for_day': 'OPEN', 'replaced': 'CANCELED',
+  };
+
+  @override
+  Future<BrokerOrderLookup> orderStatus({required String clientOrderId, String? brokerOrderId,
+      Map<String, dynamic>? match}) async {
+    final Object? raw;
+    try {
+      raw = brokerOrderId != null
+          ? await _http.send('GET', _uri('/v2/orders/$brokerOrderId'), headers: _auth)
+          : await _http.send('GET', Uri.https(host, '/v2/orders:by_client_order_id', {'client_order_id': clientOrderId}),
+              headers: _auth);
+    } on BrokerException catch (e) {
+      if (e.code == 'HTTP_404' && brokerOrderId == null) return const BrokerOrderLookup(null, definitiveNotFound: true);
+      if (e.code == 'HTTP_404') return const BrokerOrderLookup(null);
+      rethrow;
+    }
+    final j = asMap(raw);
+    final id = j['id'], status = j['status'];
+    if (id is! String || status is! String) throw const BrokerException('INVALID_DATA');
+    if (j['client_order_id'] != null && j['client_order_id'] != clientOrderId) throw const BrokerException('ORDER_IDENTITY_MISMATCH');
+    final filled = decimalCents(decimalText(j['filled_qty']) ?? '0');
+    if (filled == null || filled % 100 != 0) throw const BrokerException('INVALID_DATA');
+    return BrokerOrderLookup(BrokerOrderStatus(brokerOrderId: id, state: _states[status] ?? 'OPEN', rawStatus: status,
+        filledQuantity: filled ~/ 100, averageFillPrice: decimalText(j['filled_avg_price']), clientOrderId: clientOrderId));
+  }
+
   @override
   Future<BrokerOrderAck> submitPaperOrder(PaperOrderRequest o) async {
     final j = asMap(await _http.send('POST', _uri('/v2/orders'), headers: _auth, jsonBody: {

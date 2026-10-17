@@ -89,6 +89,31 @@ class IbkrPaperAdapter implements BrokerAdapter {
         time: DateTime.fromMillisecondsSinceEpoch(updated, isUtc: true), source: 'ibkr-paper', timeSource: 'QUOTE');
   }
 
+  static const _states = {
+    'Filled': 'FILLED', 'Cancelled': 'CANCELED', 'Inactive': 'REJECTED', 'ApiCancelled': 'CANCELED',
+  };
+
+  /// Matches today's orders for the Paper account by `order_ref` (cOID) or orderId.
+  /// Absence is never treated as proof that nothing was placed.
+  @override
+  Future<BrokerOrderLookup> orderStatus({required String clientOrderId, String? brokerOrderId,
+      Map<String, dynamic>? match}) async {
+    final j = asMap(await _http.send('GET', _uri('/iserver/account/orders')));
+    final rows = asList(j['orders'] ?? const []).map(asMap).where((o) =>
+        (o['acct'] == null || o['acct'] == accountId) &&
+        (o['order_ref'] == clientOrderId || (brokerOrderId != null && '${o['orderId']}' == brokerOrderId))).toList();
+    if (rows.isEmpty) return const BrokerOrderLookup(null);
+    if (rows.length > 1) throw const BrokerException('ORDER_IDENTITY_MISMATCH');
+    final o = rows.first;
+    final status = '${o['status']}';
+    final filled = decimalCents(decimalText(o['filledQuantity']) ?? '0');
+    if (filled == null || filled % 100 != 0) throw const BrokerException('INVALID_DATA');
+    final qty = filled ~/ 100;
+    final state = _states[status] ?? (qty > 0 ? 'PARTIALLY_FILLED' : 'OPEN');
+    return BrokerOrderLookup(BrokerOrderStatus(brokerOrderId: '${o['orderId']}', state: state, rawStatus: status,
+        filledQuantity: qty, averageFillPrice: decimalText(o['avgPrice']), clientOrderId: clientOrderId));
+  }
+
   @override
   Future<BrokerOrderAck> submitPaperOrder(PaperOrderRequest o) async {
     if (o.ibkrConid == null) throw const BrokerException('INVALID_ORDER');

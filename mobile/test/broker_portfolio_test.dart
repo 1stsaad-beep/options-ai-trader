@@ -30,6 +30,9 @@ class FakeAdapter implements BrokerAdapter {
   Future<BrokerOrderAck> submitPaperOrder(PaperOrderRequest order) => throw UnimplementedError();
   @override
   Future<BrokerQuote?> optionQuote(OccContract contract, {String? conid}) async => null;
+  @override
+  Future<BrokerOrderLookup> orderStatus({required String clientOrderId, String? brokerOrderId,
+      Map<String, dynamic>? match}) async => const BrokerOrderLookup(null);
 }
 
 // HTTP/storage futures need real async turns interleaved with frames; the

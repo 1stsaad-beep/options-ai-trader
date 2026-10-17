@@ -17,7 +17,9 @@ class OrderState {
   // Broker-side states (set by acknowledgement / reconciliation)
   static const open = 'OPEN', partiallyFilled = 'PARTIALLY_FILLED', filled = 'FILLED',
       canceled = 'CANCELED', expired = 'EXPIRED';
-  static const terminal = {rejected, notPlaced, confirmationRequired, filled, canceled, expired};
+  /// Explicit user decision after checking the broker's own app; recorded, never inferred.
+  static const userResolvedNotPlaced = 'USER_RESOLVED_NOT_PLACED';
+  static const terminal = {rejected, notPlaced, confirmationRequired, filled, canceled, expired, userResolvedNotPlaced};
   /// States that make the account's order truth uncertain.
   static const unresolved = {intent, unknown};
 }

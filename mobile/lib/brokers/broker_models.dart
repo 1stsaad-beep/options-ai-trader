@@ -164,6 +164,24 @@ class PaperOrderRequest {
   }
 }
 
+/// Normalized broker order status. [state] uses `OrderState` names.
+class BrokerOrderStatus {
+  final String brokerOrderId, state, rawStatus;
+  final int filledQuantity;
+  final String? averageFillPrice;
+  final String? clientOrderId;
+  const BrokerOrderStatus({required this.brokerOrderId, required this.state, required this.rawStatus,
+      required this.filledQuantity, this.averageFillPrice, this.clientOrderId});
+}
+
+/// Lookup result: [status] null with [definitiveNotFound] means the broker
+/// proved no order exists for the client id (Alpaca client_order_id lookup).
+class BrokerOrderLookup {
+  final BrokerOrderStatus? status;
+  final bool definitiveNotFound;
+  const BrokerOrderLookup(this.status, {this.definitiveNotFound = false});
+}
+
 class BrokerOrderAck {
   final String orderId, status;
   final String? message;

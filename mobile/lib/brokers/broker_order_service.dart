@@ -16,6 +16,7 @@ import 'broker_options.dart';
 import 'broker_order_admission.dart';
 import 'broker_order_journal.dart';
 import 'broker_portfolio.dart';
+import 'broker_reconcile.dart';
 import 'broker_store.dart';
 
 typedef DirectQuoteSource = Future<OptionQuote?> Function(String contract);
@@ -71,6 +72,16 @@ class BrokerOrderService {
     final at = now();
     return (adapter, BrokerOrderReview(a, t, portfolio, quote, admitBrokerOrder(t, portfolio, quote, orders, at, policy: policy), at));
   }
+
+  /// Read-only broker queries; appends STATUS/FILL/RESOLVED events only.
+  Future<ReconcileResult> reconcile(BrokerAccount a) async {
+    final adapter = await _adapter(a);
+    final portfolio = await loadPortfolio(a, adapter, clock: now);
+    return BrokerReconciler(journal(a), clock: now).run(a, adapter, positions: portfolio.positions);
+  }
+
+  Future<void> resolveManually(BrokerAccount a, String clientOrderId, String note) =>
+      BrokerReconciler(journal(a), clock: now).resolveManually(clientOrderId, note: note);
 
   Future<BrokerOrderReview> review(BrokerAccount a, BrokerOrderTicket t) async => (await _evaluate(a, t)).$2;
 

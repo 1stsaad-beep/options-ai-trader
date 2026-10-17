@@ -126,6 +126,48 @@ class TradeStationSimAdapter implements BrokerAdapter {
         source: 'tradestation-sim', timeSource: 'RECEIVED');
   }
 
+  static const _states = {
+    'FLL': 'FILLED', 'FLP': 'PARTIALLY_FILLED', 'FPR': 'PARTIALLY_FILLED', 'OUT': 'CANCELED', 'CAN': 'CANCELED',
+    'REJ': 'REJECTED', 'EXP': 'EXPIRED', 'BRO': 'CANCELED', 'TSC': 'CANCELED',
+  };
+
+  BrokerOrderStatus _status(Map<String, dynamic> o, String clientOrderId) {
+    final status = '${o['Status']}';
+    final legs = o['Legs'] is List ? (o['Legs'] as List).map(asMap).toList() : const <Map<String, dynamic>>[];
+    final exec = legs.isEmpty ? decimalText(o['FilledQuantity'] ?? '0') : decimalText(legs.first['ExecQuantity'] ?? '0');
+    final filled = decimalCents(exec);
+    if (filled == null || filled % 100 != 0) throw const BrokerException('INVALID_DATA');
+    final price = legs.isEmpty ? decimalText(o['FilledPrice']) : decimalText(legs.first['ExecutionPrice']);
+    return BrokerOrderStatus(brokerOrderId: '${o['OrderID']}', state: _states[status] ?? 'OPEN', rawStatus: status,
+        filledQuantity: filled ~/ 100, averageFillPrice: price, clientOrderId: clientOrderId);
+  }
+
+  /// TradeStation orders carry no client order id. Without a broker id, a single
+  /// unlinked same-day order with identical symbol/side/quantity/limit is linked;
+  /// zero or several candidates leave the order unresolved (never guessed).
+  @override
+  Future<BrokerOrderLookup> orderStatus({required String clientOrderId, String? brokerOrderId,
+      Map<String, dynamic>? match}) async {
+    final id = await _account();
+    final j = asMap(await _http.send('GET', _uri('/brokerage/accounts/$id/orders'), headers: await _auth()));
+    final rows = asList(j['Orders'] ?? const []).map(asMap).toList();
+    if (brokerOrderId != null) {
+      final hit = rows.where((o) => '${o['OrderID']}' == brokerOrderId).toList();
+      return BrokerOrderLookup(hit.length == 1 ? _status(hit.first, clientOrderId) : null);
+    }
+    if (match == null) return const BrokerOrderLookup(null);
+    final linked = (match['linkedIds'] as Iterable?)?.toSet() ?? const <Object?>{};
+    final candidates = rows.where((o) {
+      final legs = o['Legs'] is List ? (o['Legs'] as List).map(asMap).toList() : const <Map<String, dynamic>>[];
+      final leg = legs.isEmpty ? o : legs.first;
+      return !linked.contains('${o['OrderID']}') && leg['Symbol'] == match['symbol'] &&
+          '${leg['BuyOrSell'] ?? ''}'.toUpperCase().startsWith(match['buy'] == true ? 'BUY' : 'SELL') &&
+          decimalCents(decimalText(leg['QuantityOrdered'] ?? o['QuantityOrdered'] ?? '-1')) == (match['quantity'] as int) * 100 &&
+          decimalCents(decimalText(o['LimitPrice'] ?? '-1')) == match['limitCents'];
+    }).toList();
+    return BrokerOrderLookup(candidates.length == 1 ? _status(candidates.first, clientOrderId) : null);
+  }
+
   @override
   Future<BrokerOrderAck> submitPaperOrder(PaperOrderRequest o) async {
     final id = await _account();

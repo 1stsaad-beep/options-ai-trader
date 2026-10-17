@@ -1,0 +1,2 @@
+a60ca755ee30c29cfc8d734aa274ac5cd4509a7f5e8cd9b20722bb0fecab5b4b  app-debug.apk
+app-debug.apk 190076672 bytes

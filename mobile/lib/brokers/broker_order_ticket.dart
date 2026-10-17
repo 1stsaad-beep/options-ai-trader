@@ -55,6 +55,7 @@ String stateLabel(String state) => const {
       OrderState.filled: 'منفذ',
       OrderState.canceled: 'ملغى',
       OrderState.expired: 'منتهي',
+      OrderState.userResolvedNotPlaced: 'حُسم يدويًا: لم يُرسل (بعد مراجعة المستخدم)',
     }[state] ??
     state;
 

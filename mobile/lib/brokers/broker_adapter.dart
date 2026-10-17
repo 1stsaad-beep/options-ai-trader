@@ -24,6 +24,11 @@ abstract class BrokerAdapter {
   /// Option quote from the broker's own Paper host, or null when this broker
   /// has none there (Alpaca: use the existing Direct OPRA session instead).
   Future<BrokerQuote?> optionQuote(OccContract contract, {String? conid});
+
+  /// Read-only status lookup for reconciliation; [match] identifies orders
+  /// when the broker has no client order id (TradeStation).
+  Future<BrokerOrderLookup> orderStatus({required String clientOrderId, String? brokerOrderId,
+      Map<String, dynamic>? match});
 }
 
 typedef TokenRotated = Future<void> Function(String newRefreshToken);

@@ -76,6 +76,45 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
     if (out != null) await _refresh();
   }
 
+  String? reconcileSummary;
+
+  Future<void> _reconcile() async {
+    setState(() { loading = true; reconcileSummary = null; });
+    try {
+      final r = await service.reconcile(widget.account);
+      final o = await service.journal(widget.account).orders();
+      if (mounted) {
+        setState(() { orders = o; loading = false;
+          reconcileSummary = 'فُحص ${r.checked} • حُدّث ${r.updated} • تنفيذات ${r.fills}'
+              '${r.stillUnresolved.isEmpty ? '' : ' • غير محسوم ${r.stillUnresolved.length}'}'
+              '${r.discrepancies.isEmpty ? '' : '\nفروقات: ${r.discrepancies.join(', ')}'}'; });
+      }
+    } on BrokerException catch (e) {
+      _fail(e.code);
+    } catch (e) {
+      _fail(RegExp(r'\(([A-Z0-9_]+)\)').firstMatch('$e')?.group(1) ?? 'UNKNOWN');
+    }
+  }
+
+  Future<void> _resolve(BrokerOrderRecord o) async {
+    final ok = await showDialog<bool>(context: context, builder: (c) => AlertDialog(
+      title: const Text('حسم الأمر يدويًا كـ «لم يُرسل»؟'),
+      content: Text('افعل ذلك فقط بعد التأكد من تطبيق الوسيط أن الأمر ${o.contract} غير موجود. يُسجل القرار ولا يُحذف أي سجل.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('إلغاء')),
+        FilledButton(key: const ValueKey('confirm-resolve'), onPressed: () => Navigator.pop(c, true), child: const Text('تأكيد')),
+      ]));
+    if (ok != true) return;
+    try {
+      await service.resolveManually(widget.account, o.clientOrderId, 'checked broker app');
+    } catch (e) {
+      _fail(RegExp(r'\(([A-Z0-9_]+)\)').firstMatch('$e')?.group(1) ?? 'UNKNOWN');
+      return;
+    }
+    final list = await service.journal(widget.account).orders();
+    if (mounted) setState(() => orders = list);
+  }
+
   // Keep the previous observation visible but clearly marked; never merge it with failed data.
   void _fail(String code) {
     if (mounted) setState(() { error = brokerMessage(code); loading = false; });
@@ -155,12 +194,19 @@ class _BrokerPortfolioScreenState extends State<BrokerPortfolioScreen> {
               FilledButton.tonalIcon(key: const ValueKey('new-paper-order'), onPressed: loading ? null : () => _ticket(),
                   icon: const Icon(Icons.add_shopping_cart), label: const Text('أمر Paper')),
             ])),
-            const Text('اضغط مطولًا على مركز لفتح أمر إغلاق.'),
+            Row(children: [
+              const Expanded(child: Text('اضغط مطولًا على مركز لفتح أمر إغلاق.')),
+              TextButton.icon(key: const ValueKey('reconcile-orders'), onPressed: loading ? null : _reconcile,
+                  icon: const Icon(Icons.sync), label: const Text('مطابقة الأوامر')),
+            ]),
+            if (reconcileSummary != null) Text(reconcileSummary!, key: const ValueKey('reconcile-summary')),
             for (final o in orders.reversed)
               Card(child: ListTile(
                 title: Text('${o.side == 'BUY_TO_OPEN' ? 'شراء' : 'بيع'} ${o.quantity} × ${o.contract}', textDirection: TextDirection.ltr),
                 subtitle: Text('${stateLabel(o.state)} • منفذ ${o.filledQuantity}/${o.quantity}'
                     '${o.brokerOrderId == null ? '' : ' • #${o.brokerOrderId}'}'),
+                trailing: o.unresolved ? IconButton(tooltip: 'حسم يدوي', onPressed: () => _resolve(o),
+                    icon: const Icon(Icons.rule)) : null,
               )),
           ],
         ]),
