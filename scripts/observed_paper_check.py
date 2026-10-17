@@ -216,6 +216,8 @@ def run():
         result['checks'] += metadata_check(repositories)
         from alert_delivery_check import check as notification_check
         result['checks'] += notification_check(repositories)
+        from health_export_check import check as health_check
+        result['checks'] += health_check(url, repositories)
         print(json.dumps(result,sort_keys=True))
     finally:
         for repo in repositories: repo.close()

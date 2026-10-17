@@ -1,0 +1,85 @@
+{
+  "artifacts": [
+    {
+      "batch": 67,
+      "id": 12103750490,
+      "name": "backend-test-results",
+      "hash": "618aef7b9ac36556f489f1945ed5ddf266ed52ddd8c4e053249ab584994277da",
+      "source": "44d1433265de0dae4427a9de22456957b584c49c",
+      "run": 39039169424,
+      "conclusion": "success",
+      "file": "batch67-backend-test-results.zip",
+      "crcVerified": true
+    },
+    {
+      "batch": 67,
+      "id": 12103482026,
+      "name": "compose-runtime-result",
+      "hash": "78c6ca0d2ab2bf32809b4b615cd8bfbd79a27c89d9fede611884209f7c8bda5f",
+      "source": "44d1433265de0dae4427a9de22456957b584c49c",
+      "run": 39039169424,
+      "conclusion": "success",
+      "file": "batch67-compose-runtime-result.zip",
+      "crcVerified": true
+    },
+    {
+      "batch": 67,
+      "id": 12103650844,
+      "name": "v1-security-results",
+      "hash": "fec64fdb33924023ac9a916f5861b688b397b7cb1cbb599b47b98a8da096e0a2",
+      "source": "44d1433265de0dae4427a9de22456957b584c49c",
+      "run": 39039169407,
+      "conclusion": "success",
+      "file": "batch67-v1-security-results.zip",
+      "crcVerified": true
+    },
+    {
+      "batch": 66,
+      "id": 12103660483,
+      "name": "backend-test-results",
+      "hash": "b751f391ec49d421496bfb91d63c725bcd447e069b6e83ee94f5f2e38c2beba0",
+      "source": "9b3d33963758d64c97aaf1225cfb35c0b1c55472",
+      "run": 39038925851,
+      "conclusion": "success",
+      "file": "batch66-backend-test-results.zip",
+      "crcVerified": true
+    },
+    {
+      "batch": 66,
+      "id": 12102563769,
+      "name": "compose-runtime-result",
+      "hash": "0bd7c3510e7d1a6481b9abdfa6310bd63e2b3a6e32ce0a7ab3c61521d2fd9939",
+      "source": "9b3d33963758d64c97aaf1225cfb35c0b1c55472",
+      "run": 39038925851,
+      "conclusion": "success",
+      "file": "batch66-compose-runtime-result.zip",
+      "crcVerified": true
+    },
+    {
+      "batch": 66,
+      "id": 12102309330,
+      "name": "v1-security-results",
+      "hash": "eed65d96ce4677286400381125e231ca0dfd5855bbf8880b9f6b91648cc71664",
+      "source": "9b3d33963758d64c97aaf1225cfb35c0b1c55472",
+      "run": 39038925996,
+      "conclusion": "failure",
+      "file": "batch66-v1-security-results.zip",
+      "crcVerified": true
+    }
+  ],
+  "batch66Python": 1729,
+  "batch67Python": 1730,
+  "postgresql": [
+    22,
+    6,
+    10,
+    5,
+    32,
+    4,
+    23
+  ],
+  "compose": 23,
+  "security66": "FAILED_synthetic_test_fixture_pattern",
+  "security67": "success_exact_test_path_and_value_review",
+  "externalMarketConnection": false
+}
