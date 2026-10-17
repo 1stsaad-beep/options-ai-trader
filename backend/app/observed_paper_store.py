@@ -100,6 +100,31 @@ class ObservedPaperStore:
             result=summarize(db.stream('SELECT payload FROM observed_paper_events WHERE account_id=? ORDER BY sequence DESC',(account,)),state,self.now())
             return result|{'version':row['version'],'eventHash':row['event_hash']}
 
+    def valuation_history(self, account, after=-1, limit=50, through=None):
+        from .observed_paper_history import history, VERSION as HISTORY_VERSION
+        if (type(after) is not int or after < -1 or type(limit) is not int or not 1 <= limit <= 100
+                or (through is not None and (type(through) is not int or through < 0))):
+            raise ValueError('Bounded historical cursor required')
+        with self.repo.transaction() as db:
+            # Always verify originals, including on an already warm store. A
+            # report cannot turn corrupted financial evidence into valid marks.
+            head, state = self._read(db, account, full=True)
+            end = head['version'] if through is None else through
+            if end > head['version'] or after > end:
+                raise ValueError('Historical cursor exceeds available events')
+            anchor = db.one('SELECT digest FROM observed_paper_events WHERE account_id=? AND sequence=?', (account, end))
+            points = history(db.stream('SELECT sequence,digest,payload FROM observed_paper_events WHERE account_id=? AND sequence<=? ORDER BY sequence',
+                (account, end)), after=after, limit=limit, through=end)
+            next_after = points[-1]['version'] if points else after
+            return {'contract': HISTORY_VERSION, 'account': account, 'source': state['source'],
+                'externalOrder': False, 'executionAllowed': False, 'throughVersion': end,
+                'throughEventHash': anchor['digest'], 'points': points, 'nextAfter': next_after,
+                'hasMore': next_after < end, 'sampling': 'AFTER_RECORDED_EVENT', 'sharpe': None,
+                'limitations': ['Event-sampled valuations; no marks between recorded events',
+                    'Missing marks invalidate full-prefix drawdown; no interpolation',
+                    'Irregular event samples cannot establish daily returns or Sharpe',
+                    'Replay streams from genesis; bounded output is not constant-time pagination']}
+
     def _read(self, db, account, *, full=False):
         row=db.one('SELECT * FROM observed_paper_accounts WHERE id=?',(account,))
         if row is None: raise LedgerConflict('Unknown observed-paper account')

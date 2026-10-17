@@ -80,6 +80,14 @@ def check(repositories):
     final=stores[0].snapshot(account,full=True)
     assert not final['state']['positions'] and not final['state']['enabled']
     assert stores[0].snapshot(other)['state']['cash']==1000000
+    history=stores[0].valuation_history(account,through=3)
+    assert history['points'][-1]['liquidationEquityCents']==9997480
+    assert history['points'][-1]['prefix']['maximumSampledDrawdownCents']==2520
+    assert history['throughEventHash']==event['eventHash']
+    first=stores[0].valuation_history(account,limit=2,through=3)
+    second=stores[1].valuation_history(account,after=first['nextAfter'],limit=2,through=3)
+    assert first['points']+second['points']==history['points'] and not second['hasMore']
+    assert stores[0].snapshot(account,full=True)==final
     for i in range(260): stores[0].command(other,'toggle'+str(i),{'kind':'ENABLE','enabled':bool(i%2)})
     assert stores[1].snapshot(other,full=True)['version']==260
     with repositories[0].transaction() as db:
@@ -110,7 +118,7 @@ def check(repositories):
         'native_update_delete_guards','lease_generation_fencing','independent_account_balances',
         'sealed_segment_rotation','streamed_full_replay','expired_owner_shutdown_health',
         'same_owner_successor_generation_fencing','shutdown_preserves_original_ledger',
-        'read_only_version_bound_net_valuation']}
+        'read_only_version_bound_net_valuation','causal_history_two_connection_pagination']}
 
 
 def run():
