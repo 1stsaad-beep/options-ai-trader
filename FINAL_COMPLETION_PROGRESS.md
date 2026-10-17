@@ -166,3 +166,6 @@ Batch28 source6f32da0 analyzer failure was corrected in1178247; its subsequent D
 
 Verified latest GitHub HEAD before edits:7703307876ce7f3ec8f85a1f4c98aa0c05a49fe8. Batch30 implements atomic idempotent four-account USD1,000 server experiment setup, independent stopped configurations and snapshot-consistent streamed receipt comparison. Collision, mid-write rollback, two-connection concurrency, retry-after-fill, source separation and API authorization tests added; PostgreSQL acceptance integrated into the existing backend workflow. Targeted Python completed74 passes after recovering missing fixtures; PostgreSQL/Compose CI pending. No market connection, Oracle change, user data deletion, automation or APK. Full V1.0 completion is not claimed. See docs/RESUME_STAGE1_20261017_AR.md.
 
+
+
+Batch30 is saved at c5ef1bba43125811562c5fdea968e846044dd9a1 and accepted from raw CI ZIP SHA256/CRC:1383 Python, existing PostgreSQL suites plus4 new atomic experiment checks,18 backup/restore and20 Compose checks. Batch31 adds Flutter experiment setup/comparison, strict response checks, uncertain-write handling and shared SQL fixture;1384 Python passed locally, Flutter/JVM pending source CI. See docs/RESUME_STAGE1_20261017_AR.md. No APK or final completeness claim.

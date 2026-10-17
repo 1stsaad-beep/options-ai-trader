@@ -6,6 +6,7 @@ import 'direct_labs.dart';
 import 'paper_time.dart';
 import 'strategy_replay.dart';
 import 'observed_server_controls.dart';
+import 'observed_server_comparison.dart';
 
 Map<String,dynamic> observedObject(dynamic value) {
   if(value is! Map||value.keys.any((key)=>key is! String))throw const FormatException('Invalid server object');
@@ -157,6 +158,44 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
     }catch(_){if(mounted)setState(()=>error='تعذر التحقق من صفحة القرارات؛ لم تُعرض بيانات بديلة.');}
     finally{if(mounted)setState(()=>busy=false);}
   }
+  Future<void> experiment() async {
+    if (busy) return;
+    final accepted = await showDialog<bool>(context: context, builder: (context) => AlertDialog(
+      title: const Text('أربعة حسابات خادم × 1000 USD'),
+      content: const Text('اتجاه، اختراق، ارتداد، دايفرجنس؛ أرصدة افتراضية مستقلة وحسابات جديدة متوقفة. إعادة الطلب تحتفظ بأموال المجموعة وإعداداتها الحالية. لا تشغيل أو اتصال سوقي تلقائي.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('إلغاء')),
+        FilledButton(key: const Key('observed-experiment-confirm'), onPressed: () => Navigator.pop(context, true), child: const Text('إعداد المجموعة')),
+      ],
+    ));
+    if (accepted != true || !mounted || busy) return;
+    setState(() { busy = true; error = null; });
+    try {
+      parseObservedExperiment(await widget.api.request('POST', '/api/observed-paper/experiment', {'source': 'alpaca'}), 'alpaca');
+    } catch (_) {
+      if (mounted) setState(() => error = 'لم يتأكد إعداد المجموعة؛ حدّث الحسابات للتحقق. لم تُعد الكتابة تلقائيًا.');
+    } finally {
+      if (mounted) setState(() { busy = false; saved = null; events = []; });
+    }
+    if (mounted && error == null) await load(selected: observedExperimentIds('alpaca').first);
+  }
+  Future<void> comparison() async {
+    final selected = observedExperimentIds('alpaca');
+    if (busy || !selected.every(ids.contains)) return;
+    setState(() { busy = true; error = null; });
+    Map<String, dynamic>? report;
+    try {
+      final query = Uri(queryParameters: {'accounts': selected.join(',')}).query;
+      report = parseObservedComparison(await widget.api.request('GET', '/api/observed-paper/comparison?$query'), selected, 'alpaca');
+    } catch (_) {
+      if (mounted) setState(() => error = 'تعذر التحقق من مقارنة الحسابات؛ حدّث الحالة وأعد القراءة.');
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+    if (!mounted || report == null) return;
+    final verified = report;
+    await Navigator.push(context, MaterialPageRoute<void>(builder: (_) => ObservedComparisonScreen(report: verified)));
+  }
   @override Widget build(BuildContext context) {
     final value=saved?.state;
     return Scaffold(appBar:AppBar(title:const Text('دفتر الخادم الافتراضي'),actions:[IconButton(key:const Key('observed-refresh'),onPressed:busy?null:()=>load(),icon:const Icon(Icons.refresh))]),
@@ -168,6 +207,8 @@ class _ObservedServerScreenState extends State<ObservedServerScreen> {
         if(busy)const LinearProgressIndicator(),
         if(error!=null)Text(error!,key:const Key('observed-error')),
         OutlinedButton(key:const Key('observed-create'),onPressed:busy?null:create,child:const Text('إنشاء حساب افتراضي مستقل')),
+        OutlinedButton(key:const Key('observed-experiment'),onPressed:busy?null:experiment,child:const Text('إعداد أربعة حسابات × 1000 USD')),
+        if(observedExperimentIds('alpaca').every(ids.contains))OutlinedButton(key:const Key('observed-comparison'),onPressed:busy?null:comparison,child:const Text('مقارنة الحسابات الأربعة')),
         if(ids.isNotEmpty)DropdownButton<String>(value:account,isExpanded:true,items:[for(final id in ids)DropdownMenuItem(value:id,child:Text(id))],onChanged:busy?null:(id)=>load(selected:id)),
         if(value!=null)...[
           Text('${value['name']} • ${value['source']} • إصدار ${saved!.version}',key:const Key('observed-account')),

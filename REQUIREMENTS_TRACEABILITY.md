@@ -61,3 +61,8 @@ Batch28 R05/R06/R08/R10/R12: observed_server.dart and observed_server_controls.d
 New observed-paper accounts use v2 with opt-in one-time profitable augmentation and original support/resistance scenario exit; v1 is frozen and old original SQL events/hashes reproduce exactly. Streamed receipt statistics distinguish realized drawdown and cost basis from unmarked NAV and exclude settlement-affected closures from quote round-trip win rate. Mobile controls support both contracts and version-bound performance reads. Local full1368 Python passed. See docs/OBSERVED_PAPER_V2_20261016.md.
 
 Batch28 source6f32da0 analyzer failure was corrected in1178247; its subsequent Direct38872514130 failed two new widget scroll assertions. Original failed ZIP SHA256/CRC verified and retained in batch28-failed-ci-evidence.zip. Both harness defects are corrected here. No Flutter source success or final acceptance is claimed yet. Greek/deliverable market entry remains blocked; remaining parity/capacity/valuation/operational and independent-review/APK work stays open.
+
+
+### Batch30 acceptance / batch31 UI — 2026-10-17
+
+R01/R05/R10/R14: source c5ef1bba passed1383 Python locally and CI; original ZIP hashes/CRC verified for PostgreSQL concurrent experiment, existing financial/risk/backup suites and20 Compose checks. Flutter explicit four-account setup and read-only comparison now validate source/account/version/hash/accounting, with uncertain-write and360px RTL tests plus actual SQL genesis fixture. Local1384 Python passed after fixture round-trip test. Flutter/JVM CI pending for batch31. Full eligibility, parity, capacity, valuation and operational acceptance remain PARTIAL.

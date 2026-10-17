@@ -155,3 +155,13 @@ def test_disposable_postgres_acceptance_contract_on_sqlite(tmp_path):
         assert len(check(repositories)['checks']) == 4
     finally:
         for repo in repositories: repo.close()
+
+
+def test_mobile_experiment_fixture_reproduces_actual_sql_genesis():
+    import sys
+    import json
+    from pathlib import Path
+    root = Path(__file__).parents[2]
+    sys.path.insert(0, str(root / 'scripts'))
+    from generate_observed_experiment_fixture import generate
+    assert generate() == json.loads((root / 'mobile/test/fixtures/observed_experiment_v1.json').read_text())

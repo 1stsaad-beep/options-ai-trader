@@ -1,0 +1,34 @@
+{
+  "source": "c5ef1bba43125811562c5fdea968e846044dd9a1",
+  "run_id": 39005047259,
+  "python": {
+    "passed": 1383,
+    "failed": 0,
+    "skipped": 0
+  },
+  "postgres": {
+    "execution": 22,
+    "journal": 6,
+    "runtime": 10,
+    "settlement": 5,
+    "observed_paper": 9,
+    "observed_experiment": 4,
+    "backup_restore": 18
+  },
+  "compose_checks": 20,
+  "actual_market_connection": false,
+  "artifacts": [
+    {
+      "file": "batch30-backend.zip",
+      "artifact_id": 12090119334,
+      "sha256": "e33e0f9f11667e22c5c5cd31b04c07e89049935dfdbad67442f3bd25013892d3",
+      "crc_verified": true
+    },
+    {
+      "file": "batch30-compose.zip",
+      "artifact_id": 12090886235,
+      "sha256": "aeccf15c71e7e80d1cbf7d93ace0c87e000a0d7bc0bb5ae65f3bc03bda05751f",
+      "crc_verified": true
+    }
+  ]
+}
