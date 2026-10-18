@@ -5,6 +5,7 @@ import '../services/app_controller.dart';
 import 'account_detail_screen.dart';
 import 'add_account_screen.dart';
 import '../widgets/market_status_card.dart';
+import '../widgets/safety_widgets.dart';
 
 class AccountsScreen extends StatelessWidget {
   final AppController controller;
@@ -20,10 +21,11 @@ class AccountsScreen extends StatelessWidget {
           appBar: AppBar(
             title: const Text('الحسابات'),
             actions: [
+              KillSwitchButton(controller: controller),
               IconButton(
                 tooltip: 'تشغيل دورة الآن',
                 icon: const Icon(Icons.play_circle_outline),
-                onPressed: controller.runAllCycles,
+                onPressed: () => controller.runAllCycles(force: true),
               ),
             ],
           ),
@@ -36,16 +38,22 @@ class AccountsScreen extends StatelessWidget {
           body: !controller.loaded
               ? const Center(child: CircularProgressIndicator())
               : accounts.isEmpty
-                  ? const _EmptyState()
+                  ? Column(children: [
+                      Padding(padding: const EdgeInsets.all(12), child: KillSwitchBanner(controller: controller)),
+                      const Expanded(child: _EmptyState()),
+                    ])
                   : RefreshIndicator(
                       onRefresh: controller.refreshAll,
                       child: ListView.separated(
                         padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
-                        itemCount: accounts.length + 1,
+                        itemCount: accounts.length + 3,
                         separatorBuilder: (_, __) => const SizedBox(height: 8),
-                        itemBuilder: (context, i) => i == 0
-                            ? MarketStatusCard(controller: controller)
-                            : _AccountCard(controller: controller, rt: accounts[i - 1]),
+                        itemBuilder: (context, i) => switch (i) {
+                          0 => KillSwitchBanner(controller: controller),
+                          1 => MarketStatusCard(controller: controller),
+                          2 => BackgroundCard(controller: controller),
+                          _ => _AccountCard(controller: controller, rt: accounts[i - 3]),
+                        },
                       ),
                     ),
         );

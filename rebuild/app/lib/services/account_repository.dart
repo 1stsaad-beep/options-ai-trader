@@ -50,6 +50,11 @@ class AccountRepository {
 
   Future<void> saveState(String accountId, AccountState state) => _writeAtomic('state_$accountId.json', state.toJson());
 
+  /// App-wide flags (kill switch, background preference). Missing file = defaults.
+  Future<Map<String, dynamic>> loadAppSettings() async => await _read('app.json') ?? <String, dynamic>{};
+
+  Future<void> saveAppSettings(Map<String, Object?> settings) => _writeAtomic('app.json', settings);
+
   Future<void> deleteState(String accountId) async {
     final f = await _file('state_$accountId.json');
     if (await f.exists()) await f.delete();

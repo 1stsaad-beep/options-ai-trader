@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:trader_core/trader_core.dart';
 
 import 'account_repository.dart';
+import 'background_service.dart';
 import 'http_transport.dart';
 import 'secret_store.dart';
 
@@ -18,6 +19,9 @@ class AccountRuntime {
   DateTime? lastCycle;
   AccountSnapshot? snapshot;
   List<Position> positions = const [];
+
+  /// Latest option quote per held contract (OCC symbol) for P/L and Greeks.
+  Map<String, OptionQuote> quotes = const {};
 
   AccountRuntime(this.profile, this.state);
 
@@ -45,16 +49,31 @@ class AccountLock {
   }
 }
 
-/// App-wide state: accounts, automation timer and persistence.
+/// App-wide state: accounts, automation timer, kill switch, background
+/// service and persistence.
 ///
-/// Automation runs while the app process is alive (foreground). Continuous
-/// background trading needs a host — see HANDOFF.md, "Background execution".
+/// Automation runs while the app process is alive. The optional Android
+/// foreground service ([BackgroundRunner]) keeps the process alive with the
+/// screen off / app in the background; see HANDOFF.md §11 for its limits.
 class AppController extends ChangeNotifier {
   final AccountRepository repo;
   final SecretStore secrets;
   final BrokerRegistry registry;
   final SyntheticMarket market;
   final Duration cycleEvery;
+  final BackgroundRunner background;
+
+  /// Cycles closer together than this are skipped (timer + service ticks).
+  static const minCycleGap = Duration(seconds: 30);
+
+  /// Emergency stop: when true no account runs cycles (auto or manual).
+  bool killSwitch = false;
+
+  /// User wants the background service (persisted; re-started on launch).
+  bool backgroundWanted = false;
+  bool backgroundRunning = false;
+  String? backgroundError;
+  DateTime? lastAllCycles;
 
   final Map<String, AccountRuntime> _accounts = {};
   Timer? _timer;
@@ -67,7 +86,9 @@ class AppController extends ChangeNotifier {
     BrokerRegistry? registry,
     SyntheticMarket? market,
     this.cycleEvery = const Duration(minutes: 1),
-  })  : repo = repo ?? AccountRepository(),
+    BackgroundRunner? background,
+  })  : background = background ?? NoBackgroundRunner(),
+        repo = repo ?? AccountRepository(),
         secrets = secrets ?? SecretStore(),
         registry = registry ?? BrokerRegistry.standard(),
         market = market ?? SyntheticMarket();
@@ -80,16 +101,111 @@ class AppController extends ChangeNotifier {
     for (final p in await repo.loadProfiles()) {
       _accounts[p.id] = AccountRuntime(p, await repo.loadState(p.id));
     }
+    try {
+      final app = await repo.loadAppSettings();
+      killSwitch = app['killSwitch'] == true;
+      backgroundWanted = app['background'] == true;
+    } catch (_) {
+      // Unreadable app.json: safe defaults (kill switch off, service off).
+    }
+    background.init(_onBackgroundCommand);
     loaded = true;
     _timer = Timer.periodic(cycleEvery, (_) => runAllCycles());
     notifyListeners();
+    unawaited(_restoreBackground());
     unawaited(refreshAll());
   }
 
+  Future<void> _saveAppSettings() async {
+    try {
+      await repo.saveAppSettings({'v': 1, 'killSwitch': killSwitch, 'background': backgroundWanted});
+    } catch (_) {}
+  }
+
+  // ---- kill switch ----
+
+  /// One tap pauses all auto-trading (every account, timer and service).
+  /// Open positions are left as they are; nothing is sent while paused.
+  Future<void> setKillSwitch(bool on) async {
+    killSwitch = on;
+    await _saveAppSettings();
+    notifyListeners();
+    await _updateNotification();
+  }
+
+  // ---- background service ----
+
+  Future<void> _restoreBackground() async {
+    try {
+      backgroundRunning = await background.isRunning();
+      if (backgroundWanted && !backgroundRunning) await startBackground();
+    } catch (e) {
+      backgroundError = '$e';
+    }
+    notifyListeners();
+  }
+
+  /// Starts the foreground service (user action). Returns an Arabic error or null.
+  Future<String?> startBackground() async {
+    if (!await background.notificationsAllowed()) await background.requestNotifications();
+    final err = await background.start(title: _notificationTitle(), text: _notificationText());
+    backgroundError = err;
+    backgroundRunning = err == null;
+    backgroundWanted = err == null;
+    await _saveAppSettings();
+    notifyListeners();
+    return err;
+  }
+
+  Future<void> stopBackground() async {
+    await background.stop();
+    backgroundRunning = false;
+    backgroundWanted = false;
+    await _saveAppSettings();
+    notifyListeners();
+  }
+
+  void _onBackgroundCommand(String command) {
+    switch (command) {
+      case BackgroundCommand.tick:
+        unawaited(runAllCycles());
+      case BackgroundCommand.pauseAll:
+        unawaited(setKillSwitch(true));
+      case BackgroundCommand.stopService:
+        unawaited(stopBackground());
+    }
+  }
+
+  String _notificationTitle() => killSwitch ? 'التداول الآلي: إيقاف طارئ' : 'التداول الآلي يعمل (Paper)';
+
+  String _notificationText() {
+    if (killSwitch) return 'لن تُرسل أي أوامر حتى تلغي الإيقاف الطارئ من التطبيق';
+    final enabled = accounts.where((a) => a.profile.enabled).length;
+    final t = lastAllCycles;
+    final last = t == null ? 'لم تعمل دورة بعد' : 'آخر دورة ${NewYorkTime.hm(t.toUtc())} ET';
+    return '$enabled حساب مفعّل • $last • ${marketStatus().summaryAr()}';
+  }
+
+  Future<void> _updateNotification() async {
+    if (!backgroundRunning) return;
+    try {
+      await background.update(title: _notificationTitle(), text: _notificationText());
+    } catch (_) {}
+  }
+
+  bool _disposed = false;
+
   @override
   void dispose() {
+    _disposed = true;
     _timer?.cancel();
     super.dispose();
+  }
+
+  /// Async work (cycles, service callbacks) may finish after dispose.
+  @override
+  void notifyListeners() {
+    if (!_disposed) super.notifyListeners();
   }
 
   static String newId() {
@@ -227,6 +343,7 @@ class AppController extends ChangeNotifier {
       final b = await _adapter(rt);
       rt.snapshot = await b.account();
       rt.positions = await b.positions();
+      rt.quotes = await _quotesFor(b, rt.positions);
       rt.lastError = null;
       _captureBrokerState(rt);
     } catch (e) {
@@ -242,9 +359,16 @@ class AppController extends ChangeNotifier {
   }
 
   /// Runs one cycle for every enabled account, one account at a time.
-  Future<void> runAllCycles() async {
-    if (_busy) return;
+  /// Skipped while the kill switch is on, while a pass is running, or when the
+  /// last pass was under [minCycleGap] ago (timer and service both call this),
+  /// unless [force] (the manual "run now" button).
+  Future<void> runAllCycles({bool force = false}) async {
+    if (_busy || killSwitch) return;
+    final now = DateTime.now();
+    final last = lastAllCycles;
+    if (!force && last != null && now.difference(last) < minCycleGap) return;
     _busy = true;
+    lastAllCycles = now;
     try {
       for (final rt in accounts.where((a) => a.profile.enabled)) {
         await runCycle(rt.profile.id);
@@ -252,11 +376,13 @@ class AppController extends ChangeNotifier {
     } finally {
       _busy = false;
     }
+    await _updateNotification();
   }
 
   Future<CycleSummary?> runCycle(String id) async {
     final rt = _accounts[id];
     if (rt == null) return null;
+    if (killSwitch) return const CycleSummary(ran: false, noteAr: 'الإيقاف الطارئ مفعّل — لا تعمل أي دورة');
     return rt.lock.run(() => _runCycle(rt));
   }
 
@@ -269,6 +395,7 @@ class AppController extends ChangeNotifier {
       rt.lastCycle = DateTime.now();
       rt.snapshot = await b.account();
       rt.positions = await b.positions();
+      rt.quotes = await _quotesFor(b, rt.positions);
       rt.lastError = summary.errors > 0 ? summary.noteAr : null;
       _captureBrokerState(rt);
       await repo.saveState(id, rt.state);
@@ -308,6 +435,19 @@ class AppController extends ChangeNotifier {
       if (st != null && st.source == StatusSource.broker && t.difference(st.at).inSeconds.abs() < 120) return st;
     }
     return const MarketCalendar().statusAt(t);
+  }
+
+  Future<Map<String, OptionQuote>> _quotesFor(BrokerAdapter b, List<Position> positions) async {
+    final out = <String, OptionQuote>{};
+    for (final p in positions) {
+      try {
+        final q = await b.optionQuote(p.contract);
+        if (q != null) out[p.contract.occSymbol] = q;
+      } catch (_) {
+        // A missing quote only hides P/L for that position.
+      }
+    }
+    return out;
   }
 
   void _captureBrokerState(AccountRuntime rt) {

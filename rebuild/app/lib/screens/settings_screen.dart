@@ -103,12 +103,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(12),
         children: [
-          _section('المخاطرة وحجم الصفقة', [
+          _section('المخاطرة وحدود الأمان', [
             _num('riskPerTradePercent', 'نسبة المخاطرة لكل صفقة', suffix: '%',
                 help: 'أقصى خسارة مقبولة للصفقة من قيمة الحساب (العلاوة × نسبة وقف الخسارة)'),
             _num('maxPositionPercent', 'أقصى حجم للمركز الواحد', suffix: '%'),
             _num('maxContractsPerTrade', 'أقصى عدد عقود للصفقة', integer: true),
             _num('maxOpenPositions', 'أقصى عدد صفقات مفتوحة', integer: true),
+            _num('maxOrdersPerDay', 'أقصى أوامر فتح يوميًا', integer: true,
+                help: 'يشمل الدخول والتعزيز، ويُصفَّر مع بداية يوم نيويورك. أوامر الخروج غير محدودة'),
+            _num('symbolCooldownMinutes', 'فترة التهدئة لكل سهم', integer: true, suffix: 'دقيقة',
+                help: 'لا دخول جديد على نفس السهم خلال هذه المدة بعد أي دخول أو خروج (0 = تعطيل)'),
             _num('maxTotalExposurePercent', 'أقصى تعرض كلي', suffix: '%'),
             _num('dailyLossLimitPercent', 'حد الخسارة اليومي', suffix: '%', help: 'يوقف الدخول الجديد لبقية اليوم'),
           ]),

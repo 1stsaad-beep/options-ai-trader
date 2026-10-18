@@ -5,7 +5,10 @@ import '../services/app_controller.dart';
 import 'add_account_screen.dart';
 import 'chart_screen.dart';
 import '../widgets/market_status_card.dart';
+import '../widgets/safety_widgets.dart';
+import 'activity_log_screen.dart';
 import 'live_mode_screen.dart';
+import 'positions_tab.dart';
 import 'settings_screen.dart';
 
 class AccountDetailScreen extends StatelessWidget {
@@ -21,11 +24,12 @@ class AccountDetailScreen extends StatelessWidget {
         final rt = controller.account(accountId);
         if (rt == null) return const Scaffold(body: Center(child: Text('الحساب غير موجود')));
         return DefaultTabController(
-          length: 3,
+          length: 5,
           child: Scaffold(
             appBar: AppBar(
               title: Text(rt.profile.name),
               actions: [
+                KillSwitchButton(controller: controller),
                 IconButton(
                   tooltip: 'الإعدادات',
                   icon: const Icon(Icons.tune),
@@ -42,10 +46,18 @@ class AccountDetailScreen extends StatelessWidget {
                   ],
                 ),
               ],
-              bottom: const TabBar(tabs: [Tab(text: 'نظرة عامة'), Tab(text: 'سجل القرارات'), Tab(text: 'الأداء')]),
+              bottom: const TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [
+                Tab(text: 'نظرة عامة'),
+                Tab(text: 'المراكز'),
+                Tab(text: 'سجل الدورات'),
+                Tab(text: 'سجل القرارات'),
+                Tab(text: 'الأداء'),
+              ]),
             ),
             body: TabBarView(children: [
               _Overview(controller: controller, rt: rt),
+              PositionsTab(controller: controller, rt: rt),
+              ActivityLogTab(controller: controller, rt: rt),
               _JournalTab(rt: rt),
               _PerformanceTab(rt: rt),
             ]),
@@ -135,11 +147,14 @@ class _OverviewState extends State<_Overview> {
       child: ListView(
         padding: const EdgeInsets.all(12),
         children: [
+          KillSwitchBanner(controller: widget.controller),
           Card(
             child: SwitchListTile(
-              title: const Text('التداول الآلي'),
+              title: const Text('التداول الآلي لهذا الحساب'),
               subtitle: Text(p.enabled
-                  ? 'مفعّل — يعمل كل دقيقة أثناء فتح التطبيق، ويرسل أوامر فقط في ساعات السوق الرسمية (${p.mode == TradingMode.paper ? 'Paper' : 'حقيقي'})'
+                  ? 'مفعّل — دورة كل دقيقة ${widget.controller.backgroundRunning ? 'حتى في الخلفية' : 'أثناء فتح التطبيق'}، '
+                      'وأوامر فقط في ساعات السوق الرسمية (${p.mode == TradingMode.paper ? 'Paper' : 'حقيقي'})'
+                      '${widget.controller.killSwitch ? ' — موقوف الآن بالإيقاف الطارئ' : ''}'
                   : 'متوقف'),
               value: p.enabled,
               onChanged: (v) => widget.controller.updateProfile(p.copyWith(enabled: v)),
@@ -162,6 +177,12 @@ class _OverviewState extends State<_Overview> {
                       _Stat('القوة الشرائية', formatUsd(snap.buyingPowerCents)),
                     ]),
             ),
+          ),
+          RiskSettingsCard(
+            rt: rt,
+            killSwitch: widget.controller.killSwitch,
+            onEdit: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => SettingsScreen(controller: widget.controller, accountId: p.id))),
           ),
           const _SectionTitle('الأسهم المسموح تداولها — اضغط على السهم لفتح الشارت'),
           Card(
@@ -196,7 +217,7 @@ class _OverviewState extends State<_Overview> {
               ]),
             ),
           ),
-          const _SectionTitle('المراكز المفتوحة'),
+          const _SectionTitle('المراكز المفتوحة — التفاصيل والربح/الخسارة في تبويب "المراكز"'),
           if (rt.positions.isEmpty)
             const Card(child: ListTile(title: Text('لا توجد مراكز')))
           else

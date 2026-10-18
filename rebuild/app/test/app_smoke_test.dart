@@ -21,6 +21,14 @@ class MemoryRepository extends AccountRepository {
   Future<void> saveState(String accountId, AccountState state) async {
     states[accountId] = state;
   }
+  Map<String, dynamic> app = {};
+  @override
+  Future<Map<String, dynamic>> loadAppSettings() async => Map.of(app);
+  @override
+  Future<void> saveAppSettings(Map<String, Object?> settings) async {
+    app = Map<String, dynamic>.of(settings);
+  }
+
   @override
   Future<void> deleteState(String accountId) async {
     states.remove(accountId);
