@@ -1,0 +1,4530 @@
+<!doctype html><html lang='ar' dir='rtl'><head><meta charset='utf-8'><style>
+@page { size: A4; margin: 16mm 13mm 16mm 13mm; }
+body { font-family: 'DejaVu Sans', sans-serif; direction: rtl; font-size: 9.6pt; line-height: 1.6; color: #1d2433; }
+h1 { font-size: 17pt; color: #0b4f6c; border-bottom: 2px solid #0b4f6c; padding-bottom: 4px; margin-top: 0; }
+h2 { font-size: 13pt; color: #0b4f6c; margin-top: 18px; }
+h3 { font-size: 11pt; color: #234; }
+h4 { font-size: 10pt; }
+table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 7.6pt; page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+th, td { border: 1px solid #c9d3de; padding: 3px 4px; vertical-align: top; unicode-bidi: plaintext; text-align: start; }
+th { background: #e8f1f7; }
+tr:nth-child(even) td { background: #f8fafc; }
+code { font-family: 'DejaVu Sans Mono', monospace; font-size: 8pt; background: #f1f4f7; padding: 0 2px; direction: ltr; unicode-bidi: embed; }
+pre { direction: ltr; text-align: left; background: #f4f6f9; border: 1px solid #dde3ea; padding: 8px; font-size: 7.8pt; white-space: pre-wrap; }
+pre code { background: none; }
+blockquote { border-right: 4px solid #e0a100; margin: 8px 0; padding: 4px 10px; background: #fff8e6; }
+.pb { page-break-after: always; }
+.raw { direction: ltr; text-align: left; } .raw table { font-size: 6.6pt; } .raw h2, .raw h3, .raw h4 { text-align: left; }
+.cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+.cover h1 { border: none; font-size: 26pt; }
+.cover .sub { font-size: 13pt; color: #456; margin: 6px 0; }
+.toc ul { list-style: none; padding-right: 12px; } .toc > ul > li { margin-top: 4px; font-weight: bold; } .toc ul ul li { font-weight: normal; }
+a { color: #0b4f6c; text-decoration: none; }
+</style></head><body><div class='cover'><h1>Options AI Trader</h1>
+<div class='sub'>الجولة الرابعة: استراتيجيات العقود الأسبوعية</div>
+<div class='sub'>دراسة الوقت · التنفيذ عند 15:50 · الموجات · التحقق بأسعار عقود حقيقية</div>
+<div class='sub' style='margin-top:30px;font-size:11pt'>18 أكتوبر 2026 · الفرع rebuild/hybrid-engines-20261018</div>
+<div class='sub' style='font-size:10pt'>Yahoo يومي 1998–2026 · Alpaca 5 دقائق 2016–2026 · أسعار عقود حقيقية 2024–2026 · 15 رمزًا</div>
+</div><div class='pb'></div><h1>المحتويات</h1><div class="toc">
+<ul>
+<li><a href="#_1">الملخص التنفيذي</a></li>
+<li><a href="#_2">ما أُضيف في الجولة الرابعة</a></li>
+<li><a href="#_3">دراسة الوقت: كم يحتاج السهم ليتحرك؟</a></li>
+<li><a href="#_4">المحاكاة على العقود الأسبوعية (النموذج)</a><ul>
+<li><a href="#19992026">الدخول في افتتاح اليوم التالي (1999–2026)</a></li>
+<li><a href="#1550">التنفيذ عند الإغلاق أو 15:50: التحسين الأكبر</a></li>
+<li><a href="#5-0dte-spyqqq-2022-11">صفقات نفس اليوم (5 دقائق، عقود 0DTE لـ SPY/QQQ منذ 2022-11)</a></li>
+<li><a href="#_5">الموجات: نتيجة صريحة</a></li>
+</ul>
+</li>
+<li><a href="#_6">الاستراتيجيات الأربع: القواعد والمتانة والاختبار النهائي (النموذج)</a></li>
+<li><a href="#_7">التحقق بأسعار عقود حقيقية: النتيجة الحاسمة</a><ul>
+<li><a href="#_8">التطوير على الأسعار الحقيقية</a></li>
+<li><a href="#_9">هل قيد "أقل من أسبوع" هو السبب؟</a></li>
+</ul>
+</li>
+<li><a href="#_10">ما لم ينجح ولماذا</a></li>
+<li><a href="#paper">التوصيات وخطة Paper</a></li>
+<li><a href="#_11">ملحق أ: القواعد الحتمية (شبه كود)</a></li>
+<li><a href="#_12">ملحق ب: خريطة الكود</a></li>
+<li><a href="#_13">ملحق ج: المصادر</a></li>
+<li><a href="#resultsr4">ملحق د: النتائج الخام (results/r4)</a><ul>
+<li><a href="#timingmd">TIMING.md</a></li>
+<li><a href="#validatemd">VALIDATE.md</a></li>
+<li><a href="#simmd">SIM.md</a></li>
+<li><a href="#closemd">CLOSE.md</a></li>
+<li><a href="#intradaymd">INTRADAY.md</a></li>
+<li><a href="#intraday3md">INTRADAY3.md</a></li>
+<li><a href="#samedaymd">SAMEDAY.md</a></li>
+<li><a href="#noise_robustmd">NOISE_ROBUST.md</a></li>
+<li><a href="#wave_intradaymd">WAVE_INTRADAY.md</a></li>
+<li><a href="#final_robustmd">FINAL_ROBUST.md</a></li>
+<li><a href="#holdoutmd">HOLDOUT.md</a></li>
+<li><a href="#portfoliomd">PORTFOLIO.md</a></li>
+<li><a href="#real_optionsmd">REAL_OPTIONS.md</a></li>
+<li><a href="#real_devmd">REAL_DEV.md</a></li>
+<li><a href="#iv_filtermd">IV_FILTER.md</a></li>
+<li><a href="#real_dtemd">REAL_DTE.md</a></li>
+</ul>
+</li>
+</ul>
+</div><div class='pb'></div><h1 id="_1">الملخص التنفيذي</h1>
+<p><strong>المطلوب في هذه الجولة:</strong></p>
+<ul>
+<li>إعادة الدراسة في ضوء تقرير Round 3.</li>
+<li>الخروج بأربع استراتيجيات، إحداها عن الموجات.</li>
+<li>التركيز على <strong>الوقت</strong>: عقود تنتهي خلال أقل من أسبوع من الشراء، وأهداف قريبة.</li>
+</ul>
+<p><strong>النتيجة باختصار:</strong></p>
+<ul>
+<li><strong>(1)</strong> <strong>على نموذج التسعير النظري</strong> (Black–Scholes بتقلب مُقدَّر، وهو نفس نموذج الجولات السابقة) وجدنا أربع استراتيجيات. كانت رابحة في فترة الاكتشاف وفترة التحقق، وفي آخر 6 أشهر التي لم تُستخدم إلا مرة واحدة بعد تجميد القواعد:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>التحقق 2021–2026: عائد/صفقة (t)</th>
+<th>آخر 6 أشهر</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A</strong> ارتداد الترند عند 15:50</td>
+<td>+17.4% (3.78)</td>
+<td>+11.4%</td>
+</tr>
+<tr>
+<td><strong>B</strong> إنهاك الموجة 2/B (الموجات)</td>
+<td>+19.9% (0.78)، عينة صغيرة</td>
+<td>صفقتان فقط</td>
+</tr>
+<tr>
+<td><strong>C</strong> اختراق أول 5 دقائق للأسهم النشطة</td>
+<td>+42.3% (3.13)</td>
+<td>+14.3%</td>
+</tr>
+<tr>
+<td><strong>D</strong> زخم "منطقة الضجيج" على SPY/QQQ</td>
+<td>+9.8% (2.79)</td>
+<td>+9.6%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>(2)</strong> <strong>لأول مرة أعدنا تسعير نفس الصفقات بأسعار عقود حقيقية متداولة.</strong> المصدر بيانات خيارات Alpaca المتاحة منذ فبراير 2024، بنفس التوقيت ونفس الانتهاء وأقرب سعر تنفيذ مُدرج. <strong>النتيجة سلبية في الاستراتيجيات الأربع:</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>النموذج</th>
+<th><strong>الأسعار الحقيقية</strong></th>
+<th>بسعر VWAP بلا فرق شراء/بيع</th>
+<th>كم العقد الحقيقي أغلى من النموذج</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>+19.2%</td>
+<td><strong>−1.7%</strong></td>
+<td>+3.7%</td>
+<td>~17%</td>
+</tr>
+<tr>
+<td>B</td>
+<td>−10.4%</td>
+<td><strong>−3.7%</strong></td>
+<td>+1.4%</td>
+<td>~7%</td>
+</tr>
+<tr>
+<td>C</td>
+<td>+24.4%</td>
+<td><strong>−12.1%</strong></td>
+<td>−6.9%</td>
+<td>60%–79%</td>
+</tr>
+<tr>
+<td>D</td>
+<td>+10.3%</td>
+<td><strong>−2.1%</strong></td>
+<td>+0.9%</td>
+<td>~13%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>
+<p><strong>(3)</strong> <strong>لماذا؟</strong></p>
+<ul>
+<li>التقلب الضمني الحقيقي للعقود التي تشتريها هذه الإشارات أعلى بكثير من التقلب المحقق:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>التقلب الضمني الحقيقي</th>
+<th>التقلب المحقق</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>31%</td>
+<td>24%</td>
+</tr>
+<tr>
+<td>C</td>
+<td>49%</td>
+<td>24%</td>
+</tr>
+<tr>
+<td>D (عقود 0DTE)</td>
+<td>29%</td>
+<td>14%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>الإشارات تتنبأ فعلًا بحركة السهم (A: +0.27% لكل صفقة). لكن <strong>علاوة العقد الأسبوعي تبتلع هذه الحركة</strong>: ثمن عقد A الحقيقي ≈ 0.9 انحراف معياري يومي.</li>
+</ul>
+</li>
+<li>
+<p><strong>(4)</strong> <strong>حاولنا التطوير مباشرة على الأسعار الحقيقية.</strong> المحاولات:</p>
+<ul>
+<li>دلتا 0.7 و0.85.</li>
+<li>انتهاء أقرب وأبعد.</li>
+<li>فلتر "التقلب الضمني ÷ المحقق".</li>
+<li>FOMC بخروج قبل البيان.</li>
+</ul>
+</li>
+</ul>
+<p>اخترنا على فترة (2024-02 → 2025-06) واختبرنا على ما بعدها (2025-07 → 2026-10). <strong>كل النسخ المختارة خسرت في فترة الاختبار.</strong></p>
+<pre><code>- النسخة الواعدة الوحيدة في التطوير كانت "قبل FOMC مع الخروج 13:55": +13.9%. لكنها انقلبت في الاختبار إلى −5.9%.
+</code></pre>
+<ul>
+<li>
+<p><strong>(5)</strong> <strong>الاستنتاج الأمين:</strong></p>
+<ul>
+<li><strong>لم نجد استراتيجية تشتري عقودًا أسبوعية وتربح بأسعار حقيقية بعد التكاليف</strong> في 2024–2026.</li>
+<li>الحافة موجودة في <strong>حركة السهم</strong>، لا في العقد الأسبوعي.</li>
+<li><strong>كل نتائج الجولات السابقة متفائلة</strong> للسبب نفسه، لأنها بُنيت على النموذج نفسه.</li>
+</ul>
+</li>
+<li>
+<p><strong>(6)</strong> <strong>التوصية:</strong></p>
+<ul>
+<li><strong>لا تفعيل لهذه الاستراتيجيات بأموال حقيقية.</strong></li>
+<li>المرحلة التالية: معيار قبول جديد إلزامي هو <strong>الربح بأسعار عقود حقيقية</strong>، تُسجَّل من Paper أو من بيانات OPRA.</li>
+<li><strong>إطالة المدة إلى 14 و28 يومًا لم تُنقذ النتيجة</strong> (A بين −0.8% و−2.4%). لكن بسعر الوسط (بلا فرق) A موجب (+3% إلى +5%). فالحافة في حجم تكلفة التنفيذ تقريبًا، و<strong>أوامر Limit قرب منتصف السعر شرط أساسي</strong>.</li>
+</ul>
+</li>
+</ul>
+<h1 id="_2">ما أُضيف في الجولة الرابعة</h1>
+<table>
+<thead>
+<tr>
+<th>الإضافة</th>
+<th>التفاصيل</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>بيانات أطول</strong></td>
+<td>يومية من 1998 لـ 15 رمزًا، ومؤشرات VIX وVIX9D وVIX1D وVIX3M وVXN</td>
+</tr>
+<tr>
+<td><strong>بيانات 5 دقائق</strong></td>
+<td>من 2016 إلى 2026، من Alpaca SIP، معدّلة للتقسيمات والتوزيعات، ~211 ألف شمعة لكل رمز</td>
+</tr>
+<tr>
+<td><strong>أسعار عقود حقيقية</strong></td>
+<td>شموع 5 دقائق لعقود الخيارات من Alpaca (منذ 2024-02)</td>
+</tr>
+<tr>
+<td><strong>تقويم FOMC</strong></td>
+<td>1999–2026 من موقع الاحتياطي الفيدرالي</td>
+</tr>
+<tr>
+<td><strong>محرك عقود أسبوعية جديد</strong> (<code>shortdated.py</code>)</td>
+<td>انتهاء أول جمعة ≥ الدخول + N أيام، وعقود يومية لـ SPY/QQQ منذ 2022-11</td>
+</tr>
+<tr>
+<td><strong>إصلاح ثغرات Round 3</strong></td>
+<td>الخروج المشروط يُنفَّذ في افتتاح الشمعة التالية؛ ترتيب الإشارات بالقوة لا أبجديًا؛ مقاييس على NAV يومي؛ t مُجمّع أسبوعيًا؛ إصلاح خطأ "آخر صف كأنه نهاية شهر"؛ تسجيل القواعد مسبقًا في JSON؛ فترة نهائية لم تُلمس</td>
+</tr>
+<tr>
+<td><strong>تسعير لا يتأثر بالتقسيمات</strong></td>
+<td>الأسعار المعدّلة القديمة صغيرة جدًا (AAPL ≈ 0.3$ في 2003)، فكانت تدفع فروقًا وحدًّا أدنى غير واقعي. الحل: إعادة قياس السعر إلى 100 عند الدخول (للأسعار الصغيرة فقط)</td>
+</tr>
+<tr>
+<td><strong>التنفيذ عند 15:50</strong></td>
+<td>سلسلة يومية "حتى 15:50" تُحسب عليها المؤشرات، فيُنفَّذ الأمر قبل الإغلاق بعشر دقائق بلا تسرّب مستقبل</td>
+</tr>
+<tr>
+<td><strong>محرك زمن الوصول للهدف</strong> (<code>timing.py</code>)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>التحقق من الإطار</strong></td>
+<td>بيانات عشوائية: لا حافة (+1.9%، t = −0.37). حافة مزروعة: اكتُشفت (+42%، t = 10.8)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>الفترات:</strong></p>
+<table>
+<thead>
+<tr>
+<th>النوع</th>
+<th>الاكتشاف</th>
+<th>التحقق</th>
+<th>النهائية</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>يومي</td>
+<td>1999–2012</td>
+<td>2013 → 2026-04-15</td>
+<td>2026-04-16 → 2026-10-16</td>
+</tr>
+<tr>
+<td>5 دقائق</td>
+<td>2016–2020</td>
+<td>2021 → 2026-04-15</td>
+<td>2026-04-16 → 2026-10-16</td>
+</tr>
+<tr>
+<td>أسعار حقيقية</td>
+<td>تطوير: 2024-02 → 2025-06</td>
+<td>اختبار: 2025-07 → 2026-10</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>التكاليف (مسجّلة مسبقًا):</strong></p>
+<ul>
+<li>فرق شراء/بيع للعقود الأسبوعية: 3% من سعر العقد للـ ETF و6% للأسهم.</li>
+<li>العمولة: 0.65$ لكل عقد في كل اتجاه.</li>
+<li>اختبارات الحساسية: ½× و2× الفرق، والتقلب ×0.8 و×1.25.</li>
+</ul>
+<h1 id="_3">دراسة الوقت: كم يحتاج السهم ليتحرك؟</h1>
+<p>الإعداد:</p>
+<ul>
+<li>الدخول في افتتاح اليوم التالي، والوحدة ATR يومي.</li>
+<li>الوقف −1 ATR. إذا لمست الشمعة الهدف والوقف معًا تُحسب وقفًا (تحفّظ).</li>
+<li>فترة الاكتشاف فقط: 1999–2012.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الإعداد</th>
+<th>العدد</th>
+<th>+0.5 ATR خلال يومين</th>
+<th>+1 ATR خلال يومين</th>
+<th>+1 ATR خلال 5 أيام</th>
+<th>الوقف خلال 5 أيام</th>
+<th>متوسط الإغلاق بعد يومين (ATR)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ارتداد ETF (Calls)</td>
+<td>503</td>
+<td>59%</td>
+<td>30%</td>
+<td>50%</td>
+<td>47%</td>
+<td>+0.10</td>
+</tr>
+<tr>
+<td>ارتداد هابط (Puts)</td>
+<td>306</td>
+<td>61%</td>
+<td>25%</td>
+<td>49%</td>
+<td>35%</td>
+<td>+0.18</td>
+</tr>
+<tr>
+<td>قبل FOMC</td>
+<td>323</td>
+<td><strong>66%</strong></td>
+<td><strong>33%</strong></td>
+<td>53%</td>
+<td>39%</td>
+<td><strong>+0.26</strong></td>
+</tr>
+<tr>
+<td>فجوة حدث</td>
+<td>84</td>
+<td>54%</td>
+<td>26%</td>
+<td>48%</td>
+<td>39%</td>
+<td>+0.14</td>
+</tr>
+<tr>
+<td>بداية الشهر</td>
+<td>1102</td>
+<td>57%</td>
+<td>27%</td>
+<td>47%</td>
+<td>47%</td>
+<td>+0.10</td>
+</tr>
+<tr>
+<td>الموجة 2→3 يومي</td>
+<td>618</td>
+<td>57%</td>
+<td>23%</td>
+<td>44%</td>
+<td>46%</td>
+<td>−0.00</td>
+</tr>
+<tr>
+<td>الموجة B→C يومي</td>
+<td>102</td>
+<td>56%</td>
+<td>26%</td>
+<td>49%</td>
+<td>37%</td>
+<td>+0.22</td>
+</tr>
+<tr>
+<td><strong>أساس: أي يوم فوق SMA200</strong></td>
+<td>22749</td>
+<td>54%</td>
+<td>25%</td>
+<td>45%</td>
+<td>46%</td>
+<td>+0.04</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ما تعلمناه:</strong></p>
+<ul>
+<li><strong>(1)</strong> معظم الإعدادات تقارب الأساس في سرعة الوصول للهدف. الوصول إلى +1 ATR خلال يومين يحدث في ~25% فقط من الحالات تقريبًا لكل الإعدادات. الأهداف القريبة (+0.5 ATR) هي الواقعية لعقد أسبوعي.</li>
+<li><strong>(2)</strong> <strong>الإعدادات ذات الحافة هي ذات "الانجراف الفوري":</strong> قبل FOMC، والارتداد بعد الهبوط، وB→C. الموجة 2→3 بالتأكيد بعد الاندفاع لا تتفوق على الأساس.</li>
+<li><strong>(3)</strong> <strong>قسمٌ كبير من الارتداد يحدث ليلًا.</strong> في ارتداد ETF:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الفترة</th>
+<th>الليلة الأولى (من إغلاق يوم الإشارة إلى افتتاح اليوم التالي)</th>
+<th>خلال اليوم الأول</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1999–2012</td>
+<td>+0.12 ATR</td>
+<td>−0.01 ATR</td>
+</tr>
+<tr>
+<td>2013–2026</td>
+<td>+0.11 ATR</td>
+<td>+0.03 ATR</td>
+</tr>
+</tbody>
+</table>
+<p><strong>الدخول في الافتتاح التالي يضيّع الحافة.</strong> من هنا جاء الابتكار الأهم في الجولة: <strong>التنفيذ عند 15:50</strong>.</p>
+<ul>
+<li><strong>(4)</strong> يوم الدخول من الأسبوع لا يصنع فرقًا يُعتدّ به في حركة السهم. الإثنين أفضل قليلًا: +0.10 ATR بعد يومين، مقابل +0.04 للثلاثاء.</li>
+</ul>
+<h1 id="_4">المحاكاة على العقود الأسبوعية (النموذج)</h1>
+<h2 id="19992026">الدخول في افتتاح اليوم التالي (1999–2026)</h2>
+<ul>
+<li>الشبكة مسجّلة مسبقًا: دلتا × خروج × انتهاء.</li>
+<li>الاختيار على 1999–2012 بإحصاء t الأسبوعي، ثم التحقق مرة واحدة على 2013–2026.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الإعداد</th>
+<th>التحقق: عائد/صفقة</th>
+<th>t</th>
+<th>مع فروق مضاعفة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>قبل FOMC</td>
+<td>+11.7%</td>
+<td>1.36</td>
+<td>+7.1%</td>
+</tr>
+<tr>
+<td>إنهاك الموجة 2/B (جديد)</td>
+<td>+18.3%</td>
+<td>1.99</td>
+<td>+11.6%</td>
+</tr>
+<tr>
+<td>الموجة B→C</td>
+<td>+9.8%</td>
+<td>1.01</td>
+<td>+3.4%</td>
+</tr>
+<tr>
+<td>ارتداد ETF</td>
+<td>+2.9%</td>
+<td>1.91</td>
+<td>−0.7%</td>
+</tr>
+<tr>
+<td>الموجة 2→3</td>
+<td>−0.3%</td>
+<td>−1.00</td>
+<td>−5.5%</td>
+</tr>
+<tr>
+<td>بداية الشهر / قبل العطلة / اختراق 20 يومًا / فجوة الحدث / ارتداد VIX</td>
+<td>بين −14% و+3%</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1550">التنفيذ عند الإغلاق أو 15:50: التحسين الأكبر</h2>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الاكتشاف</th>
+<th>التحقق</th>
+<th>مع فروق مضاعفة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ارتداد ETF @الإغلاق (1999–2026)</td>
+<td>+13.8% (t 3.23)</td>
+<td>+7.0% (t 2.33)</td>
+<td>+3.5%</td>
+</tr>
+<tr>
+<td>ارتداد الترند — كل الـ 15 @الإغلاق</td>
+<td>+7.5% (t 4.11)</td>
+<td>+19.0% (t 5.58)</td>
+<td>+12.0%</td>
+</tr>
+<tr>
+<td>ارتداد ETF @15:50 (5 دقائق)</td>
+<td>+19.9%</td>
+<td>+10.1% (t 2.36)</td>
+<td>+6.6%</td>
+</tr>
+<tr>
+<td>ارتداد الأسهم @15:50 (5 دقائق)</td>
+<td>+24.3% (t 4.11)</td>
+<td>+21.0% (t 3.26)</td>
+<td>+13.7%</td>
+</tr>
+<tr>
+<td>إنهاك الموجة 2/B @15:50</td>
+<td>+22.2% (n=46)</td>
+<td>+19.9% (n=54)</td>
+<td>+13.4%</td>
+</tr>
+<tr>
+<td>قبل FOMC 15:50 → 13:55 (قبل البيان)</td>
+<td>−2.8%</td>
+<td>+4.2%</td>
+<td>+1.1%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>ملاحظة:</strong> هذه كلها أرقام <strong>النموذج</strong>. القسم التالي يبيّن أنها متفائلة.</p>
+</blockquote>
+<h2 id="5-0dte-spyqqq-2022-11">صفقات نفس اليوم (5 دقائق، عقود 0DTE لـ SPY/QQQ منذ 2022-11)</h2>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الاكتشاف 2016–2020</th>
+<th>التحقق 2021–2026</th>
+<th>مع فروق مضاعفة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>اختراق أول 5 دقائق، أسهم نشطة (Zarattini 2024)</td>
+<td>+22.3% (t 2.61)</td>
+<td>+42.3% (t 3.13)</td>
+<td>+30.8%</td>
+</tr>
+<tr>
+<td>زخم منطقة الضجيج (Zarattini 2024)</td>
+<td>+0.9%</td>
+<td>+9.8% (t 2.79)</td>
+<td>+6.2%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>زخم منطقة الضجيج <strong>يضعف بوضوح</strong> في السنوات الأخيرة: 2024: +29%، 2025: +0.3%، 2026: −2.3%.</li>
+<li>ربح النموذج فيه يعتمد على "تحدّب" عقود 0DTE، مع أن حركة السهم لكل صفقة +0.045% فقط.</li>
+</ul>
+<h2 id="_5">الموجات: نتيجة صريحة</h2>
+<table>
+<thead>
+<tr>
+<th>النسخة</th>
+<th>النتيجة (النموذج)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>الموجة 2→3 بالتأكيد بعد الاندفاع (يومي)</td>
+<td>لا حافة في الفترتين</td>
+</tr>
+<tr>
+<td>الموجة 2/B على فريم ساعة و15 دقيقة (مع ترند يومي)</td>
+<td>خاسرة في كل الحالات (التحقق −2% إلى −5.5%)</td>
+</tr>
+<tr>
+<td><strong>ابتكار هذه الجولة: "إنهاك الموجة 2/B"</strong></td>
+<td>إيجابية في كل الاختبارات الأربعة بالنموذج، لكن العينة صغيرة (~10 صفقات/سنة على 15 رمزًا)</td>
+</tr>
+</tbody>
+</table>
+<p>شروط "إنهاك الموجة 2/B": الدخول في <strong>نهاية</strong> الموجة 2، لا بعد الاندفاع:</p>
+<ul>
+<li>موجة 1 ≥ 3 ATR كسرت القمة السابقة.</li>
+<li>تصحيح بين 38.2% و78.6%.</li>
+<li>الإغلاق فوق بداية الموجة وفوق VWAP المثبّت منها.</li>
+<li>ترند أسبوعي صاعد وSMA200.</li>
+<li>RSI(2) &lt; 10.</li>
+</ul>
+<p>مقارنة الموجة بالنسخة "بدون موجة" (ترند + RSI2 فقط): الموجة أفضل في الفترتين — @الإغلاق: +7.7% / +17.5% مقابل −0.1% / +10.7%.</p>
+<blockquote>
+<p><strong>لكن:</strong>
+- بدون أفضل 5 صفقات تصبح −21.9%.
+- Calls وحدها سالبة.
+- بالأسعار الحقيقية: −3.7%.</p>
+<p><strong>التصنيف: هشّة.</strong></p>
+</blockquote>
+<h1 id="_6">الاستراتيجيات الأربع: القواعد والمتانة والاختبار النهائي (النموذج)</h1>
+<p>القواعد مجمّدة في <code>results/r4/FINAL_PREREG.json</code>. رُفعت إلى GitHub (commit 268cdbd) <strong>قبل</strong> تشغيل الفترة النهائية.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>A ارتداد الترند @15:50</th>
+<th>B إنهاك الموجة 2/B @15:50</th>
+<th>C اختراق 5 دقائق (نشطة)</th>
+<th>D زخم منطقة الضجيج</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>الرموز</strong></td>
+<td>الـ 15</td>
+<td>الـ 15</td>
+<td>الـ 15</td>
+<td>SPY وQQQ</td>
+</tr>
+<tr>
+<td><strong>الدخول</strong></td>
+<td>15:50: RSI2&lt;10، فوق SMA200، VIX&lt;35</td>
+<td>15:50: شروط الموجة أعلاه</td>
+<td>09:35: حجم أول شمعة ≥ 2× متوسط 14 يومًا، والاتجاه حسب جسم الشمعة</td>
+<td>مراجعة كل نصف ساعة من 10:00 إلى 15:00: الإغلاق خارج حدود الضجيج</td>
+</tr>
+<tr>
+<td><strong>العقد</strong></td>
+<td>دلتا 0.5، انتهاء أول جمعة بعد يومين أو أكثر</td>
+<td>دلتا 0.5، نفسه</td>
+<td>دلتا 0.5، نفس اليوم/الجمعة</td>
+<td>دلتا 0.7، 0DTE</td>
+</tr>
+<tr>
+<td><strong>الخروج</strong></td>
+<td>+0.75 ATR، أو −1 ATR، أو إغلاق &gt; SMA5، أو RSI2 &gt; 70، وقبل يوم الانتهاء</td>
+<td>+0.5 ATR / −1 ATR</td>
+<td>طرف الشمعة الأولى أو 10% ATR، وإلا الإغلاق</td>
+<td>العودة داخل max(الحد، VWAP)، وإلا الإغلاق</td>
+</tr>
+<tr>
+<td><strong>الحجم</strong></td>
+<td>2% من NAV</td>
+<td>2%</td>
+<td>1%</td>
+<td>1%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>المتانة على فترة التحقق (النموذج):</strong></p>
+<table>
+<thead>
+<tr>
+<th>الاختبار</th>
+<th>A</th>
+<th>C</th>
+<th>D</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>الأساس</td>
+<td>+17.4%</td>
+<td>+42.3%</td>
+<td>+9.8%</td>
+</tr>
+<tr>
+<td>فروق ×2</td>
+<td>+10.9%</td>
+<td>+30.8%</td>
+<td>+6.2%</td>
+</tr>
+<tr>
+<td>تقلب ضمني ×1.25</td>
+<td><strong>+3.2%</strong></td>
+<td>+23.6%</td>
+<td>+6.5%</td>
+</tr>
+<tr>
+<td>بدون NVDA/TSLA/AMD/META</td>
+<td>+5.9%</td>
+<td>+46.2%</td>
+<td>—</td>
+</tr>
+<tr>
+<td>بدون أفضل 5 صفقات</td>
+<td>+10.8%</td>
+<td>+32.1%</td>
+<td>+6.2%</td>
+</tr>
+<tr>
+<td>أسوأ سنة</td>
+<td>2022: −16%</td>
+<td>2025: +15.5%</td>
+<td>2026: −2.3%</td>
+</tr>
+<tr>
+<td>حركة السهم/صفقة</td>
+<td>+0.27%</td>
+<td>+0.09%</td>
+<td>+0.04%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>إشارة الإنذار كانت هنا:</strong> حساسية A للتقلب الضمني (×1.25 يمحو معظم الربح)، وضعف حركة السهم في C وD.</li>
+</ul>
+<p><strong>الفترة النهائية</strong> (2026-04-16 → 2026-10-16، مرة واحدة، النموذج):</p>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>النتيجة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>+11.4% (82 صفقة)</td>
+</tr>
+<tr>
+<td>B</td>
+<td>صفقتان: غير كافٍ</td>
+</tr>
+<tr>
+<td>C</td>
+<td>+14.3% (92)</td>
+</tr>
+<tr>
+<td>D</td>
+<td>+9.6% (157)</td>
+</tr>
+<tr>
+<td>الأربع مجتمعة</td>
+<td>+11.2% (333 صفقة، t = 0.93)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>المحفظة (النموذج، أربعة حسابات مستقلة بالتساوي، 2021-01 → 2026-10):</strong></p>
+<table>
+<thead>
+<tr>
+<th>المقياس</th>
+<th>القيمة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CAGR</td>
+<td>+49.7%</td>
+</tr>
+<tr>
+<td>أقصى تراجع</td>
+<td>−14.1%</td>
+</tr>
+<tr>
+<td>Sharpe</td>
+<td>1.89</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>هذه الأرقام نظرية فقط</strong>، وأسقطها اختبار الأسعار الحقيقية التالي.</p>
+</blockquote>
+<h1 id="_7">التحقق بأسعار عقود حقيقية: النتيجة الحاسمة</h1>
+<p><strong>الطريقة:</strong> لكل صفقة نموذجية منذ 2024-02-05:</p>
+<ul>
+<li>تحويل سعر السهم المعدّل إلى السعر الفعلي ذلك اليوم.</li>
+<li>بناء رمز العقد الحقيقي (OCC) بنفس الانتهاء، وأقرب سعر تنفيذ مُدرج.</li>
+<li>التنفيذ بسعر VWAP لشمعة 5 دقائق للعقد عند لحظة الدخول ولحظة الخروج.</li>
+<li>إضافة نصف فرق (1.5% للـ ETF و3% للأسهم) وعمولة 0.65$.</li>
+<li>طابقنا 93%–99% من الصفقات.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الصفقات</th>
+<th><strong>حقيقي</strong></th>
+<th>VWAP بلا فرق</th>
+<th>النموذج</th>
+<th>معامل الارتباط (نموذج/حقيقي)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>409</td>
+<td><strong>−1.7%</strong></td>
+<td>+3.7%</td>
+<td>+19.2%</td>
+<td>0.76</td>
+</tr>
+<tr>
+<td>B</td>
+<td>22</td>
+<td><strong>−3.7%</strong></td>
+<td>+1.4%</td>
+<td>−10.4%</td>
+<td>0.90</td>
+</tr>
+<tr>
+<td>C</td>
+<td>476</td>
+<td><strong>−12.1%</strong> (t −3.9)</td>
+<td>−6.9%</td>
+<td>+24.4%</td>
+<td>0.80</td>
+</tr>
+<tr>
+<td>D</td>
+<td>783</td>
+<td><strong>−2.1%</strong></td>
+<td>+0.9%</td>
+<td>+10.3%</td>
+<td>0.87</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>النموذج يتحرك <strong>في نفس الاتجاه</strong> مع الواقع (الارتباط 0.76–0.90)، لكن <strong>مستواه منحاز للأعلى</strong>.</li>
+</ul>
+<p><strong>ثمن العقد الحقيقي مقابل الحركة:</strong></p>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>العلاوة % من السهم</th>
+<th>أيام للانتهاء</th>
+<th>التقلب الضمني</th>
+<th>التقلب المحقق</th>
+<th>العلاوة بوحدة الانحراف اليومي</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>1.35%</td>
+<td>4.0</td>
+<td>31%</td>
+<td>24%</td>
+<td>0.90</td>
+</tr>
+<tr>
+<td>C</td>
+<td>1.02%</td>
+<td>1.3</td>
+<td>49%</td>
+<td>24%</td>
+<td>0.61</td>
+</tr>
+<tr>
+<td>D</td>
+<td>0.53%</td>
+<td>0.2</td>
+<td>29%</td>
+<td>14%</td>
+<td>0.56</td>
+</tr>
+<tr>
+<td>قبل FOMC</td>
+<td>0.80%</td>
+<td>3.0</td>
+<td>24%</td>
+<td>16%</td>
+<td>0.89</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_8">التطوير على الأسعار الحقيقية</h2>
+<p>اختبرنا 21 نسخة على فترة التطوير (2024-02 → 2025-06)، ثم اختبرنا الأفضل لكل استراتيجية مرة واحدة على 2025-07 → 2026-10.</p>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الاختيار</th>
+<th>التطوير</th>
+<th><strong>الاختبار</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>دلتا 0.85، هدف 0.75 ATR</td>
+<td>−12.1%</td>
+<td><strong>−9.8%</strong></td>
+</tr>
+<tr>
+<td>C</td>
+<td>دلتا 0.85</td>
+<td>−6.3%</td>
+<td><strong>−6.2%</strong></td>
+</tr>
+<tr>
+<td>D</td>
+<td>دلتا 0.7</td>
+<td>−0.2%</td>
+<td><strong>−4.1%</strong></td>
+</tr>
+<tr>
+<td>قبل FOMC (خروج 13:55)</td>
+<td>دلتا 0.5</td>
+<td>+13.9% (n=33)</td>
+<td><strong>−5.9%</strong> (n=30)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>فلتر التقلب الضمني ÷ المحقق عند الدخول:</strong> لم يفصل الرابح عن الخاسر بثبات.</p>
+<table>
+<thead>
+<tr>
+<th>النطاق</th>
+<th>التطوير</th>
+<th>الاختبار</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>أقل من 0.9</td>
+<td>−13.3%</td>
+<td>+9.4%</td>
+</tr>
+<tr>
+<td>1.1–1.3</td>
+<td>−9.4%</td>
+<td>−11.9%</td>
+</tr>
+</tbody>
+</table>
+<p>النتائج غير متسقة بين الفترتين.</p>
+<h2 id="_9">هل قيد "أقل من أسبوع" هو السبب؟</h2>
+<p>نفس إشارات A وقبل FOMC، بعقود أطول، بالأسعار الحقيقية، على 2024-02 → 2026-10:</p>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الانتهاء ≥ الدخول +</th>
+<th>دلتا</th>
+<th>الصفقات</th>
+<th><strong>حقيقي</strong></th>
+<th>VWAP بلا فرق</th>
+<th>النموذج</th>
+<th>حركة السهم/صفقة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>يومان</td>
+<td>0.5</td>
+<td>409</td>
+<td><strong>−1.7%</strong></td>
+<td>+3.7%</td>
+<td>+19.2%</td>
+<td>+0.43%</td>
+</tr>
+<tr>
+<td>A</td>
+<td>7 أيام</td>
+<td>0.5</td>
+<td>378</td>
+<td><strong>−0.8%</strong></td>
+<td>+4.7%</td>
+<td>+8.9%</td>
+<td>+0.52%</td>
+</tr>
+<tr>
+<td>A</td>
+<td>14 يومًا</td>
+<td>0.5</td>
+<td>334</td>
+<td><strong>−2.4%</strong></td>
+<td>+3.1%</td>
+<td>+4.9%</td>
+<td>+0.54%</td>
+</tr>
+<tr>
+<td>A</td>
+<td>28 يومًا</td>
+<td>0.5</td>
+<td>267</td>
+<td><strong>−2.4%</strong></td>
+<td>+3.0%</td>
+<td>+4.8%</td>
+<td>+0.52%</td>
+</tr>
+<tr>
+<td>A</td>
+<td>2–28 يومًا</td>
+<td>0.7</td>
+<td>125–336</td>
+<td><strong>−7.6% إلى −10.1%</strong></td>
+<td>−2% إلى −5%</td>
+<td>—</td>
+<td>~+0.5%</td>
+</tr>
+<tr>
+<td>قبل FOMC</td>
+<td>يومان</td>
+<td>0.5</td>
+<td>63</td>
+<td><strong>+4.5%</strong></td>
+<td>+7.6%</td>
+<td>+2.4%</td>
+<td>+0.18%</td>
+</tr>
+<tr>
+<td>قبل FOMC</td>
+<td>14 / 28 يومًا</td>
+<td>0.5</td>
+<td>54 / 42</td>
+<td>+1.0% / +0.8%</td>
+<td>+4%</td>
+<td>—</td>
+<td>+0.18%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>(1)</strong> <strong>إطالة المدة لا تُصلح المشكلة.</strong> A يبقى قرب الصفر أو تحته (−0.8% إلى −2.4%).</li>
+<li><strong>(2)</strong> <strong>بسعر الوسط (VWAP بلا فرق) A موجب</strong> (+3% إلى +5%). أي أن <strong>الحافة في حجم تكلفة التنفيذ تقريبًا</strong>. هذا يعني أن أوامر Limit قرب منتصف السعر هي الشرط الأول لأي ربح.</li>
+<li><strong>(3)</strong> <strong>دلتا 0.7 أسوأ دائمًا بالأسعار الحقيقية.</strong> على الأرجح لضعف سيولة العقود داخل النقود، فتنفيذها أسوأ.</li>
+<li><strong>(4)</strong> <strong>قبل FOMC بعقد قصير هو الوحيد الموجب على كامل 2024–2026</strong> (+4.5%، t = 0.84). لكن العينة 63 صفقة فقط، وفترة الاختبار وحدها كانت سالبة. التصنيف: <strong>يحتاج Paper لا قرارًا.</strong></li>
+</ul>
+<h1 id="_10">ما لم ينجح ولماذا</h1>
+<ul>
+<li><strong>(1)</strong> <strong>العقد الأسبوعي نفسه:</strong> العلاوة ≈ حركة يوم كامل، والتقلب الضمني أعلى من المحقق. الإشارات ذات الحافة الصغيرة في السهم (+0.1 إلى +0.3 ATR) لا تغطيها.</li>
+<li><strong>(2)</strong> <strong>نموذج Black–Scholes بتقلب مُقدَّر من التقلب المحقق</strong> يقلل ثمن العقود في الأيام التي تختارها الإشارات: بعد الهبوط، وفي الأسهم النشطة، وفي 0DTE. وهو لا يحاكي انخفاض التقلب بعد الارتداد.</li>
+<li><strong>(3)</strong> <strong>الموجات:</strong><ul>
+<li>بعد الاندفاع (2→3) لا حافة على أي فريم.</li>
+<li>الإنهاك (نهاية 2/B) أفضل لكنه نادر وهش.</li>
+<li>الفريمات الصغيرة خاسرة دائمًا.</li>
+</ul>
+</li>
+<li><strong>(4)</strong> <strong>بداية الشهر، وقبل العطلات، واختراق 20 يومًا، وانعكاس VIX، وفجوة الحدث (بديل PEAD):</strong> بلا حافة على العقود الأسبوعية حتى في النموذج.</li>
+<li><strong>(5)</strong> <strong>قبل FOMC:</strong> قوي 1999–2012 (يتوافق مع Lucca &amp; Moench)، ثم ضعف بعد 2015 (يتوافق مع الأدبيات اللاحقة). وبالأسعار الحقيقية غير ثابت.</li>
+</ul>
+<h1 id="paper">التوصيات وخطة Paper</h1>
+<ul>
+<li><strong>(1)</strong> <strong>لا تُفعَّل أي من استراتيجيات هذه الجولة على حساب حقيقي.</strong> ويُعاد تقييم استراتيجيات الجولات السابقة (S1/S2…) بنفس اختبار الأسعار الحقيقية قبل أي اعتماد.</li>
+<li><strong>(2)</strong> <strong>معيار قبول جديد إلزامي</strong> لأي استراتيجية خيارات: ربح بعد التكاليف <strong>بأسعار عقود حقيقية</strong>، على ≥ 100 صفقة، في فترة لم تُستخدم في الاختيار.</li>
+<li><strong>(3)</strong> <strong>تشغيل Paper للمراقبة فقط</strong> (بلا توقعات ربح) لـ A وD. الغرض: جمع أسعار تنفيذ فعلية وقياس الفرق بين التنفيذ والنموذج.<ul>
+<li><strong>معيار الإيقاف:</strong> عائد/صفقة &lt; 0 بعد 60 صفقة.</li>
+</ul>
+</li>
+<li><strong>(4)</strong> <strong>إضافة إلى التطبيق:</strong><ul>
+<li>تسجيل التقلب الضمني الفعلي وسعري الطلب والعرض لكل أمر في سجل القرارات.</li>
+<li>شرط اختياري "سقف التقلب الضمني ÷ المحقق" يُضبط لاحقًا.</li>
+</ul>
+</li>
+<li><strong>(5)</strong> <strong>بحث قادم مقترح:</strong><ul>
+<li>تقويم أرباح فعلي (PEAD الحقيقي).</li>
+<li>مدد أطول بالأسعار الحقيقية (انظر القسم أعلاه).</li>
+<li>توسيع قاعدة الرموز لتقليل هشاشة الموجات.</li>
+<li>شراء بيانات OPRA تاريخية أطول (ThetaData / Polygon) للتحقق قبل 2024.</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>أمان:</strong> مفتاح Alpaca (Paper) حُفظ خارج المستودع ولم يُطبع ولم يُرفع. <strong>يُنصح بإلغائه الآن.</strong></p>
+</blockquote>
+<div class='pb'></div>
+
+<h1 id="_11">ملحق أ: القواعد الحتمية (شبه كود)</h1>
+<pre><code>COMMON
+  bars: 5-minute regular session; daily_asof(15:50) = daily OHLC whose close is the 15:50 price
+  contract: long Call (dir=+1) / long Put (dir=-1); expiry = first Friday &gt;= entry_date + min_days
+            (SPY/QQQ: same-day expiry allowed when min_days = 0, since 2022-11)
+  strike: listed strike whose |delta| is closest to target_delta (BS on live IV)
+  order: LIMIT near mid (results show the edge is about the size of the spread)
+  conditional exits: decided on a bar close, executed at the next bar open
+  sell by the close of the session before expiry day (weekly contracts)
+  one position per symbol (Call/Put lock of the app still applies)
+
+A  TREND-DIP @15:50
+  at 15:50: rsi2(daily_asof) &lt; 10 AND close &gt; sma200 AND vix_prev_close &lt; 35  -&gt; BUY CALL
+  delta 0.5, min_days 2, size 2% NAV premium
+  exit when (checked 15:50): close &gt;= entry + 0.75*ATR | close &lt;= entry - 1*ATR | close &gt; sma5 | rsi2 &gt; 70
+
+B  WAVE-2/B EXHAUSTION @15:50
+  zigzag(confirmed pivots 3/2, swing &gt;= 1.5*ATR): s0 = last swing low, s1 = last swing high (bull case)
+  wave1 = s1 - s0 &gt;= 3*ATR AND s1 &gt; previous swing high
+  retr = (s1 - low_today)/(s1 - s0) in [0.382, 0.786]
+  close &gt; s0 AND close &gt; AVWAP(from s0) AND weekly_trend_up AND close &gt; sma200 AND rsi2 &lt; 10 -&gt; BUY CALL
+  mirror for PUT (wave B rally in a down-trend, rsi2 &gt; 90)
+  delta 0.5, min_days 2; exit +0.5*ATR / -1*ATR
+
+C  ORB-5 IN PLAY (same day)
+  first 5-min bar volume &gt;= 2 * avg(first-bar volume, 14 days); dir = sign(close - open) of that bar
+  BUY at 09:35 open; stop = nearer of (first-bar extreme, entry -/+ 0.10*daily ATR); else exit at the close
+  delta 0.5, min_days 0, size 1%
+
+D  NOISE-AREA MOMENTUM (SPY/QQQ, same day)
+  sigma(t) = mean over 14 days of |close(t)/open - 1| at the same time of day
+  UB = max(open, prev_close)*(1+sigma), LB = min(open, prev_close)*(1-sigma)
+  at :00/:30 marks 10:00-15:00: close &gt; UB -&gt; CALL, close &lt; LB -&gt; PUT (first signal of the day)
+  exit at :00/:30 when close &lt; max(UB, VWAP) (calls) / &gt; min(LB, VWAP) (puts); else at the close
+  delta 0.7, 0-DTE, size 1%
+
+PRE-FOMC (candidate for Paper only)
+  BUY CALL on SPY/QQQ/IWM at 15:50 the session before a scheduled FOMC statement,
+  SELL at 13:55 on statement day (before 14:00); delta 0.5, nearest weekly
+</code></pre>
+<h1 id="_12">ملحق ب: خريطة الكود</h1>
+<table>
+<thead>
+<tr>
+<th>الملف</th>
+<th>الوظيفة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fetch_alpaca.py</code></td>
+<td>تنزيل شموع 5 دقائق من Alpaca (المفاتيح من ملف خارج المستودع)</td>
+</tr>
+<tr>
+<td><code>static/fomc.csv</code></td>
+<td>تواريخ بيانات FOMC 1999–2026</td>
+</tr>
+<tr>
+<td><code>oat_research/shortdated.py</code></td>
+<td>محرك العقود الأسبوعية/اليومية</td>
+</tr>
+<tr>
+<td><code>oat_research/setups4.py</code></td>
+<td>إعدادات الجولة الرابعة (الارتداد، الموجات، FOMC، ORB، منطقة الضجيج…)</td>
+</tr>
+<tr>
+<td><code>oat_research/intraday4.py</code></td>
+<td>شرائح الجلسة وسلسلة "حتى 15:50"</td>
+</tr>
+<tr>
+<td><code>oat_research/timing.py</code></td>
+<td>محرك زمن الوصول للهدف</td>
+</tr>
+<tr>
+<td><code>r4_timing.py</code></td>
+<td>دراسة الوقت</td>
+</tr>
+<tr>
+<td><code>r4_sim.py</code>, <code>r4_close.py</code></td>
+<td>المحاكاة (الدخول عند الافتتاح التالي وعند الإغلاق)</td>
+</tr>
+<tr>
+<td><code>r4_intraday.py</code>, <code>r4_intraday2.py</code>, <code>r4_intraday3.py</code>, <code>r4_wave_hourly.py</code></td>
+<td>بيانات 5 دقائق (15:50، ونفس اليوم، والموجات)</td>
+</tr>
+<tr>
+<td><code>r4_noise_robust.py</code></td>
+<td>متانة زخم منطقة الضجيج</td>
+</tr>
+<tr>
+<td><code>r4_final.py</code></td>
+<td>الاستراتيجيات الأربع (robust / holdout)</td>
+</tr>
+<tr>
+<td><code>r4_validate.py</code></td>
+<td>التحقق من الإطار</td>
+</tr>
+<tr>
+<td><code>r4_real_options.py</code>, <code>r4_real_dev.py</code>, <code>r4_iv_filter.py</code>, <code>r4_real_dte.py</code></td>
+<td>التحقق والتطوير بأسعار العقود الحقيقية</td>
+</tr>
+<tr>
+<td><code>results/r4/*.md</code>, <code>*.json</code></td>
+<td>كل النتائج والتسجيل المسبق</td>
+</tr>
+</tbody>
+</table>
+<h1 id="_13">ملحق ج: المصادر</h1>
+<ul>
+<li>Lucca &amp; Moench (2015), <em>The Pre-FOMC Announcement Drift</em>, Journal of Finance.</li>
+<li>Zarattini, Barbon &amp; Aziz (2024), <em>A Profitable Day Trading Strategy for the U.S. Equity Market</em> (5-min ORB, stocks in play).</li>
+<li>Zarattini, Aziz &amp; Barbon (2024), <em>Beat the Market: An Effective Intraday Momentum Strategy for S&amp;P500 ETF (SPY)</em> (noise area).</li>
+<li>Connors &amp; Alvarez, <em>Short Term Trading Strategies That Work</em> (RSI(2)).</li>
+<li>Ariel (1990), <em>High Stock Returns before Holidays</em>; McConnell &amp; Xu (2008), turn of the month.</li>
+<li>Federal Reserve, FOMC meeting calendars (federalreserve.gov).</li>
+<li>Data: Yahoo Finance (daily), Alpaca Markets SIP (5-minute stock bars) and option bars (2024+).</li>
+</ul>
+<div class='pb'></div>
+
+<h1 id="resultsr4">ملحق د: النتائج الخام (results/r4)</h1>
+<h2 id="timingmd">TIMING.md</h2>
+<div class="raw">
+<p>Entry = next open. Units = daily ATR(14) at the signal. Stop = −1 ATR (a bar touching both counts as stop first).
+pX_dN = share of setups that touched +X ATR <strong>before the stop</strong> within N trading days (day 1 = entry day).</p>
+<table>
+<thead>
+<tr>
+<th>setup</th>
+<th>n</th>
+<th>+0.5 d1</th>
+<th>+0.5 d2</th>
+<th>+0.75 d2</th>
+<th>+1 d1</th>
+<th>+1 d2</th>
+<th>+1 d3</th>
+<th>+1 d5</th>
+<th>+1.5 d5</th>
+<th>median days to +1</th>
+<th>stop ≤5d</th>
+<th>MFE d1</th>
+<th>MFE d2</th>
+<th>close d1</th>
+<th>close d2</th>
+<th>close d5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ETF dip (calls)</td>
+<td>503</td>
+<td>43%</td>
+<td>59%</td>
+<td>44%</td>
+<td>9%</td>
+<td>30%</td>
+<td>40%</td>
+<td>50%</td>
+<td>35%</td>
+<td>2.0</td>
+<td>47%</td>
+<td>0.46</td>
+<td>0.71</td>
+<td>-0.01</td>
+<td>0.10</td>
+<td>0.23</td>
+</tr>
+<tr>
+<td>ETF bear-rally (puts)</td>
+<td>306</td>
+<td>37%</td>
+<td>61%</td>
+<td>42%</td>
+<td>6%</td>
+<td>25%</td>
+<td>38%</td>
+<td>49%</td>
+<td>30%</td>
+<td>3.0</td>
+<td>35%</td>
+<td>0.40</td>
+<td>0.64</td>
+<td>0.06</td>
+<td>0.18</td>
+<td>0.22</td>
+</tr>
+<tr>
+<td>VIX spike reversal (calls)</td>
+<td>93</td>
+<td>41%</td>
+<td>55%</td>
+<td>34%</td>
+<td>9%</td>
+<td>17%</td>
+<td>31%</td>
+<td>43%</td>
+<td>23%</td>
+<td>3.0</td>
+<td>51%</td>
+<td>0.46</td>
+<td>0.59</td>
+<td>-0.06</td>
+<td>-0.21</td>
+<td>0.03</td>
+</tr>
+<tr>
+<td>Gap &amp; go (both)</td>
+<td>516</td>
+<td>37%</td>
+<td>52%</td>
+<td>36%</td>
+<td>10%</td>
+<td>24%</td>
+<td>34%</td>
+<td>46%</td>
+<td>29%</td>
+<td>2.0</td>
+<td>44%</td>
+<td>0.36</td>
+<td>0.57</td>
+<td>-0.00</td>
+<td>0.03</td>
+<td>0.05</td>
+</tr>
+<tr>
+<td>Turn of month (calls)</td>
+<td>1102</td>
+<td>31%</td>
+<td>57%</td>
+<td>40%</td>
+<td>7%</td>
+<td>27%</td>
+<td>37%</td>
+<td>47%</td>
+<td>31%</td>
+<td>2.0</td>
+<td>47%</td>
+<td>0.34</td>
+<td>0.61</td>
+<td>-0.08</td>
+<td>0.10</td>
+<td>0.22</td>
+</tr>
+<tr>
+<td>20-day breakout (calls)</td>
+<td>1385</td>
+<td>38%</td>
+<td>52%</td>
+<td>37%</td>
+<td>11%</td>
+<td>24%</td>
+<td>33%</td>
+<td>43%</td>
+<td>28%</td>
+<td>2.0</td>
+<td>49%</td>
+<td>0.37</td>
+<td>0.57</td>
+<td>0.04</td>
+<td>0.03</td>
+<td>0.15</td>
+</tr>
+<tr>
+<td>Pre-FOMC (calls, ETFs)</td>
+<td>323</td>
+<td>36%</td>
+<td>66%</td>
+<td>51%</td>
+<td>6%</td>
+<td>33%</td>
+<td>45%</td>
+<td>53%</td>
+<td>35%</td>
+<td>2.0</td>
+<td>39%</td>
+<td>0.38</td>
+<td>0.79</td>
+<td>0.03</td>
+<td>0.26</td>
+<td>0.28</td>
+</tr>
+<tr>
+<td>Event gap drift (both)</td>
+<td>84</td>
+<td>43%</td>
+<td>54%</td>
+<td>45%</td>
+<td>20%</td>
+<td>26%</td>
+<td>30%</td>
+<td>48%</td>
+<td>23%</td>
+<td>2.0</td>
+<td>39%</td>
+<td>0.41</td>
+<td>0.72</td>
+<td>0.19</td>
+<td>0.14</td>
+<td>0.20</td>
+</tr>
+<tr>
+<td>Pre-holiday (calls, ETFs)</td>
+<td>284</td>
+<td>28%</td>
+<td>53%</td>
+<td>38%</td>
+<td>4%</td>
+<td>25%</td>
+<td>35%</td>
+<td>46%</td>
+<td>28%</td>
+<td>2.0</td>
+<td>42%</td>
+<td>0.31</td>
+<td>0.60</td>
+<td>0.04</td>
+<td>0.14</td>
+<td>0.14</td>
+</tr>
+<tr>
+<td>Wave 2-&gt;3 daily (HTF)</td>
+<td>618</td>
+<td>39%</td>
+<td>57%</td>
+<td>39%</td>
+<td>9%</td>
+<td>23%</td>
+<td>33%</td>
+<td>44%</td>
+<td>27%</td>
+<td>2.0</td>
+<td>46%</td>
+<td>0.40</td>
+<td>0.61</td>
+<td>0.01</td>
+<td>-0.00</td>
+<td>-0.06</td>
+</tr>
+<tr>
+<td>Wave B-&gt;C daily (HTF)</td>
+<td>102</td>
+<td>40%</td>
+<td>56%</td>
+<td>41%</td>
+<td>8%</td>
+<td>26%</td>
+<td>35%</td>
+<td>49%</td>
+<td>33%</td>
+<td>2.0</td>
+<td>37%</td>
+<td>0.39</td>
+<td>0.64</td>
+<td>0.05</td>
+<td>0.22</td>
+<td>0.13</td>
+</tr>
+<tr>
+<td>BASELINE calls: any day above SMA200</td>
+<td>22749</td>
+<td>37%</td>
+<td>54%</td>
+<td>38%</td>
+<td>9%</td>
+<td>25%</td>
+<td>35%</td>
+<td>45%</td>
+<td>29%</td>
+<td>2.0</td>
+<td>46%</td>
+<td>0.38</td>
+<td>0.58</td>
+<td>0.01</td>
+<td>0.04</td>
+<td>0.14</td>
+</tr>
+<tr>
+<td>BASELINE puts: any day below SMA200</td>
+<td>10788</td>
+<td>37%</td>
+<td>53%</td>
+<td>37%</td>
+<td>9%</td>
+<td>24%</td>
+<td>33%</td>
+<td>42%</td>
+<td>26%</td>
+<td>2.0</td>
+<td>48%</td>
+<td>0.38</td>
+<td>0.56</td>
+<td>-0.01</td>
+<td>-0.02</td>
+<td>-0.05</td>
+</tr>
+</tbody>
+</table>
+<h4 id="entry-weekday-all-setups-pooled">Entry weekday (all setups pooled)</h4>
+<table>
+<thead>
+<tr>
+<th>weekday</th>
+<th>n</th>
+<th>+0.5 within 2d</th>
+<th>+1 within 2d</th>
+<th>mean close d2 (ATR)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mon</td>
+<td>998</td>
+<td>59%</td>
+<td>27%</td>
+<td>+0.10</td>
+</tr>
+<tr>
+<td>Tue</td>
+<td>1049</td>
+<td>56%</td>
+<td>27%</td>
+<td>+0.04</td>
+</tr>
+<tr>
+<td>Wed</td>
+<td>1009</td>
+<td>58%</td>
+<td>26%</td>
+<td>+0.08</td>
+</tr>
+<tr>
+<td>Thu</td>
+<td>894</td>
+<td>53%</td>
+<td>24%</td>
+<td>+0.06</td>
+</tr>
+<tr>
+<td>Fri</td>
+<td>1366</td>
+<td>54%</td>
+<td>25%</td>
+<td>+0.09</td>
+</tr>
+</tbody>
+</table>
+<h4 id="hourly-bars-discovery-2023-11-17-2025-04-30-horizon-in-trading-days-7-barsday">Hourly bars, discovery 2023-11-17 → 2025-04-30 (horizon in trading days, 7 bars/day)</h4>
+<table>
+<thead>
+<tr>
+<th>setup</th>
+<th>n</th>
+<th>+0.5 same day</th>
+<th>+0.5 d2</th>
+<th>+1 same day</th>
+<th>+1 d2</th>
+<th>stop ≤5d</th>
+<th>close same day</th>
+<th>close d2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First-hour breakout (in play)</td>
+<td>232</td>
+<td>25%</td>
+<td>52%</td>
+<td>4%</td>
+<td>26%</td>
+<td>55%</td>
+<td>-0.01</td>
+<td>0.03</td>
+</tr>
+<tr>
+<td>Wave 2-&gt;3 hourly (daily HTF)</td>
+<td>311</td>
+<td>19%</td>
+<td>49%</td>
+<td>4%</td>
+<td>21%</td>
+<td>50%</td>
+<td>-0.00</td>
+<td>-0.00</td>
+</tr>
+<tr>
+<td>Wave B-&gt;C hourly (daily HTF)</td>
+<td>95</td>
+<td>21%</td>
+<td>46%</td>
+<td>4%</td>
+<td>20%</td>
+<td>47%</td>
+<td>0.04</td>
+<td>0.05</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="validatemd">VALIDATE.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>data</th>
+<th>signal</th>
+<th>n</th>
+<th>exp/trade</th>
+<th>t(week)</th>
+<th>underlying move 3d (ATR)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>null (no edge)</td>
+<td>planted rule</td>
+<td>683</td>
+<td>+1.9%</td>
+<td>-0.37</td>
+<td>+0.11</td>
+</tr>
+<tr>
+<td>null (no edge)</td>
+<td>random 3%</td>
+<td>749</td>
+<td>-2.9%</td>
+<td>-0.60</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>planted edge</td>
+<td>planted rule</td>
+<td>1006</td>
+<td>+42.0%</td>
+<td>10.80</td>
+<td>+0.60</td>
+</tr>
+<tr>
+<td>planted edge</td>
+<td>random 3%</td>
+<td>524</td>
+<td>-1.6%</td>
+<td>0.45</td>
+<td>+nan</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="simmd">SIM.md</h2>
+<div class="raw">
+<p>Contracts expire ≤ 7 calendar days after entry (first Friday ≥ entry + min_days). Spreads: ETF 3%, stocks 6% of mid.
+Conditional exits are decided at a close and filled at the next open. Budget 2% of NAV per trade, max 5 open.</p>
+<h4 id="discovery-19992012-grid-delta-exit-expiry-chosen-rule">Discovery 1999–2012: grid (delta × exit × expiry) → chosen rule</h4>
+<table>
+<thead>
+<tr>
+<th>setup</th>
+<th>chosen: delta / (target ATR, stop ATR, max days) / min days</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ETF dip</td>
+<td>0.7 / (0.5, 1.0, 2) / 2</td>
+<td>357</td>
+<td>0.48</td>
+<td>+60.4%</td>
+<td>-45.8%</td>
+<td>+5.6%</td>
+<td>1.19</td>
+<td>3.46</td>
+</tr>
+<tr>
+<td>ETF bear-rally puts</td>
+<td>0.5 / (0.5, 1.0, 2) / 2</td>
+<td>207</td>
+<td>0.45</td>
+<td>+74.9%</td>
+<td>-48.0%</td>
+<td>+7.8%</td>
+<td>1.24</td>
+<td>1.69</td>
+</tr>
+<tr>
+<td>Pre-FOMC</td>
+<td>0.5 / (None, None, None) / 2</td>
+<td>320</td>
+<td>0.56</td>
+<td>+94.6%</td>
+<td>-55.5%</td>
+<td>+28.0%</td>
+<td>2.17</td>
+<td>3.32</td>
+</tr>
+<tr>
+<td>Turn of month</td>
+<td>0.7 / (None, None, None) / 2</td>
+<td>283</td>
+<td>0.48</td>
+<td>+52.7%</td>
+<td>-50.9%</td>
+<td>-0.7%</td>
+<td>0.94</td>
+<td>-0.24</td>
+</tr>
+<tr>
+<td>Turn of month (stocks)</td>
+<td>0.5 / (None, None, None) / 2</td>
+<td>538</td>
+<td>0.36</td>
+<td>+107.7%</td>
+<td>-64.4%</td>
+<td>-1.7%</td>
+<td>0.92</td>
+<td>-0.32</td>
+</tr>
+<tr>
+<td>Pre-holiday</td>
+<td>0.7 / (None, None, None) / 2</td>
+<td>278</td>
+<td>0.42</td>
+<td>+42.5%</td>
+<td>-48.2%</td>
+<td>-10.0%</td>
+<td>0.61</td>
+<td>-1.84</td>
+</tr>
+<tr>
+<td>Event gap drift</td>
+<td>0.7 / (None, None, None) / 5</td>
+<td>74</td>
+<td>0.42</td>
+<td>+88.5%</td>
+<td>-62.3%</td>
+<td>+0.9%</td>
+<td>1.00</td>
+<td>-0.49</td>
+</tr>
+<tr>
+<td>Wave 2-&gt;3 daily</td>
+<td>0.5 / (0.5, 1.0, 2) / 2</td>
+<td>613</td>
+<td>0.40</td>
+<td>+79.5%</td>
+<td>-56.1%</td>
+<td>-1.2%</td>
+<td>0.94</td>
+<td>-0.97</td>
+</tr>
+<tr>
+<td>Wave B-&gt;C daily</td>
+<td>0.5 / (0.75, 1.0, 3) / 2</td>
+<td>102</td>
+<td>0.44</td>
+<td>+116.6%</td>
+<td>-55.4%</td>
+<td>+20.5%</td>
+<td>1.66</td>
+<td>1.90</td>
+</tr>
+<tr>
+<td>VIX spike reversal</td>
+<td>0.7 / (1.0, 1.0, 4) / 5</td>
+<td>88</td>
+<td>0.50</td>
+<td>+37.1%</td>
+<td>-40.7%</td>
+<td>-1.8%</td>
+<td>0.89</td>
+<td>-0.41</td>
+</tr>
+<tr>
+<td>20-day breakout</td>
+<td>0.7 / (None, None, None) / 5</td>
+<td>633</td>
+<td>0.41</td>
+<td>+84.5%</td>
+<td>-63.0%</td>
+<td>-1.9%</td>
+<td>0.89</td>
+<td>-0.48</td>
+</tr>
+<tr>
+<td>Wave-2/B exhaustion (new)</td>
+<td>0.5 / (0.5, 1.0, 2) / 2</td>
+<td>106</td>
+<td>0.48</td>
+<td>+69.7%</td>
+<td>-57.2%</td>
+<td>+3.9%</td>
+<td>1.13</td>
+<td>1.04</td>
+</tr>
+<tr>
+<td>Control: trend + RSI2 (no wave)</td>
+<td>0.5 / (0.5, 1.0, 2) / 2</td>
+<td>2311</td>
+<td>0.44</td>
+<td>+86.3%</td>
+<td>-55.6%</td>
+<td>+6.7%</td>
+<td>1.12</td>
+<td>5.33</td>
+</tr>
+</tbody>
+</table>
+<h4 id="validation-2013-2026-04-15-rules-frozen-above-run-once">Validation 2013 – 2026-04-15 (rules frozen above, run once)</h4>
+<table>
+<thead>
+<tr>
+<th>setup</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>2× spreads exp</th>
+<th>CAGR*</th>
+<th>maxDD*</th>
+<th>median hours held</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ETF dip</td>
+<td>417</td>
+<td>0.50</td>
+<td>+48.2%</td>
+<td>-42.2%</td>
+<td>+2.9%</td>
+<td>1.11</td>
+<td>1.91</td>
+<td>-0.7%</td>
+<td>+1.4%</td>
+<td>-25.1%</td>
+<td>30</td>
+</tr>
+<tr>
+<td>ETF bear-rally puts</td>
+<td>125</td>
+<td>0.37</td>
+<td>+92.5%</td>
+<td>-49.4%</td>
+<td>+2.8%</td>
+<td>1.06</td>
+<td>0.99</td>
+<td>-0.7%</td>
+<td>+0.3%</td>
+<td>-20.3%</td>
+<td>30</td>
+</tr>
+<tr>
+<td>Pre-FOMC</td>
+<td>315</td>
+<td>0.47</td>
+<td>+89.9%</td>
+<td>-56.7%</td>
+<td>+11.7%</td>
+<td>1.31</td>
+<td>1.36</td>
+<td>+7.1%</td>
+<td>+4.5%</td>
+<td>-30.3%</td>
+<td>30</td>
+</tr>
+<tr>
+<td>Turn of month</td>
+<td>369</td>
+<td>0.44</td>
+<td>+53.3%</td>
+<td>-53.7%</td>
+<td>-6.8%</td>
+<td>0.72</td>
+<td>-1.30</td>
+<td>-10.1%</td>
+<td>-3.9%</td>
+<td>-47.9%</td>
+<td>126</td>
+</tr>
+<tr>
+<td>Turn of month (stocks)</td>
+<td>668</td>
+<td>0.35</td>
+<td>+119.6%</td>
+<td>-64.8%</td>
+<td>-1.0%</td>
+<td>0.92</td>
+<td>-0.17</td>
+<td>-6.6%</td>
+<td>-2.7%</td>
+<td>-70.0%</td>
+<td>126</td>
+</tr>
+<tr>
+<td>Pre-holiday</td>
+<td>326</td>
+<td>0.39</td>
+<td>+44.8%</td>
+<td>-51.7%</td>
+<td>-14.4%</td>
+<td>0.60</td>
+<td>-2.68</td>
+<td>-17.2%</td>
+<td>-6.0%</td>
+<td>-62.2%</td>
+<td>102</td>
+</tr>
+<tr>
+<td>Event gap drift</td>
+<td>81</td>
+<td>0.42</td>
+<td>+87.8%</td>
+<td>-57.8%</td>
+<td>+3.3%</td>
+<td>1.06</td>
+<td>0.76</td>
+<td>-1.9%</td>
+<td>+0.2%</td>
+<td>-16.2%</td>
+<td>222</td>
+</tr>
+<tr>
+<td>Wave 2-&gt;3 daily</td>
+<td>696</td>
+<td>0.41</td>
+<td>+80.2%</td>
+<td>-55.2%</td>
+<td>-0.3%</td>
+<td>0.98</td>
+<td>-1.00</td>
+<td>-5.5%</td>
+<td>-1.0%</td>
+<td>-56.0%</td>
+<td>30</td>
+</tr>
+<tr>
+<td>Wave B-&gt;C daily</td>
+<td>171</td>
+<td>0.43</td>
+<td>+114.1%</td>
+<td>-69.7%</td>
+<td>+9.8%</td>
+<td>1.21</td>
+<td>1.01</td>
+<td>+3.4%</td>
+<td>+2.2%</td>
+<td>-23.6%</td>
+<td>54</td>
+</tr>
+<tr>
+<td>VIX spike reversal</td>
+<td>202</td>
+<td>0.50</td>
+<td>+43.3%</td>
+<td>-40.3%</td>
+<td>+1.1%</td>
+<td>1.04</td>
+<td>0.43</td>
+<td>-2.0%</td>
+<td>+0.2%</td>
+<td>-19.0%</td>
+<td>72</td>
+</tr>
+<tr>
+<td>20-day breakout</td>
+<td>906</td>
+<td>0.44</td>
+<td>+87.5%</td>
+<td>-64.1%</td>
+<td>+3.3%</td>
+<td>1.08</td>
+<td>-0.59</td>
+<td>-0.2%</td>
+<td>+2.9%</td>
+<td>-50.5%</td>
+<td>198</td>
+</tr>
+<tr>
+<td>Wave-2/B exhaustion (new)</td>
+<td>125</td>
+<td>0.47</td>
+<td>+101.3%</td>
+<td>-55.9%</td>
+<td>+18.3%</td>
+<td>1.60</td>
+<td>1.99</td>
+<td>+11.6%</td>
+<td>+3.2%</td>
+<td>-9.9%</td>
+<td>30</td>
+</tr>
+<tr>
+<td>Control: trend + RSI2 (no wave)</td>
+<td>2457</td>
+<td>0.45</td>
+<td>+96.0%</td>
+<td>-56.3%</td>
+<td>+11.5%</td>
+<td>1.29</td>
+<td>5.31</td>
+<td>+5.1%</td>
+<td>+42.5%</td>
+<td>-46.7%</td>
+<td>30</td>
+</tr>
+</tbody>
+</table>
+<p>*Each setup alone, 2% of NAV premium per trade.</p>
+</div>
+<h2 id="closemd">CLOSE.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>period</th>
+<th>chosen delta / exit / min days</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>½ spr</th>
+<th>2× spr</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ETF dip @close</td>
+<td>disc 1999–2012</td>
+<td>0.7 / (None, None, None) / 2</td>
+<td>307</td>
+<td>0.54</td>
+<td>+71.0%</td>
+<td>-54.5%</td>
+<td>+13.8%</td>
+<td>1.45</td>
+<td>3.23</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ETF dip @close</td>
+<td>valid 2013–26</td>
+<td></td>
+<td>357</td>
+<td>0.54</td>
+<td>+61.0%</td>
+<td>-56.5%</td>
+<td>+7.0%</td>
+<td>1.23</td>
+<td>2.33</td>
+<td>+8.8%</td>
+<td>+3.5%</td>
+<td>-15.5%</td>
+</tr>
+<tr>
+<td>Trend dip stocks @close</td>
+<td>disc 1999–2012</td>
+<td>0.5 / (None, None, None) / 2</td>
+<td>1026</td>
+<td>0.46</td>
+<td>+103.0%</td>
+<td>-72.0%</td>
+<td>+8.7%</td>
+<td>1.14</td>
+<td>3.71</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Trend dip stocks @close</td>
+<td>valid 2013–26</td>
+<td></td>
+<td>1336</td>
+<td>0.47</td>
+<td>+123.3%</td>
+<td>-69.9%</td>
+<td>+21.4%</td>
+<td>1.49</td>
+<td>5.27</td>
+<td>+25.3%</td>
+<td>+13.8%</td>
+<td>-30.8%</td>
+</tr>
+<tr>
+<td>Trend dip all 15 @close</td>
+<td>disc 1999–2012</td>
+<td>0.5 / (0.75, 1.0, None) / 2</td>
+<td>1329</td>
+<td>0.47</td>
+<td>+96.5%</td>
+<td>-71.6%</td>
+<td>+7.5%</td>
+<td>1.11</td>
+<td>4.11</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Trend dip all 15 @close</td>
+<td>valid 2013–26</td>
+<td></td>
+<td>1679</td>
+<td>0.48</td>
+<td>+115.3%</td>
+<td>-71.4%</td>
+<td>+19.0%</td>
+<td>1.38</td>
+<td>5.58</td>
+<td>+22.7%</td>
+<td>+12.0%</td>
+<td>-34.1%</td>
+</tr>
+<tr>
+<td>Wave-2/B exhaustion @close</td>
+<td>disc 1999–2012</td>
+<td>0.5 / (None, None, None) / 2</td>
+<td>104</td>
+<td>0.40</td>
+<td>+134.8%</td>
+<td>-78.4%</td>
+<td>+7.7%</td>
+<td>1.15</td>
+<td>0.96</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Wave-2/B exhaustion @close</td>
+<td>valid 2013–26</td>
+<td></td>
+<td>123</td>
+<td>0.37</td>
+<td>+173.2%</td>
+<td>-75.5%</td>
+<td>+17.5%</td>
+<td>1.29</td>
+<td>1.21</td>
+<td>+21.2%</td>
+<td>+10.6%</td>
+<td>-19.4%</td>
+</tr>
+<tr>
+<td>Control trend+RSI2 both sides @close</td>
+<td>disc 1999–2012</td>
+<td>0.5 / (0.5, 1.0, None) / 2</td>
+<td>1985</td>
+<td>0.46</td>
+<td>+83.8%</td>
+<td>-73.0%</td>
+<td>-0.1%</td>
+<td>0.98</td>
+<td>2.48</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Control trend+RSI2 both sides @close</td>
+<td>valid 2013–26</td>
+<td></td>
+<td>2147</td>
+<td>0.49</td>
+<td>+99.7%</td>
+<td>-74.6%</td>
+<td>+10.7%</td>
+<td>1.21</td>
+<td>3.94</td>
+<td>+14.1%</td>
+<td>+4.1%</td>
+<td>-58.4%</td>
+</tr>
+<tr>
+<td>Pre-FOMC close→close</td>
+<td>disc 1999–2012</td>
+<td>0.5 / (0.5, 1.0, None) / 2</td>
+<td>320</td>
+<td>0.54</td>
+<td>+76.5%</td>
+<td>-47.8%</td>
+<td>+19.8%</td>
+<td>1.93</td>
+<td>2.65</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Pre-FOMC close→close</td>
+<td>valid 2013–26</td>
+<td></td>
+<td>315</td>
+<td>0.41</td>
+<td>+83.7%</td>
+<td>-54.2%</td>
+<td>+2.3%</td>
+<td>1.00</td>
+<td>0.30</td>
+<td>+4.6%</td>
+<td>-2.2%</td>
+<td>-36.0%</td>
+</tr>
+<tr>
+<td>ETF bear-rally puts @close</td>
+<td>disc 1999–2012</td>
+<td>0.7 / (0.75, 1.0, None) / 2</td>
+<td>177</td>
+<td>0.55</td>
+<td>+46.8%</td>
+<td>-50.7%</td>
+<td>+3.3%</td>
+<td>1.12</td>
+<td>1.04</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ETF bear-rally puts @close</td>
+<td>valid 2013–26</td>
+<td></td>
+<td>102</td>
+<td>0.44</td>
+<td>+47.1%</td>
+<td>-51.0%</td>
+<td>-7.7%</td>
+<td>0.71</td>
+<td>-0.24</td>
+<td>-5.9%</td>
+<td>-10.3%</td>
+<td>-19.9%</td>
+</tr>
+<tr>
+<td>VIX spike reversal @close</td>
+<td>disc 1999–2012</td>
+<td>0.7 / (0.5, 1.0, None) / 5</td>
+<td>88</td>
+<td>0.58</td>
+<td>+38.1%</td>
+<td>-55.6%</td>
+<td>-1.3%</td>
+<td>0.92</td>
+<td>0.05</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VIX spike reversal @close</td>
+<td>valid 2013–26</td>
+<td></td>
+<td>188</td>
+<td>0.57</td>
+<td>+28.7%</td>
+<td>-55.2%</td>
+<td>-7.4%</td>
+<td>0.74</td>
+<td>-0.99</td>
+<td>-5.8%</td>
+<td>-10.3%</td>
+<td>-28.2%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="intradaymd">INTRADAY.md</h2>
+<div class="raw">
+<p>Signals are computed on a daily series whose close is the 15:50 price, so the trade is placed the same afternoon.</p>
+<h4 id="discovery-20162020-chosen-rule">Discovery 2016–2020 → chosen rule</h4>
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>chosen delta / exit / min days</th>
+<th>n</th>
+<th>win</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pre-FOMC 15:50→13:55</td>
+<td>0.7 / (0.75, 1.0, None) / 2</td>
+<td>117</td>
+<td>0.34</td>
+<td>-2.8%</td>
+<td>0.79</td>
+<td>-0.54</td>
+</tr>
+<tr>
+<td>Pre-FOMC 15:50→15:50 (holds through statement)</td>
+<td>0.7 / (None, None, None) / 2</td>
+<td>117</td>
+<td>0.39</td>
+<td>-1.8%</td>
+<td>0.87</td>
+<td>-0.24</td>
+</tr>
+<tr>
+<td>ETF dip @15:50</td>
+<td>0.5 / (0.75, 1.0, None) / 2</td>
+<td>147</td>
+<td>0.56</td>
+<td>+19.9%</td>
+<td>1.61</td>
+<td>2.91</td>
+</tr>
+<tr>
+<td>ETF bear-rally puts @15:50</td>
+<td>0.7 / (0.5, 1.0, None) / 2</td>
+<td>51</td>
+<td>0.41</td>
+<td>-9.9%</td>
+<td>0.60</td>
+<td>-0.11</td>
+</tr>
+<tr>
+<td>VIX spike reversal @15:50</td>
+<td>0.7 / (None, None, None) / 5</td>
+<td>77</td>
+<td>0.40</td>
+<td>-5.1%</td>
+<td>0.85</td>
+<td>-0.48</td>
+</tr>
+</tbody>
+</table>
+<h4 id="validation-2021-2026-04-15-frozen-rules">Validation 2021 – 2026-04-15 (frozen rules)</h4>
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>½ spreads</th>
+<th>2× spreads</th>
+<th>maxDD*</th>
+<th>median hours</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pre-FOMC 15:50→13:55</td>
+<td>126</td>
+<td>0.47</td>
+<td>+41.2%</td>
+<td>-28.4%</td>
+<td>+4.2%</td>
+<td>1.25</td>
+<td>0.62</td>
+<td>+5.7%</td>
+<td>+1.1%</td>
+<td>-9.4%</td>
+<td>22</td>
+</tr>
+<tr>
+<td>Pre-FOMC 15:50→15:50 (holds through statement)</td>
+<td>126</td>
+<td>0.48</td>
+<td>+70.7%</td>
+<td>-45.4%</td>
+<td>+9.9%</td>
+<td>1.37</td>
+<td>0.97</td>
+<td>+11.6%</td>
+<td>+6.6%</td>
+<td>-12.4%</td>
+<td>24</td>
+</tr>
+<tr>
+<td>ETF dip @15:50</td>
+<td>187</td>
+<td>0.54</td>
+<td>+79.4%</td>
+<td>-71.3%</td>
+<td>+10.1%</td>
+<td>1.27</td>
+<td>2.36</td>
+<td>+11.9%</td>
+<td>+6.6%</td>
+<td>-19.2%</td>
+<td>48</td>
+</tr>
+<tr>
+<td>ETF bear-rally puts @15:50</td>
+<td>54</td>
+<td>0.52</td>
+<td>+44.9%</td>
+<td>-56.9%</td>
+<td>-4.1%</td>
+<td>0.80</td>
+<td>1.03</td>
+<td>-2.7%</td>
+<td>-6.7%</td>
+<td>-10.3%</td>
+<td>91</td>
+</tr>
+<tr>
+<td>VIX spike reversal @15:50</td>
+<td>77</td>
+<td>0.44</td>
+<td>+66.9%</td>
+<td>-52.6%</td>
+<td>+0.2%</td>
+<td>1.08</td>
+<td>0.28</td>
+<td>+1.7%</td>
+<td>-3.9%</td>
+<td>-16.8%</td>
+<td>144</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="intraday3md">INTRADAY3.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>period</th>
+<th>chosen delta / exit / min days</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>½ spr</th>
+<th>2× spr</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wave-2/B exhaustion @15:50</td>
+<td>disc 2016–20</td>
+<td>0.5 / (0.5, 1.0, None) / 2</td>
+<td>46</td>
+<td>0.67</td>
+<td>+66.0%</td>
+<td>-68.3%</td>
+<td>+22.2%</td>
+<td>2.03</td>
+<td>1.66</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Wave-2/B exhaustion @15:50</td>
+<td>valid 2021–26</td>
+<td></td>
+<td>54</td>
+<td>0.48</td>
+<td>+127.7%</td>
+<td>-80.1%</td>
+<td>+19.9%</td>
+<td>1.32</td>
+<td>0.78</td>
+<td>+23.4%</td>
+<td>+13.4%</td>
+<td>-12.8%</td>
+</tr>
+<tr>
+<td>Wave-2 exhaustion calls only @15:50</td>
+<td>disc 2016–20</td>
+<td>0.5 / (0.5, 1.0, None) / 2</td>
+<td>36</td>
+<td>0.64</td>
+<td>+80.1%</td>
+<td>-72.5%</td>
+<td>+25.0%</td>
+<td>2.00</td>
+<td>1.55</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Wave-2 exhaustion calls only @15:50</td>
+<td>valid 2021–26</td>
+<td></td>
+<td>44</td>
+<td>0.45</td>
+<td>+72.2%</td>
+<td>-79.8%</td>
+<td>-10.7%</td>
+<td>0.72</td>
+<td>-0.68</td>
+<td>-8.2%</td>
+<td>-15.5%</td>
+<td>-13.1%</td>
+</tr>
+<tr>
+<td>Control: trend + RSI2 @15:50 (no wave)</td>
+<td>disc 2016–20</td>
+<td>0.5 / (None, None, None) / 2</td>
+<td>666</td>
+<td>0.36</td>
+<td>+158.2%</td>
+<td>-73.2%</td>
+<td>+9.2%</td>
+<td>1.16</td>
+<td>1.86</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Control: trend + RSI2 @15:50 (no wave)</td>
+<td>valid 2021–26</td>
+<td></td>
+<td>744</td>
+<td>0.37</td>
+<td>+193.4%</td>
+<td>-74.1%</td>
+<td>+24.8%</td>
+<td>1.35</td>
+<td>3.04</td>
+<td>+28.3%</td>
+<td>+18.0%</td>
+<td>-51.5%</td>
+</tr>
+<tr>
+<td>Trend dip stocks @15:50 (calls)</td>
+<td>disc 2016–20</td>
+<td>0.5 / (0.5, 1.0, None) / 2</td>
+<td>571</td>
+<td>0.58</td>
+<td>+94.7%</td>
+<td>-71.3%</td>
+<td>+24.3%</td>
+<td>1.67</td>
+<td>4.11</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Trend dip stocks @15:50 (calls)</td>
+<td>valid 2021–26</td>
+<td></td>
+<td>663</td>
+<td>0.53</td>
+<td>+105.7%</td>
+<td>-74.9%</td>
+<td>+21.0%</td>
+<td>1.56</td>
+<td>3.26</td>
+<td>+24.8%</td>
+<td>+13.7%</td>
+<td>-28.9%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="samedaymd">SAMEDAY.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>period</th>
+<th>delta / option stop</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>½ spr</th>
+<th>2× spr</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Noise-area momentum (SPY/QQQ)</td>
+<td>disc 2016–20</td>
+<td>0.7 / None</td>
+<td>1417</td>
+<td>0.27</td>
+<td>+49.8%</td>
+<td>-17.5%</td>
+<td>+0.9%</td>
+<td>1.06</td>
+<td>0.07</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Noise-area momentum (SPY/QQQ)</td>
+<td>valid 2021–26</td>
+<td></td>
+<td>1551</td>
+<td>0.35</td>
+<td>+85.7%</td>
+<td>-31.1%</td>
+<td>+9.8%</td>
+<td>1.39</td>
+<td>2.79</td>
+<td>+11.7%</td>
+<td>+6.2%</td>
+</tr>
+<tr>
+<td>ORB 5-min, in play (all)</td>
+<td>disc 2016–20</td>
+<td>0.5 / None</td>
+<td>988</td>
+<td>0.23</td>
+<td>+268.0%</td>
+<td>-49.3%</td>
+<td>+22.3%</td>
+<td>1.43</td>
+<td>2.61</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ORB 5-min, in play (all)</td>
+<td>valid 2021–26</td>
+<td></td>
+<td>848</td>
+<td>0.23</td>
+<td>+342.3%</td>
+<td>-49.1%</td>
+<td>+42.3%</td>
+<td>1.80</td>
+<td>3.13</td>
+<td>+49.0%</td>
+<td>+30.8%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="noise_robustmd">NOISE_ROBUST.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>n</th>
+<th>win</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>validation, base</td>
+<td>1551</td>
+<td>0.35</td>
+<td>+9.8%</td>
+<td>1.39</td>
+<td>2.79</td>
+</tr>
+<tr>
+<td>2021-01 → 2022-11 (weekly expiries)</td>
+<td>562</td>
+<td>0.34</td>
+<td>+4.4%</td>
+<td>1.38</td>
+<td>1.40</td>
+</tr>
+<tr>
+<td>2022-11 → 2026-04 (0-DTE)</td>
+<td>989</td>
+<td>0.35</td>
+<td>+12.8%</td>
+<td>1.39</td>
+<td>2.51</td>
+</tr>
+<tr>
+<td>calls only</td>
+<td>808</td>
+<td>0.38</td>
+<td>+6.1%</td>
+<td>1.08</td>
+<td>1.60</td>
+</tr>
+<tr>
+<td>puts only</td>
+<td>743</td>
+<td>0.32</td>
+<td>+13.7%</td>
+<td>1.67</td>
+<td>1.73</td>
+</tr>
+<tr>
+<td>SPY only</td>
+<td>780</td>
+<td>0.34</td>
+<td>+5.3%</td>
+<td>1.12</td>
+<td>2.11</td>
+</tr>
+<tr>
+<td>QQQ only</td>
+<td>771</td>
+<td>0.36</td>
+<td>+14.3%</td>
+<td>1.65</td>
+<td>3.01</td>
+</tr>
+<tr>
+<td>year 2021</td>
+<td>285</td>
+<td>0.37</td>
+<td>+1.1%</td>
+<td>1.08</td>
+<td>0.19</td>
+</tr>
+<tr>
+<td>year 2022</td>
+<td>315</td>
+<td>0.32</td>
+<td>+6.9%</td>
+<td>1.44</td>
+<td>1.10</td>
+</tr>
+<tr>
+<td>year 2023</td>
+<td>296</td>
+<td>0.38</td>
+<td>+13.9%</td>
+<td>1.61</td>
+<td>2.36</td>
+</tr>
+<tr>
+<td>year 2024</td>
+<td>297</td>
+<td>0.37</td>
+<td>+29.2%</td>
+<td>2.27</td>
+<td>1.99</td>
+</tr>
+<tr>
+<td>year 2025</td>
+<td>274</td>
+<td>0.31</td>
+<td>+0.3%</td>
+<td>0.99</td>
+<td>0.07</td>
+</tr>
+<tr>
+<td>year 2026</td>
+<td>84</td>
+<td>0.35</td>
+<td>-2.3%</td>
+<td>0.90</td>
+<td>-0.38</td>
+</tr>
+<tr>
+<td>0-DTE period, IV = VIX1D-based</td>
+<td>989</td>
+<td>0.36</td>
+<td>+14.5%</td>
+<td>1.44</td>
+<td>2.73</td>
+</tr>
+<tr>
+<td>0-DTE period, IV x1.25</td>
+<td>989</td>
+<td>0.34</td>
+<td>+8.2%</td>
+<td>1.29</td>
+<td>1.90</td>
+</tr>
+<tr>
+<td>0-DTE period, delta 0.5</td>
+<td>989</td>
+<td>0.27</td>
+<td>+25.7%</td>
+<td>1.36</td>
+<td>2.26</td>
+</tr>
+</tbody>
+</table>
+<p>Underlying move per trade (validation): mean +0.045%, win 0.42, n 1551</p>
+</div>
+<h2 id="wave_intradaymd">WAVE_INTRADAY.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>bars</th>
+<th>variant</th>
+<th>period</th>
+<th>chosen</th>
+<th>n</th>
+<th>win</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>2× spr</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>60m</td>
+<td>wave</td>
+<td>disc</td>
+<td>(0.7, (0.75, 1.0, None), 2)</td>
+<td>287</td>
+<td>0.48</td>
+<td>+2.2%</td>
+<td>1.05</td>
+<td>0.12</td>
+<td></td>
+</tr>
+<tr>
+<td>60m</td>
+<td>wave</td>
+<td>valid</td>
+<td></td>
+<td>312</td>
+<td>0.43</td>
+<td>-2.5%</td>
+<td>0.94</td>
+<td>-0.26</td>
+<td>-6.9%</td>
+</tr>
+<tr>
+<td>60m</td>
+<td>control (no wave)</td>
+<td>disc</td>
+<td>(0.5, (None, None, 14), 2)</td>
+<td>2338</td>
+<td>0.35</td>
+<td>-3.2%</td>
+<td>0.84</td>
+<td>-0.84</td>
+<td></td>
+</tr>
+<tr>
+<td>60m</td>
+<td>control (no wave)</td>
+<td>valid</td>
+<td></td>
+<td>2692</td>
+<td>0.35</td>
+<td>+0.6%</td>
+<td>0.99</td>
+<td>0.11</td>
+<td>-3.2%</td>
+</tr>
+<tr>
+<td>15m</td>
+<td>wave</td>
+<td>disc</td>
+<td>(0.5, (None, None, 56), 2)</td>
+<td>650</td>
+<td>0.33</td>
+<td>+0.7%</td>
+<td>0.95</td>
+<td>0.45</td>
+<td></td>
+</tr>
+<tr>
+<td>15m</td>
+<td>wave</td>
+<td>valid</td>
+<td></td>
+<td>630</td>
+<td>0.34</td>
+<td>-5.5%</td>
+<td>0.89</td>
+<td>-2.18</td>
+<td>-9.1%</td>
+</tr>
+<tr>
+<td>15m</td>
+<td>control (no wave)</td>
+<td>disc</td>
+<td>(0.5, (None, None, 56), 2)</td>
+<td>2648</td>
+<td>0.34</td>
+<td>-2.0%</td>
+<td>0.88</td>
+<td>-0.61</td>
+<td></td>
+</tr>
+<tr>
+<td>15m</td>
+<td>control (no wave)</td>
+<td>valid</td>
+<td></td>
+<td>2799</td>
+<td>0.36</td>
+<td>-0.1%</td>
+<td>0.97</td>
+<td>-0.43</td>
+<td>-2.2%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="final_robustmd">FINAL_ROBUST.md</h2>
+<div class="raw">
+<h4 id="a-trend-dip-1550">A Trend-dip @15:50</h4>
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>underlying move/trade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>base</td>
+<td>768</td>
+<td>0.49</td>
+<td>+110.5%</td>
+<td>-72.9%</td>
+<td>+17.4%</td>
+<td>1.51</td>
+<td>3.78</td>
+<td>+0.27%</td>
+</tr>
+<tr>
+<td>2× spreads</td>
+<td>768</td>
+<td>0.48</td>
+<td>+101.5%</td>
+<td>-73.3%</td>
+<td>+10.9%</td>
+<td>1.29</td>
+<td>2.82</td>
+<td>+0.27%</td>
+</tr>
+<tr>
+<td>½ spreads</td>
+<td>768</td>
+<td>0.50</td>
+<td>+115.4%</td>
+<td>-72.5%</td>
+<td>+20.7%</td>
+<td>1.63</td>
+<td>4.23</td>
+<td>+0.27%</td>
+</tr>
+<tr>
+<td>IV × 1.25</td>
+<td>767</td>
+<td>0.47</td>
+<td>+83.4%</td>
+<td>-67.0%</td>
+<td>+3.2%</td>
+<td>1.05</td>
+<td>1.48</td>
+<td>+0.26%</td>
+</tr>
+<tr>
+<td>IV × 0.8</td>
+<td>768</td>
+<td>0.51</td>
+<td>+149.0%</td>
+<td>-77.7%</td>
+<td>+37.5%</td>
+<td>2.14</td>
+<td>5.70</td>
+<td>+0.27%</td>
+</tr>
+<tr>
+<td>without NVDA/TSLA/AMD/META</td>
+<td>600</td>
+<td>0.47</td>
+<td>+93.8%</td>
+<td>-73.6%</td>
+<td>+5.9%</td>
+<td>1.10</td>
+<td>3.01</td>
+<td>+0.08%</td>
+</tr>
+<tr>
+<td>ETFs only</td>
+<td>187</td>
+<td>0.54</td>
+<td>+79.4%</td>
+<td>-71.3%</td>
+<td>+10.1%</td>
+<td>1.27</td>
+<td>2.36</td>
+<td>+0.20%</td>
+</tr>
+<tr>
+<td>Calls only</td>
+<td>768</td>
+<td>0.49</td>
+<td>+110.5%</td>
+<td>-72.9%</td>
+<td>+17.4%</td>
+<td>1.51</td>
+<td>3.78</td>
+<td>+0.27%</td>
+</tr>
+<tr>
+<td>Puts only</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>+nan%</td>
+</tr>
+<tr>
+<td>without the 5 best trades</td>
+<td>763</td>
+<td>0.49</td>
+<td>+98.2%</td>
+<td>-72.9%</td>
+<td>+10.8%</td>
+<td>1.30</td>
+<td>3.34</td>
+<td>+0.20%</td>
+</tr>
+<tr>
+<td>year 2021</td>
+<td>187</td>
+<td>0.53</td>
+<td>+100.9%</td>
+<td>-72.1%</td>
+<td>+20.4%</td>
+<td>1.68</td>
+<td>2.51</td>
+<td>+0.35%</td>
+</tr>
+<tr>
+<td>year 2022</td>
+<td>74</td>
+<td>0.42</td>
+<td>+72.0%</td>
+<td>-79.5%</td>
+<td>-16.0%</td>
+<td>0.57</td>
+<td>0.67</td>
+<td>-0.53%</td>
+</tr>
+<tr>
+<td>year 2023</td>
+<td>133</td>
+<td>0.44</td>
+<td>+118.8%</td>
+<td>-73.4%</td>
+<td>+11.9%</td>
+<td>1.24</td>
+<td>0.85</td>
+<td>+0.11%</td>
+</tr>
+<tr>
+<td>year 2024</td>
+<td>186</td>
+<td>0.47</td>
+<td>+114.7%</td>
+<td>-66.5%</td>
+<td>+19.2%</td>
+<td>1.40</td>
+<td>1.76</td>
+<td>+0.43%</td>
+</tr>
+<tr>
+<td>year 2025</td>
+<td>130</td>
+<td>0.50</td>
+<td>+135.9%</td>
+<td>-79.1%</td>
+<td>+28.4%</td>
+<td>1.61</td>
+<td>1.93</td>
+<td>+0.31%</td>
+</tr>
+<tr>
+<td>year 2026</td>
+<td>58</td>
+<td>0.60</td>
+<td>+100.2%</td>
+<td>-71.9%</td>
+<td>+32.0%</td>
+<td>1.95</td>
+<td>1.78</td>
+<td>+0.79%</td>
+</tr>
+</tbody>
+</table>
+<p>Exit reasons: underlying_target 306, underlying_stop 191, pre_expiry 189, rule_exit 82</p>
+<h4 id="b-wave-2b-exhaustion-1550">B Wave-2/B exhaustion @15:50</h4>
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>underlying move/trade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>base</td>
+<td>54</td>
+<td>0.48</td>
+<td>+127.7%</td>
+<td>-80.1%</td>
+<td>+19.9%</td>
+<td>1.32</td>
+<td>0.78</td>
+<td>+0.22%</td>
+</tr>
+<tr>
+<td>2× spreads</td>
+<td>54</td>
+<td>0.48</td>
+<td>+115.8%</td>
+<td>-81.7%</td>
+<td>+13.4%</td>
+<td>1.19</td>
+<td>0.64</td>
+<td>+0.22%</td>
+</tr>
+<tr>
+<td>½ spreads</td>
+<td>54</td>
+<td>0.48</td>
+<td>+134.0%</td>
+<td>-79.3%</td>
+<td>+23.4%</td>
+<td>1.40</td>
+<td>0.85</td>
+<td>+0.22%</td>
+</tr>
+<tr>
+<td>IV × 1.25</td>
+<td>54</td>
+<td>0.44</td>
+<td>+100.6%</td>
+<td>-71.6%</td>
+<td>+4.9%</td>
+<td>1.03</td>
+<td>0.45</td>
+<td>+0.22%</td>
+</tr>
+<tr>
+<td>IV × 0.8</td>
+<td>54</td>
+<td>0.48</td>
+<td>+173.7%</td>
+<td>-83.4%</td>
+<td>+40.4%</td>
+<td>1.68</td>
+<td>1.05</td>
+<td>+0.22%</td>
+</tr>
+<tr>
+<td>without NVDA/TSLA/AMD/META</td>
+<td>41</td>
+<td>0.46</td>
+<td>+75.7%</td>
+<td>-82.1%</td>
+<td>-9.0%</td>
+<td>0.73</td>
+<td>-0.44</td>
+<td>-0.22%</td>
+</tr>
+<tr>
+<td>ETFs only</td>
+<td>13</td>
+<td>0.62</td>
+<td>+49.0%</td>
+<td>-71.1%</td>
+<td>+2.8%</td>
+<td>1.06</td>
+<td>0.65</td>
+<td>+0.67%</td>
+</tr>
+<tr>
+<td>Calls only</td>
+<td>44</td>
+<td>0.45</td>
+<td>+72.2%</td>
+<td>-79.8%</td>
+<td>-10.7%</td>
+<td>0.70</td>
+<td>-0.68</td>
+<td>-0.13%</td>
+</tr>
+<tr>
+<td>Puts only</td>
+<td>10</td>
+<td>0.60</td>
+<td>+312.7%</td>
+<td>-82.2%</td>
+<td>+154.8%</td>
+<td>4.89</td>
+<td>1.03</td>
+<td>+1.76%</td>
+</tr>
+<tr>
+<td>without the 5 best trades</td>
+<td>49</td>
+<td>0.43</td>
+<td>+55.7%</td>
+<td>-80.1%</td>
+<td>-21.9%</td>
+<td>0.48</td>
+<td>-1.59</td>
+<td>-0.43%</td>
+</tr>
+<tr>
+<td>year 2021</td>
+<td>11</td>
+<td>0.45</td>
+<td>+101.2%</td>
+<td>-81.5%</td>
+<td>+1.6%</td>
+<td>0.90</td>
+<td>-0.15</td>
+<td>-0.03%</td>
+</tr>
+<tr>
+<td>year 2022</td>
+<td>8</td>
+<td>0.50</td>
+<td>+420.1%</td>
+<td>-83.6%</td>
+<td>+168.3%</td>
+<td>4.34</td>
+<td>0.89</td>
+<td>+2.06%</td>
+</tr>
+<tr>
+<td>year 2023</td>
+<td>4</td>
+<td>0.25</td>
+<td>+36.6%</td>
+<td>-55.7%</td>
+<td>-32.6%</td>
+<td>0.22</td>
+<td>-1.21</td>
+<td>+0.34%</td>
+</tr>
+<tr>
+<td>year 2024</td>
+<td>21</td>
+<td>0.48</td>
+<td>+54.8%</td>
+<td>-80.5%</td>
+<td>-16.1%</td>
+<td>0.58</td>
+<td>-0.85</td>
+<td>-0.25%</td>
+</tr>
+<tr>
+<td>year 2025</td>
+<td>8</td>
+<td>0.50</td>
+<td>+80.4%</td>
+<td>-92.1%</td>
+<td>-5.9%</td>
+<td>0.84</td>
+<td>0.20</td>
+<td>-0.35%</td>
+</tr>
+<tr>
+<td>year 2026</td>
+<td>2</td>
+<td>1.00</td>
+<td>+113.9%</td>
+<td>+0.0%</td>
+<td>+113.9%</td>
+<td>—</td>
+<td>0.00</td>
+<td>+1.29%</td>
+</tr>
+</tbody>
+</table>
+<p>Exit reasons: underlying_target 25, underlying_stop 16, pre_expiry 13</p>
+<h4 id="c-orb-5-in-play">C ORB-5 in play</h4>
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>underlying move/trade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>base</td>
+<td>848</td>
+<td>0.23</td>
+<td>+342.3%</td>
+<td>-49.1%</td>
+<td>+42.3%</td>
+<td>1.80</td>
+<td>3.13</td>
+<td>+0.09%</td>
+</tr>
+<tr>
+<td>2× spreads</td>
+<td>848</td>
+<td>0.23</td>
+<td>+307.2%</td>
+<td>-52.9%</td>
+<td>+30.8%</td>
+<td>1.56</td>
+<td>2.74</td>
+<td>+0.09%</td>
+</tr>
+<tr>
+<td>½ spreads</td>
+<td>848</td>
+<td>0.23</td>
+<td>+362.1%</td>
+<td>-47.1%</td>
+<td>+49.0%</td>
+<td>1.94</td>
+<td>3.27</td>
+<td>+0.09%</td>
+</tr>
+<tr>
+<td>IV × 1.25</td>
+<td>847</td>
+<td>0.23</td>
+<td>+248.1%</td>
+<td>-43.0%</td>
+<td>+23.6%</td>
+<td>1.55</td>
+<td>2.67</td>
+<td>+0.09%</td>
+</tr>
+<tr>
+<td>IV × 0.8</td>
+<td>848</td>
+<td>0.23</td>
+<td>+486.5%</td>
+<td>-55.4%</td>
+<td>+71.8%</td>
+<td>2.09</td>
+<td>3.49</td>
+<td>+0.09%</td>
+</tr>
+<tr>
+<td>without NVDA/TSLA/AMD/META</td>
+<td>673</td>
+<td>0.23</td>
+<td>+368.9%</td>
+<td>-52.0%</td>
+<td>+46.2%</td>
+<td>1.86</td>
+<td>2.62</td>
+<td>+0.07%</td>
+</tr>
+<tr>
+<td>ETFs only</td>
+<td>108</td>
+<td>0.21</td>
+<td>+322.4%</td>
+<td>-43.0%</td>
+<td>+34.9%</td>
+<td>1.95</td>
+<td>1.22</td>
+<td>+0.05%</td>
+</tr>
+<tr>
+<td>Calls only</td>
+<td>417</td>
+<td>0.26</td>
+<td>+369.4%</td>
+<td>-49.7%</td>
+<td>+59.9%</td>
+<td>2.03</td>
+<td>2.83</td>
+<td>+0.22%</td>
+</tr>
+<tr>
+<td>Puts only</td>
+<td>431</td>
+<td>0.21</td>
+<td>+309.1%</td>
+<td>-48.5%</td>
+<td>+25.3%</td>
+<td>1.59</td>
+<td>2.00</td>
+<td>-0.03%</td>
+</tr>
+<tr>
+<td>without the 5 best trades</td>
+<td>843</td>
+<td>0.23</td>
+<td>+305.4%</td>
+<td>-49.1%</td>
+<td>+32.1%</td>
+<td>1.42</td>
+<td>2.74</td>
+<td>+0.08%</td>
+</tr>
+<tr>
+<td>year 2021</td>
+<td>148</td>
+<td>0.28</td>
+<td>+207.0%</td>
+<td>-51.8%</td>
+<td>+19.9%</td>
+<td>1.52</td>
+<td>1.24</td>
+<td>+0.13%</td>
+</tr>
+<tr>
+<td>year 2022</td>
+<td>130</td>
+<td>0.25</td>
+<td>+304.9%</td>
+<td>-44.8%</td>
+<td>+43.9%</td>
+<td>2.16</td>
+<td>1.73</td>
+<td>+0.33%</td>
+</tr>
+<tr>
+<td>year 2023</td>
+<td>152</td>
+<td>0.24</td>
+<td>+534.1%</td>
+<td>-53.6%</td>
+<td>+89.5%</td>
+<td>2.60</td>
+<td>1.62</td>
+<td>+0.04%</td>
+</tr>
+<tr>
+<td>year 2024</td>
+<td>185</td>
+<td>0.22</td>
+<td>+397.1%</td>
+<td>-48.3%</td>
+<td>+50.4%</td>
+<td>2.24</td>
+<td>2.21</td>
+<td>+0.07%</td>
+</tr>
+<tr>
+<td>year 2025</td>
+<td>197</td>
+<td>0.18</td>
+<td>+297.9%</td>
+<td>-47.6%</td>
+<td>+15.5%</td>
+<td>1.36</td>
+<td>1.13</td>
+<td>-0.09%</td>
+</tr>
+<tr>
+<td>year 2026</td>
+<td>36</td>
+<td>0.28</td>
+<td>+246.5%</td>
+<td>-47.3%</td>
+<td>+34.3%</td>
+<td>1.94</td>
+<td>1.18</td>
+<td>+0.31%</td>
+</tr>
+</tbody>
+</table>
+<p>Exit reasons: underlying_stop 629, rule_scheduled 113, pre_expiry 106</p>
+<h4 id="d-noise-area-momentum">D Noise-area momentum</h4>
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>underlying move/trade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>base</td>
+<td>1551</td>
+<td>0.35</td>
+<td>+85.7%</td>
+<td>-31.1%</td>
+<td>+9.8%</td>
+<td>1.39</td>
+<td>2.79</td>
+<td>+0.04%</td>
+</tr>
+<tr>
+<td>2× spreads</td>
+<td>1540</td>
+<td>0.33</td>
+<td>+86.1%</td>
+<td>-32.4%</td>
+<td>+6.2%</td>
+<td>1.24</td>
+<td>1.69</td>
+<td>+0.05%</td>
+</tr>
+<tr>
+<td>½ spreads</td>
+<td>1554</td>
+<td>0.36</td>
+<td>+85.9%</td>
+<td>-30.4%</td>
+<td>+11.7%</td>
+<td>1.46</td>
+<td>3.33</td>
+<td>+0.05%</td>
+</tr>
+<tr>
+<td>IV × 1.25</td>
+<td>1519</td>
+<td>0.34</td>
+<td>+73.8%</td>
+<td>-28.2%</td>
+<td>+6.5%</td>
+<td>1.29</td>
+<td>2.06</td>
+<td>+0.05%</td>
+</tr>
+<tr>
+<td>IV × 0.8</td>
+<td>1557</td>
+<td>0.36</td>
+<td>+97.8%</td>
+<td>-33.9%</td>
+<td>+13.8%</td>
+<td>1.50</td>
+<td>3.31</td>
+<td>+0.04%</td>
+</tr>
+<tr>
+<td>Calls only</td>
+<td>808</td>
+<td>0.38</td>
+<td>+64.8%</td>
+<td>-30.0%</td>
+<td>+6.1%</td>
+<td>1.08</td>
+<td>1.60</td>
+<td>+0.05%</td>
+</tr>
+<tr>
+<td>Puts only</td>
+<td>743</td>
+<td>0.32</td>
+<td>+113.2%</td>
+<td>-32.2%</td>
+<td>+13.7%</td>
+<td>1.67</td>
+<td>1.73</td>
+<td>+0.04%</td>
+</tr>
+<tr>
+<td>without the 5 best trades</td>
+<td>1546</td>
+<td>0.35</td>
+<td>+76.1%</td>
+<td>-31.1%</td>
+<td>+6.2%</td>
+<td>1.15</td>
+<td>2.38</td>
+<td>+0.04%</td>
+</tr>
+<tr>
+<td>year 2021</td>
+<td>285</td>
+<td>0.37</td>
+<td>+30.6%</td>
+<td>-16.3%</td>
+<td>+1.1%</td>
+<td>1.08</td>
+<td>0.19</td>
+<td>+0.05%</td>
+</tr>
+<tr>
+<td>year 2022</td>
+<td>315</td>
+<td>0.32</td>
+<td>+73.4%</td>
+<td>-24.1%</td>
+<td>+6.9%</td>
+<td>1.44</td>
+<td>1.10</td>
+<td>+0.07%</td>
+</tr>
+<tr>
+<td>year 2023</td>
+<td>296</td>
+<td>0.38</td>
+<td>+92.3%</td>
+<td>-34.5%</td>
+<td>+13.9%</td>
+<td>1.61</td>
+<td>2.36</td>
+<td>+0.04%</td>
+</tr>
+<tr>
+<td>year 2024</td>
+<td>297</td>
+<td>0.37</td>
+<td>+144.0%</td>
+<td>-37.3%</td>
+<td>+29.2%</td>
+<td>2.27</td>
+<td>1.99</td>
+<td>+0.06%</td>
+</tr>
+<tr>
+<td>year 2025</td>
+<td>274</td>
+<td>0.31</td>
+<td>+90.6%</td>
+<td>-40.9%</td>
+<td>+0.3%</td>
+<td>0.99</td>
+<td>0.07</td>
+<td>+0.01%</td>
+</tr>
+<tr>
+<td>year 2026</td>
+<td>84</td>
+<td>0.35</td>
+<td>+70.5%</td>
+<td>-40.7%</td>
+<td>-2.3%</td>
+<td>0.90</td>
+<td>-0.38</td>
+<td>-0.02%</td>
+</tr>
+</tbody>
+</table>
+<p>Exit reasons: rule_exit 1143, pre_expiry 295, rule_scheduled 113</p>
+</div>
+<h2 id="holdoutmd">HOLDOUT.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+<th>underlying move/trade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>82</td>
+<td>0.51</td>
+<td>+90.9%</td>
+<td>-72.0%</td>
+<td>+11.4%</td>
+<td>1.21</td>
+<td>1.08</td>
+<td>+0.30%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50 — 2× spreads</td>
+<td>82</td>
+<td>0.51</td>
+<td>+81.3%</td>
+<td>-73.8%</td>
+<td>+5.6%</td>
+<td>1.10</td>
+<td>0.66</td>
+<td>+0.30%</td>
+</tr>
+<tr>
+<td>B Wave-2/B exhaustion @15:50</td>
+<td>2</td>
+<td>0.50</td>
+<td>+76.4%</td>
+<td>-99.3%</td>
+<td>-11.4%</td>
+<td>0.72</td>
+<td>0.00</td>
+<td>-0.27%</td>
+</tr>
+<tr>
+<td>B Wave-2/B exhaustion @15:50 — 2× spreads</td>
+<td>2</td>
+<td>0.50</td>
+<td>+66.1%</td>
+<td>-99.9%</td>
+<td>-16.9%</td>
+<td>0.62</td>
+<td>0.00</td>
+<td>-0.27%</td>
+</tr>
+<tr>
+<td>C ORB-5 in play</td>
+<td>92</td>
+<td>0.20</td>
+<td>+286.1%</td>
+<td>-51.8%</td>
+<td>+14.3%</td>
+<td>1.28</td>
+<td>1.29</td>
+<td>+0.00%</td>
+</tr>
+<tr>
+<td>C ORB-5 in play — 2× spreads</td>
+<td>92</td>
+<td>0.18</td>
+<td>+278.7%</td>
+<td>-54.2%</td>
+<td>+7.3%</td>
+<td>1.12</td>
+<td>1.18</td>
+<td>+0.00%</td>
+</tr>
+<tr>
+<td>D Noise-area momentum</td>
+<td>157</td>
+<td>0.32</td>
+<td>+114.8%</td>
+<td>-41.0%</td>
+<td>+9.6%</td>
+<td>1.32</td>
+<td>0.81</td>
+<td>+0.02%</td>
+</tr>
+<tr>
+<td>D Noise-area momentum — 2× spreads</td>
+<td>157</td>
+<td>0.31</td>
+<td>+115.0%</td>
+<td>-41.8%</td>
+<td>+6.1%</td>
+<td>1.18</td>
+<td>0.59</td>
+<td>+0.02%</td>
+</tr>
+<tr>
+<td>ALL FOUR pooled</td>
+<td>333</td>
+<td>0.34</td>
+<td>+133.0%</td>
+<td>-50.5%</td>
+<td>+11.2%</td>
+<td>1.25</td>
+<td>0.93</td>
+<td>+0.08%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="portfoliomd">PORTFOLIO.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>account</th>
+<th>trades</th>
+<th>CAGR</th>
+<th>max DD</th>
+<th>Sharpe</th>
+<th>total</th>
+<th>positive months</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>852</td>
+<td>+49.5%</td>
+<td>-37.6%</td>
+<td>1.14</td>
+<td>+922.2%</td>
+<td>57%</td>
+</tr>
+<tr>
+<td>B Wave-2/B exhaustion @15:50</td>
+<td>56</td>
+<td>+2.3%</td>
+<td>-12.8%</td>
+<td>0.24</td>
+<td>+14.2%</td>
+<td>22%</td>
+</tr>
+<tr>
+<td>C ORB-5 in play</td>
+<td>945</td>
+<td>+75.1%</td>
+<td>-13.7%</td>
+<td>1.49</td>
+<td>+2446.0%</td>
+<td>58%</td>
+</tr>
+<tr>
+<td>D Noise-area momentum</td>
+<td>1708</td>
+<td>+28.8%</td>
+<td>-20.9%</td>
+<td>1.21</td>
+<td>+331.8%</td>
+<td>59%</td>
+</tr>
+<tr>
+<td><strong>four sub-accounts, equal capital</strong></td>
+<td>3561</td>
+<td>+49.7%</td>
+<td>-14.1%</td>
+<td>1.89</td>
+<td>+928.6%</td>
+<td>70%</td>
+</tr>
+<tr>
+<td>A + C + D</td>
+<td>3505</td>
+<td>+56.5%</td>
+<td>-17.1%</td>
+<td>1.88</td>
+<td>+1233.4%</td>
+<td>70%</td>
+</tr>
+</tbody>
+</table>
+<p>Four sub-accounts, return by year: 2021 +32.1%, 2022 +13.6%, 2023 +90.8%, 2024 +105.0%, 2025 +32.4%, 2026 +32.3%</p>
+<p>Budget: A/B 2% of the sub-account NAV in premium per trade, C/D 1%; max 5 open per sub-account.</p>
+</div>
+<h2 id="real_optionsmd">REAL_OPTIONS.md</h2>
+<div class="raw">
+<p>Fill = 5-minute option-bar VWAP at the entry / exit time, plus a half-spread (ETF 1.5%, stock 3%) and $0.65/contract each side.
+<code>model</code> = the same trades priced by the Black-Scholes proxy used everywhere else in round 4.</p>
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>trades</th>
+<th>matched</th>
+<th>model exp/trade</th>
+<th>REAL exp/trade</th>
+<th>REAL @ VWAP (no spread)</th>
+<th>REAL win</th>
+<th>REAL PF</th>
+<th>REAL t</th>
+<th>corr(model, real)</th>
+<th>model entry px / real</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>439</td>
+<td>409</td>
+<td>+19.2%</td>
+<td><strong>-1.7%</strong></td>
+<td>+3.7%</td>
+<td>0.47</td>
+<td>0.95</td>
+<td>-0.44</td>
+<td>0.76</td>
+<td>0.85</td>
+</tr>
+<tr>
+<td>B Wave-2/B exhaustion @15:50</td>
+<td>25</td>
+<td>22</td>
+<td>-10.4%</td>
+<td><strong>-3.7%</strong></td>
+<td>+1.4%</td>
+<td>0.45</td>
+<td>0.90</td>
+<td>-0.22</td>
+<td>0.90</td>
+<td>0.93</td>
+</tr>
+<tr>
+<td>C ORB-5 in play</td>
+<td>493</td>
+<td>476</td>
+<td>+24.4%</td>
+<td><strong>-12.1%</strong></td>
+<td>-6.9%</td>
+<td>0.19</td>
+<td>0.58</td>
+<td>-3.91</td>
+<td>0.80</td>
+<td>0.60</td>
+</tr>
+<tr>
+<td>D Noise-area momentum</td>
+<td>785</td>
+<td>783</td>
+<td>+10.3%</td>
+<td><strong>-2.1%</strong></td>
+<td>+0.9%</td>
+<td>0.30</td>
+<td>0.91</td>
+<td>-0.80</td>
+<td>0.87</td>
+<td>0.88</td>
+</tr>
+</tbody>
+</table>
+<p>PF here = sum of winning returns / sum of losing returns (equal premium per trade). t = i.i.d. t-statistic.</p>
+</div>
+<h2 id="real_devmd">REAL_DEV.md</h2>
+<div class="raw">
+<p>Fill: 5-min option-bar VWAP ± half-spread (ETF 1.5%, stock 3%) + $0.65/contract/side.</p>
+<h4 id="dev-2024-02-2025-06-all-variants">Dev 2024-02 → 2025-06 (all variants)</h4>
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>variant</th>
+<th>n</th>
+<th>REAL exp</th>
+<th>@VWAP</th>
+<th>win</th>
+<th>t</th>
+<th>model exp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>{'delta': 0.7, 'min_days': 2, 'target_atr': 0.75, 'stop_atr': 1.0}</td>
+<td>155</td>
+<td>-13.0%</td>
+<td>-8.0%</td>
+<td>0.41</td>
+<td>-2.33</td>
+<td>-2.4%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>{'delta': 0.7, 'min_days': 2, 'target_atr': None, 'stop_atr': None}</td>
+<td>132</td>
+<td>-14.4%</td>
+<td>-9.5%</td>
+<td>0.42</td>
+<td>-2.31</td>
+<td>-1.3%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>{'delta': 0.7, 'min_days': 5, 'target_atr': 0.75, 'stop_atr': 1.0}</td>
+<td>125</td>
+<td>-13.6%</td>
+<td>-8.7%</td>
+<td>0.46</td>
+<td>-2.68</td>
+<td>-12.2%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>{'delta': 0.7, 'min_days': 5, 'target_atr': None, 'stop_atr': None}</td>
+<td>98</td>
+<td>-14.6%</td>
+<td>-9.8%</td>
+<td>0.48</td>
+<td>-2.36</td>
+<td>-10.0%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>{'delta': 0.85, 'min_days': 2, 'target_atr': 0.75, 'stop_atr': 1.0}</td>
+<td>123</td>
+<td>-12.1%</td>
+<td>-7.2%</td>
+<td>0.43</td>
+<td>-2.30</td>
+<td>-7.8%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>{'delta': 0.85, 'min_days': 2, 'target_atr': None, 'stop_atr': None}</td>
+<td>103</td>
+<td>-12.7%</td>
+<td>-7.7%</td>
+<td>0.42</td>
+<td>-1.93</td>
+<td>-2.8%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>{'delta': 0.85, 'min_days': 5, 'target_atr': 0.75, 'stop_atr': 1.0}</td>
+<td>79</td>
+<td>-13.4%</td>
+<td>-8.6%</td>
+<td>0.46</td>
+<td>-2.47</td>
+<td>-12.4%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>{'delta': 0.85, 'min_days': 5, 'target_atr': None, 'stop_atr': None}</td>
+<td>66</td>
+<td>-16.9%</td>
+<td>-12.2%</td>
+<td>0.45</td>
+<td>-2.28</td>
+<td>-12.5%</td>
+</tr>
+<tr>
+<td>B Wave-2/B exhaustion @15:50</td>
+<td>{'delta': 0.5, 'min_days': 2}</td>
+<td>15</td>
+<td>-1.9%</td>
+<td>+3.5%</td>
+<td>0.47</td>
+<td>-0.09</td>
+<td>-11.0%</td>
+</tr>
+<tr>
+<td>B Wave-2/B exhaustion @15:50</td>
+<td>{'delta': 0.5, 'min_days': 5}</td>
+<td>15</td>
+<td>-9.3%</td>
+<td>-4.3%</td>
+<td>0.47</td>
+<td>-0.56</td>
+<td>-22.5%</td>
+</tr>
+<tr>
+<td>B Wave-2/B exhaustion @15:50</td>
+<td>{'delta': 0.7, 'min_days': 2}</td>
+<td>14</td>
+<td>-11.3%</td>
+<td>-6.1%</td>
+<td>0.50</td>
+<td>-0.67</td>
+<td>-17.1%</td>
+</tr>
+<tr>
+<td>B Wave-2/B exhaustion @15:50</td>
+<td>{'delta': 0.7, 'min_days': 5}</td>
+<td>14</td>
+<td>-14.6%</td>
+<td>-9.6%</td>
+<td>0.50</td>
+<td>-1.03</td>
+<td>-23.2%</td>
+</tr>
+<tr>
+<td>B Wave-2/B exhaustion @15:50</td>
+<td>{'delta': 0.85, 'min_days': 2}</td>
+<td>10</td>
+<td>-9.7%</td>
+<td>-4.5%</td>
+<td>0.50</td>
+<td>-0.54</td>
+<td>-9.9%</td>
+</tr>
+<tr>
+<td>B Wave-2/B exhaustion @15:50</td>
+<td>{'delta': 0.85, 'min_days': 5}</td>
+<td>10</td>
+<td>-10.1%</td>
+<td>-4.9%</td>
+<td>0.50</td>
+<td>-0.66</td>
+<td>-15.0%</td>
+</tr>
+<tr>
+<td>C ORB-5 in play</td>
+<td>{'delta': 0.7}</td>
+<td>231</td>
+<td>-10.9%</td>
+<td>-5.8%</td>
+<td>0.18</td>
+<td>-3.10</td>
+<td>-2.0%</td>
+</tr>
+<tr>
+<td>D Noise-area momentum</td>
+<td>{'delta': 0.7}</td>
+<td>403</td>
+<td>-0.2%</td>
+<td>+2.9%</td>
+<td>0.30</td>
+<td>-0.04</td>
+<td>+18.6%</td>
+</tr>
+<tr>
+<td>C ORB-5 in play</td>
+<td>{'delta': 0.85}</td>
+<td>194</td>
+<td>-6.3%</td>
+<td>-1.1%</td>
+<td>0.18</td>
+<td>-1.70</td>
+<td>-0.5%</td>
+</tr>
+<tr>
+<td>D Noise-area momentum</td>
+<td>{'delta': 0.85}</td>
+<td>401</td>
+<td>-1.6%</td>
+<td>+1.4%</td>
+<td>0.32</td>
+<td>-0.68</td>
+<td>+3.1%</td>
+</tr>
+<tr>
+<td>Pre-FOMC (ETFs)</td>
+<td>{'delta': 0.5, 'exit_at': '12:00'}</td>
+<td>33</td>
+<td>+13.9%</td>
+<td>+17.3%</td>
+<td>0.55</td>
+<td>1.67</td>
+<td>+17.9%</td>
+</tr>
+<tr>
+<td>Pre-FOMC (ETFs)</td>
+<td>{'delta': 0.5, 'exit_at': '13:55'}</td>
+<td>33</td>
+<td>+1.3%</td>
+<td>+4.4%</td>
+<td>0.39</td>
+<td>0.11</td>
+<td>+23.7%</td>
+</tr>
+<tr>
+<td>Pre-FOMC (ETFs)</td>
+<td>{'delta': 0.7, 'exit_at': '12:00'}</td>
+<td>28</td>
+<td>+9.6%</td>
+<td>+13.0%</td>
+<td>0.54</td>
+<td>1.34</td>
+<td>+10.9%</td>
+</tr>
+<tr>
+<td>Pre-FOMC (ETFs)</td>
+<td>{'delta': 0.7, 'exit_at': '13:55'}</td>
+<td>32</td>
+<td>+2.6%</td>
+<td>+5.8%</td>
+<td>0.41</td>
+<td>0.28</td>
+<td>+13.8%</td>
+</tr>
+</tbody>
+</table>
+<h4 id="test-2025-07-2026-10-best-dev-variant-per-strategy-n-20-frozen">Test 2025-07 → 2026-10 (best dev variant per strategy, n ≥ 20, frozen)</h4>
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>chosen</th>
+<th>dev n</th>
+<th>dev REAL exp</th>
+<th>test n</th>
+<th><strong>test REAL exp</strong></th>
+<th>test @VWAP</th>
+<th>test win</th>
+<th>test t</th>
+<th>test model exp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>{'delta': 0.85, 'min_days': 2, 'target_atr': 0.75, 'stop_atr': 1.0}</td>
+<td>123</td>
+<td>-12.1%</td>
+<td>132</td>
+<td><strong>-9.8%</strong></td>
+<td>-5.0%</td>
+<td>0.41</td>
+<td>-2.23</td>
+<td>-7.9%</td>
+</tr>
+<tr>
+<td>C ORB-5 in play</td>
+<td>{'delta': 0.85}</td>
+<td>194</td>
+<td>-6.3%</td>
+<td>162</td>
+<td><strong>-6.2%</strong></td>
+<td>-0.6%</td>
+<td>0.27</td>
+<td>-1.83</td>
+<td>+1.8%</td>
+</tr>
+<tr>
+<td>D Noise-area momentum</td>
+<td>{'delta': 0.7}</td>
+<td>403</td>
+<td>-0.2%</td>
+<td>380</td>
+<td><strong>-4.1%</strong></td>
+<td>-1.2%</td>
+<td>0.29</td>
+<td>-1.15</td>
+<td>+1.5%</td>
+</tr>
+<tr>
+<td>Pre-FOMC (ETFs)</td>
+<td>{'delta': 0.5, 'exit_at': '12:00'}</td>
+<td>33</td>
+<td>+13.9%</td>
+<td>30</td>
+<td><strong>-5.9%</strong></td>
+<td>-3.0%</td>
+<td>0.43</td>
+<td>-0.97</td>
+<td>-14.7%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="iv_filtermd">IV_FILTER.md</h2>
+<div class="raw">
+<p>IV/RV = implied vol of the bought contract (real print) / 20-day realised vol of the underlying.</p>
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>period</th>
+<th>n</th>
+<th>median IV/RV</th>
+<th>REAL exp: IV/RV below dev median</th>
+<th>REAL exp: above</th>
+<th>n below</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>dev</td>
+<td>202</td>
+<td>1.28</td>
+<td>-16.5%</td>
+<td>+3.3%</td>
+<td>101</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>test</td>
+<td>206</td>
+<td>1.31</td>
+<td>+2.6%</td>
+<td>+4.2%</td>
+<td>99</td>
+</tr>
+<tr>
+<td>C ORB-5 in play</td>
+<td>dev</td>
+<td>252</td>
+<td>1.95</td>
+<td>-13.7%</td>
+<td>-9.1%</td>
+<td>126</td>
+</tr>
+<tr>
+<td>C ORB-5 in play</td>
+<td>test</td>
+<td>219</td>
+<td>1.88</td>
+<td>-14.2%</td>
+<td>-12.5%</td>
+<td>112</td>
+</tr>
+<tr>
+<td>D Noise-area momentum</td>
+<td>dev</td>
+<td>380</td>
+<td>2.14</td>
+<td>-4.9%</td>
+<td>+2.1%</td>
+<td>190</td>
+</tr>
+<tr>
+<td>D Noise-area momentum</td>
+<td>test</td>
+<td>354</td>
+<td>1.94</td>
+<td>-5.3%</td>
+<td>-2.4%</td>
+<td>221</td>
+</tr>
+<tr>
+<td>Pre-FOMC (ETFs)</td>
+<td>dev</td>
+<td>33</td>
+<td>1.45</td>
+<td>-1.0%</td>
+<td>+29.7%</td>
+<td>17</td>
+</tr>
+<tr>
+<td>Pre-FOMC (ETFs)</td>
+<td>test</td>
+<td>30</td>
+<td>1.51</td>
+<td>-7.1%</td>
+<td>-4.8%</td>
+<td>14</td>
+</tr>
+</tbody>
+</table>
+<p>Threshold = the DEV median IV/RV of each strategy (fixed before looking at test).</p>
+<h4 id="pooled-all-four-real-return-by-ivrv-bucket">Pooled (all four), real return by IV/RV bucket</h4>
+<table>
+<thead>
+<tr>
+<th>IV/RV bucket</th>
+<th>dev n</th>
+<th>dev REAL exp</th>
+<th>test n</th>
+<th>test REAL exp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–0.9</td>
+<td>51</td>
+<td>-13.3%</td>
+<td>50</td>
+<td>+9.4%</td>
+</tr>
+<tr>
+<td>0.9–1.1</td>
+<td>67</td>
+<td>-9.4%</td>
+<td>64</td>
+<td>+2.2%</td>
+</tr>
+<tr>
+<td>1.1–1.3</td>
+<td>104</td>
+<td>-9.4%</td>
+<td>97</td>
+<td>-11.9%</td>
+</tr>
+<tr>
+<td>1.3–1.6</td>
+<td>140</td>
+<td>-6.1%</td>
+<td>169</td>
+<td>-1.6%</td>
+</tr>
+<tr>
+<td>1.6–99</td>
+<td>505</td>
+<td>-2.3%</td>
+<td>429</td>
+<td>-7.1%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="real_dtemd">REAL_DTE.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>expiry ≥ entry +</th>
+<th>delta</th>
+<th>n</th>
+<th>REAL exp</th>
+<th>@VWAP</th>
+<th>win</th>
+<th>t</th>
+<th>model exp</th>
+<th>underlying move/trade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>2 days</td>
+<td>0.5</td>
+<td>409</td>
+<td>-1.7%</td>
+<td>+3.7%</td>
+<td>0.47</td>
+<td>-0.44</td>
+<td>+19.2%</td>
+<td>+0.43%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>2 days</td>
+<td>0.7</td>
+<td>336</td>
+<td>-7.6%</td>
+<td>-2.3%</td>
+<td>0.45</td>
+<td>-2.10</td>
+<td>+2.7%</td>
+<td>+0.42%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>7 days</td>
+<td>0.5</td>
+<td>378</td>
+<td>-0.8%</td>
+<td>+4.7%</td>
+<td>0.53</td>
+<td>-0.23</td>
+<td>+8.9%</td>
+<td>+0.52%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>7 days</td>
+<td>0.7</td>
+<td>262</td>
+<td>-8.7%</td>
+<td>-3.5%</td>
+<td>0.50</td>
+<td>-2.55</td>
+<td>-5.1%</td>
+<td>+0.53%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>14 days</td>
+<td>0.5</td>
+<td>334</td>
+<td>-2.4%</td>
+<td>+3.1%</td>
+<td>0.52</td>
+<td>-0.87</td>
+<td>+4.9%</td>
+<td>+0.54%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>14 days</td>
+<td>0.7</td>
+<td>197</td>
+<td>-9.1%</td>
+<td>-4.0%</td>
+<td>0.47</td>
+<td>-3.03</td>
+<td>-5.0%</td>
+<td>+0.57%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>28 days</td>
+<td>0.5</td>
+<td>267</td>
+<td>-2.4%</td>
+<td>+3.0%</td>
+<td>0.52</td>
+<td>-1.00</td>
+<td>+4.8%</td>
+<td>+0.52%</td>
+</tr>
+<tr>
+<td>A Trend-dip @15:50</td>
+<td>28 days</td>
+<td>0.7</td>
+<td>125</td>
+<td>-10.1%</td>
+<td>-5.2%</td>
+<td>0.43</td>
+<td>-3.91</td>
+<td>-6.3%</td>
+<td>+0.54%</td>
+</tr>
+<tr>
+<td>Pre-FOMC (ETFs)</td>
+<td>2 days</td>
+<td>0.5</td>
+<td>63</td>
+<td>+4.5%</td>
+<td>+7.6%</td>
+<td>0.49</td>
+<td>0.84</td>
+<td>+2.4%</td>
+<td>+0.18%</td>
+</tr>
+<tr>
+<td>Pre-FOMC (ETFs)</td>
+<td>14 days</td>
+<td>0.5</td>
+<td>54</td>
+<td>+1.0%</td>
+<td>+4.1%</td>
+<td>0.46</td>
+<td>0.35</td>
+<td>-1.2%</td>
+<td>+0.18%</td>
+</tr>
+<tr>
+<td>Pre-FOMC (ETFs)</td>
+<td>28 days</td>
+<td>0.5</td>
+<td>42</td>
+<td>+0.8%</td>
+<td>+3.9%</td>
+<td>0.50</td>
+<td>0.31</td>
+<td>+1.4%</td>
+<td>+0.20%</td>
+</tr>
+</tbody>
+</table>
+</div></body></html>
