@@ -23,6 +23,10 @@ TPB trend pullback). Real-data results are pending CSV price files — see
 `rebuild/research/STRATEGY_RESEARCH.md` §5 for the exact commands and the
 acceptance criteria an engine must pass before it is ported to Dart.
 
+**Update (real data):** `rebuild/research/FIVE_STRATEGIES_STUDY.md` — 15 symbols, 1m/5m/1h/1d. Only RCB (daily) and the
+current composite + QualityGate (daily) were positive out-of-sample (2020–2026, ~+5% per trade on premium, t≈1.3);
+wave-2/B divergence, VWAP pullback and TPB lost on every timeframe. Port RCB + QualityGate first.
+
 ## 1. Why a rebuild
 
 v1 (70 batches) drifted into server operations (alert receivers, health
