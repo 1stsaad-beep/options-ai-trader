@@ -433,5 +433,14 @@ Full details: **[`ROUND5.md`](ROUND5.md)**. Branch `rebuild/strategies-ivrv-2026
   re-download), signer `dde693a8…6720`. Box note: the NDK 28.2 install and Gradle
   transform cache were found corrupted; NDK reinstalled via sdkmanager (broken copy kept in
   `/workspace/tools/ndk-28.2-broken-*`), transforms cache rebuilt.
-* Next (5.2): strategies A (MTF Elliott) and B (MTF RSI, both directions), real-bar
-  backtests with discovery/validation/holdout, results and recommendations.
+* **5.2 (versionCode 7)**: strategies A (MTF Elliott) and B (MTF RSI, both directions)
+  in `trader_core/lib/src/strategies/`, research harness `trader_core/tool/r5_*.dart`
+  (modeled options on real Yahoo bars, discovery/validation/holdout, controls,
+  sensitivity), results in `research/results/r5/`, rules in `docs/STRATEGY_MTF_*.md`,
+  conclusions in `docs/STRATEGY_RESEARCH_RESULTS.md` and ROUND5.md §2.
+  Outcome: only the **daily Elliott Call** variant passed validation + holdout (holdout
+  n 39, +16.5%/trade modeled, PF 1.42; fragile to zig-zag size) → shipped as the
+  experimental per-account strategy `elliottDaily` (off by default, preset button,
+  Paper only). Strategy B, the intraday Elliott specs and the Put mirror are not shipped.
+  Default strategy stays negative in the model; IV/RV filter halves its loss on SPY/QQQ
+  but does not make it positive.
