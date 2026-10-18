@@ -244,6 +244,9 @@ class AlpacaAdapter implements BrokerAdapter, MarketClockSource {
       time: DateTime.tryParse('${lq['t']}')?.toUtc() ?? clock(),
       volume: bar is Map ? jNum(bar['v']).round() : 0,
       delta: greeks is Map && greeks['delta'] != null ? jNum(greeks['delta']) : null,
+      gamma: greeks is Map && greeks['gamma'] != null ? jNum(greeks['gamma']) : null,
+      theta: greeks is Map && greeks['theta'] != null ? jNum(greeks['theta']) : null,
+      vega: greeks is Map && greeks['vega'] != null ? jNum(greeks['vega']) : null,
       impliedVolatility: s['impliedVolatility'] == null ? null : jNum(s['impliedVolatility']),
     );
   }

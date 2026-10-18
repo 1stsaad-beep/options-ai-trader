@@ -161,6 +161,9 @@ class OptionQuote {
   final int volume;
   final int openInterest;
   final double? delta;
+  final double? gamma;
+  final double? theta;
+  final double? vega;
   final double? impliedVolatility;
   final DateTime time;
 
@@ -172,6 +175,9 @@ class OptionQuote {
     this.volume = 0,
     this.openInterest = 0,
     this.delta,
+    this.gamma,
+    this.theta,
+    this.vega,
     this.impliedVolatility,
   });
 

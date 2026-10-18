@@ -4,6 +4,7 @@
 library;
 
 import '../models.dart';
+import 'cycle_record.dart';
 import 'decision_engine.dart';
 import 'journal.dart';
 
@@ -71,6 +72,7 @@ class TrackedOrder {
 class AccountState {
   static const int maxJournal = 3000;
   static const int maxCurve = 3000;
+  static const int maxCycles = 600;
 
   int cycle;
   final Map<String, PositionMeta> metas;
@@ -87,6 +89,16 @@ class AccountState {
   /// Raw broker-specific state (the simulator ledger lives here).
   Map<String, dynamic>? brokerState;
 
+  /// Opening orders (entries + scale-ins) sent on New York day [ordersDayKey].
+  int ordersToday;
+  String? ordersDayKey;
+
+  /// Last entry/exit submission per underlying (cooldown).
+  final Map<String, DateTime> lastTradeAt;
+
+  /// Most recent cycles, oldest first (bounded by [maxCycles]).
+  final List<CycleRecord> cycles;
+
   AccountState({
     this.cycle = 0,
     Map<String, PositionMeta>? metas,
@@ -99,7 +111,13 @@ class AccountState {
     this.dayStartEquityCents,
     this.dailyLimitNotifiedFor,
     this.brokerState,
-  })  : metas = metas ?? {},
+    this.ordersToday = 0,
+    this.ordersDayKey,
+    Map<String, DateTime>? lastTradeAt,
+    List<CycleRecord>? cycles,
+  })  : lastTradeAt = lastTradeAt ?? {},
+        cycles = cycles ?? [],
+        metas = metas ?? {},
         tracked = tracked ?? {},
         escalate = escalate ?? {},
         trades = trades ?? [],
@@ -109,6 +127,11 @@ class AccountState {
   void log(JournalEntry e) {
     journal.add(e);
     if (journal.length > maxJournal) journal.removeRange(0, journal.length - maxJournal);
+  }
+
+  void addCycle(CycleRecord r) {
+    cycles.add(r);
+    if (cycles.length > maxCycles) cycles.removeRange(0, cycles.length - maxCycles);
   }
 
   void addEquity(EquityPoint p) {
@@ -134,6 +157,10 @@ class AccountState {
         'dayStart': dayStartEquityCents,
         'dailyNotified': dailyLimitNotifiedFor,
         'broker': brokerState,
+        'ordersToday': ordersToday,
+        'ordersDay': ordersDayKey,
+        'lastTrade': {for (final e in lastTradeAt.entries) e.key: e.value.toIso8601String()},
+        'cycles': [for (final c in cycles) c.toJson()],
       };
 
   factory AccountState.fromJson(Map<String, dynamic> j) {
@@ -152,6 +179,12 @@ class AccountState {
       dayStartEquityCents: j['dayStart'] as int?,
       dailyLimitNotifiedFor: j['dailyNotified'] as String?,
       brokerState: (j['broker'] as Map?)?.cast<String, dynamic>(),
+      ordersToday: j['ordersToday'] as int? ?? 0,
+      ordersDayKey: j['ordersDay'] as String?,
+      lastTradeAt: {
+        for (final e in ((j['lastTrade'] as Map?) ?? const {}).entries) e.key as String: DateTime.parse(e.value as String)
+      },
+      cycles: maps('cycles').map(CycleRecord.fromJson).toList(),
     );
   }
 }

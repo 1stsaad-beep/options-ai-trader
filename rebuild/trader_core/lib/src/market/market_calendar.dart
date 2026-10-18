@@ -16,6 +16,14 @@
 ///   early-close days), post-market until 20:00 (17:00 on early-close days).
 ///   Options trade in RTH only; the app uses 13:00 on early-close days even
 ///   though some options close at 13:15 (conservative).
+/// * **13:15 ET nuance** (documented, deliberately not used): on early-close
+///   days equity options stop at 13:00 ET, but broad-based index options
+///   (e.g. SPX/XSP/NDX/RUT on Cboe) and some ETF options (e.g. SPY/QQQ/IWM on
+///   several venues) keep trading until 13:15 ET — mirroring the normal
+///   16:00 vs 16:15 split. The engine stops opening/closing at 13:00 for every
+///   symbol: the last 15 minutes are thin, and a uniform cut-off can never send
+///   an order after a venue has closed. Positions still open then are handled
+///   on the next session (or by the broker's own expiry processing).
 library;
 
 import '../brokers/broker_adapter.dart';
@@ -193,7 +201,8 @@ class MarketCalendar {
     DateTime.utc(2028, 12, 25): 'عيد الميلاد',
   };
 
-  /// Official 13:00 ET early closes.
+  /// Official 13:00 ET early closes (equities and equity options; some index /
+  /// ETF options run to 13:15 ET — the app still uses 13:00, see library docs).
   static final Set<DateTime> officialEarlyCloses = {
     DateTime.utc(2026, 11, 27),
     DateTime.utc(2026, 12, 24),

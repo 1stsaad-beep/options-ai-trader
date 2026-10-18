@@ -21,6 +21,7 @@ import '../market/market_calendar.dart';
 import '../models.dart';
 import 'account.dart';
 import 'account_state.dart';
+import 'cycle_record.dart';
 import 'decision_engine.dart';
 import 'direction_lock.dart';
 import 'journal.dart';
@@ -88,8 +89,26 @@ class TradingEngine {
   /// skips do not push real decisions out of the bounded journal.
   final Map<String, DateTime> _lastSkip = {};
 
+  /// Record of the cycle in progress (null between cycles).
+  CycleRecord? _current;
+  String? _capNotifiedFor;
+
   void _log(JournalAction a, String reason, {String? symbol, Map<String, Object?> details = const {}}) {
     final now = clock();
+    final rec = _current;
+    if (rec != null) {
+      details = {...details, 'cycle': rec.cycle};
+      if (a == JournalAction.orderFilled) {
+        rec.fills++;
+      } else if (a == JournalAction.error) {
+        rec.errors.add(symbol == null ? reason : '$symbol: $reason');
+      }
+      if (symbol != null && a != JournalAction.orderFilled && a != JournalAction.orderCancelled && a != JournalAction.info) {
+        final n = rec.symbol(symbol);
+        n.action = a.name;
+        n.reasonAr = reason;
+      }
+    }
     if (a == JournalAction.skip && symbol != null) {
       final last = _lastSkip[symbol];
       if (last != null && now.difference(last).inMinutes < 30) return;
@@ -98,7 +117,27 @@ class TradingEngine {
     state.log(JournalEntry(time: now, action: a, symbol: symbol, reasonAr: reason, details: details));
   }
 
+  /// Runs one cycle and records it in [AccountState.cycles].
   Future<CycleSummary> runCycle() async {
+    final before = state.cycle;
+    final rec = _current = CycleRecord(cycle: before + 1, start: clock());
+    CycleSummary r;
+    try {
+      r = await _runCycle();
+    } finally {
+      _current = null;
+    }
+    if (state.cycle > before) {
+      rec
+        ..ran = r.ran
+        ..noteAr = r.noteAr
+        ..end = clock();
+      state.addCycle(rec);
+    }
+    return r;
+  }
+
+  Future<CycleSummary> _runCycle() async {
     if (_running) return const CycleSummary(ran: false, noteAr: 'دورة سابقة ما زالت تعمل');
     if (!profile.enabled) return const CycleSummary(ran: false, noteAr: 'الحساب غير مفعّل');
     final invalid = s.validate();
@@ -124,6 +163,9 @@ class TradingEngine {
       if (gate != null) {
         final st = await gate.status(now);
         lastMarketStatus = st;
+        _current
+          ?..marketPhase = st.phase.name
+          ..marketSummaryAr = st.summaryAr();
         if (!st.isOpen) {
           final key = '${st.phase.name}:${st.nextOpen.toIso8601String()}';
           if (_closedLoggedFor != key) {
@@ -149,8 +191,11 @@ class TradingEngine {
             _log(JournalAction.skip, 'بيانات غير كافية للتحليل (${bars.length} شمعة)', symbol: sym);
             continue;
           }
-          reports[sym] = analyzer.analyze(sym, bars, weights: s.engineWeights);
+          final report = reports[sym] = analyzer.analyze(sym, bars, weights: s.engineWeights);
           prices[sym] = bars.last.close;
+          _current?.symbol(sym)
+            ?..score = report.score
+            ..bias = report.bias.name;
         } catch (e) {
           errors++;
           _log(JournalAction.error, 'تعذر تحليل السهم: $e', symbol: sym);
@@ -221,6 +266,11 @@ class TradingEngine {
               multiplier: p.contract.multiplier,
               feePerContractCents: feePerContractCents,
             );
+            if (_openingCapReached()) {
+              _log(JournalAction.skip, 'تعزيز غير ممكن: بلغ عدد أوامر الفتح اليوم الحد (${s.maxOrdersPerDay})',
+                  symbol: p.contract.underlying);
+              continue;
+            }
             final qty = math.min(scale.quantity, sized.quantity);
             if (qty <= 0) {
               _log(JournalAction.skip, 'تعزيز غير ممكن: ${sized.reasonAr}', symbol: p.contract.underlying);
@@ -251,6 +301,13 @@ class TradingEngine {
       if (_dailyLimitHit(account, now)) {
         return CycleSummary(ran: true, ordersSubmitted: submitted, errors: errors, noteAr: 'حد الخسارة اليومي');
       }
+      if (_openingCapReached()) {
+        if (_capNotifiedFor != state.ordersDayKey) {
+          _capNotifiedFor = state.ordersDayKey;
+          _log(JournalAction.blocked, 'لا دخول جديد اليوم: بلغ عدد أوامر الفتح ${state.ordersToday} من ${s.maxOrdersPerDay}');
+        }
+        return CycleSummary(ran: true, ordersSubmitted: submitted, errors: errors, noteAr: 'الحد اليومي للأوامر');
+      }
       positions = await broker.positions();
       openOrders = await broker.openOrders();
       var openCount = _openSlotsUsed(positions, openOrders);
@@ -267,6 +324,12 @@ class TradingEngine {
         }
         final active = DirectionLock.activeRight(sym, positions, openOrders);
         if (active != null) continue; // managed by the exit logic above
+        final cooldown = _cooldownLeft(sym, now);
+        if (cooldown != null) {
+          _log(JournalAction.skip, 'فترة تهدئة: لا دخول جديد على $sym قبل ${cooldown.inMinutes + 1} دقيقة', symbol: sym);
+          continue;
+        }
+        if (_openingCapReached()) break;
         try {
           final intent = rules.evaluateEntry(sym, report,
               rejection: (r) => _log(JournalAction.skip, r, symbol: sym, details: {'score': report.score}));
@@ -384,6 +447,14 @@ class TradingEngine {
       }
     }
     final o = await broker.placeOrder(r);
+    final now = clock();
+    if (r.side == OrderSide.buyToOpen) {
+      _ensureOrdersDay(now);
+      state.ordersToday++;
+    }
+    if (purpose == 'entry' || r.side == OrderSide.sellToClose) state.lastTradeAt[r.contract.underlying] = now;
+    _current?.orders.add('${journalAction.name} ${r.side == OrderSide.buyToOpen ? 'شراء' : 'بيع'} ${r.quantity}× '
+        '${r.contract.occSymbol} بحد ${(r.limitPriceCents / 100).toStringAsFixed(2)}\$ (${o.status.name})');
     state.tracked[o.id] = TrackedOrder(
       orderId: o.id,
       clientOrderId: r.clientOrderId,
@@ -530,10 +601,29 @@ class TradingEngine {
     // The trading day is the New York date (the daily-loss limit resets at
     // midnight ET, not UTC).
     final key = NewYorkTime.dateKey(now);
+    _ensureOrdersDay(now);
     if (state.dayKey != key) {
       state.dayKey = key;
       state.dayStartEquityCents = a.equityCents;
     }
+  }
+
+  void _ensureOrdersDay(DateTime now) {
+    final key = NewYorkTime.dateKey(now);
+    if (state.ordersDayKey != key) {
+      state.ordersDayKey = key;
+      state.ordersToday = 0;
+    }
+  }
+
+  bool _openingCapReached() => state.ordersToday >= s.maxOrdersPerDay;
+
+  /// Remaining cooldown for new entries on [symbol], or null.
+  Duration? _cooldownLeft(String symbol, DateTime now) {
+    final last = state.lastTradeAt[symbol];
+    if (last == null || s.symbolCooldownMinutes <= 0) return null;
+    final left = last.add(Duration(minutes: s.symbolCooldownMinutes)).difference(now);
+    return left > Duration.zero ? left : null;
   }
 
   bool _dailyLimitHit(AccountSnapshot a, DateTime now) {

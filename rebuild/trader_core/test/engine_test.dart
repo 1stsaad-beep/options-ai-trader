@@ -32,6 +32,7 @@ void main() {
           maxPositionPercent: 20,
           entryAggressiveness: aggressiveness,
           stopLossPercent: 50,
+          symbolCooldownMinutes: 0, // cooldown has its own tests (safety_test.dart)
         ),
       );
 

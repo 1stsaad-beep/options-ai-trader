@@ -26,6 +26,13 @@ class AccountSettings {
   /// New entries stop for the day once equity is down this % from the day's start.
   final double dailyLossLimitPercent;
 
+  /// Max opening orders (entries + scale-ins) per New York trading day.
+  /// Exits are never capped (they reduce risk).
+  final int maxOrdersPerDay;
+
+  /// After an entry or exit on a symbol, no new entry on it for this many minutes.
+  final int symbolCooldownMinutes;
+
   // ---- entry criteria ----
   final BarTimeframe timeframe;
 
@@ -105,6 +112,8 @@ class AccountSettings {
     this.maxOpenPositions = 3,
     this.maxTotalExposurePercent = 40,
     this.dailyLossLimitPercent = 3,
+    this.maxOrdersPerDay = 10,
+    this.symbolCooldownMinutes = 60,
     this.timeframe = BarTimeframe.m15,
     this.minScore = 35,
     this.minAgreeingEngines = 2,
@@ -156,6 +165,8 @@ class AccountSettings {
     range(maxOpenPositions, 1, 50, 'عدد المراكز المفتوحة');
     range(maxTotalExposurePercent, 1, 100, 'التعرض الكلي');
     range(dailyLossLimitPercent, 0.5, 50, 'حد الخسارة اليومي');
+    range(maxOrdersPerDay, 1, 200, 'أقصى أوامر فتح يوميًا');
+    range(symbolCooldownMinutes, 0, 1440, 'فترة التهدئة لكل سهم');
     range(minScore, 5, 100, 'الحد الأدنى للنتيجة');
     range(minAgreeingEngines, 1, EngineId.values.length, 'عدد المحركات المتوافقة');
     range(minDaysToExpiry, 0, 365, 'أقل أيام للانتهاء');
@@ -182,6 +193,8 @@ class AccountSettings {
     int? maxOpenPositions,
     double? maxTotalExposurePercent,
     double? dailyLossLimitPercent,
+    int? maxOrdersPerDay,
+    int? symbolCooldownMinutes,
     BarTimeframe? timeframe,
     double? minScore,
     int? minAgreeingEngines,
@@ -219,6 +232,8 @@ class AccountSettings {
         maxOpenPositions: maxOpenPositions ?? this.maxOpenPositions,
         maxTotalExposurePercent: maxTotalExposurePercent ?? this.maxTotalExposurePercent,
         dailyLossLimitPercent: dailyLossLimitPercent ?? this.dailyLossLimitPercent,
+        maxOrdersPerDay: maxOrdersPerDay ?? this.maxOrdersPerDay,
+        symbolCooldownMinutes: symbolCooldownMinutes ?? this.symbolCooldownMinutes,
         timeframe: timeframe ?? this.timeframe,
         minScore: minScore ?? this.minScore,
         minAgreeingEngines: minAgreeingEngines ?? this.minAgreeingEngines,
@@ -257,6 +272,8 @@ class AccountSettings {
         'maxOpenPositions': maxOpenPositions,
         'maxTotalExposurePercent': maxTotalExposurePercent,
         'dailyLossLimitPercent': dailyLossLimitPercent,
+        'maxOrdersPerDay': maxOrdersPerDay,
+        'symbolCooldownMinutes': symbolCooldownMinutes,
         'timeframe': timeframe.name,
         'minScore': minScore,
         'minAgreeingEngines': minAgreeingEngines,
@@ -309,6 +326,8 @@ class AccountSettings {
       maxOpenPositions: integer('maxOpenPositions', d.maxOpenPositions),
       maxTotalExposurePercent: dbl('maxTotalExposurePercent', d.maxTotalExposurePercent),
       dailyLossLimitPercent: dbl('dailyLossLimitPercent', d.dailyLossLimitPercent),
+      maxOrdersPerDay: integer('maxOrdersPerDay', d.maxOrdersPerDay),
+      symbolCooldownMinutes: integer('symbolCooldownMinutes', d.symbolCooldownMinutes),
       timeframe: BarTimeframe.values.firstWhere((t) => t.name == j['timeframe'], orElse: () => d.timeframe),
       minScore: dbl('minScore', d.minScore),
       minAgreeingEngines: integer('minAgreeingEngines', d.minAgreeingEngines),
