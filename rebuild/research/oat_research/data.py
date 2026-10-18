@@ -16,10 +16,11 @@ REQUIRED = ["open", "high", "low", "close", "volume"]
 
 
 def load_csv(path: str | Path) -> pd.DataFrame:
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, comment="#")
     df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
-    date_col = next(c for c in df.columns if c in ("date", "datetime", "timestamp", "data"))
-    df[date_col] = pd.to_datetime(df[date_col], utc=False).dt.tz_localize(None)
+    date_col = next(c for c in df.columns if c in ("date", "datetime", "timestamp", "time", "data"))
+    dt = pd.to_datetime(df[date_col], utc=True)
+    df[date_col] = dt.dt.tz_convert(None).dt.normalize()
     df = df.rename(columns={date_col: "date"}).set_index("date").sort_index()
     for c in REQUIRED + ["adj_close"]:
         if c in df.columns:
