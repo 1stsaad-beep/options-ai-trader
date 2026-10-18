@@ -46,13 +46,14 @@ class AccountsScreen extends StatelessWidget {
                       onRefresh: controller.refreshAll,
                       child: ListView.separated(
                         padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
-                        itemCount: accounts.length + 3,
+                        itemCount: accounts.length + 4,
                         separatorBuilder: (_, __) => const SizedBox(height: 8),
                         itemBuilder: (context, i) => switch (i) {
                           0 => KillSwitchBanner(controller: controller),
                           1 => MarketStatusCard(controller: controller),
                           2 => BackgroundCard(controller: controller),
-                          _ => _AccountCard(controller: controller, rt: accounts[i - 3]),
+                          3 => NotificationPrefsCard(controller: controller),
+                          _ => _AccountCard(controller: controller, rt: accounts[i - 4]),
                         },
                       ),
                     ),
@@ -107,6 +108,8 @@ class _AccountCard extends StatelessWidget {
                 ),
               ]),
               Text('${p.broker.arabic} • ${p.watchlist.isEmpty ? 'لا توجد أسهم محددة' : p.watchlist.join('، ')}'),
+              if (p.settings.pauseNewEntries)
+                const Text('الدخول الجديد موقوف مؤقتًا — الخروج يعمل', style: TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 6),
               if (snap != null)
                 Text('القيمة: ${formatUsd(snap.equityCents)}   النقد: ${formatUsd(snap.cashCents)}   المراكز: ${rt.positions.length}'),

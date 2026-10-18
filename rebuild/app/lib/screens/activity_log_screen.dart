@@ -58,6 +58,14 @@ class _ActivityLogTabState extends State<ActivityLogTab> {
   CycleFilter _filter = CycleFilter.all;
   String? _symbol;
 
+  Future<void> _export(List<CycleRecord> cycles, bool json) async {
+    try {
+      await widget.controller.exporter.exportActivity(widget.rt.profile, cycles, json: json);
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تعذر التصدير: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final all = widget.rt.state.cycles;
@@ -92,9 +100,24 @@ class _ActivityLogTabState extends State<ActivityLogTab> {
         ]),
       ),
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        child: Text('${list.length} من ${all.length} دورة محفوظة (آخر ${AccountState.maxCycles})',
-            style: Theme.of(context).textTheme.bodySmall),
+        padding: const EdgeInsets.fromLTRB(12, 0, 4, 0),
+        child: Row(children: [
+          Expanded(
+            child: Text('${list.length} من ${all.length} دورة محفوظة (آخر ${AccountState.maxCycles})',
+                style: Theme.of(context).textTheme.bodySmall),
+          ),
+          PopupMenuButton<bool>(
+            key: const Key('export-activity'),
+            tooltip: 'تصدير السجل المعروض',
+            icon: const Icon(Icons.ios_share),
+            enabled: list.isNotEmpty,
+            onSelected: (json) => _export(list.reversed.toList(), json),
+            itemBuilder: (_) => const [
+              PopupMenuItem(value: false, child: Text('تصدير CSV')),
+              PopupMenuItem(value: true, child: Text('تصدير JSON')),
+            ],
+          ),
+        ]),
       ),
       Expanded(
         child: list.isEmpty

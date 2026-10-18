@@ -48,7 +48,7 @@ jobs:
         with:
           channel: stable
           cache: true
-      # Platform folders are generated, not committed (see rebuild/HANDOFF.md).
+      # android/ is committed (applicationId suffix, manifest, desugaring); create only fills in missing files (ios/).
       - run: flutter create --platforms=android,ios --org com.optionsaitrader --project-name options_ai_trader_app . && rm -f test/widget_test.dart
       - run: flutter pub get
       - run: flutter analyze --no-fatal-infos

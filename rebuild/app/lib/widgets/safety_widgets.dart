@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trader_core/trader_core.dart';
 
 import '../services/app_controller.dart';
+import '../services/notifier.dart';
 
 /// Shown on every main screen while the kill switch is on.
 class KillSwitchBanner extends StatelessWidget {
@@ -184,6 +185,7 @@ class RiskSettingsCard extends StatelessWidget {
     final rights = [if (s.allowCalls) 'Call', if (s.allowPuts) 'Put'];
     final rows = <(String, String)>[
       ('الإيقاف الطارئ', killSwitch ? 'مفعّل — لا أوامر' : 'غير مفعّل'),
+      ('الدخول الجديد', s.pauseNewEntries ? 'موقوف مؤقتًا (الخروج يعمل)' : 'مسموح'),
       ('المخاطرة لكل صفقة', '${s.riskPerTradePercent}% من قيمة الحساب'),
       ('أقصى حجم للمركز', '${s.maxPositionPercent}%'),
       ('أقصى صفقات مفتوحة', '${rt.positions.length} / ${s.maxOpenPositions}'),
@@ -216,4 +218,42 @@ class RiskSettingsCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// User control of local notifications.
+class NotificationPrefsCard extends StatelessWidget {
+  final AppController controller;
+  const NotificationPrefsCard({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) => Card(
+        child: ExpansionTile(
+          key: const Key('notify-prefs'),
+          leading: const Icon(Icons.notifications_outlined),
+          title: const Text('الإشعارات'),
+          subtitle: Text([
+            for (final k in NotifyKind.values)
+              if (controller.notify[k] == true) k.arabic
+          ].join('، ').ifEmpty('كلها متوقفة')),
+          children: [
+            for (final k in NotifyKind.values)
+              SwitchListTile(
+                key: Key('notify-${k.name}'),
+                title: Text(k.arabic),
+                subtitle: Text(switch (k) {
+                  NotifyKind.fills => 'عند تنفيذ أي أمر شراء أو بيع',
+                  NotifyKind.errors => 'أخطاء الاتصال أو الوسيط (نفس الخطأ مرة كل 30 دقيقة كحد أقصى)',
+                  NotifyKind.killSwitch => 'عند تفعيل الإيقاف الطارئ أو إلغائه',
+                  NotifyKind.market => 'عند افتتاح السوق الأمريكي وإغلاقه (أثناء عمل التطبيق)',
+                }),
+                value: controller.notify[k] == true,
+                onChanged: (v) => controller.setNotify(k, v),
+              ),
+          ],
+        ),
+      );
+}
+
+extension on String {
+  String ifEmpty(String other) => isEmpty ? other : this;
 }

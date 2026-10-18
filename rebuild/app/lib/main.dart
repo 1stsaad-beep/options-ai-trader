@@ -4,10 +4,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/accounts_screen.dart';
 import 'services/app_controller.dart';
 import 'services/background_service.dart';
+import 'services/notifier.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  final controller = AppController(background: ForegroundTaskRunner())..load();
+  final controller = AppController(background: ForegroundTaskRunner(), notifier: LocalNotifier())..load();
   runApp(OptionsAiTraderApp(controller: controller));
 }
 

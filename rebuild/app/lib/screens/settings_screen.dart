@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trader_core/trader_core.dart';
 
 import '../services/app_controller.dart';
+import 'settings_help.dart';
 
 /// Per-account risk, entry, exit and engine settings.
 class SettingsScreen extends StatefulWidget {
@@ -37,21 +38,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
   AccountSettings _build() =>
       AccountSettings.fromJson({..._v, 'engineWeights': _weights}.cast<String, dynamic>());
 
-  Widget _num(String key, String label, {String? help, bool integer = false, String suffix = ''}) {
+  Widget _num(String key, {bool integer = false}) {
+    final h = settingsHelp[key]!;
     final c = _text.putIfAbsent(key, () => TextEditingController(text: '${_v[key]}'));
+    final range = AccountSettings.allowedRanges[key];
+    final rangeText = [
+      if (range != null) 'المسموح: ${range.$1}–${range.$2}',
+      if (h.suggested != null) 'المقترح: ${h.suggested}',
+    ].join(' • ');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextField(
+        key: Key('setting-$key'),
         controller: c,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textDirection: TextDirection.ltr,
-        decoration: InputDecoration(labelText: label, helperText: help, helperMaxLines: 3, suffixText: suffix),
+        decoration: InputDecoration(
+          labelText: h.label,
+          helperText: rangeText.isEmpty ? h.explain : '${h.explain}\n$rangeText',
+          helperMaxLines: 5,
+          suffixText: h.suffix,
+        ),
         onChanged: (t) {
           final n = num.tryParse(t.trim());
           if (n != null) _v[key] = integer ? n.toInt() : n.toDouble();
         },
       ),
     );
+  }
+
+  Future<void> _resetDefaults() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('استعادة الإعدادات الافتراضية؟'),
+        content: const Text('ستعود كل قيم المخاطرة والدخول والخروج وأوزان المحركات إلى القيم الافتراضية المحافظة. '
+            'قائمة الأسهم والمفاتيح لا تتغير. لن يُحفظ شيء حتى تضغط "حفظ".'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('إلغاء')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('استعادة')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    const d = AccountSettings();
+    setState(() {
+      _v = Map<String, Object?>.from(d.toJson());
+      _weights = {for (final e in d.engineWeights.entries) e.key.name: e.value};
+      for (final e in _text.entries) {
+        e.value.text = '${_v[e.key]}';
+      }
+    });
   }
 
   Widget _flag(String key, String label, {String? help}) => SwitchListTile(
@@ -98,28 +135,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('إعدادات الحساب'),
-        actions: [TextButton(onPressed: _save, child: const Text('حفظ'))],
+        actions: [
+          IconButton(
+            key: const Key('reset-defaults'),
+            tooltip: 'استعادة الافتراضي',
+            icon: const Icon(Icons.restart_alt),
+            onPressed: _resetDefaults,
+          ),
+          TextButton(onPressed: _save, child: const Text('حفظ')),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(12),
         children: [
-          _section('المخاطرة وحدود الأمان', [
-            _num('riskPerTradePercent', 'نسبة المخاطرة لكل صفقة', suffix: '%',
-                help: 'أقصى خسارة مقبولة للصفقة من قيمة الحساب (العلاوة × نسبة وقف الخسارة)'),
-            _num('maxPositionPercent', 'أقصى حجم للمركز الواحد', suffix: '%'),
-            _num('maxContractsPerTrade', 'أقصى عدد عقود للصفقة', integer: true),
-            _num('maxOpenPositions', 'أقصى عدد صفقات مفتوحة', integer: true),
-            _num('maxOrdersPerDay', 'أقصى أوامر فتح يوميًا', integer: true,
-                help: 'يشمل الدخول والتعزيز، ويُصفَّر مع بداية يوم نيويورك. أوامر الخروج غير محدودة'),
-            _num('symbolCooldownMinutes', 'فترة التهدئة لكل سهم', integer: true, suffix: 'دقيقة',
-                help: 'لا دخول جديد على نفس السهم خلال هذه المدة بعد أي دخول أو خروج (0 = تعطيل)'),
-            _num('maxTotalExposurePercent', 'أقصى تعرض كلي', suffix: '%'),
-            _num('dailyLossLimitPercent', 'حد الخسارة اليومي', suffix: '%', help: 'يوقف الدخول الجديد لبقية اليوم'),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+            child: Text('كل قيمة تُفحص عند الحفظ ضمن النطاق المسموح. القيم "المقترحة" محافظة وليست توصية استثمارية. '
+                'التداول الحقيقي مقفل في هذه النسخة؛ الإعدادات تعمل على حساب Paper أو المحاكي.',
+                style: Theme.of(context).textTheme.bodySmall),
+          ),
+          _section('حالة الحساب', [
+            _flag('pauseNewEntries', 'إيقاف مؤقت للدخول الجديد',
+                help: 'لا صفقات جديدة ولا تعزيز، مع استمرار إدارة الخروج ووقف الخسارة للمراكز المفتوحة'),
+          ]),
+          _section('المخاطرة وحجم الصفقة', [
+            _num('riskPerTradePercent'),
+            _num('maxPositionPercent'),
+            _num('maxContractsPerTrade', integer: true),
+            _num('maxTotalExposurePercent'),
+            _num('dailyLossLimitPercent'),
+          ]),
+          _section('حدود الأمان', [
+            _num('maxOpenPositions', integer: true),
+            _num('maxOrdersPerDay', integer: true),
+            _num('symbolCooldownMinutes', integer: true),
+            const ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.lock_outline),
+              title: Text('قفل الاتجاه (ثابت)'),
+              subtitle: Text('لا يُفتح Call وPut على نفس السهم في نفس الوقت، ولا يُرسل أي أمر خارج ساعات السوق الرسمية.'),
+            ),
           ]),
           _section('معايير الدخول', [
             DropdownButtonFormField<String>(
               initialValue: _v['timeframe'] as String,
-              decoration: const InputDecoration(labelText: 'الإطار الزمني للتحليل'),
+              decoration: const InputDecoration(
+                  labelText: 'الإطار الزمني للتحليل',
+                  helperText: 'حجم الشمعة التي تحللها المحركات؛ الأطر الأكبر إشارات أقل وأبطأ وأكثر ثباتًا',
+                  helperMaxLines: 3),
               items: const [
                 DropdownMenuItem(value: 'm5', child: Text('5 دقائق')),
                 DropdownMenuItem(value: 'm15', child: Text('15 دقيقة')),
@@ -128,13 +191,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
               onChanged: (t) => setState(() => _v['timeframe'] = t),
             ),
-            _num('minScore', 'الحد الأدنى للنتيجة المركبة (0-100)'),
-            _num('minAgreeingEngines', 'أقل عدد محركات متوافقة', integer: true),
-            _flag('requireTrendAlignment', 'اشتراط توافق الاتجاه العام'),
-            _flag('allowCalls', 'السماح بعقود Call'),
-            _flag('allowPuts', 'السماح بعقود Put'),
+            _num('minScore'),
+            _num('minAgreeingEngines', integer: true),
+            _flag('requireTrendAlignment', 'اشتراط توافق الاتجاه العام', help: 'لا دخول عكس اتجاه محرك الاتجاه'),
+            _flag('allowCalls', 'السماح بعقود Call', help: 'رهان على الصعود'),
+            _flag('allowPuts', 'السماح بعقود Put', help: 'رهان على الهبوط'),
           ]),
-          _section('أوزان المحركات (0 = تعطيل)', [
+          _section('أوزان المحركات (0 = تعطيل، 0–3)', [
+            Text('الوزن يحدد تأثير كل محرك في النتيجة المركبة.', style: Theme.of(context).textTheme.bodySmall),
             for (final id in EngineId.values)
               Row(children: [
                 SizedBox(width: 130, child: Text(id.arabic)),
@@ -151,33 +215,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ]),
           ]),
           _section('اختيار العقد', [
-            _num('minDaysToExpiry', 'أقل أيام حتى الانتهاء', integer: true),
-            _num('maxDaysToExpiry', 'أقصى أيام حتى الانتهاء', integer: true),
-            _num('targetDelta', 'الدلتا المستهدفة', help: '0.5 تقريبًا عند سعر التنفيذ (ATM)'),
-            _num('maxSpreadPercent', 'أقصى فرق بين العرض والطلب', suffix: '%'),
-            _num('minOpenInterest', 'أقل عدد عقود مفتوحة (OI)', integer: true),
-            _num('entryAggressiveness', 'جرأة التسعير (0 = العرض، 1 = الطلب)'),
-            _num('orderTimeoutCycles', 'إلغاء الأمر غير المنفذ بعد (دورات)', integer: true),
+            _num('minDaysToExpiry', integer: true),
+            _num('maxDaysToExpiry', integer: true),
+            _num('targetDelta'),
+            _num('maxSpreadPercent'),
+            _num('minOpenInterest', integer: true),
+            _num('entryAggressiveness'),
+            _num('orderTimeoutCycles', integer: true),
           ]),
           _section('الخروج', [
-            _num('stopLossPercent', 'وقف الخسارة', suffix: '%', help: 'من سعر شراء العقد'),
-            _num('partialTakeProfitPercent', 'جني ربح جزئي عند', suffix: '%'),
-            _num('partialTakeProfitFraction', 'نسبة الكمية المباعة جزئيًا (0-0.9)'),
-            _num('takeProfitPercent', 'هدف الربح الكامل', suffix: '%'),
-            _num('trailingActivationPercent', 'تفعيل الوقف المتحرك عند ربح', suffix: '%'),
-            _num('trailingStopPercent', 'الوقف المتحرك: تراجع من القمة', suffix: '%'),
-            _flag('exitOnUnderlyingInvalidation', 'الخروج عند كسر مستوى إبطال النمط'),
-            _flag('exitOnOppositeSignal', 'الخروج عند إشارة معاكسة'),
-            _num('maxHoldingDays', 'أقصى مدة احتفاظ (أيام)', integer: true),
-            _num('exitDaysBeforeExpiry', 'الإغلاق قبل الانتهاء بـ (أيام)', integer: true),
+            _num('stopLossPercent'),
+            _num('partialTakeProfitPercent'),
+            _num('partialTakeProfitFraction'),
+            _num('takeProfitPercent'),
+            _num('trailingActivationPercent'),
+            _num('trailingStopPercent'),
+            _flag('exitOnUnderlyingInvalidation', 'الخروج عند كسر مستوى إبطال النمط',
+                help: 'إذا كسر سعر السهم المستوى الذي يلغي فكرة الصفقة'),
+            _flag('exitOnOppositeSignal', 'الخروج عند إشارة معاكسة', help: 'إذا انقلبت النتيجة المركبة بقوة في الاتجاه الآخر'),
+            _num('maxHoldingDays', integer: true),
+            _num('exitDaysBeforeExpiry', integer: true),
           ]),
           _section('التعزيز', [
-            _flag('scaleInEnabled', 'تفعيل التعزيز للصفقات الرابحة'),
-            _num('maxScaleIns', 'أقصى عدد تعزيزات', integer: true),
-            _num('scaleInMinProfitPercent', 'أقل ربح للتعزيز', suffix: '%'),
-            _num('scaleInMinScore', 'أقل نتيجة للتعزيز'),
-            _num('scaleInFraction', 'حجم التعزيز نسبة للكمية الأولى'),
+            _flag('scaleInEnabled', 'تفعيل التعزيز للصفقات الرابحة', help: 'يُحسب ضمن أقصى أوامر الفتح اليومية'),
+            _num('maxScaleIns', integer: true),
+            _num('scaleInMinProfitPercent'),
+            _num('scaleInMinScore'),
+            _num('scaleInFraction'),
           ]),
+          OutlinedButton.icon(
+            onPressed: _resetDefaults,
+            icon: const Icon(Icons.restart_alt),
+            label: const Text('استعادة الإعدادات الافتراضية'),
+          ),
           const SizedBox(height: 24),
           FilledButton(onPressed: _save, child: const Text('حفظ الإعدادات')),
           const SizedBox(height: 24),

@@ -9,6 +9,7 @@ import '../widgets/safety_widgets.dart';
 import 'activity_log_screen.dart';
 import 'live_mode_screen.dart';
 import 'positions_tab.dart';
+import 'reports_tab.dart';
 import 'settings_screen.dart';
 
 class AccountDetailScreen extends StatelessWidget {
@@ -51,7 +52,7 @@ class AccountDetailScreen extends StatelessWidget {
                 Tab(text: 'المراكز'),
                 Tab(text: 'سجل الدورات'),
                 Tab(text: 'سجل القرارات'),
-                Tab(text: 'الأداء'),
+                Tab(text: 'التقارير'),
               ]),
             ),
             body: TabBarView(children: [
@@ -59,7 +60,7 @@ class AccountDetailScreen extends StatelessWidget {
               PositionsTab(controller: controller, rt: rt),
               ActivityLogTab(controller: controller, rt: rt),
               _JournalTab(rt: rt),
-              _PerformanceTab(rt: rt),
+              ReportsTab(controller: controller, rt: rt),
             ]),
           ),
         );
@@ -158,6 +159,16 @@ class _OverviewState extends State<_Overview> {
                   : 'متوقف'),
               value: p.enabled,
               onChanged: (v) => widget.controller.updateProfile(p.copyWith(enabled: v)),
+            ),
+          ),
+          Card(
+            child: SwitchListTile(
+              key: const Key('pause-entries'),
+              secondary: const Icon(Icons.pause_circle_outline),
+              title: const Text('إيقاف مؤقت للدخول الجديد'),
+              subtitle: const Text('لا صفقات جديدة ولا تعزيز لهذا الحساب، مع استمرار إدارة الخروج ووقف الخسارة للمراكز المفتوحة'),
+              value: p.settings.pauseNewEntries,
+              onChanged: (v) => widget.controller.updateProfile(p.copyWith(settings: p.settings.copyWith(pauseNewEntries: v))),
             ),
           ),
           MarketStatusCard(controller: widget.controller),
@@ -275,57 +286,6 @@ class _JournalTab extends StatelessWidget {
           children: [SelectableText(e.reasonAr)],
         );
       },
-    );
-  }
-}
-
-class _PerformanceTab extends StatelessWidget {
-  final AccountRuntime rt;
-  const _PerformanceTab({required this.rt});
-
-  @override
-  Widget build(BuildContext context) {
-    final r = PerformanceReport.compute(rt.state.trades, rt.state.equityCurve,
-        startingEquityCents: rt.profile.broker == BrokerKind.simulator ? rt.profile.startingCashCents : null);
-    final trades = rt.state.trades.reversed.toList();
-    return ListView(
-      padding: const EdgeInsets.all(12),
-      children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Wrap(spacing: 24, runSpacing: 12, children: [
-              _Stat('الربح/الخسارة المحققة', formatUsd(r.realizedPnlCents)),
-              _Stat('العائد الكلي', r.totalReturnPercent == null ? '—' : '${r.totalReturnPercent!.toStringAsFixed(2)}%'),
-              _Stat('أقصى تراجع (Drawdown)', '${r.maxDrawdownPercent.toStringAsFixed(2)}%'),
-              _Stat('عدد الصفقات', '${r.trades}'),
-              _Stat('نسبة الربح', '${r.winRatePercent.toStringAsFixed(1)}%'),
-              _Stat('معامل الربح', r.profitFactor.isInfinite ? '∞' : r.profitFactor.toStringAsFixed(2)),
-              _Stat('أفضل صفقة', formatUsd(r.bestTradeCents)),
-              _Stat('أسوأ صفقة', formatUsd(r.worstTradeCents)),
-              _Stat('العمولات', formatUsd(r.feesCents)),
-            ]),
-          ),
-        ),
-        const _SectionTitle('الصفقات المغلقة'),
-        if (trades.isEmpty) const Card(child: ListTile(title: Text('لا توجد صفقات مغلقة بعد'))),
-        for (final t in trades)
-          Card(
-            child: ExpansionTile(
-              title: Text('${t.underlying} ${t.right.arabic} • ${formatUsd(t.pnlCents)}'),
-              subtitle: Text('${t.quantity} عقد • ${t.returnPercent.toStringAsFixed(1)}% • ${t.exitKind}'),
-              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-              expandedCrossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('سبب الدخول:', style: Theme.of(context).textTheme.labelLarge),
-                SelectableText(t.entryReasonAr),
-                const SizedBox(height: 8),
-                Text('سبب الخروج:', style: Theme.of(context).textTheme.labelLarge),
-                SelectableText(t.exitReasonAr),
-              ],
-            ),
-          ),
-      ],
     );
   }
 }

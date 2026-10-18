@@ -165,11 +165,11 @@ void main() {
         AccountState());
     await tester.pumpWidget(host(ListenableBuilder(
       listenable: c,
-      builder: (context, _) => Column(children: [
+      builder: (context, _) => SingleChildScrollView(child: Column(children: [
         KillSwitchButton(controller: c),
         KillSwitchBanner(controller: c),
         RiskSettingsCard(rt: rt, killSwitch: c.killSwitch),
-      ]),
+      ])),
     )));
     expect(find.text('0 / 4'), findsOneWidget);
     expect(find.text('45 دقيقة بعد كل دخول/خروج'), findsOneWidget);

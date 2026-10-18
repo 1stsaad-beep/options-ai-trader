@@ -6,6 +6,8 @@ import 'package:trader_core/trader_core.dart';
 
 import 'account_repository.dart';
 import 'background_service.dart';
+import 'notifier.dart';
+import 'report_exporter.dart';
 import 'http_transport.dart';
 import 'secret_store.dart';
 
@@ -62,6 +64,16 @@ class AppController extends ChangeNotifier {
   final SyntheticMarket market;
   final Duration cycleEvery;
   final BackgroundRunner background;
+  final Notifier notifier;
+  final ReportExporter exporter;
+
+  /// Test hook: builds the engine for an account (default: real analyzer).
+  final TradingEngine Function(AccountRuntime rt, BrokerAdapter broker)? engineFactory;
+
+  /// Which local notifications are on (persisted in app.json).
+  final Map<NotifyKind, bool> notify = {for (final k in NotifyKind.values) k: k.defaultOn};
+  bool? _lastMarketOpen;
+  final Map<String, DateTime> _lastErrorNotified = {};
 
   /// Cycles closer together than this are skipped (timer + service ticks).
   static const minCycleGap = Duration(seconds: 30);
@@ -87,7 +99,12 @@ class AppController extends ChangeNotifier {
     SyntheticMarket? market,
     this.cycleEvery = const Duration(minutes: 1),
     BackgroundRunner? background,
+    Notifier? notifier,
+    ReportExporter? exporter,
+    this.engineFactory,
   })  : background = background ?? NoBackgroundRunner(),
+        notifier = notifier ?? RecordingNotifier(),
+        exporter = exporter ?? ReportExporter(),
         repo = repo ?? AccountRepository(),
         secrets = secrets ?? SecretStore(),
         registry = registry ?? BrokerRegistry.standard(),
@@ -105,10 +122,19 @@ class AppController extends ChangeNotifier {
       final app = await repo.loadAppSettings();
       killSwitch = app['killSwitch'] == true;
       backgroundWanted = app['background'] == true;
+      final n = app['notify'];
+      if (n is Map) {
+        for (final k in NotifyKind.values) {
+          if (n[k.name] is bool) notify[k] = n[k.name] as bool;
+        }
+      }
     } catch (_) {
       // Unreadable app.json: safe defaults (kill switch off, service off).
     }
     background.init(_onBackgroundCommand);
+    try {
+      await notifier.init();
+    } catch (_) {}
     loaded = true;
     _timer = Timer.periodic(cycleEvery, (_) => runAllCycles());
     notifyListeners();
@@ -118,7 +144,12 @@ class AppController extends ChangeNotifier {
 
   Future<void> _saveAppSettings() async {
     try {
-      await repo.saveAppSettings({'v': 1, 'killSwitch': killSwitch, 'background': backgroundWanted});
+      await repo.saveAppSettings({
+        'v': 1,
+        'killSwitch': killSwitch,
+        'background': backgroundWanted,
+        'notify': {for (final e in notify.entries) e.key.name: e.value},
+      });
     } catch (_) {}
   }
 
@@ -127,11 +158,76 @@ class AppController extends ChangeNotifier {
   /// One tap pauses all auto-trading (every account, timer and service).
   /// Open positions are left as they are; nothing is sent while paused.
   Future<void> setKillSwitch(bool on) async {
+    if (killSwitch == on) return;
     killSwitch = on;
     await _saveAppSettings();
     notifyListeners();
     await _updateNotification();
+    await _notify(NotifyKind.killSwitch, on ? 'تم تفعيل الإيقاف الطارئ' : 'تم استئناف التداول الآلي',
+        on ? 'توقف التداول الآلي لكل الحسابات — لن تُرسل أي أوامر.' : 'عادت الحسابات المفعّلة للعمل حسب إعداداتها.');
   }
+
+  // ---- local notifications ----
+
+  Future<void> setNotify(NotifyKind kind, bool on) async {
+    notify[kind] = on;
+    if (on) {
+      try {
+        await notifier.requestPermission();
+      } catch (_) {}
+    }
+    await _saveAppSettings();
+    notifyListeners();
+  }
+
+  Future<void> _notify(NotifyKind kind, String title, String body) async {
+    if (notify[kind] != true) return;
+    try {
+      await notifier.show(kind, title, body);
+    } catch (_) {
+      // Notifications are best effort.
+    }
+  }
+
+  /// Error notifications: the same account+text at most once per 30 minutes.
+  Future<void> _notifyError(AccountRuntime rt, String text) async {
+    final key = '${rt.profile.id}|$text';
+    final now = DateTime.now();
+    final last = _lastErrorNotified[key];
+    if (last != null && now.difference(last) < const Duration(minutes: 30)) return;
+    _lastErrorNotified[key] = now;
+    await _notify(NotifyKind.errors, 'خطأ في ${rt.profile.name}', text);
+  }
+
+  /// Market open/close notification on an observed transition.
+  Future<void> _checkMarketTransition() async {
+    final st = marketStatus();
+    final open = st.isOpen;
+    final prev = _lastMarketOpen;
+    _lastMarketOpen = open;
+    if (prev == null || prev == open) return;
+    await _notify(NotifyKind.market, open ? 'السوق الأمريكي فتح' : 'السوق الأمريكي أغلق', st.summaryAr());
+  }
+
+  // ---- reports & exports ----
+
+  /// Unrealised P/L of the account's open positions at the last quotes
+  /// (null when no position could be priced).
+  int? unrealizedPnlCents(AccountRuntime rt) {
+    int? total;
+    for (final p in rt.positions) {
+      final q = rt.quotes[p.contract.occSymbol];
+      if (q == null) continue;
+      final mark = q.isTwoSided ? q.midCents : q.bidCents;
+      if (mark <= 0) continue;
+      total = (total ?? 0) + (mark - p.averageCostCents) * p.quantity * p.contract.multiplier;
+    }
+    return total;
+  }
+
+  AccountReport report(AccountRuntime rt) => AccountReport.build(rt.state.trades, rt.state.equityCurve,
+      startingEquityCents: rt.profile.broker == BrokerKind.simulator ? rt.profile.startingCashCents : null,
+      unrealizedPnlCents: unrealizedPnlCents(rt));
 
   // ---- background service ----
 
@@ -376,6 +472,7 @@ class AppController extends ChangeNotifier {
     } finally {
       _busy = false;
     }
+    await _checkMarketTransition();
     await _updateNotification();
   }
 
@@ -390,8 +487,11 @@ class AppController extends ChangeNotifier {
     final id = rt.profile.id;
     try {
       final b = await _adapter(rt);
-      final engine = rt.engine ??= TradingEngine(profile: rt.profile, broker: b, state: rt.state);
+      final engine = rt.engine ??=
+          engineFactory?.call(rt, b) ?? TradingEngine(profile: rt.profile, broker: b, state: rt.state);
+      final cycleBefore = rt.state.cycle;
       final summary = await engine.runCycle();
+      if (rt.state.cycle > cycleBefore) await _notifyCycle(rt, rt.state.cycle);
       rt.lastCycle = DateTime.now();
       rt.snapshot = await b.account();
       rt.positions = await b.positions();
@@ -404,7 +504,24 @@ class AppController extends ChangeNotifier {
     } catch (e) {
       rt.lastError = '$e';
       notifyListeners();
+      await _notifyError(rt, '$e');
       return null;
+    }
+  }
+
+  Future<void> _notifyCycle(AccountRuntime rt, int cycle) async {
+    final fills = [
+      for (final j in rt.state.journal.reversed.take(200))
+        if (j.action == JournalAction.orderFilled && j.details['cycle'] == cycle) j
+    ].reversed;
+    for (final f in fills) {
+      await _notify(NotifyKind.fills, 'تنفيذ أمر — ${rt.profile.name}', '${f.symbol ?? ''}: ${f.reasonAr}');
+    }
+    final rec = rt.state.cycles.isEmpty ? null : rt.state.cycles.last;
+    if (rec != null && rec.cycle == cycle) {
+      for (final e in rec.errors) {
+        await _notifyError(rt, e);
+      }
     }
   }
 
