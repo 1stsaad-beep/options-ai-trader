@@ -256,3 +256,67 @@ time. Not yet tested on the phone.
   (broker clock or NYSE calendar). Chart axis and readout times in New York (ET).
 * Tests: core `market_test.dart` (19); app `batch_b_app_test.dart` (6) and chart
   updates. core 75/75, app 21/21.
+
+## 11. Batch C — background service, activity log, safety, positions (versionCode 4)
+
+* **Background execution** (`app/lib/services/background_service.dart`):
+  Android foreground service via `flutter_foreground_task` 11.0.3, type
+  `specialUse` (not `dataSync`: Android 15 caps dataSync at 6 h per 24 h), with
+  `PROPERTY_SPECIAL_USE_FGS_SUBTYPE`, `stopWithTask="true"`, wake lock + Wi-Fi lock,
+  no auto-start on boot. Started/stopped only by the user (accounts screen switch);
+  the choice is persisted (`oat_v2/app.json`) and re-applied on the next launch.
+  Design: cycles still run in the **main isolate** (accounts, secrets, locks live
+  there); the service keeps the process/CPU alive, shows the persistent
+  notification ("N accounts enabled • last cycle HH:MM ET • market state") and
+  sends a tick every 60 s. `runAllCycles` skips if a pass is running or the last
+  one was < 30 s ago, so the in-app timer and the ticks never double-run.
+  Notification buttons: **إيقاف طارئ** (kill switch) and **إيقاف الخدمة**.
+  Battery: the card shows whether the app is battery-optimised and opens the
+  system list (`openIgnoreBatteryOptimizationSettings`) — no
+  `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` permission, the user decides.
+  Notification permission (Android 13+) is requested when the user turns it on.
+* **Limits (documented in the app too)**: no server — the phone is the host.
+  Swiping the app from Recents, force-stop, reboot or an OEM task killer
+  (Xiaomi/Huawei/Samsung…) stops trading until the app is opened again. Doze can
+  delay cycles/network by minutes despite the wake lock. Ticks are ~60 s, not exact.
+  Real-device validation of screen-off behaviour is still to be done by the user.
+* **Kill switch**: one tap (AppBar hand icon on accounts and account screens, or
+  the notification button) pauses **all** accounts: no cycle runs, nothing is sent
+  (entries *and* exits); positions stay as they are. Persisted; red banner while on;
+  resume asks for confirmation.
+* **Engine safety** (`trading_engine.dart`, `AccountSettings`):
+  `maxOrdersPerDay` (default 10) caps **opening** orders (entries + scale-ins) per
+  New York day; exits are never capped. `symbolCooldownMinutes` (default 60): no
+  new entry on a symbol for N minutes after any entry or exit on it (this also
+  delays a Call→Put flip by the cooldown). `maxOpenPositions`, daily-loss limit and
+  the Call/Put direction lock are unchanged. Counters/timestamps persist in
+  `AccountState` (`ordersToday`, `ordersDay`, `lastTrade`).
+* **Cycle records** (`trading/cycle_record.dart`): every cycle stores market phase
+  and summary, per-symbol score/bias and the final decision + Arabic reason (even
+  when the journal rate-limits repeated "skip" notes), orders sent, fill count,
+  errors, note and duration; last 600 kept. Journal entries carry `cycle`.
+* **UI**: account screen tabs — نظرة عامة / المراكز / سجل الدورات / سجل القرارات /
+  الأداء. Activity log filters: all, trade decisions, with orders, errors, market
+  closed, per symbol. Positions: unrealised P/L ($ and %, from mid or bid), Greeks
+  (Δ Γ Θ ν + IV from Alpaca snapshots when present; the simulator gives Δ only),
+  entry reason/score/time (ET), underlying invalidation and target, chart link.
+  Risk & safety card on the overview (kill switch, risk %, positions x/y, opening
+  orders today x/y, cooldown, daily loss, stop, allowed rights, direction lock,
+  live locked). Settings gained the two new limits.
+* **13:15 ET nuance**: on early-close days equity options stop at 13:00 ET, but
+  broad index options (SPX/XSP/NDX/RUT…) and some ETF options (SPY/QQQ/IWM on
+  some venues) trade until 13:15 ET (like 16:00 vs 16:15). The app keeps **13:00
+  for every symbol** — conservative, never sends after a venue closes; documented
+  in `market_calendar.dart`.
+* Live trading still compiled out (`OAT_ENABLE_LIVE` not set).
+* Tests: core `safety_test.dart` (6: settings JSON/validate, cooldown, opening-order
+  cap + NY reset + exits allowed, cycle record content + JSON, bound, Alpaca
+  greeks); legacy engine tests pin cooldown 0. App `batch_c_app_test.dart` (8:
+  kill switch, background start/stop/tick/gap/restore, filters, log screen,
+  position card, risk card + kill switch toggle, detail tabs). core 81/81, app 29/29.
+* Next (Batch D candidates): device validation of the service; per-account pause;
+  notification on fills/errors; export of the activity log.
+* Build: `rebuild-v2-debug-4` (private builds repo), versionCode 4 / 2.0.0-dev.4,
+  162,610,015 bytes, SHA-256
+  `a59ec4791a06fc0f944050bb6a80ed6b1bbf2f90baa0ea39077c82ca7744967c` (verified by
+  re-download), signer SHA-256 `dde693a8…6720` (box debug cert, updates in place).
