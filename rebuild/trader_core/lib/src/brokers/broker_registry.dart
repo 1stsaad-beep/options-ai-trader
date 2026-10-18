@@ -41,6 +41,9 @@ typedef AdapterFactory = BrokerAdapter Function(AdapterContext ctx);
 class BrokerRegistry {
   final Map<BrokerKind, AdapterFactory> _factories = {};
 
+  /// Empty registry; use [BrokerRegistry.standard] for the built-in adapters.
+  BrokerRegistry();
+
   void register(BrokerKind kind, AdapterFactory factory) => _factories[kind] = factory;
 
   bool supports(BrokerKind kind) => _factories.containsKey(kind);

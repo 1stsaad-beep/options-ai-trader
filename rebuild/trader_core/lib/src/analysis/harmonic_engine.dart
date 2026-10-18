@@ -95,7 +95,7 @@ List<EngineSignal> harmonicEngine(List<Candle> c, {double tolerance = 0.04, int 
       final lo = math.max(xaLo, bcLo), hi = math.min(xaHi, bcHi);
       if (lo > hi || d < lo || d > hi) continue;
       final ideal = (def.adMin + def.adMax) / 2;
-      final fit = 1 - math.min(1.0, (adXa - ideal).abs() / (tolerance * 3));
+      final fit = (1 - math.min(1.0, (adXa - ideal).abs() / (tolerance * 3))).toDouble();
       emit(def.name, fit, lo, hi, {'AB/XA': abXa, 'BC/AB': bcAb, 'CD/BC': cdBc, 'AD/XA': adXa});
     }
   }
@@ -107,7 +107,7 @@ List<EngineSignal> harmonicEngine(List<Candle> c, {double tolerance = 0.04, int 
     if (_within(abXa, .382, .618, tolerance) &&
         _within(xcXa, 1.272, 1.414, tolerance) &&
         _within(cdXc, .786, .786, tolerance)) {
-      final fit = 1 - math.min(1.0, (cdXc - .786).abs() / (tolerance * 2));
+      final fit = (1 - math.min(1.0, (cdXc - .786).abs() / (tolerance * 2))).toDouble();
       emit('CYPHER', fit, cc - (.786 + tolerance) * xc, cc - (.786 - tolerance) * xc,
           {'AB/XA': abXa, 'XC/XA': xcXa, 'CD/XC': cdXc});
     }
