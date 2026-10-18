@@ -114,7 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ]),
           _section('معايير الدخول', [
             DropdownButtonFormField<String>(
-              value: _v['timeframe'] as String,
+              initialValue: _v['timeframe'] as String,
               decoration: const InputDecoration(labelText: 'الإطار الزمني للتحليل'),
               items: const [
                 DropdownMenuItem(value: 'm5', child: Text('5 دقائق')),

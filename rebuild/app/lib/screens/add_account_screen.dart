@@ -95,7 +95,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<BrokerKind>(
-                value: _broker,
+                initialValue: _broker,
                 decoration: const InputDecoration(labelText: 'الوسيط'),
                 items: [
                   for (final k in BrokerKind.values)

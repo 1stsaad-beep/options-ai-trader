@@ -52,7 +52,7 @@ class _LiveModeScreenState extends State<LiveModeScreen> {
             if (issues.isEmpty) const ListTile(leading: Icon(Icons.check_circle), title: Text('كل الشروط متحققة')),
             for (final i in issues) ListTile(leading: const Icon(Icons.block), title: Text(i)),
             const SizedBox(height: 12),
-            Text('للتفعيل اكتب الجملة التالية حرفيًا:\n«${LiveApproval.requiredAcknowledgement}»'),
+            const Text('للتفعيل اكتب الجملة التالية حرفيًا:\n«${LiveApproval.requiredAcknowledgement}»'),
             TextField(controller: _ack, enabled: issues.isEmpty),
             const SizedBox(height: 12),
             FilledButton(
