@@ -1,0 +1,18 @@
+{
+  "A Trend-dip @15:50": {
+    "delta": 0.85,
+    "min_days": 2,
+    "target_atr": 0.75,
+    "stop_atr": 1.0
+  },
+  "C ORB-5 in play": {
+    "delta": 0.85
+  },
+  "D Noise-area momentum": {
+    "delta": 0.7
+  },
+  "Pre-FOMC (ETFs)": {
+    "delta": 0.5,
+    "exit_at": "12:00"
+  }
+}

@@ -5,3 +5,4 @@ results/*.pkl
 results_*.log
 results/**/*.pkl
 .secrets/
+results/r4/opt_cache.json
