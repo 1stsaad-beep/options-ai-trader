@@ -1,0 +1,5733 @@
+<!doctype html><html lang='ar' dir='rtl'><head><meta charset='utf-8'><style>
+@page { size: A4; margin: 16mm 13mm 16mm 13mm; }
+body { font-family: 'DejaVu Sans', sans-serif; direction: rtl; font-size: 9.6pt; line-height: 1.6; color: #1d2433; }
+h1 { font-size: 17pt; color: #0b4f6c; border-bottom: 2px solid #0b4f6c; padding-bottom: 4px; margin-top: 0; }
+h2 { font-size: 13pt; color: #0b4f6c; margin-top: 18px; }
+h3 { font-size: 11pt; color: #234; }
+h4 { font-size: 10pt; }
+table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 7.6pt; page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+th, td { border: 1px solid #c9d3de; padding: 3px 4px; vertical-align: top; unicode-bidi: plaintext; text-align: start; }
+th { background: #e8f1f7; }
+tr:nth-child(even) td { background: #f8fafc; }
+code { font-family: 'DejaVu Sans Mono', monospace; font-size: 8pt; background: #f1f4f7; padding: 0 2px; direction: ltr; unicode-bidi: embed; }
+pre { direction: ltr; text-align: left; background: #f4f6f9; border: 1px solid #dde3ea; padding: 8px; font-size: 7.8pt; white-space: pre-wrap; }
+pre code { background: none; }
+blockquote { border-right: 4px solid #e0a100; margin: 8px 0; padding: 4px 10px; background: #fff8e6; }
+.pb { page-break-after: always; }
+.raw { direction: ltr; text-align: left; } .raw table { font-size: 6.6pt; } .raw h2, .raw h3, .raw h4 { text-align: left; }
+.cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+.cover h1 { border: none; font-size: 26pt; }
+.cover .sub { font-size: 13pt; color: #456; margin: 6px 0; }
+.toc ul { list-style: none; padding-right: 12px; } .toc > ul > li { margin-top: 4px; font-weight: bold; } .toc ul ul li { font-weight: normal; }
+a { color: #0b4f6c; text-decoration: none; }
+</style></head><body><div class='cover'><h1>Options AI Trader</h1>
+<div class='sub'>الجولة الخامسة: موجات إليوت وRSI متعددا الإطارات + فلتر التقلب</div>
+<div class='sub'>يومي / ساعة / 15 دقيقة / 5 دقائق · عقود أسبوعية · أسعار عقود حقيقية</div>
+<div class='sub' style='margin-top:30px;font-size:11pt'>18 أكتوبر 2026 · الفرع rebuild/hybrid-engines-20261018</div>
+<div class='sub' style='font-size:10pt'>Alpaca 5 دقائق 2016–2026 · أسعار عقود حقيقية 2024–2026 · 15 رمزًا</div>
+</div><div class='pb'></div><h1>المحتويات</h1><div class="toc">
+<ul>
+<li><a href="#_1">الملخص التنفيذي</a></li>
+<li><a href="#_2">الخطة والمنهجية</a></li>
+<li><a href="#1">1) فلتر التقلب</a><ul>
+<li><a href="#_3">كيف يُحسب عمليًا</a></li>
+<li><a href="#_4">هل يعمل الفلتر؟</a></li>
+</ul>
+</li>
+<li><a href="#2-rsi">2) RSI متعدد الإطارات</a><ul>
+<li><a href="#_5">القاعدة كما طُلبت، والنسخ المختبرة</a></li>
+<li><a href="#atr">حركة السهم (بوحدة ATR اليومي، يومان بعد الدخول)</a></li>
+<li><a href="#_6">على العقود</a></li>
+<li><a href="#mtf-rsi-call">القاعدة النهائية — MTF-RSI Call</a></li>
+</ul>
+</li>
+<li><a href="#3">3) موجات إليوت متعددة الإطارات</a><ul>
+<li><a href="#elliott_mtfpy">الترقيم الحتمي (elliott_mtf.py)</a></li>
+<li><a href="#_7">النتائج</a></li>
+<li><a href="#mtf-elliott-call">القاعدة المقترحة للمراقبة — MTF Elliott Call</a></li>
+</ul>
+</li>
+<li><a href="#_8">التوصية النهائية</a></li>
+<li><a href="#resultsr5">ملحق: النتائج الخام (results/r5)</a><ul>
+<li><a href="#rsi_underlyingmd">RSI_UNDERLYING.md</a></li>
+<li><a href="#optionsmd">OPTIONS.md</a></li>
+<li><a href="#rsi_real_robustmd">RSI_REAL_ROBUST.md</a></li>
+<li><a href="#rsi_filter_modelmd">RSI_FILTER_MODEL.md</a></li>
+<li><a href="#wave_rules_15md">WAVE_RULES_15.md</a></li>
+<li><a href="#wave_rules_5md">WAVE_RULES_5.md</a></li>
+<li><a href="#wave_literal_optmd">WAVE_LITERAL_OPT.md</a></li>
+<li><a href="#wave_lift_15md">WAVE_LIFT_15.md</a></li>
+<li><a href="#wave_lift_5md">WAVE_LIFT_5.md</a></li>
+</ul>
+</li>
+</ul>
+</div><div class='pb'></div><h1 id="_1">الملخص التنفيذي</h1>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>RSI متعدد الإطارات — Call</strong></th>
+<th>RSI متعدد الإطارات — Put</th>
+<th><strong>موجات إليوت متعددة الإطارات — Call</strong></th>
+<th>موجات إليوت — Put</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>حركة السهم (اكتشاف 2016–20 / تحقق 2021–26)</td>
+<td><strong>+0.14 / +0.16 ATR</strong> بعد يومين</td>
+<td>سالبة في الفترتين</td>
+<td>الحرفية على 5 دقائق: +0.09 / +0.09 (عينة صغيرة)</td>
+<td>سالبة في الفترتين</td>
+</tr>
+<tr>
+<td>عقود أسبوعية — النموذج المعايَر</td>
+<td>+20.4% / +14.8% لكل صفقة</td>
+<td>—</td>
+<td>الحرفية ≈ 0%</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>عقود أسبوعية — أسعار حقيقية 2024–2026</strong></td>
+<td><strong>+12.9%</strong> (100 صفقة، t = 1.87)</td>
+<td>—</td>
+<td>الحرفية <strong>+18.3%</strong> (54 صفقة)، والمطوّرة −4.6% / −7.8%</td>
+<td>—</td>
+</tr>
+<tr>
+<td>مع فلتر التقلب (IV/RV ≤ 1.3)</td>
+<td>تطوير +12.4% → <strong>اختبار +23.1%</strong></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>التوصية</strong></td>
+<td><strong>🟡 تُضاف للتجربة في Paper بالشروط أدناه</strong></td>
+<td>❌ لا تُضاف</td>
+<td>🟠 Paper للمراقبة فقط</td>
+<td>❌ لا تُضاف</td>
+</tr>
+</tbody>
+</table>
+<p><strong>أهم ثلاث نتائج:</strong></p>
+<ul>
+<li><strong>(1)</strong> <strong>تشبع الساعة الشرائي ليس إشارة Put.</strong> في الأسهم الأمريكية 2016–2026 يعني زخمًا يستمر: الـ Put خاسر بكل العتبات والتوقيتات. أما <strong>تشبع الساعة البيعي مع عودة الـ 15 دقيقة إلى التشبع</strong> فإشارة Call ثابتة. وهي <strong>أول استراتيجية في كل جولاتنا تبقى رابحة بأسعار العقود الحقيقية</strong> في فترتي التطوير والاختبار.</li>
+<li><strong>(2)</strong> <strong>الدايفرجنس لا يضيف شيئًا لإعداد الموجات.</strong> هذا ما وجدناه في 3 جولات وعلى 3 فريمات. ما يضيف قليلًا: سرعة الموجة 1، وعمق تصحيح الموجة 2 (61.8%–88.6%)، والسعر فوق EMA200، وتقاطع MACD مع خط الإشارة. أما الدعوم والمقاومات وفيبوناتشي الزمن والأنماط فأثرها صفر أو متقلّب.</li>
+<li><strong>(3)</strong> <strong>فلتر التقلب يحتاج التقلب الضمني الحقيقي</strong> من سلسلة العقود لحظة الدخول، وهو متاح من الوسيط. التقدير من التقلب المحقق وحده لا يفصل الصفقات الجيدة عن السيئة، لأنه يقيس الشيء نفسه مرتين. عند استخدام IV الحقيقي، عتبة 1.3 حسّنت النتيجة في التطوير والاختبار، لكن على عينة صغيرة.</li>
+</ul>
+<blockquote>
+<p><strong>تحفّظات:</strong>
+- عينة الأسعار الحقيقية 2.7 سنة فقط (100 صفقة للاستراتيجية الرابحة).
+- t = 1.87: أقل من عتبة اليقين الإحصائي.
+- <strong>القرار النهائي لتجربة Paper بأسعار التنفيذ الفعلية.</strong></p>
+</blockquote>
+<h1 id="_2">الخطة والمنهجية</h1>
+<p><strong>البيانات:</strong></p>
+<ul>
+<li>شموع 5 دقائق من Alpaca SIP (2016-01 → 2026-10)، 15 رمزًا، معدّلة للتقسيمات والتوزيعات.</li>
+<li>منها بُنيت فريمات 15 دقيقة والساعة (تبدأ 9:30) واليومي.</li>
+<li>أسعار عقود الخيارات الحقيقية: شموع 5 دقائق من Alpaca منذ 2024-02.</li>
+</ul>
+<p><strong>السببية:</strong></p>
+<ul>
+<li>قيمة الفريم الأكبر لا تُستخدم على الفريم الأصغر إلا بعد <strong>انتهاء</strong> شمعتها (المحاذاة بوقت نهاية الشمعة).</li>
+<li>القمم والقيعان (3/2) لا تُستخدم إلا بعد تأكيدها.</li>
+<li>الدخول في افتتاح الشمعة التالية للإشارة.</li>
+</ul>
+<p><strong>ثلاث مراحل لكل استراتيجية:</strong></p>
+<table>
+<thead>
+<tr>
+<th>المرحلة</th>
+<th>ما يُقاس</th>
+<th>الفترات</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. حركة السهم</strong></td>
+<td>العائد بوحدة ATR اليومي بعد ساعة ونهاية اليوم ويومين، واحتمال +0.5 ATR قبل −1 ATR</td>
+<td>اكتشاف 2016–2020 ← تحقق 2021 → 2026-04 ← نهائية 2026-04 → 2026-10</td>
+</tr>
+<tr>
+<td><strong>2. عقود أسبوعية بنموذج معايَر</strong></td>
+<td>التقلب الضمني التقديري مضروبًا في معامل استُخرج من 1,700 سعر حقيقي (الجدول أدناه)</td>
+<td>نفس الفترات؛ اختيار العقد والخروج على الاكتشاف فقط</td>
+</tr>
+<tr>
+<td><strong>3. أسعار عقود حقيقية</strong></td>
+<td>إعادة تسعير نفس الصفقات بأسعار متداولة فعلًا ± نصف فرق (1.5% ETF / 3% سهم) + 0.65$ للعقد</td>
+<td>تطوير 2024-02 → 2025-06، اختبار 2025-07 → 2026-10</td>
+</tr>
+</tbody>
+</table>
+<h1 id="1">1) فلتر التقلب</h1>
+<h2 id="_3">كيف يُحسب عمليًا</h2>
+<table>
+<thead>
+<tr>
+<th>العنصر</th>
+<th>في التطبيق (حي)</th>
+<th>في الاختبار التاريخي بلا بيانات خيارات</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>IV</strong></td>
+<td>التقلب الضمني للعقد المختار من سلسلة الوسيط. Alpaca وIBKR وTradeStation تعطيه، أو يُشتق من منتصف السعر بمعادلة Black–Scholes</td>
+<td>IV تقديري = VIX9D (SPY) أو VXN (QQQ) أو 1.10 × مزيج التقلب المحقق × نسبة VIX9D/VIX، <strong>مضروبًا في معامل المعايرة</strong> أدناه</td>
+</tr>
+<tr>
+<td><strong>RV</strong></td>
+<td>التقلب المحقق 20 يومًا (إغلاق-إغلاق، سنوي)، وبديل أدق هو Yang-Zhang 20 يومًا</td>
+<td>نفسه</td>
+</tr>
+<tr>
+<td><strong>القاعدة</strong></td>
+<td><strong>لا دخول إذا IV/RV20 &gt; 1.3</strong> (أو IV/YZ20 &gt; 1.5)</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>معامل المعايرة</strong> (IV الحقيقي ÷ IV التقديري)، الوسيط على 1,700 سعر حقيقي، حسب الأيام المتبقية للانتهاء:</p>
+<table>
+<thead>
+<tr>
+<th>الأيام للانتهاء</th>
+<th>ETF</th>
+<th>سهم</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–1</td>
+<td>1.62</td>
+<td>2.29</td>
+</tr>
+<tr>
+<td>1–3</td>
+<td>1.39</td>
+<td>1.46</td>
+</tr>
+<tr>
+<td>3–8</td>
+<td>1.23</td>
+<td>1.28</td>
+</tr>
+<tr>
+<td>8+</td>
+<td>1.13</td>
+<td>1.17</td>
+</tr>
+</tbody>
+</table>
+<p><strong>نسبة IV الحقيقي إلى المحقق (RV20)</strong> في نفس العينة:</p>
+<table>
+<thead>
+<tr>
+<th>الأيام للانتهاء</th>
+<th>ETF</th>
+<th>سهم</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–1</td>
+<td>2.0</td>
+<td>2.4</td>
+</tr>
+<tr>
+<td>3–8</td>
+<td>1.45</td>
+<td>1.26</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>معنى ذلك:</strong> العقود الأسبوعية تُسعَّر عادة بتقلب أعلى من المحقق بـ 25%–45%. عقود نفس اليوم ضعف ذلك.</p>
+</blockquote>
+<h2 id="_4">هل يعمل الفلتر؟</h2>
+<table>
+<thead>
+<tr>
+<th>الحالة</th>
+<th>النتيجة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>بالتقلب الضمني الحقيقي</strong> (MTF-RSI Calls، العتبة مختارة على التطوير)</td>
+<td>IV/RV20 ≤ 1.3: تطوير +12.4% (24 صفقة) ← <strong>اختبار +23.1%</strong> (21 صفقة)، مقابل +18.0% بلا فلتر. IV/YZ20 ≤ 1.5: +10.7% ← +34.9% (32 صفقة)</td>
+</tr>
+<tr>
+<td>بالتقلب الضمني الحقيقي، استراتيجية الموجات المطوّرة</td>
+<td>IV/RV ≤ 1.1 حسّنها من −7.8% إلى +6.0% في الاختبار، لكن فترة التطوير بقيت سالبة (−1.7%)</td>
+</tr>
+<tr>
+<td><strong>بالتقدير فقط</strong> (نموذج 2016–2026)</td>
+<td><strong>لم يعمل:</strong> التحقق انخفض من +14.8% إلى +8.4%. التقدير مبني على التقلب المحقق نفسه فلا يضيف معلومة</td>
+</tr>
+<tr>
+<td>بديل "حركة التعادل" (الحركة المطلوبة في يوم واحد لتغطية الاضمحلال والفرق، بوحدة ATR)</td>
+<td>لم يفصل الصفقات: العتبة المثلى ≈ إبقاء كل الصفقات</td>
+</tr>
+</tbody>
+</table>
+<p><strong>الخلاصة:</strong></p>
+<ul>
+<li>الفلتر <strong>مفيد بشرط استخدام IV الحقيقي لحظة الدخول</strong>.</li>
+<li>العتبة المقترحة <strong>1.3 على IV/RV20</strong>، كشرط إضافي لا كمصدر إشارة.</li>
+<li>الأدلة على عينة صغيرة (~45 صفقة بعد الفلترة)، وتحتاج تأكيدًا في Paper.</li>
+</ul>
+<h1 id="2-rsi">2) RSI متعدد الإطارات</h1>
+<h2 id="_5">القاعدة كما طُلبت، والنسخ المختبرة</h2>
+<table>
+<thead>
+<tr>
+<th>العنصر</th>
+<th>القيم المختبرة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Put</strong></td>
+<td>RSI(14) على الساعة &gt; العتبة، ثم RSI على 15 دقيقة كان متشبعًا ونزل ثم عاد للتشبع، والساعة ما زالت متشبعة</td>
+</tr>
+<tr>
+<td><strong>Call</strong></td>
+<td>العكس</td>
+</tr>
+<tr>
+<td><strong>العتبات</strong></td>
+<td>70/30، و75/25، و80/20</td>
+</tr>
+<tr>
+<td><strong>طول RSI</strong></td>
+<td>14 و9</td>
+</tr>
+<tr>
+<td><strong>فريم التأكيد</strong></td>
+<td>15 دقيقة (و5 دقائق للمقارنة)</td>
+</tr>
+<tr>
+<td><strong>التوقيت</strong></td>
+<td>(أ) لحظة العودة للتشبع؛ (ب) بعد خروجه الثاني من التشبع ("فشل")؛ (ج) "فشل" + دايفرجنس على 15 دقيقة</td>
+</tr>
+</tbody>
+</table>
+<h2 id="atr">حركة السهم (بوحدة ATR اليومي، يومان بعد الدخول)</h2>
+<table>
+<thead>
+<tr>
+<th>النسخة</th>
+<th>اكتشاف 2016–20</th>
+<th>تحقق 2021–26</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>أساس: أي لحظة الساعة فيها &gt; 70</strong> (اتجاه Put)</td>
+<td><strong>−0.055</strong> (n 13,527)</td>
+<td><strong>−0.050</strong></td>
+</tr>
+<tr>
+<td>Put — عودة، 70</td>
+<td>−0.013</td>
+<td>−0.069</td>
+</tr>
+<tr>
+<td>Put — فشل + دايفرجنس، 70</td>
+<td>−0.018</td>
+<td>−0.124</td>
+</tr>
+<tr>
+<td>Put — عودة، 75</td>
+<td>−0.004</td>
+<td>−0.028</td>
+</tr>
+<tr>
+<td>Put — كل نسخ 80</td>
+<td>−0.03 إلى −0.13</td>
+<td>−0.04 إلى +0.03</td>
+</tr>
+<tr>
+<td>أساس: الساعة &lt; 30 (اتجاه Call)</td>
+<td>+0.051</td>
+<td>+0.074</td>
+</tr>
+<tr>
+<td>Call — عودة، 30</td>
+<td>+0.058</td>
+<td>+0.095</td>
+</tr>
+<tr>
+<td>Call — فشل + دايفرجنس، 30</td>
+<td>+0.134</td>
+<td>+0.099</td>
+</tr>
+<tr>
+<td><strong>Call — عودة، RSI14 / 25</strong></td>
+<td><strong>+0.142</strong> (n 254، t 2.03)</td>
+<td><strong>+0.157</strong> (n 271، t 3.04)</td>
+</tr>
+<tr>
+<td>Call — RSI9</td>
+<td>−0.02 إلى +0.09</td>
+<td>+0.01 إلى +0.13</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>(1)</strong> <strong>الـ Put خاسر:</strong> السهم يواصل الصعود بعد تشبع الساعة الشرائي (−0.05 ATR في يومين). جرّبنا ثلاثة فلاتر نظام سوق (فوق/تحت SMA200، ترند SMA50 صاعد، ترند SMA50 هابط) فلم يجعله أي منها موجبًا في الفترتين.</li>
+<li><strong>(2)</strong> <strong>الـ Call رابح، والأقوى بعتبة 25.</strong> اخترنا "العودة، RSI14، 25، 15 دقيقة" على فترة الاكتشاف وحدها، وتأكدت في التحقق.</li>
+</ul>
+<h2 id="_6">على العقود</h2>
+<table>
+<thead>
+<tr>
+<th>الاختبار</th>
+<th>النتيجة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>النموذج المعايَر (دلتا 0.5، انتهاء أول جمعة بعد يومين أو أكثر، هدف +0.75 ATR، وقف −1 ATR، حد أقصى يومان)</td>
+<td>اكتشاف +20.4% (185)، تحقق +14.8% (201، t 2.87)، النهائية +42% (14 فقط)</td>
+</tr>
+<tr>
+<td><strong>أسعار حقيقية 2024-02 → 2026-10</strong></td>
+<td><strong>+12.9%</strong> (100)، بسعر الوسط +19.4%، نسبة الربح 59%</td>
+</tr>
+<tr>
+<td>تطوير / اختبار</td>
+<td>+8.6% (54) / <strong>+18.0%</strong> (46)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>المتانة بالأسعار الحقيقية:</strong></p>
+<table>
+<thead>
+<tr>
+<th>الاختبار</th>
+<th>العائد/صفقة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>فروق مضاعفة (3% / 6%)</td>
+<td>+6.8%</td>
+</tr>
+<tr>
+<td>بدون أفضل 5 صفقات</td>
+<td>+5.2%</td>
+</tr>
+<tr>
+<td>بدون NVDA/TSLA/AMD/META</td>
+<td>+13.5%</td>
+</tr>
+<tr>
+<td>الأسهم فقط</td>
+<td>+15.3%</td>
+</tr>
+<tr>
+<td>ETF فقط</td>
+<td>+0.5% (16 صفقة)</td>
+</tr>
+<tr>
+<td>2024 / 2025 / 2026</td>
+<td>+16.6% / +2.4% / +24.2%</td>
+</tr>
+<tr>
+<td>عتبة 30 بدل 25</td>
+<td>−1.1%</td>
+</tr>
+<tr>
+<td>عتبة 20</td>
+<td>+7.3% (17)</td>
+</tr>
+<tr>
+<td>RSI9</td>
+<td>−7.1%</td>
+</tr>
+<tr>
+<td>توقيت "فشل" بدل "عودة"</td>
+<td>+16.5% (t 2.42)</td>
+</tr>
+<tr>
+<td>دلتا 0.7 / انتهاء أبعد (5 أيام)</td>
+<td>+5.1% / +6.7%</td>
+</tr>
+<tr>
+<td>هدف أقرب (+0.5 ATR ويوم واحد)</td>
+<td>−3.5%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>تقييم:</strong> النتيجة متسقة الإشارة في كل السنوات، لكنها <strong>حساسة لعمق العتبة</strong> (25 تعمل و30 لا). وتحتاج تحرّكًا كافيًا: الهدف 0.75 ATR خلال يومين، لا أقرب.</p>
+</blockquote>
+<h2 id="mtf-rsi-call">القاعدة النهائية — MTF-RSI Call</h2>
+<pre><code>DATA      15-min bars and 60-min bars built from the session (09:30 start); RSI = Wilder RSI(14)
+STATE     hourly RSI14 (last COMPLETED hourly bar) &lt; 25
+SEQUENCE  on 15-min: RSI14 &lt; 25 (first oversold) -&gt; RSI14 &gt;= 25 (leaves) -&gt; RSI14 &lt; 25 again
+          while the hourly RSI is still &lt; 25 the whole time (reset if hourly &gt;= 25)
+SIGNAL    the 15-min bar that re-enters oversold -&gt; BUY CALL at the next bar open
+CONTRACT  delta ~0.50, expiry = first Friday &gt;= entry date + 2 days (&lt;= 8 days)
+FILTER    skip if IV(contract)/RV20 &gt; 1.3   (IV from the live chain; RV20 = 20-day close-to-close)
+EXIT      underlying &gt;= entry + 0.75 x ATR14(daily, previous day)   -&gt; sell at next 15-min open
+          underlying &lt;= entry - 1.0 x ATR14                          -&gt; sell at next 15-min open
+          52 bars (2 sessions) without either                        -&gt; sell at that bar's close
+          never hold into expiry day
+ORDERS    LIMIT at mid, improve toward the ask in small steps; never market orders
+SIZE      2% of account NAV in premium per trade, max 5 open, one position per symbol
+UNIVERSE  liquid single stocks with weekly options (ETFs showed no edge in 2024-26)
+</code></pre>
+<h1 id="3">3) موجات إليوت متعددة الإطارات</h1>
+<h2 id="elliott_mtfpy">الترقيم الحتمي (<code>elliott_mtf.py</code>)</h2>
+<p>يُطبَّق على كل فريم:</p>
+<ul>
+<li><strong>الزجزاج:</strong> قمم/قيعان مؤكدة 3/2، مرشّحة بحد أدنى للحركة: 2 ATR لليومي، و1.5 ATR للساعة، و1.5 ATR للأحفاد.</li>
+<li><strong>نقطة البداية:</strong> أدنى قاع لم يُكسر لعدّ صاعد، وأعلى قمة لعدّ هابط، ضمن آخر 10 قمم/قيعان.</li>
+<li><strong>قواعد الدافعة:</strong><ul>
+<li>الموجة 2 لا تكسر بداية الموجة 1.</li>
+<li>الموجة 3 تتجاوز نهاية الموجة 1.</li>
+<li>الموجة 4 لا تدخل منطقة الموجة 2 (نسخة مرنة).</li>
+<li>الموجة 5 تتجاوز الموجة 3.</li>
+<li>الموجة 3 ليست الأقصر.</li>
+</ul>
+</li>
+<li><strong>بعد 5 موجات مكتملة:</strong> تصحيح A-B-C.</li>
+<li><strong>عند صحة العدّين:</strong> يُختار الهيكل الأكبر.</li>
+</ul>
+<p><strong>ناتج كل شمعة:</strong> الاتجاه (صاعد/هابط/بلا عدّ) ورقم الموجة الجارية (1–5 أو A/B/C):</p>
+<ul>
+<li>اليومي: موجات "الأب".</li>
+<li>الساعة: "الأبناء".</li>
+<li>15 دقيقة و5 دقائق: "الأحفاد". عليها إعداد الموجة 2 أو B: موجة ≥ 3 ATR، وتصحيح 38.2%–88.6%، ثم كسر أعلى/أدنى 3 شموع مع EMA20.</li>
+</ul>
+<h2 id="_7">النتائج</h2>
+<p><strong>على 15 دقيقة</strong> (يومان بعد الدخول، ATR):</p>
+<table>
+<thead>
+<tr>
+<th>القاعدة</th>
+<th>اكتشاف</th>
+<th>تحقق</th>
+<th>نهائية</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>كل إعدادات الأحفاد الصاعدة (أساس)</td>
+<td>+0.032 (5,808)</td>
+<td>+0.037</td>
+<td>+0.029</td>
+</tr>
+<tr>
+<td><strong>الحرفية Call:</strong> يومي صاعد بموجة 1/3/5 + الساعة صاعدة بموجة 3 + نهاية موجة 2 للأحفاد + دايفرجنس إيجابي</td>
+<td>+0.117 (12)</td>
+<td>+0.170 (13)</td>
+<td>(3)</td>
+</tr>
+<tr>
+<td>المطوّرة Call (قوة نسبية + موجة 1 سريعة + تصحيح عميق)</td>
+<td>+0.094 (1,346)</td>
+<td>+0.048</td>
+<td>−0.010</td>
+</tr>
+<tr>
+<td>كل إعدادات B→C الهابطة (أساس)</td>
+<td>−0.075</td>
+<td>−0.059</td>
+<td>−0.059</td>
+</tr>
+<tr>
+<td><strong>الحرفية Put:</strong> تصحيح أو هبوط على اليومي، والساعة في C أو دافعة هابطة، ونهاية B مع دايفرجنس سلبي</td>
+<td>−0.020 (222)</td>
+<td>−0.107 (205)</td>
+<td>−0.539 (20)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>على 5 دقائق (الأحفاد):</strong></p>
+<table>
+<thead>
+<tr>
+<th>القاعدة</th>
+<th>اكتشاف</th>
+<th>تحقق</th>
+<th>نهائية</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>الحرفية Call</td>
+<td>+0.094 (82)</td>
+<td>+0.086 (116)</td>
+<td>+0.093 (19)</td>
+</tr>
+<tr>
+<td>الحرفية Put</td>
+<td>−0.036 (1,118)</td>
+<td>−0.059</td>
+<td>−0.080</td>
+</tr>
+</tbody>
+</table>
+<p><strong>أثر التحسينات على Call</strong> (فرق العائد عند تحقق الشرط مقابل عدمه، اكتشاف / تحقق، 15 دقيقة):</p>
+<table>
+<thead>
+<tr>
+<th>التحسين</th>
+<th>الأثر</th>
+<th>الحكم</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>موجة 1 سريعة (≤ 20 شمعة)</td>
+<td>+0.048 / +0.116</td>
+<td>✅ ثابت</td>
+</tr>
+<tr>
+<td>السعر فوق EMA200 / ترند 200</td>
+<td>+0.036 / +0.023</td>
+<td>✅ ثابت</td>
+</tr>
+<tr>
+<td>تقاطع MACD فوق الإشارة</td>
+<td>+0.021 / +0.028</td>
+<td>✅ ثابت</td>
+</tr>
+<tr>
+<td>شمعة ابتلاعية أو مطرقة عند قاع الموجة 2</td>
+<td>+0.017 / +0.015</td>
+<td>✅ صغير</td>
+</tr>
+<tr>
+<td>EMA50 &gt; EMA200</td>
+<td>+0.016 / +0.018</td>
+<td>✅ صغير</td>
+</tr>
+<tr>
+<td>فيبوناتشي ذهبي 50%–61.8%</td>
+<td>−0.032 / −0.000</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>تصحيح عميق 61.8%–88.6%</td>
+<td>+0.024 / −0.024</td>
+<td>❌ متقلب</td>
+</tr>
+<tr>
+<td>فيبوناتشي الزمن (نسبة 0.382–1.0)</td>
+<td>+0.004 / −0.005</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>لمس EMA20 أو EMA50 عند نهاية الموجة 2</td>
+<td>≈0 / −0.04 إلى −0.07</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>دعم/مقاومة: قمة سابقة أصبحت دعمًا</td>
+<td>+0.006 / −0.016</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>دعم/مقاومة: قاع/قمة اليوم السابق</td>
+<td>+0.026 / −0.011</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>قاع مزدوج عند نهاية الموجة 2</td>
+<td>−0.121 / −0.014</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>الدايفرجنس (أي نوع)</strong></td>
+<td><strong>+0.001 / −0.038</strong></td>
+<td>❌</td>
+</tr>
+<tr>
+<td>دايفرجنس RSI عادي</td>
+<td>−0.062 / −0.031</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>دايفرجنس MACD عادي</td>
+<td>−0.080 / −0.020</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>لمس بولنجر السفلي</td>
+<td>−0.058 / −0.072</td>
+<td>❌ ضار</td>
+</tr>
+</tbody>
+</table>
+<p><strong>على العقود:</strong></p>
+<table>
+<thead>
+<tr>
+<th>النسخة</th>
+<th>النتيجة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>المطوّرة (نموذج)</td>
+<td>−3% / −6%</td>
+</tr>
+<tr>
+<td>المطوّرة (أسعار حقيقية)</td>
+<td>−4.6% تطوير / −7.8% اختبار</td>
+</tr>
+<tr>
+<td><strong>الحرفية على 5 دقائق (نموذج)</strong></td>
+<td>≈0%: −3.6% / +0.3% / +7.7%</td>
+</tr>
+<tr>
+<td><strong>الحرفية على 5 دقائق (أسعار حقيقية 2024–2026)</strong></td>
+<td><strong>+18.3%</strong> (54 صفقة)، بينما النموذج على نفس الصفقات +2.2%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>التقييم:</strong>
+- الفرق بين الواقع والنموذج في القاعدة الحرفية كبير، والعينة صغيرة. على الأرجح حظ لا حافة.
+- التصنيف: <strong>🟠 مراقبة في Paper فقط</strong>. لا تُعتمد قبل 100 صفقة حقيقية.</p>
+</blockquote>
+<h2 id="mtf-elliott-call">القاعدة المقترحة للمراقبة — MTF Elliott Call</h2>
+<pre><code>DAILY   elliott_count(daily, k=2 ATR) = UP impulse, wave in progress 1, 3 or 5   (previous completed day)
+HOURLY  elliott_count(60m, k=1.5 ATR) = UP impulse, wave 3 in progress           (last completed hour)
+5-MIN   grandchild wave-2 setup: wave1 &gt;= 3 ATR(5m) breaking the prior swing high,
+        retracement 38.2-88.6 %, wave-2 low &gt; wave-1 start,
+        trigger = close &gt; max(high of last 3 bars) and &gt; EMA20 within 10 bars of the wave-2 pivot,
+        bullish divergence (RSI14 or MACD-hist; regular or hidden) at the wave-2 low
+OPTIONAL (consistent but small lift): close &gt; EMA200(5m), wave 1 &lt;= 20 bars, MACD &gt; signal
+CONTRACT/EXIT/FILTER/ORDERS/SIZE   as MTF-RSI (delta 0.5, &gt;= 2 days, +0.75 / -1 ATR, 2 sessions, IV/RV20 &lt;= 1.3)
+PUT (wave C)  not recommended: negative in every period and timeframe tested
+</code></pre>
+<h1 id="_8">التوصية النهائية</h1>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>التوصية</th>
+<th>الشروط</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MTF-RSI Call (25، عودة، 15 دقيقة)</strong></td>
+<td><strong>🟡 تُضاف للتطبيق، وضع Paper فقط</strong></td>
+<td>فلتر IV/RV20 ≤ 1.3 بالتقلب الضمني الحي؛ أوامر Limit عند المنتصف؛ أسهم سائلة. <strong>معيار النجاح بعد 60 صفقة Paper:</strong> عائد/صفقة بأسعار التنفيذ الفعلية &gt; +5%، وPF ≥ 1.3. <strong>الإيقاف:</strong> &lt; 0 بعد 40 صفقة</td>
+</tr>
+<tr>
+<td>MTF-RSI Put</td>
+<td>❌ لا تُضاف</td>
+<td>تشبع الساعة الشرائي = زخم مستمر</td>
+</tr>
+<tr>
+<td><strong>MTF Elliott Call (الحرفية، 5 دقائق)</strong></td>
+<td><strong>🟠 Paper للمراقبة فقط</strong></td>
+<td>نفس الفلتر والعقد. نادرة (~20 إشارة/سنة على 15 رمزًا). تُقيَّم بعد 100 صفقة</td>
+</tr>
+<tr>
+<td>MTF Elliott Put (موجة C)</td>
+<td>❌ لا تُضاف</td>
+<td>سالبة في كل الفترات والفريمات</td>
+</tr>
+<tr>
+<td>فلتر التقلب</td>
+<td>✅ يُضاف كشرط عام لكل استراتيجيات الشراء</td>
+<td>يحتاج IV الحي من سلسلة الوسيط؛ لا يُستخدم التقدير بديلًا</td>
+</tr>
+</tbody>
+</table>
+<p><strong>فلاتر إضافية تحسّن النتائج:</strong></p>
+<ul>
+<li><strong>(1)</strong> أوامر Limit قرب المنتصف: الفرق بين VWAP وVWAP مع نصف الفرق ≈ 6–7 نقاط مئوية لكل صفقة.</li>
+<li><strong>(2)</strong> تفضيل الأسهم على الـ ETF لهذه الإشارة.</li>
+<li><strong>(3)</strong> عدم تقريب الهدف عن 0.75 ATR.</li>
+<li><strong>(4)</strong> لاستراتيجية الموجات: EMA200 وMACD &gt; الإشارة وسرعة الموجة 1، <strong>لا</strong> الدايفرجنس ولا فيبوناتشي.</li>
+</ul>
+<blockquote>
+<p><strong>أمان:</strong> لا تفعيل لأوامر Live. مفتاح Alpaca يُلغى بعد الدراسة.</p>
+</blockquote>
+<div class='pb'></div>
+
+<h1 id="resultsr5">ملحق: النتائج الخام (results/r5)</h1>
+<h2 id="rsi_underlyingmd">RSI_UNDERLYING.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>period</th>
+<th>n</th>
+<th>+0.5 ATR before stop, same day</th>
+<th>within 2 days</th>
+<th>+1 ATR within 2d</th>
+<th>stop within 2d</th>
+<th>1h (ATR)</th>
+<th>close same day</th>
+<th>close day 2</th>
+<th>t(day 2)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BASELINE hourly RSI extreme RSI14 70/30 15m — puts</td>
+<td>DISC</td>
+<td>13527</td>
+<td>13%</td>
+<td>41%</td>
+<td>15%</td>
+<td>18%</td>
+<td>-0.011</td>
+<td>+0.007</td>
+<td>-0.055</td>
+<td>-7.58</td>
+</tr>
+<tr>
+<td>BASELINE hourly RSI extreme RSI14 70/30 15m — puts</td>
+<td>VALID</td>
+<td>12732</td>
+<td>14%</td>
+<td>42%</td>
+<td>15%</td>
+<td>17%</td>
+<td>-0.004</td>
+<td>+0.001</td>
+<td>-0.050</td>
+<td>-6.61</td>
+</tr>
+<tr>
+<td>BASELINE hourly RSI extreme RSI14 70/30 15m — calls</td>
+<td>DISC</td>
+<td>6225</td>
+<td>23%</td>
+<td>57%</td>
+<td>27%</td>
+<td>29%</td>
+<td>+0.003</td>
+<td>-0.004</td>
+<td>+0.051</td>
+<td>3.69</td>
+</tr>
+<tr>
+<td>BASELINE hourly RSI extreme RSI14 70/30 15m — calls</td>
+<td>VALID</td>
+<td>7877</td>
+<td>20%</td>
+<td>52%</td>
+<td>23%</td>
+<td>20%</td>
+<td>+0.009</td>
+<td>+0.035</td>
+<td>+0.074</td>
+<td>7.71</td>
+</tr>
+<tr>
+<td>BASELINE hourly RSI extreme RSI14 80/20 15m — puts</td>
+<td>DISC</td>
+<td>2276</td>
+<td>20%</td>
+<td>47%</td>
+<td>21%</td>
+<td>24%</td>
+<td>-0.010</td>
+<td>+0.031</td>
+<td>-0.024</td>
+<td>-1.16</td>
+</tr>
+<tr>
+<td>BASELINE hourly RSI extreme RSI14 80/20 15m — puts</td>
+<td>VALID</td>
+<td>1717</td>
+<td>22%</td>
+<td>50%</td>
+<td>23%</td>
+<td>19%</td>
+<td>-0.003</td>
+<td>+0.034</td>
+<td>+0.023</td>
+<td>1.09</td>
+</tr>
+<tr>
+<td>BASELINE hourly RSI extreme RSI14 80/20 15m — calls</td>
+<td>DISC</td>
+<td>891</td>
+<td>29%</td>
+<td>61%</td>
+<td>31%</td>
+<td>35%</td>
+<td>-0.006</td>
+<td>-0.039</td>
+<td>-0.010</td>
+<td>-0.26</td>
+</tr>
+<tr>
+<td>BASELINE hourly RSI extreme RSI14 80/20 15m — calls</td>
+<td>VALID</td>
+<td>942</td>
+<td>26%</td>
+<td>56%</td>
+<td>29%</td>
+<td>20%</td>
+<td>+0.016</td>
+<td>+0.093</td>
+<td>+0.085</td>
+<td>3.00</td>
+</tr>
+<tr>
+<td>reentry RSI14 70/30 15m — puts</td>
+<td>DISC</td>
+<td>1550</td>
+<td>13%</td>
+<td>43%</td>
+<td>15%</td>
+<td>16%</td>
+<td>-0.003</td>
+<td>+0.002</td>
+<td>-0.013</td>
+<td>-0.63</td>
+</tr>
+<tr>
+<td>reentry RSI14 70/30 15m — puts</td>
+<td>VALID</td>
+<td>1478</td>
+<td>13%</td>
+<td>39%</td>
+<td>13%</td>
+<td>19%</td>
+<td>-0.016</td>
+<td>-0.033</td>
+<td>-0.069</td>
+<td>-3.06</td>
+</tr>
+<tr>
+<td>reentry RSI14 70/30 15m — calls</td>
+<td>DISC</td>
+<td>821</td>
+<td>25%</td>
+<td>60%</td>
+<td>29%</td>
+<td>30%</td>
+<td>+0.001</td>
+<td>-0.018</td>
+<td>+0.058</td>
+<td>1.59</td>
+</tr>
+<tr>
+<td>reentry RSI14 70/30 15m — calls</td>
+<td>VALID</td>
+<td>870</td>
+<td>21%</td>
+<td>52%</td>
+<td>23%</td>
+<td>19%</td>
+<td>+0.013</td>
+<td>+0.054</td>
+<td>+0.095</td>
+<td>3.45</td>
+</tr>
+<tr>
+<td>fail RSI14 70/30 15m — puts</td>
+<td>DISC</td>
+<td>1193</td>
+<td>12%</td>
+<td>43%</td>
+<td>15%</td>
+<td>16%</td>
+<td>-0.014</td>
+<td>+0.018</td>
+<td>-0.021</td>
+<td>-0.95</td>
+</tr>
+<tr>
+<td>fail RSI14 70/30 15m — puts</td>
+<td>VALID</td>
+<td>1126</td>
+<td>13%</td>
+<td>40%</td>
+<td>14%</td>
+<td>19%</td>
+<td>-0.014</td>
+<td>-0.023</td>
+<td>-0.062</td>
+<td>-2.38</td>
+</tr>
+<tr>
+<td>fail RSI14 70/30 15m — calls</td>
+<td>DISC</td>
+<td>655</td>
+<td>26%</td>
+<td>60%</td>
+<td>29%</td>
+<td>29%</td>
+<td>-0.001</td>
+<td>-0.005</td>
+<td>+0.035</td>
+<td>0.90</td>
+</tr>
+<tr>
+<td>fail RSI14 70/30 15m — calls</td>
+<td>VALID</td>
+<td>701</td>
+<td>21%</td>
+<td>52%</td>
+<td>22%</td>
+<td>19%</td>
+<td>+0.020</td>
+<td>+0.041</td>
+<td>+0.076</td>
+<td>2.47</td>
+</tr>
+<tr>
+<td>div RSI14 70/30 15m — puts</td>
+<td>DISC</td>
+<td>463</td>
+<td>13%</td>
+<td>42%</td>
+<td>16%</td>
+<td>16%</td>
+<td>-0.015</td>
+<td>+0.020</td>
+<td>-0.018</td>
+<td>-0.51</td>
+</tr>
+<tr>
+<td>div RSI14 70/30 15m — puts</td>
+<td>VALID</td>
+<td>426</td>
+<td>13%</td>
+<td>39%</td>
+<td>14%</td>
+<td>21%</td>
+<td>-0.008</td>
+<td>-0.020</td>
+<td>-0.124</td>
+<td>-2.80</td>
+</tr>
+<tr>
+<td>div RSI14 70/30 15m — calls</td>
+<td>DISC</td>
+<td>250</td>
+<td>28%</td>
+<td>64%</td>
+<td>32%</td>
+<td>24%</td>
+<td>+0.037</td>
+<td>+0.085</td>
+<td>+0.134</td>
+<td>2.40</td>
+</tr>
+<tr>
+<td>div RSI14 70/30 15m — calls</td>
+<td>VALID</td>
+<td>259</td>
+<td>21%</td>
+<td>54%</td>
+<td>26%</td>
+<td>18%</td>
+<td>+0.033</td>
+<td>+0.032</td>
+<td>+0.099</td>
+<td>1.93</td>
+</tr>
+<tr>
+<td>reentry RSI14 75/25 15m — puts</td>
+<td>DISC</td>
+<td>581</td>
+<td>18%</td>
+<td>44%</td>
+<td>20%</td>
+<td>25%</td>
+<td>-0.017</td>
+<td>+0.008</td>
+<td>-0.004</td>
+<td>-0.10</td>
+</tr>
+<tr>
+<td>reentry RSI14 75/25 15m — puts</td>
+<td>VALID</td>
+<td>508</td>
+<td>17%</td>
+<td>43%</td>
+<td>17%</td>
+<td>19%</td>
+<td>-0.022</td>
+<td>+0.021</td>
+<td>-0.028</td>
+<td>-0.75</td>
+</tr>
+<tr>
+<td>reentry RSI14 75/25 15m — calls</td>
+<td>DISC</td>
+<td>254</td>
+<td>27%</td>
+<td>63%</td>
+<td>33%</td>
+<td>32%</td>
+<td>+0.055</td>
+<td>+0.024</td>
+<td>+0.142</td>
+<td>2.03</td>
+</tr>
+<tr>
+<td>reentry RSI14 75/25 15m — calls</td>
+<td>VALID</td>
+<td>271</td>
+<td>29%</td>
+<td>60%</td>
+<td>30%</td>
+<td>18%</td>
+<td>+0.023</td>
+<td>+0.120</td>
+<td>+0.157</td>
+<td>3.04</td>
+</tr>
+<tr>
+<td>fail RSI14 75/25 15m — puts</td>
+<td>DISC</td>
+<td>459</td>
+<td>17%</td>
+<td>44%</td>
+<td>19%</td>
+<td>22%</td>
+<td>-0.031</td>
+<td>+0.030</td>
+<td>+0.006</td>
+<td>0.13</td>
+</tr>
+<tr>
+<td>fail RSI14 75/25 15m — puts</td>
+<td>VALID</td>
+<td>403</td>
+<td>18%</td>
+<td>43%</td>
+<td>17%</td>
+<td>18%</td>
+<td>-0.011</td>
+<td>+0.027</td>
+<td>-0.045</td>
+<td>-1.10</td>
+</tr>
+<tr>
+<td>fail RSI14 75/25 15m — calls</td>
+<td>DISC</td>
+<td>202</td>
+<td>21%</td>
+<td>59%</td>
+<td>29%</td>
+<td>33%</td>
+<td>-0.063</td>
+<td>-0.090</td>
+<td>+0.055</td>
+<td>0.72</td>
+</tr>
+<tr>
+<td>fail RSI14 75/25 15m — calls</td>
+<td>VALID</td>
+<td>221</td>
+<td>29%</td>
+<td>60%</td>
+<td>29%</td>
+<td>17%</td>
+<td>+0.028</td>
+<td>+0.094</td>
+<td>+0.150</td>
+<td>2.65</td>
+</tr>
+<tr>
+<td>div RSI14 75/25 15m — puts</td>
+<td>DISC</td>
+<td>206</td>
+<td>14%</td>
+<td>39%</td>
+<td>16%</td>
+<td>22%</td>
+<td>-0.038</td>
+<td>+0.013</td>
+<td>-0.041</td>
+<td>-0.66</td>
+</tr>
+<tr>
+<td>div RSI14 75/25 15m — puts</td>
+<td>VALID</td>
+<td>165</td>
+<td>17%</td>
+<td>41%</td>
+<td>18%</td>
+<td>15%</td>
+<td>-0.015</td>
+<td>+0.028</td>
+<td>-0.042</td>
+<td>-0.68</td>
+</tr>
+<tr>
+<td>div RSI14 75/25 15m — calls</td>
+<td>DISC</td>
+<td>108</td>
+<td>22%</td>
+<td>61%</td>
+<td>34%</td>
+<td>29%</td>
+<td>-0.046</td>
+<td>-0.060</td>
+<td>+0.115</td>
+<td>1.07</td>
+</tr>
+<tr>
+<td>div RSI14 75/25 15m — calls</td>
+<td>VALID</td>
+<td>105</td>
+<td>27%</td>
+<td>58%</td>
+<td>30%</td>
+<td>18%</td>
+<td>+0.054</td>
+<td>+0.065</td>
+<td>+0.021</td>
+<td>0.24</td>
+</tr>
+<tr>
+<td>reentry RSI14 80/20 15m — puts</td>
+<td>DISC</td>
+<td>161</td>
+<td>25%</td>
+<td>43%</td>
+<td>17%</td>
+<td>34%</td>
+<td>+0.024</td>
+<td>-0.031</td>
+<td>-0.043</td>
+<td>-0.48</td>
+</tr>
+<tr>
+<td>reentry RSI14 80/20 15m — puts</td>
+<td>VALID</td>
+<td>121</td>
+<td>25%</td>
+<td>45%</td>
+<td>22%</td>
+<td>20%</td>
+<td>-0.035</td>
+<td>+0.055</td>
+<td>+0.030</td>
+<td>0.42</td>
+</tr>
+<tr>
+<td>reentry RSI14 80/20 15m — calls</td>
+<td>DISC</td>
+<td>46</td>
+<td>30%</td>
+<td>70%</td>
+<td>37%</td>
+<td>33%</td>
+<td>-0.015</td>
+<td>+0.036</td>
+<td>+0.079</td>
+<td>0.41</td>
+</tr>
+<tr>
+<td>reentry RSI14 80/20 15m — calls</td>
+<td>VALID</td>
+<td>49</td>
+<td>27%</td>
+<td>51%</td>
+<td>31%</td>
+<td>29%</td>
+<td>+0.069</td>
+<td>+0.227</td>
+<td>+0.030</td>
+<td>0.20</td>
+</tr>
+<tr>
+<td>fail RSI14 80/20 15m — puts</td>
+<td>DISC</td>
+<td>135</td>
+<td>26%</td>
+<td>48%</td>
+<td>16%</td>
+<td>30%</td>
+<td>-0.014</td>
+<td>+0.007</td>
+<td>-0.025</td>
+<td>-0.29</td>
+</tr>
+<tr>
+<td>fail RSI14 80/20 15m — puts</td>
+<td>VALID</td>
+<td>97</td>
+<td>22%</td>
+<td>51%</td>
+<td>23%</td>
+<td>13%</td>
+<td>-0.044</td>
+<td>+0.040</td>
+<td>+0.003</td>
+<td>0.04</td>
+</tr>
+<tr>
+<td>fail RSI14 80/20 15m — calls</td>
+<td>DISC</td>
+<td>37</td>
+<td>32%</td>
+<td>68%</td>
+<td>32%</td>
+<td>35%</td>
+<td>-0.040</td>
+<td>+0.006</td>
+<td>-0.064</td>
+<td>-0.30</td>
+</tr>
+<tr>
+<td>fail RSI14 80/20 15m — calls</td>
+<td>VALID</td>
+<td>37</td>
+<td>27%</td>
+<td>54%</td>
+<td>27%</td>
+<td>32%</td>
+<td>+0.073</td>
+<td>+0.239</td>
+<td>+0.018</td>
+<td>0.11</td>
+</tr>
+<tr>
+<td>div RSI14 80/20 15m — puts</td>
+<td>DISC</td>
+<td>71</td>
+<td>23%</td>
+<td>46%</td>
+<td>10%</td>
+<td>28%</td>
+<td>-0.021</td>
+<td>-0.020</td>
+<td>-0.118</td>
+<td>-1.35</td>
+</tr>
+<tr>
+<td>div RSI14 80/20 15m — puts</td>
+<td>VALID</td>
+<td>53</td>
+<td>19%</td>
+<td>49%</td>
+<td>15%</td>
+<td>9%</td>
+<td>-0.032</td>
+<td>+0.020</td>
+<td>-0.031</td>
+<td>-0.36</td>
+</tr>
+<tr>
+<td>div RSI14 80/20 15m — calls</td>
+<td>DISC</td>
+<td>20</td>
+<td>30%</td>
+<td>65%</td>
+<td>30%</td>
+<td>45%</td>
+<td>-0.051</td>
+<td>-0.028</td>
+<td>-0.476</td>
+<td>-1.68</td>
+</tr>
+<tr>
+<td>div RSI14 80/20 15m — calls</td>
+<td>VALID</td>
+<td>20</td>
+<td>30%</td>
+<td>55%</td>
+<td>25%</td>
+<td>25%</td>
+<td>+0.079</td>
+<td>+0.109</td>
+<td>+0.068</td>
+<td>0.34</td>
+</tr>
+<tr>
+<td>reentry RSI9 70/30 15m — puts</td>
+<td>DISC</td>
+<td>3149</td>
+<td>13%</td>
+<td>41%</td>
+<td>14%</td>
+<td>17%</td>
+<td>-0.010</td>
+<td>-0.002</td>
+<td>-0.042</td>
+<td>-3.05</td>
+</tr>
+<tr>
+<td>reentry RSI9 70/30 15m — puts</td>
+<td>VALID</td>
+<td>3040</td>
+<td>12%</td>
+<td>39%</td>
+<td>13%</td>
+<td>16%</td>
+<td>-0.012</td>
+<td>-0.014</td>
+<td>-0.068</td>
+<td>-4.82</td>
+</tr>
+<tr>
+<td>reentry RSI9 70/30 15m — calls</td>
+<td>DISC</td>
+<td>1760</td>
+<td>20%</td>
+<td>56%</td>
+<td>24%</td>
+<td>28%</td>
+<td>-0.014</td>
+<td>-0.015</td>
+<td>+0.041</td>
+<td>1.70</td>
+</tr>
+<tr>
+<td>reentry RSI9 70/30 15m — calls</td>
+<td>VALID</td>
+<td>2133</td>
+<td>19%</td>
+<td>51%</td>
+<td>22%</td>
+<td>20%</td>
+<td>+0.003</td>
+<td>+0.036</td>
+<td>+0.086</td>
+<td>4.75</td>
+</tr>
+<tr>
+<td>fail RSI9 70/30 15m — puts</td>
+<td>DISC</td>
+<td>2414</td>
+<td>12%</td>
+<td>40%</td>
+<td>14%</td>
+<td>16%</td>
+<td>-0.011</td>
+<td>+0.017</td>
+<td>-0.035</td>
+<td>-2.29</td>
+</tr>
+<tr>
+<td>fail RSI9 70/30 15m — puts</td>
+<td>VALID</td>
+<td>2371</td>
+<td>12%</td>
+<td>40%</td>
+<td>13%</td>
+<td>16%</td>
+<td>-0.004</td>
+<td>-0.000</td>
+<td>-0.050</td>
+<td>-3.14</td>
+</tr>
+<tr>
+<td>fail RSI9 70/30 15m — calls</td>
+<td>DISC</td>
+<td>1371</td>
+<td>20%</td>
+<td>55%</td>
+<td>24%</td>
+<td>26%</td>
+<td>-0.002</td>
+<td>-0.010</td>
+<td>+0.050</td>
+<td>1.87</td>
+</tr>
+<tr>
+<td>fail RSI9 70/30 15m — calls</td>
+<td>VALID</td>
+<td>1668</td>
+<td>19%</td>
+<td>51%</td>
+<td>21%</td>
+<td>19%</td>
+<td>+0.019</td>
+<td>+0.032</td>
+<td>+0.085</td>
+<td>4.15</td>
+</tr>
+<tr>
+<td>div RSI9 70/30 15m — puts</td>
+<td>DISC</td>
+<td>916</td>
+<td>11%</td>
+<td>40%</td>
+<td>12%</td>
+<td>15%</td>
+<td>-0.018</td>
+<td>+0.013</td>
+<td>-0.043</td>
+<td>-1.72</td>
+</tr>
+<tr>
+<td>div RSI9 70/30 15m — puts</td>
+<td>VALID</td>
+<td>891</td>
+<td>12%</td>
+<td>38%</td>
+<td>13%</td>
+<td>18%</td>
+<td>-0.008</td>
+<td>-0.005</td>
+<td>-0.092</td>
+<td>-3.49</td>
+</tr>
+<tr>
+<td>div RSI9 70/30 15m — calls</td>
+<td>DISC</td>
+<td>492</td>
+<td>23%</td>
+<td>57%</td>
+<td>26%</td>
+<td>24%</td>
+<td>+0.014</td>
+<td>+0.035</td>
+<td>+0.086</td>
+<td>2.03</td>
+</tr>
+<tr>
+<td>div RSI9 70/30 15m — calls</td>
+<td>VALID</td>
+<td>663</td>
+<td>17%</td>
+<td>51%</td>
+<td>21%</td>
+<td>19%</td>
+<td>+0.036</td>
+<td>+0.013</td>
+<td>+0.093</td>
+<td>2.97</td>
+</tr>
+<tr>
+<td>reentry RSI9 75/25 15m — puts</td>
+<td>DISC</td>
+<td>1474</td>
+<td>14%</td>
+<td>41%</td>
+<td>15%</td>
+<td>20%</td>
+<td>-0.015</td>
+<td>-0.002</td>
+<td>-0.042</td>
+<td>-1.90</td>
+</tr>
+<tr>
+<td>reentry RSI9 75/25 15m — puts</td>
+<td>VALID</td>
+<td>1414</td>
+<td>15%</td>
+<td>42%</td>
+<td>15%</td>
+<td>18%</td>
+<td>-0.013</td>
+<td>-0.007</td>
+<td>-0.030</td>
+<td>-1.37</td>
+</tr>
+<tr>
+<td>reentry RSI9 75/25 15m — calls</td>
+<td>DISC</td>
+<td>745</td>
+<td>26%</td>
+<td>60%</td>
+<td>31%</td>
+<td>28%</td>
+<td>+0.048</td>
+<td>+0.034</td>
+<td>+0.065</td>
+<td>1.62</td>
+</tr>
+<tr>
+<td>reentry RSI9 75/25 15m — calls</td>
+<td>VALID</td>
+<td>882</td>
+<td>21%</td>
+<td>53%</td>
+<td>23%</td>
+<td>20%</td>
+<td>+0.010</td>
+<td>+0.040</td>
+<td>+0.059</td>
+<td>2.13</td>
+</tr>
+<tr>
+<td>fail RSI9 75/25 15m — puts</td>
+<td>DISC</td>
+<td>1180</td>
+<td>15%</td>
+<td>41%</td>
+<td>15%</td>
+<td>19%</td>
+<td>-0.016</td>
+<td>+0.020</td>
+<td>-0.033</td>
+<td>-1.35</td>
+</tr>
+<tr>
+<td>fail RSI9 75/25 15m — puts</td>
+<td>VALID</td>
+<td>1111</td>
+<td>14%</td>
+<td>42%</td>
+<td>15%</td>
+<td>17%</td>
+<td>+0.010</td>
+<td>+0.001</td>
+<td>-0.041</td>
+<td>-1.73</td>
+</tr>
+<tr>
+<td>fail RSI9 75/25 15m — calls</td>
+<td>DISC</td>
+<td>609</td>
+<td>21%</td>
+<td>58%</td>
+<td>26%</td>
+<td>28%</td>
+<td>-0.026</td>
+<td>-0.027</td>
+<td>+0.027</td>
+<td>0.64</td>
+</tr>
+<tr>
+<td>fail RSI9 75/25 15m — calls</td>
+<td>VALID</td>
+<td>712</td>
+<td>19%</td>
+<td>51%</td>
+<td>23%</td>
+<td>20%</td>
+<td>+0.002</td>
+<td>+0.030</td>
+<td>+0.061</td>
+<td>1.99</td>
+</tr>
+<tr>
+<td>div RSI9 75/25 15m — puts</td>
+<td>DISC</td>
+<td>597</td>
+<td>12%</td>
+<td>38%</td>
+<td>13%</td>
+<td>18%</td>
+<td>-0.035</td>
+<td>-0.007</td>
+<td>-0.069</td>
+<td>-2.15</td>
+</tr>
+<tr>
+<td>div RSI9 75/25 15m — puts</td>
+<td>VALID</td>
+<td>498</td>
+<td>12%</td>
+<td>40%</td>
+<td>12%</td>
+<td>16%</td>
+<td>+0.006</td>
+<td>+0.012</td>
+<td>-0.042</td>
+<td>-1.21</td>
+</tr>
+<tr>
+<td>div RSI9 75/25 15m — calls</td>
+<td>DISC</td>
+<td>288</td>
+<td>23%</td>
+<td>61%</td>
+<td>27%</td>
+<td>24%</td>
+<td>+0.004</td>
+<td>+0.017</td>
+<td>+0.087</td>
+<td>1.53</td>
+</tr>
+<tr>
+<td>div RSI9 75/25 15m — calls</td>
+<td>VALID</td>
+<td>344</td>
+<td>18%</td>
+<td>51%</td>
+<td>20%</td>
+<td>18%</td>
+<td>+0.005</td>
+<td>+0.020</td>
+<td>+0.035</td>
+<td>0.84</td>
+</tr>
+<tr>
+<td>reentry RSI9 80/20 15m — puts</td>
+<td>DISC</td>
+<td>548</td>
+<td>18%</td>
+<td>39%</td>
+<td>16%</td>
+<td>24%</td>
+<td>-0.021</td>
+<td>+0.013</td>
+<td>-0.074</td>
+<td>-1.84</td>
+</tr>
+<tr>
+<td>reentry RSI9 80/20 15m — puts</td>
+<td>VALID</td>
+<td>465</td>
+<td>17%</td>
+<td>42%</td>
+<td>17%</td>
+<td>18%</td>
+<td>-0.026</td>
+<td>-0.004</td>
+<td>+0.001</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>reentry RSI9 80/20 15m — calls</td>
+<td>DISC</td>
+<td>193</td>
+<td>31%</td>
+<td>67%</td>
+<td>32%</td>
+<td>33%</td>
+<td>+0.051</td>
+<td>+0.010</td>
+<td>+0.037</td>
+<td>0.43</td>
+</tr>
+<tr>
+<td>reentry RSI9 80/20 15m — calls</td>
+<td>VALID</td>
+<td>260</td>
+<td>28%</td>
+<td>56%</td>
+<td>27%</td>
+<td>16%</td>
+<td>+0.026</td>
+<td>+0.127</td>
+<td>+0.117</td>
+<td>2.23</td>
+</tr>
+<tr>
+<td>fail RSI9 80/20 15m — puts</td>
+<td>DISC</td>
+<td>450</td>
+<td>17%</td>
+<td>40%</td>
+<td>16%</td>
+<td>21%</td>
+<td>-0.016</td>
+<td>+0.016</td>
+<td>-0.075</td>
+<td>-1.85</td>
+</tr>
+<tr>
+<td>fail RSI9 80/20 15m — puts</td>
+<td>VALID</td>
+<td>386</td>
+<td>17%</td>
+<td>44%</td>
+<td>18%</td>
+<td>15%</td>
+<td>-0.007</td>
+<td>+0.017</td>
+<td>+0.026</td>
+<td>0.57</td>
+</tr>
+<tr>
+<td>fail RSI9 80/20 15m — calls</td>
+<td>DISC</td>
+<td>168</td>
+<td>26%</td>
+<td>60%</td>
+<td>27%</td>
+<td>33%</td>
+<td>-0.027</td>
+<td>-0.046</td>
+<td>-0.017</td>
+<td>-0.18</td>
+</tr>
+<tr>
+<td>fail RSI9 80/20 15m — calls</td>
+<td>VALID</td>
+<td>219</td>
+<td>27%</td>
+<td>62%</td>
+<td>28%</td>
+<td>16%</td>
+<td>+0.037</td>
+<td>+0.122</td>
+<td>+0.130</td>
+<td>2.28</td>
+</tr>
+<tr>
+<td>div RSI9 80/20 15m — puts</td>
+<td>DISC</td>
+<td>252</td>
+<td>15%</td>
+<td>38%</td>
+<td>15%</td>
+<td>21%</td>
+<td>-0.013</td>
+<td>-0.001</td>
+<td>-0.132</td>
+<td>-2.42</td>
+</tr>
+<tr>
+<td>div RSI9 80/20 15m — puts</td>
+<td>VALID</td>
+<td>212</td>
+<td>16%</td>
+<td>40%</td>
+<td>14%</td>
+<td>16%</td>
+<td>-0.011</td>
+<td>+0.022</td>
+<td>-0.040</td>
+<td>-0.76</td>
+</tr>
+<tr>
+<td>div RSI9 80/20 15m — calls</td>
+<td>DISC</td>
+<td>97</td>
+<td>27%</td>
+<td>59%</td>
+<td>29%</td>
+<td>35%</td>
+<td>-0.015</td>
+<td>+0.022</td>
+<td>-0.006</td>
+<td>-0.05</td>
+</tr>
+<tr>
+<td>div RSI9 80/20 15m — calls</td>
+<td>VALID</td>
+<td>119</td>
+<td>21%</td>
+<td>57%</td>
+<td>23%</td>
+<td>17%</td>
+<td>+0.022</td>
+<td>+0.093</td>
+<td>+0.011</td>
+<td>0.15</td>
+</tr>
+<tr>
+<td>reentry RSI14 70/30 5m — puts</td>
+<td>DISC</td>
+<td>2891</td>
+<td>16%</td>
+<td>43%</td>
+<td>15%</td>
+<td>22%</td>
+<td>-0.015</td>
+<td>-0.013</td>
+<td>-0.049</td>
+<td>-2.76</td>
+</tr>
+<tr>
+<td>reentry RSI14 70/30 5m — puts</td>
+<td>VALID</td>
+<td>2659</td>
+<td>16%</td>
+<td>43%</td>
+<td>15%</td>
+<td>19%</td>
+<td>-0.015</td>
+<td>-0.007</td>
+<td>-0.053</td>
+<td>-3.19</td>
+</tr>
+<tr>
+<td>reentry RSI14 70/30 5m — calls</td>
+<td>DISC</td>
+<td>1309</td>
+<td>29%</td>
+<td>60%</td>
+<td>31%</td>
+<td>32%</td>
+<td>+0.033</td>
+<td>-0.015</td>
+<td>+0.054</td>
+<td>1.74</td>
+</tr>
+<tr>
+<td>reentry RSI14 70/30 5m — calls</td>
+<td>VALID</td>
+<td>1486</td>
+<td>23%</td>
+<td>55%</td>
+<td>24%</td>
+<td>21%</td>
+<td>+0.035</td>
+<td>+0.073</td>
+<td>+0.099</td>
+<td>4.48</td>
+</tr>
+<tr>
+<td>fail RSI14 70/30 5m — puts</td>
+<td>DISC</td>
+<td>2153</td>
+<td>15%</td>
+<td>41%</td>
+<td>14%</td>
+<td>21%</td>
+<td>-0.027</td>
+<td>-0.018</td>
+<td>-0.062</td>
+<td>-3.07</td>
+</tr>
+<tr>
+<td>fail RSI14 70/30 5m — puts</td>
+<td>VALID</td>
+<td>2010</td>
+<td>16%</td>
+<td>43%</td>
+<td>15%</td>
+<td>18%</td>
+<td>-0.010</td>
+<td>-0.005</td>
+<td>-0.057</td>
+<td>-2.98</td>
+</tr>
+<tr>
+<td>fail RSI14 70/30 5m — calls</td>
+<td>DISC</td>
+<td>1016</td>
+<td>26%</td>
+<td>59%</td>
+<td>29%</td>
+<td>31%</td>
+<td>+0.011</td>
+<td>-0.026</td>
+<td>+0.040</td>
+<td>1.15</td>
+</tr>
+<tr>
+<td>fail RSI14 70/30 5m — calls</td>
+<td>VALID</td>
+<td>1164</td>
+<td>22%</td>
+<td>54%</td>
+<td>24%</td>
+<td>21%</td>
+<td>+0.026</td>
+<td>+0.068</td>
+<td>+0.098</td>
+<td>3.89</td>
+</tr>
+<tr>
+<td>div RSI14 70/30 5m — puts</td>
+<td>DISC</td>
+<td>878</td>
+<td>13%</td>
+<td>40%</td>
+<td>14%</td>
+<td>22%</td>
+<td>-0.030</td>
+<td>-0.018</td>
+<td>-0.077</td>
+<td>-3.01</td>
+</tr>
+<tr>
+<td>div RSI14 70/30 5m — puts</td>
+<td>VALID</td>
+<td>815</td>
+<td>15%</td>
+<td>42%</td>
+<td>13%</td>
+<td>16%</td>
+<td>-0.007</td>
+<td>-0.003</td>
+<td>-0.053</td>
+<td>-1.69</td>
+</tr>
+<tr>
+<td>div RSI14 70/30 5m — calls</td>
+<td>DISC</td>
+<td>397</td>
+<td>22%</td>
+<td>59%</td>
+<td>30%</td>
+<td>30%</td>
+<td>+0.002</td>
+<td>-0.021</td>
+<td>+0.076</td>
+<td>1.39</td>
+</tr>
+<tr>
+<td>div RSI14 70/30 5m — calls</td>
+<td>VALID</td>
+<td>490</td>
+<td>21%</td>
+<td>52%</td>
+<td>23%</td>
+<td>24%</td>
+<td>+0.035</td>
+<td>+0.067</td>
+<td>+0.062</td>
+<td>1.56</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="optionsmd">OPTIONS.md</h2>
+<div class="raw">
+<h4 id="a-calibrated-model-iv-proxy-real-calibrated-term-multiplier-weekly-options">A. Calibrated model (IV proxy × real-calibrated term multiplier), weekly options</h4>
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>period</th>
+<th>chosen delta / min days / (target, stop, max bars)</th>
+<th>n</th>
+<th>win</th>
+<th>exp/trade</th>
+<th>PF</th>
+<th>t(week)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI Calls (15m re-entry, RSI14 25)</td>
+<td>DISC</td>
+<td>(0.5, 2, (0.75, 1.0, 52))</td>
+<td>185</td>
+<td>0.64</td>
+<td>+20.4%</td>
+<td>2.01</td>
+<td>2.40</td>
+</tr>
+<tr>
+<td>MTF-RSI Calls (15m re-entry, RSI14 25)</td>
+<td>VALID</td>
+<td>(0.5, 2, (0.75, 1.0, 52))</td>
+<td>201</td>
+<td>0.55</td>
+<td>+14.8%</td>
+<td>1.70</td>
+<td>2.87</td>
+</tr>
+<tr>
+<td>MTF-RSI Calls (15m re-entry, RSI14 25)</td>
+<td>HOLD</td>
+<td>(0.5, 2, (0.75, 1.0, 52))</td>
+<td>14</td>
+<td>0.64</td>
+<td>+42.3%</td>
+<td>3.85</td>
+<td>3.61</td>
+</tr>
+<tr>
+<td>MTF Elliott Calls (developed)</td>
+<td>DISC</td>
+<td>(0.7, 2, (1.0, 1.0, 104))</td>
+<td>1014</td>
+<td>0.48</td>
+<td>-3.0%</td>
+<td>0.87</td>
+<td>-3.14</td>
+</tr>
+<tr>
+<td>MTF Elliott Calls (developed)</td>
+<td>VALID</td>
+<td>(0.7, 2, (1.0, 1.0, 104))</td>
+<td>880</td>
+<td>0.44</td>
+<td>-6.2%</td>
+<td>0.77</td>
+<td>-3.27</td>
+</tr>
+<tr>
+<td>MTF Elliott Calls (developed)</td>
+<td>HOLD</td>
+<td>(0.7, 2, (1.0, 1.0, 104))</td>
+<td>98</td>
+<td>0.41</td>
+<td>-6.1%</td>
+<td>0.83</td>
+<td>-0.26</td>
+</tr>
+</tbody>
+</table>
+<h4 id="b-real-option-prices-2024-02-2026-10-same-trades">B. Real option prices (2024-02 → 2026-10), same trades</h4>
+<ul>
+<li><strong>MTF-RSI Calls (15m re-entry, RSI14 25) — dev:</strong> n 54, REAL exp +8.6%, @VWAP +14.8%, win 0.50, median IV/RV20 1.33, median break-even 0.23 ATR/day, model +18.8%</li>
+<li><strong>MTF-RSI Calls (15m re-entry, RSI14 25) — test:</strong> n 46, REAL exp +18.0%, @VWAP +24.9%, win 0.70, median IV/RV20 1.37, median break-even 0.21 ATR/day, model +28.7%</li>
+<li><strong>MTF Elliott Calls (developed) — dev:</strong> n 247, REAL exp -4.6%, @VWAP +0.6%, win 0.44, median IV/RV20 1.13, median break-even 0.16 ATR/day, model -6.3%</li>
+<li><strong>MTF Elliott Calls (developed) — test:</strong> n 199, REAL exp -7.8%, @VWAP -2.6%, win 0.39, median IV/RV20 1.22, median break-even 0.17 ATR/day, model -7.1%</li>
+</ul>
+<h4 id="c-volatility-filter-thresholds-chosen-on-dev-applied-once-to-test">C. Volatility filter — thresholds chosen on dev, applied once to test</h4>
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>filter</th>
+<th>threshold (from dev)</th>
+<th>dev kept n / REAL exp</th>
+<th>test kept n / REAL exp</th>
+<th>test unfiltered</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI Calls (15m re-entry, RSI14 25)</td>
+<td>iv_rv ≤ th</td>
+<td>1.3</td>
+<td>24 / +12.4%</td>
+<td>21 / <strong>+23.1%</strong></td>
+<td>+18.0%</td>
+</tr>
+<tr>
+<td>MTF-RSI Calls (15m re-entry, RSI14 25)</td>
+<td>iv_yz ≤ th</td>
+<td>1.5</td>
+<td>33 / +10.7%</td>
+<td>32 / <strong>+34.9%</strong></td>
+<td>+18.0%</td>
+</tr>
+<tr>
+<td>MTF-RSI Calls (15m re-entry, RSI14 25)</td>
+<td>be_atr ≤ th</td>
+<td>0.5</td>
+<td>54 / +8.6%</td>
+<td>46 / <strong>+18.0%</strong></td>
+<td>+18.0%</td>
+</tr>
+<tr>
+<td>MTF Elliott Calls (developed)</td>
+<td>iv_rv ≤ th</td>
+<td>1.1</td>
+<td>111 / -1.7%</td>
+<td>73 / <strong>+6.0%</strong></td>
+<td>-7.8%</td>
+</tr>
+<tr>
+<td>MTF Elliott Calls (developed)</td>
+<td>iv_yz ≤ th</td>
+<td>1.2</td>
+<td>159 / -2.5%</td>
+<td>108 / <strong>-2.7%</strong></td>
+<td>-7.8%</td>
+</tr>
+<tr>
+<td>MTF Elliott Calls (developed)</td>
+<td>be_atr ≤ th</td>
+<td>0.2</td>
+<td>191 / -3.2%</td>
+<td>140 / <strong>-10.0%</strong></td>
+<td>-7.8%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="rsi_real_robustmd">RSI_REAL_ROBUST.md</h2>
+<div class="raw">
+<h4 id="neighbouring-parameters-same-contractexit-rule">Neighbouring parameters (same contract/exit rule)</h4>
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>n</th>
+<th>REAL exp</th>
+<th>@VWAP</th>
+<th>win</th>
+<th>t</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RSI14 25 reentry 15m</td>
+<td>100</td>
+<td>+12.9%</td>
+<td>+19.4%</td>
+<td>0.59</td>
+<td>1.87</td>
+</tr>
+<tr>
+<td>RSI14 30 reentry 15m</td>
+<td>254</td>
+<td>-1.1%</td>
+<td>+4.6%</td>
+<td>0.49</td>
+<td>-0.24</td>
+</tr>
+<tr>
+<td>RSI14 20 reentry 15m</td>
+<td>17</td>
+<td>+7.3%</td>
+<td>+13.4%</td>
+<td>0.59</td>
+<td>0.42</td>
+</tr>
+<tr>
+<td>RSI9 25 reentry 15m</td>
+<td>271</td>
+<td>-7.1%</td>
+<td>-2.0%</td>
+<td>0.44</td>
+<td>-1.72</td>
+</tr>
+<tr>
+<td>RSI14 25 fail 15m</td>
+<td>99</td>
+<td>+16.5%</td>
+<td>+23.1%</td>
+<td>0.59</td>
+<td>2.42</td>
+</tr>
+<tr>
+<td>RSI14 30 div 15m</td>
+<td>115</td>
+<td>+3.5%</td>
+<td>+9.4%</td>
+<td>0.49</td>
+<td>0.52</td>
+</tr>
+<tr>
+<td>RSI9 30 reentry 15m</td>
+<td>568</td>
+<td>-6.8%</td>
+<td>-1.5%</td>
+<td>0.41</td>
+<td>-2.33</td>
+</tr>
+<tr>
+<td>RSI14 30 reentry 5m</td>
+<td>361</td>
+<td>+1.7%</td>
+<td>+7.5%</td>
+<td>0.48</td>
+<td>0.45</td>
+</tr>
+</tbody>
+</table>
+<h4 id="contract-exit-neighbours-signal-rsi14-25-re-entry-15m">Contract / exit neighbours (signal RSI14 25 re-entry, 15m)</h4>
+<table>
+<thead>
+<tr>
+<th>delta / min days / (target, stop, bars)</th>
+<th>n</th>
+<th>REAL exp</th>
+<th>@VWAP</th>
+<th>win</th>
+<th>t</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(0.5, 5, (0.75, 1.0, 52))</td>
+<td>95</td>
+<td>+6.7%</td>
+<td>+12.9%</td>
+<td>0.59</td>
+<td>1.26</td>
+</tr>
+<tr>
+<td>(0.7, 2, (0.75, 1.0, 52))</td>
+<td>72</td>
+<td>+5.1%</td>
+<td>+11.2%</td>
+<td>0.57</td>
+<td>0.81</td>
+</tr>
+<tr>
+<td>(0.5, 2, (0.5, 1.0, 26))</td>
+<td>103</td>
+<td>-3.5%</td>
+<td>+2.0%</td>
+<td>0.50</td>
+<td>-0.74</td>
+</tr>
+<tr>
+<td>(0.5, 2, (1.0, 1.0, 104))</td>
+<td>99</td>
+<td>+10.2%</td>
+<td>+16.5%</td>
+<td>0.53</td>
+<td>1.28</td>
+</tr>
+</tbody>
+</table>
+<h4 id="robustness-of-the-base-variant">Robustness of the base variant</h4>
+<table>
+<thead>
+<tr>
+<th>cut</th>
+<th>n</th>
+<th>REAL exp</th>
+<th>@VWAP</th>
+<th>win</th>
+<th>t</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all</td>
+<td>100</td>
+<td>+12.9%</td>
+<td>+19.4%</td>
+<td>0.59</td>
+<td>1.87</td>
+</tr>
+<tr>
+<td>double half-spread (3% ETF / 6% stock)</td>
+<td>100</td>
+<td>+6.8%</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>without the 5 best trades</td>
+<td>95</td>
+<td>+5.2%</td>
+<td>+11.2%</td>
+<td>0.57</td>
+<td>0.83</td>
+</tr>
+<tr>
+<td>ETFs only</td>
+<td>16</td>
+<td>+0.5%</td>
+<td>+3.5%</td>
+<td>0.62</td>
+<td>0.04</td>
+</tr>
+<tr>
+<td>stocks only</td>
+<td>84</td>
+<td>+15.3%</td>
+<td>+22.4%</td>
+<td>0.58</td>
+<td>1.94</td>
+</tr>
+<tr>
+<td>without NVDA/TSLA/AMD/META</td>
+<td>70</td>
+<td>+13.5%</td>
+<td>+19.8%</td>
+<td>0.63</td>
+<td>1.64</td>
+</tr>
+<tr>
+<td>year 2024</td>
+<td>28</td>
+<td>+16.6%</td>
+<td>+23.1%</td>
+<td>0.57</td>
+<td>1.27</td>
+</tr>
+<tr>
+<td>year 2025</td>
+<td>42</td>
+<td>+2.4%</td>
+<td>+8.3%</td>
+<td>0.52</td>
+<td>0.22</td>
+</tr>
+<tr>
+<td>year 2026</td>
+<td>30</td>
+<td>+24.2%</td>
+<td>+31.5%</td>
+<td>0.70</td>
+<td>2.01</td>
+</tr>
+</tbody>
+</table>
+<p>Trades per symbol: AAPL 11, TSLA 10, UNH 9, AMD 9, QQQ 8, NVDA 7, GOOGL 7, AMZN 6, MSFT 6, COST 5, JPM 5, XOM 5, META 4, SPY 4, IWM 4</p>
+</div>
+<h2 id="rsi_filter_modelmd">RSI_FILTER_MODEL.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>period</th>
+<th>filter</th>
+<th>n</th>
+<th>exp/trade (calibrated model)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DISC</td>
+<td>none</td>
+<td>185</td>
+<td>+20.4%</td>
+</tr>
+<tr>
+<td>DISC</td>
+<td>IV*/RV20 ≤ 1.5</td>
+<td>98</td>
+<td>+20.4%</td>
+</tr>
+<tr>
+<td>DISC</td>
+<td>IV*/RV20 ≤ 1.3</td>
+<td>46</td>
+<td>+21.4%</td>
+</tr>
+<tr>
+<td>VALID</td>
+<td>none</td>
+<td>201</td>
+<td>+14.8%</td>
+</tr>
+<tr>
+<td>VALID</td>
+<td>IV*/RV20 ≤ 1.5</td>
+<td>130</td>
+<td>+5.7%</td>
+</tr>
+<tr>
+<td>VALID</td>
+<td>IV*/RV20 ≤ 1.3</td>
+<td>52</td>
+<td>+8.4%</td>
+</tr>
+<tr>
+<td>HOLD</td>
+<td>none</td>
+<td>14</td>
+<td>+42.3%</td>
+</tr>
+<tr>
+<td>HOLD</td>
+<td>IV*/RV20 ≤ 1.5</td>
+<td>7</td>
+<td>+67.0%</td>
+</tr>
+<tr>
+<td>HOLD</td>
+<td>IV*/RV20 ≤ 1.3</td>
+<td>6</td>
+<td>+62.0%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="wave_rules_15md">WAVE_RULES_15.md</h2>
+<div class="raw">
+<h4 id="call">CALL</h4>
+<p>Developed rule = grandchild setup (bull W2/correction) AND rs AND leg1_fast AND fib_deep</p>
+<table>
+<thead>
+<tr>
+<th>rule</th>
+<th>period</th>
+<th>n</th>
+<th>ret day1 (ATR)</th>
+<th>ret day2 (ATR)</th>
+<th>P(+0.5 ATR before stop, 2d)</th>
+<th>t</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>DISC</td>
+<td>5808</td>
+<td>+0.001</td>
+<td>+0.032</td>
+<td>45%</td>
+<td>2.94</td>
+</tr>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>VALID</td>
+<td>6109</td>
+<td>+0.010</td>
+<td>+0.037</td>
+<td>47%</td>
+<td>3.33</td>
+</tr>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>HOLD</td>
+<td>584</td>
+<td>-0.021</td>
+<td>+0.029</td>
+<td>45%</td>
+<td>0.86</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>DISC</td>
+<td>12</td>
+<td>+0.061</td>
+<td>+0.117</td>
+<td>67%</td>
+<td>0.47</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>VALID</td>
+<td>13</td>
+<td>+0.145</td>
+<td>+0.170</td>
+<td>46%</td>
+<td>1.04</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>HOLD</td>
+<td>3</td>
+<td>+0.516</td>
+<td>+0.910</td>
+<td>100%</td>
+<td>3.08</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>DISC</td>
+<td>1346</td>
+<td>+0.001</td>
+<td>+0.094</td>
+<td>45%</td>
+<td>4.31</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>VALID</td>
+<td>1482</td>
+<td>-0.000</td>
+<td>+0.048</td>
+<td>45%</td>
+<td>2.36</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>HOLD</td>
+<td>133</td>
+<td>-0.024</td>
+<td>-0.010</td>
+<td>47%</td>
+<td>-0.14</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>DISC</td>
+<td>842</td>
+<td>-0.001</td>
+<td>+0.101</td>
+<td>46%</td>
+<td>3.73</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>VALID</td>
+<td>958</td>
+<td>+0.009</td>
+<td>+0.046</td>
+<td>46%</td>
+<td>1.88</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>HOLD</td>
+<td>82</td>
+<td>-0.021</td>
+<td>-0.013</td>
+<td>49%</td>
+<td>-0.16</td>
+</tr>
+</tbody>
+</table>
+<h4 id="put">PUT</h4>
+<p>Developed rule = grandchild setup (bear B→C) AND macd_above_signal AND double_extreme</p>
+<table>
+<thead>
+<tr>
+<th>rule</th>
+<th>period</th>
+<th>n</th>
+<th>ret day1 (ATR)</th>
+<th>ret day2 (ATR)</th>
+<th>P(+0.5 ATR before stop, 2d)</th>
+<th>t</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>DISC</td>
+<td>5490</td>
+<td>-0.001</td>
+<td>-0.075</td>
+<td>42%</td>
+<td>-6.29</td>
+</tr>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>VALID</td>
+<td>6057</td>
+<td>-0.016</td>
+<td>-0.059</td>
+<td>44%</td>
+<td>-5.55</td>
+</tr>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>HOLD</td>
+<td>497</td>
+<td>-0.010</td>
+<td>-0.059</td>
+<td>45%</td>
+<td>-1.57</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>DISC</td>
+<td>222</td>
+<td>+0.026</td>
+<td>-0.020</td>
+<td>47%</td>
+<td>-0.36</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>VALID</td>
+<td>205</td>
+<td>-0.036</td>
+<td>-0.107</td>
+<td>42%</td>
+<td>-1.75</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>HOLD</td>
+<td>20</td>
+<td>-0.067</td>
+<td>-0.539</td>
+<td>30%</td>
+<td>-3.05</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>DISC</td>
+<td>102</td>
+<td>+0.057</td>
+<td>+0.043</td>
+<td>47%</td>
+<td>0.49</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>VALID</td>
+<td>113</td>
+<td>-0.012</td>
+<td>-0.060</td>
+<td>39%</td>
+<td>-0.73</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>HOLD</td>
+<td>6</td>
+<td>-0.037</td>
+<td>-0.722</td>
+<td>17%</td>
+<td>-1.50</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>DISC</td>
+<td>77</td>
+<td>+0.043</td>
+<td>+0.036</td>
+<td>47%</td>
+<td>0.40</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>VALID</td>
+<td>83</td>
+<td>+0.005</td>
+<td>-0.020</td>
+<td>40%</td>
+<td>-0.24</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>HOLD</td>
+<td>5</td>
+<td>-0.107</td>
+<td>-0.975</td>
+<td>0%</td>
+<td>-1.94</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="wave_rules_5md">WAVE_RULES_5.md</h2>
+<div class="raw">
+<h4 id="call_1">CALL</h4>
+<p>Developed rule = grandchild setup (bull W2/correction) AND above_e200 AND fib_deep AND w2_lt_w1_time</p>
+<table>
+<thead>
+<tr>
+<th>rule</th>
+<th>period</th>
+<th>n</th>
+<th>ret day1 (ATR)</th>
+<th>ret day2 (ATR)</th>
+<th>P(+0.5 ATR before stop, 2d)</th>
+<th>t</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>DISC</td>
+<td>15878</td>
+<td>+0.003</td>
+<td>+0.047</td>
+<td>47%</td>
+<td>6.85</td>
+</tr>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>VALID</td>
+<td>19388</td>
+<td>+0.005</td>
+<td>+0.033</td>
+<td>46%</td>
+<td>5.62</td>
+</tr>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>HOLD</td>
+<td>1787</td>
+<td>-0.012</td>
+<td>+0.036</td>
+<td>46%</td>
+<td>1.85</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>DISC</td>
+<td>82</td>
+<td>-0.014</td>
+<td>+0.094</td>
+<td>50%</td>
+<td>1.22</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>VALID</td>
+<td>116</td>
+<td>+0.041</td>
+<td>+0.086</td>
+<td>48%</td>
+<td>1.13</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>HOLD</td>
+<td>19</td>
+<td>-0.030</td>
+<td>+0.093</td>
+<td>47%</td>
+<td>0.65</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>DISC</td>
+<td>2385</td>
+<td>+0.002</td>
+<td>+0.095</td>
+<td>47%</td>
+<td>5.38</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>VALID</td>
+<td>2951</td>
+<td>+0.000</td>
+<td>+0.034</td>
+<td>45%</td>
+<td>2.25</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>HOLD</td>
+<td>247</td>
+<td>-0.026</td>
+<td>-0.001</td>
+<td>43%</td>
+<td>-0.02</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>DISC</td>
+<td>1399</td>
+<td>+0.000</td>
+<td>+0.083</td>
+<td>48%</td>
+<td>3.67</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>VALID</td>
+<td>1743</td>
+<td>-0.001</td>
+<td>+0.035</td>
+<td>45%</td>
+<td>1.82</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>HOLD</td>
+<td>132</td>
+<td>-0.021</td>
+<td>+0.043</td>
+<td>45%</td>
+<td>0.53</td>
+</tr>
+</tbody>
+</table>
+<h4 id="put_1">PUT</h4>
+<p>Developed rule = grandchild setup (bear B→C) AND double_extreme AND fib_deep</p>
+<table>
+<thead>
+<tr>
+<th>rule</th>
+<th>period</th>
+<th>n</th>
+<th>ret day1 (ATR)</th>
+<th>ret day2 (ATR)</th>
+<th>P(+0.5 ATR before stop, 2d)</th>
+<th>t</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>DISC</td>
+<td>15654</td>
+<td>-0.000</td>
+<td>-0.057</td>
+<td>43%</td>
+<td>-8.19</td>
+</tr>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>VALID</td>
+<td>18349</td>
+<td>-0.010</td>
+<td>-0.056</td>
+<td>43%</td>
+<td>-9.16</td>
+</tr>
+<tr>
+<td>all grandchild setups (base)</td>
+<td>HOLD</td>
+<td>1809</td>
+<td>+0.003</td>
+<td>-0.052</td>
+<td>43%</td>
+<td>-2.94</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>DISC</td>
+<td>1118</td>
+<td>-0.002</td>
+<td>-0.036</td>
+<td>41%</td>
+<td>-1.39</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>VALID</td>
+<td>1100</td>
+<td>-0.012</td>
+<td>-0.059</td>
+<td>41%</td>
+<td>-2.34</td>
+</tr>
+<tr>
+<td>literal rule (as specified)</td>
+<td>HOLD</td>
+<td>143</td>
+<td>+0.017</td>
+<td>-0.080</td>
+<td>41%</td>
+<td>-1.22</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>DISC</td>
+<td>197</td>
+<td>-0.012</td>
+<td>+0.011</td>
+<td>40%</td>
+<td>0.18</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>VALID</td>
+<td>305</td>
+<td>-0.030</td>
+<td>-0.032</td>
+<td>40%</td>
+<td>-0.63</td>
+</tr>
+<tr>
+<td>developed rule</td>
+<td>HOLD</td>
+<td>44</td>
+<td>-0.010</td>
+<td>+0.034</td>
+<td>48%</td>
+<td>0.30</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>DISC</td>
+<td>169</td>
+<td>-0.004</td>
+<td>-0.018</td>
+<td>40%</td>
+<td>-0.27</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>VALID</td>
+<td>259</td>
+<td>-0.033</td>
+<td>-0.014</td>
+<td>39%</td>
+<td>-0.25</td>
+</tr>
+<tr>
+<td>developed + divergence</td>
+<td>HOLD</td>
+<td>38</td>
+<td>-0.027</td>
+<td>+0.066</td>
+<td>50%</td>
+<td>0.53</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="wave_literal_optmd">WAVE_LITERAL_OPT.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>config</th>
+<th>period</th>
+<th>n</th>
+<th>win</th>
+<th>exp/trade (model)</th>
+<th>t(week)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(0.5, 2, (0.75, 1.0, 52))</td>
+<td>DISC</td>
+<td>68</td>
+<td>0.46</td>
+<td>-3.6%</td>
+<td>-0.74</td>
+</tr>
+<tr>
+<td>(0.5, 2, (0.75, 1.0, 52))</td>
+<td>VALID</td>
+<td>94</td>
+<td>0.46</td>
+<td>+0.3%</td>
+<td>0.60</td>
+</tr>
+<tr>
+<td>(0.5, 2, (0.75, 1.0, 52))</td>
+<td>HOLD</td>
+<td>15</td>
+<td>0.53</td>
+<td>+7.7%</td>
+<td>0.61</td>
+</tr>
+<tr>
+<td>(0.5, 5, (1.0, 1.0, 104))</td>
+<td>DISC</td>
+<td>65</td>
+<td>0.45</td>
+<td>-11.9%</td>
+<td>-1.54</td>
+</tr>
+<tr>
+<td>(0.5, 5, (1.0, 1.0, 104))</td>
+<td>VALID</td>
+<td>90</td>
+<td>0.47</td>
+<td>-0.4%</td>
+<td>0.34</td>
+</tr>
+<tr>
+<td>(0.5, 5, (1.0, 1.0, 104))</td>
+<td>HOLD</td>
+<td>13</td>
+<td>0.38</td>
+<td>-7.9%</td>
+<td>-0.47</td>
+</tr>
+<tr>
+<td>(0.7, 2, (0.75, 1.0, 52))</td>
+<td>DISC</td>
+<td>68</td>
+<td>0.47</td>
+<td>-2.3%</td>
+<td>-0.92</td>
+</tr>
+<tr>
+<td>(0.7, 2, (0.75, 1.0, 52))</td>
+<td>VALID</td>
+<td>87</td>
+<td>0.51</td>
+<td>-0.5%</td>
+<td>0.34</td>
+</tr>
+<tr>
+<td>(0.7, 2, (0.75, 1.0, 52))</td>
+<td>HOLD</td>
+<td>11</td>
+<td>0.45</td>
+<td>-1.8%</td>
+<td>-0.02</td>
+</tr>
+</tbody>
+</table>
+<p>Real option prices 2024-02 → 2026-10 (delta 0.5, min 2 days, +0.75/−1 ATR, 2 days): n 54, REAL exp +18.3%, @VWAP +25.2%, win 0.48, model +2.2%</p>
+</div>
+<h2 id="wave_lift_15md">WAVE_LIFT_15.md</h2>
+<div class="raw">
+<p>Outcome: close of day 2 after entry (ret2, daily ATR, direction-adjusted) and P(+0.5 ATR before −1 ATR within 2 days).</p>
+<h4 id="call-setups-grandchild-wave-2-bull-correction">CALL setups (grandchild wave 2 / bull correction)</h4>
+<table>
+<thead>
+<tr>
+<th>group</th>
+<th>DISC n</th>
+<th>DISC ret2</th>
+<th>DISC p0.5</th>
+<th>VALID n</th>
+<th>VALID ret2</th>
+<th>VALID p0.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all</td>
+<td>5808</td>
+<td>+0.032</td>
+<td>45%</td>
+<td>6109</td>
+<td>+0.037</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>tag W2</td>
+<td>3918</td>
+<td>+0.033</td>
+<td>45%</td>
+<td>4205</td>
+<td>+0.028</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>tag B</td>
+<td>1890</td>
+<td>+0.030</td>
+<td>46%</td>
+<td>1904</td>
+<td>+0.056</td>
+<td>49%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Context (daily / hourly wave labels):</strong></p>
+<table>
+<thead>
+<tr>
+<th>context</th>
+<th>DISC n</th>
+<th>DISC ret2</th>
+<th>DISC p0.5</th>
+<th>VALID n</th>
+<th>VALID ret2</th>
+<th>VALID p0.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>daily down wave 1</td>
+<td>715</td>
+<td>+0.061</td>
+<td>50%</td>
+<td>651</td>
+<td>+0.007</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>daily down wave 2</td>
+<td>667</td>
+<td>+0.087</td>
+<td>47%</td>
+<td>606</td>
+<td>-0.035</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>daily down wave 3</td>
+<td>484</td>
+<td>+0.003</td>
+<td>45%</td>
+<td>439</td>
+<td>+0.112</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>daily down wave 4</td>
+<td>279</td>
+<td>-0.030</td>
+<td>43%</td>
+<td>294</td>
+<td>+0.020</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>daily down wave 5</td>
+<td>221</td>
+<td>-0.033</td>
+<td>41%</td>
+<td>274</td>
+<td>+0.078</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>daily down wave B</td>
+<td>79</td>
+<td>+0.103</td>
+<td>53%</td>
+<td>157</td>
+<td>+0.011</td>
+<td>42%</td>
+</tr>
+<tr>
+<td>daily none wave —</td>
+<td>1556</td>
+<td>-0.002</td>
+<td>43%</td>
+<td>1635</td>
+<td>+0.033</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>daily up wave 1</td>
+<td>168</td>
+<td>+0.194</td>
+<td>53%</td>
+<td>248</td>
+<td>+0.058</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>daily up wave 2</td>
+<td>330</td>
+<td>+0.056</td>
+<td>42%</td>
+<td>368</td>
+<td>+0.066</td>
+<td>48%</td>
+</tr>
+<tr>
+<td>daily up wave 3</td>
+<td>232</td>
+<td>+0.068</td>
+<td>48%</td>
+<td>304</td>
+<td>+0.081</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>daily up wave 4</td>
+<td>253</td>
+<td>-0.024</td>
+<td>34%</td>
+<td>292</td>
+<td>-0.041</td>
+<td>37%</td>
+</tr>
+<tr>
+<td>daily up wave 5</td>
+<td>215</td>
+<td>+0.081</td>
+<td>40%</td>
+<td>225</td>
+<td>+0.041</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>daily up wave A</td>
+<td>148</td>
+<td>-0.109</td>
+<td>51%</td>
+<td>64</td>
+<td>+0.038</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>daily up wave B</td>
+<td>199</td>
+<td>+0.090</td>
+<td>51%</td>
+<td>160</td>
+<td>+0.020</td>
+<td>52%</td>
+</tr>
+<tr>
+<td>daily up wave C</td>
+<td>171</td>
+<td>+0.028</td>
+<td>46%</td>
+<td>178</td>
+<td>+0.093</td>
+<td>48%</td>
+</tr>
+<tr>
+<td>hourly down wave 1</td>
+<td>672</td>
+<td>+0.016</td>
+<td>39%</td>
+<td>640</td>
+<td>+0.024</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>hourly down wave 2</td>
+<td>497</td>
+<td>+0.008</td>
+<td>47%</td>
+<td>497</td>
+<td>+0.002</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>hourly down wave 3</td>
+<td>454</td>
+<td>+0.009</td>
+<td>43%</td>
+<td>421</td>
+<td>+0.055</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>hourly down wave 4</td>
+<td>255</td>
+<td>-0.022</td>
+<td>45%</td>
+<td>280</td>
+<td>+0.071</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>hourly down wave 5</td>
+<td>210</td>
+<td>-0.046</td>
+<td>44%</td>
+<td>221</td>
+<td>-0.100</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>hourly down wave A</td>
+<td>68</td>
+<td>-0.150</td>
+<td>40%</td>
+<td>80</td>
+<td>-0.038</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>hourly down wave B</td>
+<td>103</td>
+<td>-0.039</td>
+<td>50%</td>
+<td>143</td>
+<td>-0.080</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>hourly down wave C</td>
+<td>89</td>
+<td>+0.094</td>
+<td>48%</td>
+<td>104</td>
+<td>+0.005</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>hourly none wave —</td>
+<td>1566</td>
+<td>+0.075</td>
+<td>47%</td>
+<td>1376</td>
+<td>+0.067</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>hourly up wave 1</td>
+<td>311</td>
+<td>+0.005</td>
+<td>52%</td>
+<td>365</td>
+<td>+0.092</td>
+<td>56%</td>
+</tr>
+<tr>
+<td>hourly up wave 2</td>
+<td>484</td>
+<td>+0.005</td>
+<td>46%</td>
+<td>584</td>
+<td>+0.024</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>hourly up wave 3</td>
+<td>284</td>
+<td>+0.153</td>
+<td>53%</td>
+<td>307</td>
+<td>+0.038</td>
+<td>51%</td>
+</tr>
+<tr>
+<td>hourly up wave 4</td>
+<td>266</td>
+<td>+0.069</td>
+<td>41%</td>
+<td>422</td>
+<td>-0.037</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly up wave 5</td>
+<td>154</td>
+<td>+0.110</td>
+<td>44%</td>
+<td>216</td>
+<td>+0.052</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>hourly up wave A</td>
+<td>137</td>
+<td>+0.010</td>
+<td>36%</td>
+<td>149</td>
+<td>+0.145</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>hourly up wave B</td>
+<td>134</td>
+<td>-0.058</td>
+<td>42%</td>
+<td>146</td>
+<td>+0.073</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly up wave C</td>
+<td>124</td>
+<td>-0.039</td>
+<td>43%</td>
+<td>158</td>
+<td>+0.128</td>
+<td>49%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Single features (True vs False):</strong></p>
+<table>
+<thead>
+<tr>
+<th>feature</th>
+<th>DISC True n / ret2</th>
+<th>DISC False ret2</th>
+<th>lift DISC</th>
+<th>VALID True n / ret2</th>
+<th>VALID False ret2</th>
+<th>lift VALID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rs</td>
+<td>3899 / +0.053</td>
+<td>-0.010</td>
+<td><strong>+0.063</strong></td>
+<td>4116 / +0.021</td>
+<td>+0.069</td>
+<td><strong>-0.049</strong></td>
+</tr>
+<tr>
+<td>ema_stack</td>
+<td>3959 / +0.048</td>
+<td>-0.002</td>
+<td><strong>+0.051</strong></td>
+<td>4170 / +0.018</td>
+<td>+0.077</td>
+<td><strong>-0.059</strong></td>
+</tr>
+<tr>
+<td>leg1_fast</td>
+<td>5145 / +0.038</td>
+<td>-0.010</td>
+<td><strong>+0.048</strong></td>
+<td>5540 / +0.047</td>
+<td>-0.068</td>
+<td><strong>+0.116</strong></td>
+</tr>
+<tr>
+<td>trend200</td>
+<td>4020 / +0.044</td>
+<td>+0.006</td>
+<td><strong>+0.037</strong></td>
+<td>4088 / +0.043</td>
+<td>+0.023</td>
+<td><strong>+0.020</strong></td>
+</tr>
+<tr>
+<td>above_e200</td>
+<td>4207 / +0.042</td>
+<td>+0.006</td>
+<td><strong>+0.036</strong></td>
+<td>4242 / +0.044</td>
+<td>+0.021</td>
+<td><strong>+0.023</strong></td>
+</tr>
+<tr>
+<td>ema50_slope</td>
+<td>4035 / +0.043</td>
+<td>+0.008</td>
+<td><strong>+0.034</strong></td>
+<td>4284 / +0.032</td>
+<td>+0.048</td>
+<td><strong>-0.016</strong></td>
+</tr>
+<tr>
+<td>sr_prev_day</td>
+<td>261 / +0.057</td>
+<td>+0.031</td>
+<td><strong>+0.026</strong></td>
+<td>239 / +0.026</td>
+<td>+0.037</td>
+<td><strong>-0.011</strong></td>
+</tr>
+<tr>
+<td>fib_deep</td>
+<td>2376 / +0.046</td>
+<td>+0.022</td>
+<td><strong>+0.024</strong></td>
+<td>2574 / +0.023</td>
+<td>+0.047</td>
+<td><strong>-0.024</strong></td>
+</tr>
+<tr>
+<td>d_up50</td>
+<td>3560 / +0.041</td>
+<td>+0.018</td>
+<td><strong>+0.023</strong></td>
+<td>3216 / +0.031</td>
+<td>+0.043</td>
+<td><strong>-0.011</strong></td>
+</tr>
+<tr>
+<td>macd_above_signal</td>
+<td>3074 / +0.042</td>
+<td>+0.021</td>
+<td><strong>+0.021</strong></td>
+<td>3170 / +0.050</td>
+<td>+0.022</td>
+<td><strong>+0.028</strong></td>
+</tr>
+<tr>
+<td>engulf_or_hammer</td>
+<td>2832 / +0.041</td>
+<td>+0.024</td>
+<td><strong>+0.017</strong></td>
+<td>2902 / +0.044</td>
+<td>+0.030</td>
+<td><strong>+0.015</strong></td>
+</tr>
+<tr>
+<td>e50_gt_e200</td>
+<td>3769 / +0.038</td>
+<td>+0.022</td>
+<td><strong>+0.016</strong></td>
+<td>3750 / +0.044</td>
+<td>+0.025</td>
+<td><strong>+0.018</strong></td>
+</tr>
+<tr>
+<td>macd_zero_side</td>
+<td>4183 / +0.035</td>
+<td>+0.024</td>
+<td><strong>+0.011</strong></td>
+<td>4406 / +0.032</td>
+<td>+0.049</td>
+<td><strong>-0.017</strong></td>
+</tr>
+<tr>
+<td>div_rsi_hidden</td>
+<td>1577 / +0.040</td>
+<td>+0.029</td>
+<td><strong>+0.010</strong></td>
+<td>1720 / -0.015</td>
+<td>+0.057</td>
+<td><strong>-0.071</strong></td>
+</tr>
+<tr>
+<td>sr_polarity</td>
+<td>4609 / +0.034</td>
+<td>+0.027</td>
+<td><strong>+0.006</strong></td>
+<td>5471 / +0.035</td>
+<td>+0.051</td>
+<td><strong>-0.016</strong></td>
+</tr>
+<tr>
+<td>div_rsi</td>
+<td>1740 / +0.036</td>
+<td>+0.030</td>
+<td><strong>+0.006</strong></td>
+<td>1920 / -0.011</td>
+<td>+0.058</td>
+<td><strong>-0.070</strong></td>
+</tr>
+<tr>
+<td>ma_touch20</td>
+<td>977 / +0.036</td>
+<td>+0.031</td>
+<td><strong>+0.004</strong></td>
+<td>1054 / +0.007</td>
+<td>+0.043</td>
+<td><strong>-0.036</strong></td>
+</tr>
+<tr>
+<td>fib_time</td>
+<td>2146 / +0.035</td>
+<td>+0.031</td>
+<td><strong>+0.004</strong></td>
+<td>2366 / +0.034</td>
+<td>+0.038</td>
+<td><strong>-0.005</strong></td>
+</tr>
+<tr>
+<td>vol_dryup</td>
+<td>3359 / +0.034</td>
+<td>+0.030</td>
+<td><strong>+0.003</strong></td>
+<td>3667 / +0.058</td>
+<td>+0.004</td>
+<td><strong>+0.054</strong></td>
+</tr>
+<tr>
+<td>div_any</td>
+<td>2720 / +0.032</td>
+<td>+0.032</td>
+<td><strong>+0.001</strong></td>
+<td>2999 / +0.017</td>
+<td>+0.055</td>
+<td><strong>-0.038</strong></td>
+</tr>
+<tr>
+<td>div_macd_hidden</td>
+<td>2172 / +0.030</td>
+<td>+0.034</td>
+<td><strong>-0.004</strong></td>
+<td>2373 / +0.023</td>
+<td>+0.046</td>
+<td><strong>-0.023</strong></td>
+</tr>
+<tr>
+<td>w2_lt_w1_time</td>
+<td>3423 / +0.030</td>
+<td>+0.035</td>
+<td><strong>-0.004</strong></td>
+<td>3603 / +0.014</td>
+<td>+0.070</td>
+<td><strong>-0.056</strong></td>
+</tr>
+<tr>
+<td>d_above200</td>
+<td>4607 / +0.031</td>
+<td>+0.037</td>
+<td><strong>-0.007</strong></td>
+<td>4408 / +0.037</td>
+<td>+0.037</td>
+<td><strong>+0.000</strong></td>
+</tr>
+<tr>
+<td>ma_touch50</td>
+<td>819 / +0.026</td>
+<td>+0.033</td>
+<td><strong>-0.007</strong></td>
+<td>923 / -0.021</td>
+<td>+0.047</td>
+<td><strong>-0.068</strong></td>
+</tr>
+<tr>
+<td>macd_hist_rising</td>
+<td>5540 / +0.032</td>
+<td>+0.045</td>
+<td><strong>-0.013</strong></td>
+<td>5827 / +0.037</td>
+<td>+0.024</td>
+<td><strong>+0.013</strong></td>
+</tr>
+<tr>
+<td>above_ema50</td>
+<td>4933 / +0.030</td>
+<td>+0.045</td>
+<td><strong>-0.015</strong></td>
+<td>5102 / +0.037</td>
+<td>+0.036</td>
+<td><strong>+0.001</strong></td>
+</tr>
+<tr>
+<td>div_macd</td>
+<td>2287 / +0.022</td>
+<td>+0.039</td>
+<td><strong>-0.016</strong></td>
+<td>2550 / +0.023</td>
+<td>+0.046</td>
+<td><strong>-0.023</strong></td>
+</tr>
+<tr>
+<td>golden</td>
+<td>2110 / +0.013</td>
+<td>+0.043</td>
+<td><strong>-0.031</strong></td>
+<td>2236 / +0.040</td>
+<td>+0.034</td>
+<td><strong>+0.006</strong></td>
+</tr>
+<tr>
+<td>fib_golden</td>
+<td>1976 / +0.011</td>
+<td>+0.043</td>
+<td><strong>-0.032</strong></td>
+<td>2107 / +0.036</td>
+<td>+0.037</td>
+<td><strong>-0.000</strong></td>
+</tr>
+<tr>
+<td>avwap_hold</td>
+<td>5574 / +0.030</td>
+<td>+0.078</td>
+<td><strong>-0.047</strong></td>
+<td>5747 / +0.039</td>
+<td>-0.005</td>
+<td><strong>+0.044</strong></td>
+</tr>
+<tr>
+<td>bb_tag</td>
+<td>966 / -0.016</td>
+<td>+0.042</td>
+<td><strong>-0.058</strong></td>
+<td>880 / -0.025</td>
+<td>+0.047</td>
+<td><strong>-0.072</strong></td>
+</tr>
+<tr>
+<td>div_rsi_regular</td>
+<td>196 / -0.028</td>
+<td>+0.034</td>
+<td><strong>-0.062</strong></td>
+<td>267 / +0.007</td>
+<td>+0.038</td>
+<td><strong>-0.031</strong></td>
+</tr>
+<tr>
+<td>div_macd_regular</td>
+<td>189 / -0.045</td>
+<td>+0.035</td>
+<td><strong>-0.080</strong></td>
+<td>277 / +0.018</td>
+<td>+0.038</td>
+<td><strong>-0.020</strong></td>
+</tr>
+<tr>
+<td>double_extreme</td>
+<td>148 / -0.086</td>
+<td>+0.035</td>
+<td><strong>-0.121</strong></td>
+<td>268 / +0.023</td>
+<td>+0.037</td>
+<td><strong>-0.014</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="put-setups-grandchild-wave-b-c">PUT setups (grandchild wave B → C)</h4>
+<table>
+<thead>
+<tr>
+<th>group</th>
+<th>DISC n</th>
+<th>DISC ret2</th>
+<th>DISC p0.5</th>
+<th>VALID n</th>
+<th>VALID ret2</th>
+<th>VALID p0.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all</td>
+<td>5490</td>
+<td>-0.075</td>
+<td>42%</td>
+<td>6057</td>
+<td>-0.059</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>tag W2</td>
+<td>3551</td>
+<td>-0.076</td>
+<td>43%</td>
+<td>3964</td>
+<td>-0.063</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>tag B</td>
+<td>1939</td>
+<td>-0.072</td>
+<td>41%</td>
+<td>2093</td>
+<td>-0.052</td>
+<td>42%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Context (daily / hourly wave labels):</strong></p>
+<table>
+<thead>
+<tr>
+<th>context</th>
+<th>DISC n</th>
+<th>DISC ret2</th>
+<th>DISC p0.5</th>
+<th>VALID n</th>
+<th>VALID ret2</th>
+<th>VALID p0.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>daily down wave 1</td>
+<td>747</td>
+<td>-0.116</td>
+<td>42%</td>
+<td>665</td>
+<td>-0.027</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>daily down wave 2</td>
+<td>624</td>
+<td>-0.084</td>
+<td>43%</td>
+<td>622</td>
+<td>-0.002</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>daily down wave 3</td>
+<td>482</td>
+<td>-0.058</td>
+<td>43%</td>
+<td>463</td>
+<td>-0.057</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>daily down wave 4</td>
+<td>260</td>
+<td>-0.075</td>
+<td>41%</td>
+<td>290</td>
+<td>-0.054</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>daily down wave 5</td>
+<td>205</td>
+<td>+0.019</td>
+<td>43%</td>
+<td>252</td>
+<td>-0.007</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>daily down wave B</td>
+<td>82</td>
+<td>-0.179</td>
+<td>38%</td>
+<td>161</td>
+<td>+0.008</td>
+<td>42%</td>
+</tr>
+<tr>
+<td>daily none wave —</td>
+<td>1482</td>
+<td>-0.040</td>
+<td>43%</td>
+<td>1605</td>
+<td>-0.074</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>daily up wave 1</td>
+<td>122</td>
+<td>-0.180</td>
+<td>30%</td>
+<td>245</td>
+<td>+0.015</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>daily up wave 2</td>
+<td>281</td>
+<td>-0.141</td>
+<td>38%</td>
+<td>360</td>
+<td>-0.130</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>daily up wave 3</td>
+<td>214</td>
+<td>-0.157</td>
+<td>44%</td>
+<td>276</td>
+<td>-0.068</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>daily up wave 4</td>
+<td>254</td>
+<td>-0.072</td>
+<td>44%</td>
+<td>322</td>
+<td>-0.104</td>
+<td>39%</td>
+</tr>
+<tr>
+<td>daily up wave 5</td>
+<td>203</td>
+<td>+0.003</td>
+<td>42%</td>
+<td>224</td>
+<td>-0.018</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>daily up wave A</td>
+<td>130</td>
+<td>-0.033</td>
+<td>45%</td>
+<td>76</td>
+<td>+0.042</td>
+<td>51%</td>
+</tr>
+<tr>
+<td>daily up wave B</td>
+<td>142</td>
+<td>-0.088</td>
+<td>41%</td>
+<td>126</td>
+<td>-0.123</td>
+<td>39%</td>
+</tr>
+<tr>
+<td>daily up wave C</td>
+<td>161</td>
+<td>-0.073</td>
+<td>43%</td>
+<td>156</td>
+<td>-0.220</td>
+<td>38%</td>
+</tr>
+<tr>
+<td>hourly down wave 1</td>
+<td>606</td>
+<td>+0.002</td>
+<td>49%</td>
+<td>582</td>
+<td>-0.001</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly down wave 2</td>
+<td>665</td>
+<td>-0.030</td>
+<td>42%</td>
+<td>709</td>
+<td>-0.081</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>hourly down wave 3</td>
+<td>383</td>
+<td>-0.054</td>
+<td>42%</td>
+<td>378</td>
+<td>-0.112</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly down wave 4</td>
+<td>348</td>
+<td>-0.154</td>
+<td>37%</td>
+<td>368</td>
+<td>-0.114</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly down wave 5</td>
+<td>207</td>
+<td>-0.060</td>
+<td>43%</td>
+<td>194</td>
+<td>-0.063</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>hourly down wave A</td>
+<td>73</td>
+<td>-0.116</td>
+<td>40%</td>
+<td>112</td>
+<td>+0.057</td>
+<td>54%</td>
+</tr>
+<tr>
+<td>hourly down wave B</td>
+<td>81</td>
+<td>+0.057</td>
+<td>49%</td>
+<td>119</td>
+<td>-0.046</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>hourly down wave C</td>
+<td>104</td>
+<td>-0.137</td>
+<td>40%</td>
+<td>137</td>
+<td>+0.025</td>
+<td>52%</td>
+</tr>
+<tr>
+<td>hourly none wave —</td>
+<td>1318</td>
+<td>-0.093</td>
+<td>41%</td>
+<td>1364</td>
+<td>-0.039</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>hourly up wave 1</td>
+<td>345</td>
+<td>-0.118</td>
+<td>46%</td>
+<td>438</td>
+<td>-0.104</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>hourly up wave 2</td>
+<td>293</td>
+<td>-0.014</td>
+<td>50%</td>
+<td>386</td>
+<td>-0.078</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>hourly up wave 3</td>
+<td>306</td>
+<td>-0.140</td>
+<td>40%</td>
+<td>386</td>
+<td>-0.034</td>
+<td>41%</td>
+</tr>
+<tr>
+<td>hourly up wave 4</td>
+<td>189</td>
+<td>-0.110</td>
+<td>39%</td>
+<td>256</td>
+<td>-0.081</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>hourly up wave 5</td>
+<td>228</td>
+<td>-0.071</td>
+<td>40%</td>
+<td>238</td>
+<td>-0.010</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly up wave A</td>
+<td>92</td>
+<td>-0.055</td>
+<td>35%</td>
+<td>89</td>
+<td>-0.074</td>
+<td>36%</td>
+</tr>
+<tr>
+<td>hourly up wave B</td>
+<td>136</td>
+<td>-0.156</td>
+<td>24%</td>
+<td>176</td>
+<td>-0.130</td>
+<td>39%</td>
+</tr>
+<tr>
+<td>hourly up wave C</td>
+<td>116</td>
+<td>-0.108</td>
+<td>37%</td>
+<td>125</td>
+<td>-0.095</td>
+<td>38%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Single features (True vs False):</strong></p>
+<table>
+<thead>
+<tr>
+<th>feature</th>
+<th>DISC True n / ret2</th>
+<th>DISC False ret2</th>
+<th>lift DISC</th>
+<th>VALID True n / ret2</th>
+<th>VALID False ret2</th>
+<th>lift VALID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>macd_above_signal</td>
+<td>3324 / -0.052</td>
+<td>-0.109</td>
+<td><strong>+0.057</strong></td>
+<td>3524 / -0.038</td>
+<td>-0.089</td>
+<td><strong>+0.051</strong></td>
+</tr>
+<tr>
+<td>d_up50</td>
+<td>2214 / -0.067</td>
+<td>-0.079</td>
+<td><strong>+0.012</strong></td>
+<td>2926 / -0.068</td>
+<td>-0.050</td>
+<td><strong>-0.018</strong></td>
+</tr>
+<tr>
+<td>ma_touch20</td>
+<td>990 / -0.065</td>
+<td>-0.077</td>
+<td><strong>+0.012</strong></td>
+<td>1105 / -0.088</td>
+<td>-0.052</td>
+<td><strong>-0.036</strong></td>
+</tr>
+<tr>
+<td>fib_golden</td>
+<td>1907 / -0.068</td>
+<td>-0.078</td>
+<td><strong>+0.010</strong></td>
+<td>2140 / -0.067</td>
+<td>-0.054</td>
+<td><strong>-0.013</strong></td>
+</tr>
+<tr>
+<td>golden</td>
+<td>2046 / -0.070</td>
+<td>-0.077</td>
+<td><strong>+0.007</strong></td>
+<td>2288 / -0.060</td>
+<td>-0.058</td>
+<td><strong>-0.002</strong></td>
+</tr>
+<tr>
+<td>vol_dryup</td>
+<td>3291 / -0.072</td>
+<td>-0.078</td>
+<td><strong>+0.006</strong></td>
+<td>3831 / -0.047</td>
+<td>-0.079</td>
+<td><strong>+0.032</strong></td>
+</tr>
+<tr>
+<td>div_macd_hidden</td>
+<td>2105 / -0.073</td>
+<td>-0.076</td>
+<td><strong>+0.003</strong></td>
+<td>2358 / -0.072</td>
+<td>-0.051</td>
+<td><strong>-0.021</strong></td>
+</tr>
+<tr>
+<td>div_macd</td>
+<td>2215 / -0.074</td>
+<td>-0.075</td>
+<td><strong>+0.001</strong></td>
+<td>2503 / -0.075</td>
+<td>-0.047</td>
+<td><strong>-0.028</strong></td>
+</tr>
+<tr>
+<td>d_above200</td>
+<td>1170 / -0.074</td>
+<td>-0.075</td>
+<td><strong>+0.000</strong></td>
+<td>1691 / -0.080</td>
+<td>-0.051</td>
+<td><strong>-0.030</strong></td>
+</tr>
+<tr>
+<td>w2_lt_w1_time</td>
+<td>3165 / -0.075</td>
+<td>-0.074</td>
+<td><strong>-0.002</strong></td>
+<td>3322 / -0.089</td>
+<td>-0.023</td>
+<td><strong>-0.066</strong></td>
+</tr>
+<tr>
+<td>leg1_fast</td>
+<td>4978 / -0.075</td>
+<td>-0.071</td>
+<td><strong>-0.004</strong></td>
+<td>5616 / -0.051</td>
+<td>-0.161</td>
+<td><strong>+0.110</strong></td>
+</tr>
+<tr>
+<td>ma_touch50</td>
+<td>788 / -0.078</td>
+<td>-0.074</td>
+<td><strong>-0.004</strong></td>
+<td>876 / -0.089</td>
+<td>-0.054</td>
+<td><strong>-0.035</strong></td>
+</tr>
+<tr>
+<td>bb_tag</td>
+<td>666 / -0.078</td>
+<td>-0.074</td>
+<td><strong>-0.004</strong></td>
+<td>686 / -0.035</td>
+<td>-0.062</td>
+<td><strong>+0.027</strong></td>
+</tr>
+<tr>
+<td>div_rsi_regular</td>
+<td>210 / -0.084</td>
+<td>-0.074</td>
+<td><strong>-0.010</strong></td>
+<td>281 / -0.124</td>
+<td>-0.056</td>
+<td><strong>-0.068</strong></td>
+</tr>
+<tr>
+<td>macd_zero_side</td>
+<td>3813 / -0.078</td>
+<td>-0.067</td>
+<td><strong>-0.011</strong></td>
+<td>4178 / -0.078</td>
+<td>-0.016</td>
+<td><strong>-0.062</strong></td>
+</tr>
+<tr>
+<td>fib_deep</td>
+<td>2362 / -0.086</td>
+<td>-0.066</td>
+<td><strong>-0.019</strong></td>
+<td>2568 / -0.048</td>
+<td>-0.067</td>
+<td><strong>+0.020</strong></td>
+</tr>
+<tr>
+<td>sr_prev_day</td>
+<td>273 / -0.095</td>
+<td>-0.074</td>
+<td><strong>-0.021</strong></td>
+<td>279 / +0.001</td>
+<td>-0.062</td>
+<td><strong>+0.063</strong></td>
+</tr>
+<tr>
+<td>engulf_or_hammer</td>
+<td>2797 / -0.087</td>
+<td>-0.061</td>
+<td><strong>-0.026</strong></td>
+<td>2869 / -0.047</td>
+<td>-0.070</td>
+<td><strong>+0.023</strong></td>
+</tr>
+<tr>
+<td>div_any</td>
+<td>2544 / -0.089</td>
+<td>-0.062</td>
+<td><strong>-0.026</strong></td>
+<td>2878 / -0.073</td>
+<td>-0.046</td>
+<td><strong>-0.026</strong></td>
+</tr>
+<tr>
+<td>ema50_slope</td>
+<td>3476 / -0.084</td>
+<td>-0.058</td>
+<td><strong>-0.026</strong></td>
+<td>3863 / -0.076</td>
+<td>-0.028</td>
+<td><strong>-0.048</strong></td>
+</tr>
+<tr>
+<td>double_extreme</td>
+<td>175 / -0.102</td>
+<td>-0.074</td>
+<td><strong>-0.028</strong></td>
+<td>227 / -0.108</td>
+<td>-0.057</td>
+<td><strong>-0.051</strong></td>
+</tr>
+<tr>
+<td>fib_time</td>
+<td>2057 / -0.093</td>
+<td>-0.064</td>
+<td><strong>-0.029</strong></td>
+<td>2269 / -0.059</td>
+<td>-0.059</td>
+<td><strong>-0.000</strong></td>
+</tr>
+<tr>
+<td>above_ema50</td>
+<td>4345 / -0.082</td>
+<td>-0.048</td>
+<td><strong>-0.034</strong></td>
+<td>4825 / -0.070</td>
+<td>-0.015</td>
+<td><strong>-0.056</strong></td>
+</tr>
+<tr>
+<td>div_rsi</td>
+<td>1476 / -0.101</td>
+<td>-0.065</td>
+<td><strong>-0.036</strong></td>
+<td>1746 / -0.075</td>
+<td>-0.052</td>
+<td><strong>-0.023</strong></td>
+</tr>
+<tr>
+<td>div_rsi_hidden</td>
+<td>1291 / -0.104</td>
+<td>-0.066</td>
+<td><strong>-0.038</strong></td>
+<td>1515 / -0.066</td>
+<td>-0.057</td>
+<td><strong>-0.009</strong></td>
+</tr>
+<tr>
+<td>avwap_hold</td>
+<td>5159 / -0.077</td>
+<td>-0.036</td>
+<td><strong>-0.042</strong></td>
+<td>5654 / -0.059</td>
+<td>-0.062</td>
+<td><strong>+0.003</strong></td>
+</tr>
+<tr>
+<td>ema_stack</td>
+<td>3269 / -0.092</td>
+<td>-0.049</td>
+<td><strong>-0.043</strong></td>
+<td>3708 / -0.084</td>
+<td>-0.020</td>
+<td><strong>-0.064</strong></td>
+</tr>
+<tr>
+<td>rs</td>
+<td>3327 / -0.093</td>
+<td>-0.046</td>
+<td><strong>-0.047</strong></td>
+<td>3788 / -0.075</td>
+<td>-0.032</td>
+<td><strong>-0.043</strong></td>
+</tr>
+<tr>
+<td>sr_polarity</td>
+<td>4178 / -0.087</td>
+<td>-0.036</td>
+<td><strong>-0.050</strong></td>
+<td>5193 / -0.057</td>
+<td>-0.069</td>
+<td><strong>+0.012</strong></td>
+</tr>
+<tr>
+<td>div_macd_regular</td>
+<td>183 / -0.135</td>
+<td>-0.072</td>
+<td><strong>-0.063</strong></td>
+<td>254 / -0.130</td>
+<td>-0.056</td>
+<td><strong>-0.075</strong></td>
+</tr>
+<tr>
+<td>above_e200</td>
+<td>2900 / -0.108</td>
+<td>-0.037</td>
+<td><strong>-0.071</strong></td>
+<td>3482 / -0.076</td>
+<td>-0.036</td>
+<td><strong>-0.040</strong></td>
+</tr>
+<tr>
+<td>trend200</td>
+<td>2911 / -0.109</td>
+<td>-0.036</td>
+<td><strong>-0.073</strong></td>
+<td>3472 / -0.068</td>
+<td>-0.046</td>
+<td><strong>-0.023</strong></td>
+</tr>
+<tr>
+<td>macd_hist_rising</td>
+<td>5251 / -0.078</td>
+<td>+0.004</td>
+<td><strong>-0.083</strong></td>
+<td>5788 / -0.058</td>
+<td>-0.086</td>
+<td><strong>+0.028</strong></td>
+</tr>
+<tr>
+<td>e50_gt_e200</td>
+<td>2245 / -0.126</td>
+<td>-0.039</td>
+<td><strong>-0.086</strong></td>
+<td>2861 / -0.084</td>
+<td>-0.036</td>
+<td><strong>-0.048</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="wave_lift_5md">WAVE_LIFT_5.md</h2>
+<div class="raw">
+<p>Outcome: close of day 2 after entry (ret2, daily ATR, direction-adjusted) and P(+0.5 ATR before −1 ATR within 2 days).</p>
+<h4 id="call-setups-grandchild-wave-2-bull-correction_1">CALL setups (grandchild wave 2 / bull correction)</h4>
+<table>
+<thead>
+<tr>
+<th>group</th>
+<th>DISC n</th>
+<th>DISC ret2</th>
+<th>DISC p0.5</th>
+<th>VALID n</th>
+<th>VALID ret2</th>
+<th>VALID p0.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all</td>
+<td>15878</td>
+<td>+0.047</td>
+<td>47%</td>
+<td>19388</td>
+<td>+0.033</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>tag W2</td>
+<td>10317</td>
+<td>+0.040</td>
+<td>46%</td>
+<td>12862</td>
+<td>+0.030</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>tag B</td>
+<td>5561</td>
+<td>+0.060</td>
+<td>47%</td>
+<td>6526</td>
+<td>+0.039</td>
+<td>46%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Context (daily / hourly wave labels):</strong></p>
+<table>
+<thead>
+<tr>
+<th>context</th>
+<th>DISC n</th>
+<th>DISC ret2</th>
+<th>DISC p0.5</th>
+<th>VALID n</th>
+<th>VALID ret2</th>
+<th>VALID p0.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>daily down wave 1</td>
+<td>1915</td>
+<td>+0.062</td>
+<td>49%</td>
+<td>2076</td>
+<td>+0.026</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>daily down wave 2</td>
+<td>1816</td>
+<td>+0.092</td>
+<td>49%</td>
+<td>1935</td>
+<td>+0.009</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>daily down wave 3</td>
+<td>1308</td>
+<td>+0.041</td>
+<td>49%</td>
+<td>1452</td>
+<td>+0.051</td>
+<td>48%</td>
+</tr>
+<tr>
+<td>daily down wave 4</td>
+<td>737</td>
+<td>+0.020</td>
+<td>47%</td>
+<td>950</td>
+<td>+0.066</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>daily down wave 5</td>
+<td>610</td>
+<td>-0.046</td>
+<td>41%</td>
+<td>745</td>
+<td>+0.040</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>daily down wave A</td>
+<td>136</td>
+<td>+0.162</td>
+<td>57%</td>
+<td>287</td>
+<td>+0.101</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>daily down wave B</td>
+<td>232</td>
+<td>+0.187</td>
+<td>54%</td>
+<td>480</td>
+<td>-0.017</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>daily down wave C</td>
+<td>118</td>
+<td>-0.130</td>
+<td>35%</td>
+<td>414</td>
+<td>+0.119</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>daily none wave —</td>
+<td>4459</td>
+<td>+0.027</td>
+<td>46%</td>
+<td>5153</td>
+<td>+0.027</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>daily up wave 1</td>
+<td>401</td>
+<td>+0.102</td>
+<td>47%</td>
+<td>797</td>
+<td>+0.052</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>daily up wave 2</td>
+<td>875</td>
+<td>+0.086</td>
+<td>43%</td>
+<td>1162</td>
+<td>+0.029</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>daily up wave 3</td>
+<td>645</td>
+<td>-0.037</td>
+<td>44%</td>
+<td>995</td>
+<td>+0.059</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>daily up wave 4</td>
+<td>712</td>
+<td>+0.100</td>
+<td>42%</td>
+<td>936</td>
+<td>+0.004</td>
+<td>41%</td>
+</tr>
+<tr>
+<td>daily up wave 5</td>
+<td>572</td>
+<td>+0.020</td>
+<td>42%</td>
+<td>661</td>
+<td>+0.003</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>daily up wave A</td>
+<td>417</td>
+<td>+0.009</td>
+<td>53%</td>
+<td>251</td>
+<td>+0.054</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>daily up wave B</td>
+<td>461</td>
+<td>+0.179</td>
+<td>50%</td>
+<td>488</td>
+<td>+0.003</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>daily up wave C</td>
+<td>464</td>
+<td>-0.030</td>
+<td>43%</td>
+<td>606</td>
+<td>+0.070</td>
+<td>48%</td>
+</tr>
+<tr>
+<td>hourly down wave 1</td>
+<td>1505</td>
+<td>+0.007</td>
+<td>42%</td>
+<td>1670</td>
+<td>-0.008</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly down wave 2</td>
+<td>1524</td>
+<td>-0.023</td>
+<td>43%</td>
+<td>1898</td>
+<td>+0.067</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>hourly down wave 3</td>
+<td>1042</td>
+<td>+0.104</td>
+<td>47%</td>
+<td>1158</td>
+<td>+0.035</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>hourly down wave 4</td>
+<td>800</td>
+<td>+0.017</td>
+<td>49%</td>
+<td>886</td>
+<td>+0.087</td>
+<td>51%</td>
+</tr>
+<tr>
+<td>hourly down wave 5</td>
+<td>520</td>
+<td>-0.032</td>
+<td>46%</td>
+<td>572</td>
+<td>-0.032</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>hourly down wave A</td>
+<td>224</td>
+<td>+0.033</td>
+<td>49%</td>
+<td>304</td>
+<td>+0.005</td>
+<td>48%</td>
+</tr>
+<tr>
+<td>hourly down wave B</td>
+<td>262</td>
+<td>+0.089</td>
+<td>53%</td>
+<td>326</td>
+<td>+0.074</td>
+<td>48%</td>
+</tr>
+<tr>
+<td>hourly down wave C</td>
+<td>294</td>
+<td>+0.087</td>
+<td>48%</td>
+<td>353</td>
+<td>+0.089</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>hourly none wave —</td>
+<td>4644</td>
+<td>+0.064</td>
+<td>46%</td>
+<td>5127</td>
+<td>+0.045</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>hourly up wave 1</td>
+<td>890</td>
+<td>-0.023</td>
+<td>53%</td>
+<td>1434</td>
+<td>+0.046</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>hourly up wave 2</td>
+<td>950</td>
+<td>+0.077</td>
+<td>51%</td>
+<td>1262</td>
+<td>-0.012</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly up wave 3</td>
+<td>914</td>
+<td>+0.095</td>
+<td>53%</td>
+<td>1191</td>
+<td>+0.019</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>hourly up wave 4</td>
+<td>621</td>
+<td>+0.091</td>
+<td>45%</td>
+<td>1062</td>
+<td>-0.051</td>
+<td>41%</td>
+</tr>
+<tr>
+<td>hourly up wave 5</td>
+<td>577</td>
+<td>+0.111</td>
+<td>47%</td>
+<td>802</td>
+<td>+0.086</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>hourly up wave A</td>
+<td>299</td>
+<td>+0.105</td>
+<td>42%</td>
+<td>396</td>
+<td>+0.050</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>hourly up wave B</td>
+<td>422</td>
+<td>+0.016</td>
+<td>45%</td>
+<td>497</td>
+<td>+0.042</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>hourly up wave C</td>
+<td>390</td>
+<td>+0.037</td>
+<td>44%</td>
+<td>450</td>
+<td>+0.039</td>
+<td>46%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Single features (True vs False):</strong></p>
+<table>
+<thead>
+<tr>
+<th>feature</th>
+<th>DISC True n / ret2</th>
+<th>DISC False ret2</th>
+<th>lift DISC</th>
+<th>VALID True n / ret2</th>
+<th>VALID False ret2</th>
+<th>lift VALID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sr_prev_day</td>
+<td>326 / +0.095</td>
+<td>+0.046</td>
+<td><strong>+0.050</strong></td>
+<td>459 / +0.044</td>
+<td>+0.033</td>
+<td><strong>+0.011</strong></td>
+</tr>
+<tr>
+<td>fib_deep</td>
+<td>6600 / +0.066</td>
+<td>+0.034</td>
+<td><strong>+0.032</strong></td>
+<td>8220 / +0.036</td>
+<td>+0.031</td>
+<td><strong>+0.005</strong></td>
+</tr>
+<tr>
+<td>above_e200</td>
+<td>11075 / +0.056</td>
+<td>+0.026</td>
+<td><strong>+0.030</strong></td>
+<td>13138 / +0.027</td>
+<td>+0.046</td>
+<td><strong>-0.019</strong></td>
+</tr>
+<tr>
+<td>double_extreme</td>
+<td>444 / +0.070</td>
+<td>+0.046</td>
+<td><strong>+0.024</strong></td>
+<td>642 / +0.057</td>
+<td>+0.033</td>
+<td><strong>+0.024</strong></td>
+</tr>
+<tr>
+<td>d_above200</td>
+<td>12517 / +0.051</td>
+<td>+0.030</td>
+<td><strong>+0.022</strong></td>
+<td>13885 / +0.031</td>
+<td>+0.038</td>
+<td><strong>-0.007</strong></td>
+</tr>
+<tr>
+<td>trend200</td>
+<td>10568 / +0.054</td>
+<td>+0.033</td>
+<td><strong>+0.021</strong></td>
+<td>12673 / +0.023</td>
+<td>+0.052</td>
+<td><strong>-0.029</strong></td>
+</tr>
+<tr>
+<td>d_up50</td>
+<td>9563 / +0.054</td>
+<td>+0.036</td>
+<td><strong>+0.018</strong></td>
+<td>10158 / +0.034</td>
+<td>+0.032</td>
+<td><strong>+0.002</strong></td>
+</tr>
+<tr>
+<td>e50_gt_e200</td>
+<td>9685 / +0.053</td>
+<td>+0.037</td>
+<td><strong>+0.016</strong></td>
+<td>11465 / +0.023</td>
+<td>+0.048</td>
+<td><strong>-0.024</strong></td>
+</tr>
+<tr>
+<td>macd_hist_rising</td>
+<td>15511 / +0.047</td>
+<td>+0.033</td>
+<td><strong>+0.015</strong></td>
+<td>18912 / +0.033</td>
+<td>+0.048</td>
+<td><strong>-0.015</strong></td>
+</tr>
+<tr>
+<td>golden</td>
+<td>5917 / +0.053</td>
+<td>+0.043</td>
+<td><strong>+0.010</strong></td>
+<td>7123 / +0.017</td>
+<td>+0.043</td>
+<td><strong>-0.025</strong></td>
+</tr>
+<tr>
+<td>macd_above_signal</td>
+<td>8711 / +0.051</td>
+<td>+0.043</td>
+<td><strong>+0.008</strong></td>
+<td>10626 / +0.027</td>
+<td>+0.041</td>
+<td><strong>-0.014</strong></td>
+</tr>
+<tr>
+<td>w2_lt_w1_time</td>
+<td>10527 / +0.049</td>
+<td>+0.043</td>
+<td><strong>+0.006</strong></td>
+<td>13084 / +0.026</td>
+<td>+0.048</td>
+<td><strong>-0.022</strong></td>
+</tr>
+<tr>
+<td>fib_golden</td>
+<td>5544 / +0.049</td>
+<td>+0.046</td>
+<td><strong>+0.003</strong></td>
+<td>6664 / +0.019</td>
+<td>+0.041</td>
+<td><strong>-0.022</strong></td>
+</tr>
+<tr>
+<td>div_macd_hidden</td>
+<td>5828 / +0.048</td>
+<td>+0.046</td>
+<td><strong>+0.002</strong></td>
+<td>7072 / +0.036</td>
+<td>+0.032</td>
+<td><strong>+0.004</strong></td>
+</tr>
+<tr>
+<td>div_macd</td>
+<td>6168 / +0.048</td>
+<td>+0.046</td>
+<td><strong>+0.001</strong></td>
+<td>7448 / +0.036</td>
+<td>+0.032</td>
+<td><strong>+0.005</strong></td>
+</tr>
+<tr>
+<td>avwap_hold</td>
+<td>15039 / +0.047</td>
+<td>+0.046</td>
+<td><strong>+0.001</strong></td>
+<td>18371 / +0.030</td>
+<td>+0.085</td>
+<td><strong>-0.055</strong></td>
+</tr>
+<tr>
+<td>div_any</td>
+<td>7445 / +0.045</td>
+<td>+0.048</td>
+<td><strong>-0.003</strong></td>
+<td>9116 / +0.036</td>
+<td>+0.031</td>
+<td><strong>+0.005</strong></td>
+</tr>
+<tr>
+<td>rs</td>
+<td>10733 / +0.046</td>
+<td>+0.049</td>
+<td><strong>-0.003</strong></td>
+<td>12900 / +0.034</td>
+<td>+0.032</td>
+<td><strong>+0.001</strong></td>
+</tr>
+<tr>
+<td>fib_time</td>
+<td>6451 / +0.040</td>
+<td>+0.052</td>
+<td><strong>-0.012</strong></td>
+<td>8201 / +0.026</td>
+<td>+0.039</td>
+<td><strong>-0.013</strong></td>
+</tr>
+<tr>
+<td>engulf_or_hammer</td>
+<td>7855 / +0.040</td>
+<td>+0.054</td>
+<td><strong>-0.014</strong></td>
+<td>8941 / +0.037</td>
+<td>+0.030</td>
+<td><strong>+0.008</strong></td>
+</tr>
+<tr>
+<td>above_ema50</td>
+<td>13405 / +0.045</td>
+<td>+0.059</td>
+<td><strong>-0.015</strong></td>
+<td>16027 / +0.030</td>
+<td>+0.047</td>
+<td><strong>-0.017</strong></td>
+</tr>
+<tr>
+<td>ema_stack</td>
+<td>10586 / +0.041</td>
+<td>+0.058</td>
+<td><strong>-0.017</strong></td>
+<td>12773 / +0.038</td>
+<td>+0.025</td>
+<td><strong>+0.012</strong></td>
+</tr>
+<tr>
+<td>ema50_slope</td>
+<td>10752 / +0.041</td>
+<td>+0.059</td>
+<td><strong>-0.018</strong></td>
+<td>13195 / +0.037</td>
+<td>+0.025</td>
+<td><strong>+0.012</strong></td>
+</tr>
+<tr>
+<td>div_macd_regular</td>
+<td>664 / +0.029</td>
+<td>+0.048</td>
+<td><strong>-0.019</strong></td>
+<td>737 / +0.011</td>
+<td>+0.034</td>
+<td><strong>-0.023</strong></td>
+</tr>
+<tr>
+<td>macd_zero_side</td>
+<td>11130 / +0.041</td>
+<td>+0.060</td>
+<td><strong>-0.019</strong></td>
+<td>13855 / +0.034</td>
+<td>+0.032</td>
+<td><strong>+0.001</strong></td>
+</tr>
+<tr>
+<td>div_rsi_regular</td>
+<td>653 / +0.025</td>
+<td>+0.048</td>
+<td><strong>-0.023</strong></td>
+<td>856 / +0.069</td>
+<td>+0.032</td>
+<td><strong>+0.037</strong></td>
+</tr>
+<tr>
+<td>sr_polarity</td>
+<td>13446 / +0.043</td>
+<td>+0.067</td>
+<td><strong>-0.024</strong></td>
+<td>17803 / +0.036</td>
+<td>-0.000</td>
+<td><strong>+0.036</strong></td>
+</tr>
+<tr>
+<td>bb_tag</td>
+<td>2689 / +0.026</td>
+<td>+0.051</td>
+<td><strong>-0.025</strong></td>
+<td>2566 / +0.054</td>
+<td>+0.030</td>
+<td><strong>+0.023</strong></td>
+</tr>
+<tr>
+<td>ma_touch50</td>
+<td>2289 / +0.024</td>
+<td>+0.051</td>
+<td><strong>-0.027</strong></td>
+<td>2792 / +0.045</td>
+<td>+0.031</td>
+<td><strong>+0.014</strong></td>
+</tr>
+<tr>
+<td>div_rsi</td>
+<td>4842 / +0.028</td>
+<td>+0.055</td>
+<td><strong>-0.028</strong></td>
+<td>5961 / +0.043</td>
+<td>+0.029</td>
+<td><strong>+0.014</strong></td>
+</tr>
+<tr>
+<td>div_rsi_hidden</td>
+<td>4323 / +0.026</td>
+<td>+0.055</td>
+<td><strong>-0.029</strong></td>
+<td>5283 / +0.039</td>
+<td>+0.031</td>
+<td><strong>+0.008</strong></td>
+</tr>
+<tr>
+<td>vol_dryup</td>
+<td>8028 / +0.031</td>
+<td>+0.063</td>
+<td><strong>-0.032</strong></td>
+<td>9232 / +0.042</td>
+<td>+0.025</td>
+<td><strong>+0.017</strong></td>
+</tr>
+<tr>
+<td>ma_touch20</td>
+<td>2502 / +0.018</td>
+<td>+0.052</td>
+<td><strong>-0.035</strong></td>
+<td>3239 / +0.003</td>
+<td>+0.039</td>
+<td><strong>-0.036</strong></td>
+</tr>
+<tr>
+<td>leg1_fast</td>
+<td>13834 / +0.042</td>
+<td>+0.083</td>
+<td><strong>-0.041</strong></td>
+<td>17864 / +0.031</td>
+<td>+0.061</td>
+<td><strong>-0.030</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="put-setups-grandchild-wave-b-c_1">PUT setups (grandchild wave B → C)</h4>
+<table>
+<thead>
+<tr>
+<th>group</th>
+<th>DISC n</th>
+<th>DISC ret2</th>
+<th>DISC p0.5</th>
+<th>VALID n</th>
+<th>VALID ret2</th>
+<th>VALID p0.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all</td>
+<td>15654</td>
+<td>-0.057</td>
+<td>43%</td>
+<td>18349</td>
+<td>-0.056</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>tag W2</td>
+<td>10047</td>
+<td>-0.051</td>
+<td>44%</td>
+<td>12043</td>
+<td>-0.055</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>tag B</td>
+<td>5607</td>
+<td>-0.067</td>
+<td>41%</td>
+<td>6306</td>
+<td>-0.059</td>
+<td>42%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Context (daily / hourly wave labels):</strong></p>
+<table>
+<thead>
+<tr>
+<th>context</th>
+<th>DISC n</th>
+<th>DISC ret2</th>
+<th>DISC p0.5</th>
+<th>VALID n</th>
+<th>VALID ret2</th>
+<th>VALID p0.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>daily down wave 1</td>
+<td>1993</td>
+<td>-0.039</td>
+<td>46%</td>
+<td>1831</td>
+<td>-0.090</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>daily down wave 2</td>
+<td>1764</td>
+<td>-0.082</td>
+<td>42%</td>
+<td>1852</td>
+<td>-0.010</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>daily down wave 3</td>
+<td>1319</td>
+<td>-0.023</td>
+<td>42%</td>
+<td>1413</td>
+<td>-0.082</td>
+<td>40%</td>
+</tr>
+<tr>
+<td>daily down wave 4</td>
+<td>648</td>
+<td>-0.093</td>
+<td>41%</td>
+<td>909</td>
+<td>-0.051</td>
+<td>42%</td>
+</tr>
+<tr>
+<td>daily down wave 5</td>
+<td>575</td>
+<td>-0.025</td>
+<td>36%</td>
+<td>785</td>
+<td>-0.041</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>daily down wave A</td>
+<td>131</td>
+<td>-0.177</td>
+<td>47%</td>
+<td>263</td>
+<td>-0.146</td>
+<td>39%</td>
+</tr>
+<tr>
+<td>daily down wave B</td>
+<td>226</td>
+<td>-0.090</td>
+<td>42%</td>
+<td>471</td>
+<td>-0.067</td>
+<td>38%</td>
+</tr>
+<tr>
+<td>daily down wave C</td>
+<td>144</td>
+<td>-0.003</td>
+<td>38%</td>
+<td>343</td>
+<td>-0.076</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>daily none wave —</td>
+<td>4394</td>
+<td>-0.040</td>
+<td>45%</td>
+<td>4792</td>
+<td>-0.066</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>daily up wave 1</td>
+<td>366</td>
+<td>-0.135</td>
+<td>37%</td>
+<td>730</td>
+<td>-0.059</td>
+<td>39%</td>
+</tr>
+<tr>
+<td>daily up wave 2</td>
+<td>829</td>
+<td>-0.105</td>
+<td>39%</td>
+<td>1177</td>
+<td>-0.021</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>daily up wave 3</td>
+<td>698</td>
+<td>-0.029</td>
+<td>43%</td>
+<td>968</td>
+<td>-0.074</td>
+<td>41%</td>
+</tr>
+<tr>
+<td>daily up wave 4</td>
+<td>684</td>
+<td>-0.085</td>
+<td>38%</td>
+<td>871</td>
+<td>+0.040</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>daily up wave 5</td>
+<td>610</td>
+<td>-0.054</td>
+<td>38%</td>
+<td>686</td>
+<td>-0.024</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>daily up wave A</td>
+<td>364</td>
+<td>-0.041</td>
+<td>49%</td>
+<td>256</td>
+<td>+0.019</td>
+<td>48%</td>
+</tr>
+<tr>
+<td>daily up wave B</td>
+<td>452</td>
+<td>-0.144</td>
+<td>39%</td>
+<td>438</td>
+<td>-0.058</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>daily up wave C</td>
+<td>457</td>
+<td>-0.034</td>
+<td>42%</td>
+<td>564</td>
+<td>-0.176</td>
+<td>41%</td>
+</tr>
+<tr>
+<td>hourly down wave 1</td>
+<td>1877</td>
+<td>-0.028</td>
+<td>44%</td>
+<td>2002</td>
+<td>-0.053</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly down wave 2</td>
+<td>1482</td>
+<td>-0.014</td>
+<td>43%</td>
+<td>1614</td>
+<td>-0.063</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>hourly down wave 3</td>
+<td>1215</td>
+<td>-0.053</td>
+<td>42%</td>
+<td>1307</td>
+<td>-0.116</td>
+<td>39%</td>
+</tr>
+<tr>
+<td>hourly down wave 4</td>
+<td>688</td>
+<td>-0.042</td>
+<td>42%</td>
+<td>777</td>
+<td>-0.105</td>
+<td>39%</td>
+</tr>
+<tr>
+<td>hourly down wave 5</td>
+<td>603</td>
+<td>-0.108</td>
+<td>40%</td>
+<td>621</td>
+<td>+0.039</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>hourly down wave A</td>
+<td>192</td>
+<td>-0.123</td>
+<td>54%</td>
+<td>271</td>
+<td>-0.070</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>hourly down wave B</td>
+<td>279</td>
+<td>+0.103</td>
+<td>50%</td>
+<td>397</td>
+<td>-0.025</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>hourly down wave C</td>
+<td>244</td>
+<td>-0.155</td>
+<td>45%</td>
+<td>350</td>
+<td>-0.067</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>hourly none wave —</td>
+<td>4311</td>
+<td>-0.081</td>
+<td>41%</td>
+<td>4776</td>
+<td>-0.047</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>hourly up wave 1</td>
+<td>731</td>
+<td>-0.069</td>
+<td>47%</td>
+<td>1030</td>
+<td>-0.032</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly up wave 2</td>
+<td>1037</td>
+<td>+0.016</td>
+<td>51%</td>
+<td>1333</td>
+<td>-0.102</td>
+<td>42%</td>
+</tr>
+<tr>
+<td>hourly up wave 3</td>
+<td>740</td>
+<td>-0.111</td>
+<td>40%</td>
+<td>967</td>
+<td>-0.022</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>hourly up wave 4</td>
+<td>683</td>
+<td>-0.099</td>
+<td>40%</td>
+<td>989</td>
+<td>+0.009</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>hourly up wave 5</td>
+<td>493</td>
+<td>-0.101</td>
+<td>39%</td>
+<td>643</td>
+<td>-0.062</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>hourly up wave A</td>
+<td>292</td>
+<td>-0.071</td>
+<td>41%</td>
+<td>374</td>
+<td>-0.094</td>
+<td>36%</td>
+</tr>
+<tr>
+<td>hourly up wave B</td>
+<td>369</td>
+<td>-0.047</td>
+<td>40%</td>
+<td>434</td>
+<td>-0.149</td>
+<td>39%</td>
+</tr>
+<tr>
+<td>hourly up wave C</td>
+<td>418</td>
+<td>-0.001</td>
+<td>42%</td>
+<td>464</td>
+<td>-0.039</td>
+<td>43%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Single features (True vs False):</strong></p>
+<table>
+<thead>
+<tr>
+<th>feature</th>
+<th>DISC True n / ret2</th>
+<th>DISC False ret2</th>
+<th>lift DISC</th>
+<th>VALID True n / ret2</th>
+<th>VALID False ret2</th>
+<th>lift VALID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>double_extreme</td>
+<td>398 / -0.010</td>
+<td>-0.058</td>
+<td><strong>+0.048</strong></td>
+<td>659 / -0.094</td>
+<td>-0.055</td>
+<td><strong>-0.039</strong></td>
+</tr>
+<tr>
+<td>leg1_fast</td>
+<td>13819 / -0.053</td>
+<td>-0.085</td>
+<td><strong>+0.032</strong></td>
+<td>17018 / -0.051</td>
+<td>-0.121</td>
+<td><strong>+0.070</strong></td>
+</tr>
+<tr>
+<td>sr_prev_day</td>
+<td>449 / -0.033</td>
+<td>-0.057</td>
+<td><strong>+0.025</strong></td>
+<td>487 / -0.021</td>
+<td>-0.057</td>
+<td><strong>+0.036</strong></td>
+</tr>
+<tr>
+<td>div_macd_regular</td>
+<td>583 / -0.034</td>
+<td>-0.058</td>
+<td><strong>+0.023</strong></td>
+<td>754 / -0.083</td>
+<td>-0.055</td>
+<td><strong>-0.028</strong></td>
+</tr>
+<tr>
+<td>golden</td>
+<td>5897 / -0.045</td>
+<td>-0.064</td>
+<td><strong>+0.019</strong></td>
+<td>6847 / -0.048</td>
+<td>-0.061</td>
+<td><strong>+0.013</strong></td>
+</tr>
+<tr>
+<td>macd_above_signal</td>
+<td>9088 / -0.050</td>
+<td>-0.067</td>
+<td><strong>+0.017</strong></td>
+<td>10454 / -0.052</td>
+<td>-0.062</td>
+<td><strong>+0.009</strong></td>
+</tr>
+<tr>
+<td>fib_golden</td>
+<td>5518 / -0.048</td>
+<td>-0.062</td>
+<td><strong>+0.014</strong></td>
+<td>6413 / -0.053</td>
+<td>-0.058</td>
+<td><strong>+0.004</strong></td>
+</tr>
+<tr>
+<td>fib_time</td>
+<td>6436 / -0.049</td>
+<td>-0.062</td>
+<td><strong>+0.014</strong></td>
+<td>8031 / -0.047</td>
+<td>-0.064</td>
+<td><strong>+0.017</strong></td>
+</tr>
+<tr>
+<td>div_any</td>
+<td>7181 / -0.050</td>
+<td>-0.062</td>
+<td><strong>+0.013</strong></td>
+<td>8501 / -0.057</td>
+<td>-0.056</td>
+<td><strong>-0.001</strong></td>
+</tr>
+<tr>
+<td>ma_touch50</td>
+<td>2342 / -0.048</td>
+<td>-0.058</td>
+<td><strong>+0.011</strong></td>
+<td>2698 / -0.050</td>
+<td>-0.057</td>
+<td><strong>+0.007</strong></td>
+</tr>
+<tr>
+<td>macd_zero_side</td>
+<td>10891 / -0.054</td>
+<td>-0.064</td>
+<td><strong>+0.010</strong></td>
+<td>12833 / -0.057</td>
+<td>-0.053</td>
+<td><strong>-0.004</strong></td>
+</tr>
+<tr>
+<td>ema50_slope</td>
+<td>10073 / -0.054</td>
+<td>-0.062</td>
+<td><strong>+0.009</strong></td>
+<td>12095 / -0.055</td>
+<td>-0.058</td>
+<td><strong>+0.003</strong></td>
+</tr>
+<tr>
+<td>ma_touch20</td>
+<td>2712 / -0.051</td>
+<td>-0.058</td>
+<td><strong>+0.007</strong></td>
+<td>3361 / -0.049</td>
+<td>-0.058</td>
+<td><strong>+0.009</strong></td>
+</tr>
+<tr>
+<td>macd_hist_rising</td>
+<td>15301 / -0.057</td>
+<td>-0.062</td>
+<td><strong>+0.006</strong></td>
+<td>17856 / -0.057</td>
+<td>-0.041</td>
+<td><strong>-0.016</strong></td>
+</tr>
+<tr>
+<td>w2_lt_w1_time</td>
+<td>10487 / -0.055</td>
+<td>-0.059</td>
+<td><strong>+0.004</strong></td>
+<td>12135 / -0.063</td>
+<td>-0.043</td>
+<td><strong>-0.019</strong></td>
+</tr>
+<tr>
+<td>div_macd</td>
+<td>6139 / -0.056</td>
+<td>-0.057</td>
+<td><strong>+0.001</strong></td>
+<td>7175 / -0.061</td>
+<td>-0.053</td>
+<td><strong>-0.008</strong></td>
+</tr>
+<tr>
+<td>div_macd_hidden</td>
+<td>5841 / -0.057</td>
+<td>-0.057</td>
+<td><strong>+0.000</strong></td>
+<td>6798 / -0.061</td>
+<td>-0.053</td>
+<td><strong>-0.008</strong></td>
+</tr>
+<tr>
+<td>vol_dryup</td>
+<td>7443 / -0.057</td>
+<td>-0.056</td>
+<td><strong>-0.001</strong></td>
+<td>8381 / -0.046</td>
+<td>-0.065</td>
+<td><strong>+0.019</strong></td>
+</tr>
+<tr>
+<td>ema_stack</td>
+<td>9801 / -0.059</td>
+<td>-0.054</td>
+<td><strong>-0.005</strong></td>
+<td>11682 / -0.055</td>
+<td>-0.058</td>
+<td><strong>+0.003</strong></td>
+</tr>
+<tr>
+<td>bb_tag</td>
+<td>2081 / -0.063</td>
+<td>-0.056</td>
+<td><strong>-0.007</strong></td>
+<td>1916 / -0.047</td>
+<td>-0.057</td>
+<td><strong>+0.010</strong></td>
+</tr>
+<tr>
+<td>div_rsi_regular</td>
+<td>564 / -0.065</td>
+<td>-0.056</td>
+<td><strong>-0.009</strong></td>
+<td>852 / -0.076</td>
+<td>-0.055</td>
+<td><strong>-0.021</strong></td>
+</tr>
+<tr>
+<td>div_rsi</td>
+<td>4277 / -0.064</td>
+<td>-0.054</td>
+<td><strong>-0.010</strong></td>
+<td>5193 / -0.061</td>
+<td>-0.054</td>
+<td><strong>-0.007</strong></td>
+</tr>
+<tr>
+<td>div_rsi_hidden</td>
+<td>3825 / -0.065</td>
+<td>-0.054</td>
+<td><strong>-0.011</strong></td>
+<td>4502 / -0.058</td>
+<td>-0.055</td>
+<td><strong>-0.003</strong></td>
+</tr>
+<tr>
+<td>rs</td>
+<td>10034 / -0.061</td>
+<td>-0.050</td>
+<td><strong>-0.011</strong></td>
+<td>11916 / -0.053</td>
+<td>-0.062</td>
+<td><strong>+0.009</strong></td>
+</tr>
+<tr>
+<td>d_above200</td>
+<td>3378 / -0.066</td>
+<td>-0.054</td>
+<td><strong>-0.012</strong></td>
+<td>5187 / -0.042</td>
+<td>-0.062</td>
+<td><strong>+0.020</strong></td>
+</tr>
+<tr>
+<td>fib_deep</td>
+<td>6871 / -0.064</td>
+<td>-0.051</td>
+<td><strong>-0.013</strong></td>
+<td>7869 / -0.049</td>
+<td>-0.062</td>
+<td><strong>+0.013</strong></td>
+</tr>
+<tr>
+<td>d_up50</td>
+<td>6245 / -0.069</td>
+<td>-0.048</td>
+<td><strong>-0.021</strong></td>
+<td>8900 / -0.052</td>
+<td>-0.060</td>
+<td><strong>+0.008</strong></td>
+</tr>
+<tr>
+<td>trend200</td>
+<td>9150 / -0.065</td>
+<td>-0.044</td>
+<td><strong>-0.021</strong></td>
+<td>10965 / -0.068</td>
+<td>-0.038</td>
+<td><strong>-0.030</strong></td>
+</tr>
+<tr>
+<td>engulf_or_hammer</td>
+<td>7907 / -0.068</td>
+<td>-0.046</td>
+<td><strong>-0.022</strong></td>
+<td>8527 / -0.059</td>
+<td>-0.054</td>
+<td><strong>-0.005</strong></td>
+</tr>
+<tr>
+<td>above_e200</td>
+<td>9242 / -0.066</td>
+<td>-0.043</td>
+<td><strong>-0.023</strong></td>
+<td>11095 / -0.065</td>
+<td>-0.043</td>
+<td><strong>-0.022</strong></td>
+</tr>
+<tr>
+<td>e50_gt_e200</td>
+<td>7414 / -0.071</td>
+<td>-0.044</td>
+<td><strong>-0.028</strong></td>
+<td>9138 / -0.073</td>
+<td>-0.039</td>
+<td><strong>-0.034</strong></td>
+</tr>
+<tr>
+<td>above_ema50</td>
+<td>12712 / -0.063</td>
+<td>-0.031</td>
+<td><strong>-0.031</strong></td>
+<td>14803 / -0.053</td>
+<td>-0.068</td>
+<td><strong>+0.015</strong></td>
+</tr>
+<tr>
+<td>sr_polarity</td>
+<td>12940 / -0.062</td>
+<td>-0.031</td>
+<td><strong>-0.032</strong></td>
+<td>16598 / -0.058</td>
+<td>-0.037</td>
+<td><strong>-0.021</strong></td>
+</tr>
+<tr>
+<td>avwap_hold</td>
+<td>14740 / -0.059</td>
+<td>-0.013</td>
+<td><strong>-0.047</strong></td>
+<td>17320 / -0.056</td>
+<td>-0.060</td>
+<td><strong>+0.004</strong></td>
+</tr>
+</tbody>
+</table>
+</div></body></html>

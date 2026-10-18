@@ -115,6 +115,7 @@ def candidates(df: pd.DataFrame, p: WDParams = WDParams(), spy: pd.DataFrame | N
         av = _avwap(tp, v, i0, t)
         rows.append(dict(
             t=t, date=df.index[t], dir=d, tag="W2" if armed["bos"] else "B", retr=armed["retr"],
+            i0=i0, i1=i1, i2=i2, p0=s0[2], p1=s1[2], p2=s2[2], n_internal=len(armed["internal"]),
             leg1_atr=armed["leg1"] / a, stop=stop, target=tgt,
             div_rsi_hidden=rh, div_rsi_regular=rr, div_macd_hidden=mh, div_macd_regular=mr,
             div_any=rh or rr or mh or mr, div_rsi=rh or rr, div_macd=mh or mr,

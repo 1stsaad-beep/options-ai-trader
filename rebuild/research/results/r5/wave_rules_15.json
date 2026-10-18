@@ -1,0 +1,15 @@
+{
+  "CALL": {
+    "features": [
+      "rs",
+      "leg1_fast",
+      "fib_deep"
+    ]
+  },
+  "PUT": {
+    "features": [
+      "macd_above_signal",
+      "double_extreme"
+    ]
+  }
+}

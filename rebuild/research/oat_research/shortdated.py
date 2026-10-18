@@ -89,6 +89,7 @@ class SDConfig:
     bar_minutes: int = 0                  # 0 = daily bars
     daily_expiry_syms: tuple = ()         # symbols with an expiry every weekday (SPY/QQQ since 2022)
     daily_expiry_from: str = "2022-11-15"
+    iv_term: object = None                # callable(sym, days_left) -> IV multiplier (round-5 calibration)
     ref_price: float | None = 100.0       # price the option on an underlying rescaled to this level at entry
                                           # (split-adjusted history makes old prices tiny: $0.30 AAPL would
                                           # otherwise pay absurd minimum spreads / strike steps)
@@ -199,6 +200,9 @@ def run(bars: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: SD
             cache[key] = float(sr.iloc[j]) if j >= 0 else np.nan
         return cache[key]
 
+    def ivm(sym, dl):
+        return cfg.iv_term(sym, dl) if cfg.iv_term is not None else 1.0
+
     def times(sym, ts, i):
         if ENDS[sym] is not None:
             return ts, ENDS[sym][i]
@@ -213,7 +217,8 @@ def run(bars: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: SD
 
     def close_pos(p, t_exit, px_spot, why, c):
         nonlocal cash
-        mid = om.mid_price(p.d > 0, px_spot * p.f, p.k, _days_left(p.expiry, t_exit), prev_val("iv", p.sym, t_exit.normalize()), c)
+        dlx = _days_left(p.expiry, t_exit)
+        mid = om.mid_price(p.d > 0, px_spot * p.f, p.k, dlx, prev_val("iv", p.sym, t_exit.normalize()) * ivm(p.sym, dlx), c)
         bid = om.sell_price(mid, c)
         cash += p.n * (100 * bid - c.commission)
         trades.append(SDTrade(p.sym, p.d, p.entry_time, t_exit, p.expiry, p.k, p.n, p.px, bid, p.spot, px_spot, why, p.reason,
@@ -236,9 +241,9 @@ def run(bars: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: SD
                 if sym in pos or len(pos) >= cfg.max_open or i is None:
                     continue
                 t_open, _ = times(sym, ts, i)
-                iv = prev_val("iv", sym, day)
+                iv0 = prev_val("iv", sym, day)
                 a = prev_val("atr", sym, day)
-                if not (np.isfinite(iv) and np.isfinite(a)):
+                if not (np.isfinite(iv0) and np.isfinite(a)):
                     continue
                 spot = O[sym][i]
                 mdays = int(md) if np.isfinite(md) else cfg.min_days
@@ -249,6 +254,7 @@ def run(bars: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: SD
                 else:
                     expiry = friday_expiry(t_open, mdays)
                 dl = _days_left(expiry, t_open)
+                iv = iv0 * ivm(sym, dl)
                 c = costs[sym]
                 f = max(1.0, cfg.ref_price / spot) if cfg.ref_price else 1.0  # only scale UP tiny adjusted prices
                 k = om.choose_strike(d > 0, spot * f, max(dl, 0.25), iv, cfg.target_delta, c)
@@ -272,7 +278,8 @@ def run(bars: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: SD
             _, t_close = times(sym, ts, i)
             spot = C[sym][i]
             c = costs[sym]
-            mid = om.mid_price(p.d > 0, spot * p.f, p.k, _days_left(p.expiry, t_close), prev_val("iv", sym, day), c)
+            dlc = _days_left(p.expiry, t_close)
+            mid = om.mid_price(p.d > 0, spot * p.f, p.k, dlc, prev_val("iv", sym, day) * ivm(sym, dlc), c)
             p.mark = mid
             p.bars += 1
             bid = om.sell_price(mid, c)
@@ -339,3 +346,14 @@ def summarize(trades: list[SDTrade], nav: pd.Series) -> dict:
                    max_dd=dd, sharpe=float(ret.mean() / ret.std() * np.sqrt(252)) if ret.std() > 0 else 0.0,
                    total=float(nav.iloc[-1] / nav.iloc[0] - 1))
     return out
+
+
+ETF_SET = {"SPY", "QQQ", "IWM"}
+
+
+def calibrated_term(sym: str, days_left: float) -> float:
+    """Round-5 calibration: median real implied vol / proxy IV, measured on ~1,700 real option
+    prints (Alpaca, 2024-02 -> 2026-10), by days to expiry. Linear between the bucket centres."""
+    xs = np.array([0.3, 2.0, 5.0, 14.0])
+    ys = np.array([1.62, 1.39, 1.23, 1.13]) if sym in ETF_SET else np.array([2.29, 1.46, 1.28, 1.17])
+    return float(np.interp(days_left, xs, ys))

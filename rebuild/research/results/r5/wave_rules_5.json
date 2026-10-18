@@ -1,0 +1,15 @@
+{
+  "CALL": {
+    "features": [
+      "above_e200",
+      "fib_deep",
+      "w2_lt_w1_time"
+    ]
+  },
+  "PUT": {
+    "features": [
+      "double_extreme",
+      "fib_deep"
+    ]
+  }
+}
