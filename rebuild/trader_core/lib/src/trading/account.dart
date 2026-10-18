@@ -3,6 +3,7 @@
 library;
 
 import '../analysis/signal.dart';
+import '../analysis/volatility.dart';
 import '../brokers/broker_adapter.dart';
 import '../brokers/live_guard.dart';
 import '../models.dart';
@@ -35,6 +36,19 @@ class AccountSettings {
 
   /// Per-account pause: no new entries or scale-ins; exits keep running.
   final bool pauseNewEntries;
+
+  /// Optional IV/RV entry filter (off by default; research round 4: optional,
+  /// to be tuned on Paper). IV, RV, IV/RV and bid/ask are logged either way.
+  final bool ivRvFilterEnabled;
+  /// Block the entry when contract IV / underlying RV exceeds this.
+  final double maxIvRvRatio;
+  /// Trading days of close-to-close returns for RV.
+  final int rvLookbackDays;
+  /// Use RV from the analysis-timeframe bars instead of daily bars.
+  final bool rvUseIntraday;
+  /// Block when the break-even move to expiry exceeds this multiple of the
+  /// expected move (spot × RV × √T); 0 = off.
+  final double maxBreakevenToExpectedMove;
 
   // ---- entry criteria ----
   final BarTimeframe timeframe;
@@ -118,6 +132,11 @@ class AccountSettings {
     this.maxOrdersPerDay = 10,
     this.symbolCooldownMinutes = 60,
     this.pauseNewEntries = false,
+    this.ivRvFilterEnabled = false,
+    this.maxIvRvRatio = 1.5,
+    this.rvLookbackDays = 20,
+    this.rvUseIntraday = false,
+    this.maxBreakevenToExpectedMove = 1.0,
     this.timeframe = BarTimeframe.m15,
     this.minScore = 35,
     this.minAgreeingEngines = 2,
@@ -156,6 +175,14 @@ class AccountSettings {
     this.scaleInFraction = 0.5,
   });
 
+  VolFilterSettings get volFilter => VolFilterSettings(
+        enabled: ivRvFilterEnabled,
+        maxIvRvRatio: maxIvRvRatio,
+        rvLookbackDays: rvLookbackDays,
+        useIntradayRv: rvUseIntraday,
+        maxBreakevenToExpectedMove: maxBreakevenToExpectedMove,
+      );
+
   /// Allowed ranges enforced by [validate] (key = JSON key). Shown in the
   /// settings screen next to each parameter.
   static const Map<String, (num, num)> allowedRanges = {
@@ -179,6 +206,9 @@ class AccountSettings {
     'partialTakeProfitFraction': (0, 0.9),
     'trailingStopPercent': (1, 90),
     'scaleInFraction': (0.1, 2),
+    'maxIvRvRatio': (0.5, 5),
+    'rvLookbackDays': (5, 120),
+    'maxBreakevenToExpectedMove': (0, 5),
   };
 
   /// Returns a list of Arabic validation errors (empty = valid).
@@ -208,6 +238,9 @@ class AccountSettings {
     range(partialTakeProfitFraction, 0, 0.9, 'نسبة الجني الجزئي');
     range(trailingStopPercent, 1, 90, 'الوقف المتحرك');
     range(scaleInFraction, 0.1, 2, 'نسبة التعزيز');
+    range(maxIvRvRatio, 0.5, 5, 'حد IV/RV');
+    range(rvLookbackDays, 5, 120, 'أيام التقلب المحقق');
+    range(maxBreakevenToExpectedMove, 0, 5, 'حد حركة التعادل');
     if (!allowCalls && !allowPuts) e.add('يجب السماح بـ Call أو Put على الأقل');
     if (partialTakeProfitFraction > 0 && partialTakeProfitPercent >= takeProfitPercent) {
       e.add('الجني الجزئي يجب أن يكون أقل من هدف الربح الكامل');
@@ -225,6 +258,11 @@ class AccountSettings {
     int? maxOrdersPerDay,
     int? symbolCooldownMinutes,
     bool? pauseNewEntries,
+    bool? ivRvFilterEnabled,
+    double? maxIvRvRatio,
+    int? rvLookbackDays,
+    bool? rvUseIntraday,
+    double? maxBreakevenToExpectedMove,
     BarTimeframe? timeframe,
     double? minScore,
     int? minAgreeingEngines,
@@ -265,6 +303,11 @@ class AccountSettings {
         maxOrdersPerDay: maxOrdersPerDay ?? this.maxOrdersPerDay,
         symbolCooldownMinutes: symbolCooldownMinutes ?? this.symbolCooldownMinutes,
         pauseNewEntries: pauseNewEntries ?? this.pauseNewEntries,
+        ivRvFilterEnabled: ivRvFilterEnabled ?? this.ivRvFilterEnabled,
+        maxIvRvRatio: maxIvRvRatio ?? this.maxIvRvRatio,
+        rvLookbackDays: rvLookbackDays ?? this.rvLookbackDays,
+        rvUseIntraday: rvUseIntraday ?? this.rvUseIntraday,
+        maxBreakevenToExpectedMove: maxBreakevenToExpectedMove ?? this.maxBreakevenToExpectedMove,
         timeframe: timeframe ?? this.timeframe,
         minScore: minScore ?? this.minScore,
         minAgreeingEngines: minAgreeingEngines ?? this.minAgreeingEngines,
@@ -306,6 +349,11 @@ class AccountSettings {
         'maxOrdersPerDay': maxOrdersPerDay,
         'symbolCooldownMinutes': symbolCooldownMinutes,
         'pauseNewEntries': pauseNewEntries,
+        'ivRvFilterEnabled': ivRvFilterEnabled,
+        'maxIvRvRatio': maxIvRvRatio,
+        'rvLookbackDays': rvLookbackDays,
+        'rvUseIntraday': rvUseIntraday,
+        'maxBreakevenToExpectedMove': maxBreakevenToExpectedMove,
         'timeframe': timeframe.name,
         'minScore': minScore,
         'minAgreeingEngines': minAgreeingEngines,
@@ -361,6 +409,11 @@ class AccountSettings {
       maxOrdersPerDay: integer('maxOrdersPerDay', d.maxOrdersPerDay),
       symbolCooldownMinutes: integer('symbolCooldownMinutes', d.symbolCooldownMinutes),
       pauseNewEntries: flag('pauseNewEntries', d.pauseNewEntries),
+      ivRvFilterEnabled: flag('ivRvFilterEnabled', d.ivRvFilterEnabled),
+      maxIvRvRatio: dbl('maxIvRvRatio', d.maxIvRvRatio),
+      rvLookbackDays: integer('rvLookbackDays', d.rvLookbackDays),
+      rvUseIntraday: flag('rvUseIntraday', d.rvUseIntraday),
+      maxBreakevenToExpectedMove: dbl('maxBreakevenToExpectedMove', d.maxBreakevenToExpectedMove),
       timeframe: BarTimeframe.values.firstWhere((t) => t.name == j['timeframe'], orElse: () => d.timeframe),
       minScore: dbl('minScore', d.minScore),
       minAgreeingEngines: integer('minAgreeingEngines', d.minAgreeingEngines),

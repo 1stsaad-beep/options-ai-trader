@@ -34,4 +34,5 @@ export 'src/trading/decision_engine.dart';
 export 'src/trading/journal.dart';
 export 'src/trading/cycle_record.dart';
 export 'src/trading/report.dart';
+export 'src/analysis/volatility.dart';
 export 'src/trading/trading_engine.dart';

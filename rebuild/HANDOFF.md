@@ -413,3 +413,21 @@ time. Not yet tested on the phone.
    accounts tested); Alpaca is the only broker exercised by the user.
 8. iOS: CI can build an unsigned archive on demand; no background execution on iOS.
 9. Dependency updates (flutter_secure_storage 10 migration, share_plus 13) deferred.
+
+## 13. Round 5 — IV/RV filter (+ strategies next) (versionCode 6)
+
+Full details: **[`ROUND5.md`](ROUND5.md)**. Branch `rebuild/strategies-ivrv-20261018`
+(from `rebuild/hybrid-engines-20261018`; merge optional, plain merge only).
+
+* Round-4 report found (`research/report4/10_main.md`, `results/r4/IV_FILTER.md`):
+  recommends logging real IV + bid/ask and an optional IV/RV cap; also shows IV/RV
+  did not separate winners/losers consistently → filter is per account, **off by default**.
+* New `analysis/volatility.dart`: RV (daily or intraday), IV (broker or solved from
+  mid), IV/RV, break-even vs expected move. Every entry evaluation logs IV, RV,
+  IV/RV, bid/ask, spread % in the decision journal; blocking only when enabled
+  (`ivRvFilterEnabled`, `maxIvRvRatio` 1.5, `rvLookbackDays` 20, `rvUseIntraday`,
+  `maxBreakevenToExpectedMove` 1.0). Settings section with Arabic help.
+* Tests: core 105/105 (+11 volatility_test); app 39/39 (+2 ivrv_app_test).
+* Build: see ROUND5.md / release `rebuild-v2-debug-6` (versionCode 6, 2.0.0-dev.6).
+* Next (5.2): strategies A (MTF Elliott) and B (MTF RSI, both directions), real-bar
+  backtests with discovery/validation/holdout, results and recommendations.

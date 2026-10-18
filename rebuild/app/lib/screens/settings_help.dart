@@ -65,4 +65,13 @@ const settingsHelp = <String, SettingHelp>{
   'scaleInMinProfitPercent': SettingHelp('أقل ربح للتعزيز', 'لا تعزيز قبل أن يربح المركز هذه النسبة.', suggested: '15–30', suffix: '%'),
   'scaleInMinScore': SettingHelp('أقل نتيجة للتعزيز', 'نتيجة التحليل في نفس الاتجاه المطلوبة للتعزيز.', suggested: '50–70'),
   'scaleInFraction': SettingHelp('حجم التعزيز', 'نسبة من الكمية الأولى (0.5 = نصفها).', suggested: '0.25–0.5'),
+  'maxIvRvRatio': SettingHelp('حد IV/RV',
+      'التقلب الضمني للعقد مقسومًا على التقلب المحقق للسهم. فوق الحد يكون العقد غاليًا مقارنة بحركة السهم الفعلية فيُمنع الشراء. يعمل فقط عند تفعيل الفلتر.',
+      suggested: '1.3–1.8'),
+  'rvLookbackDays': SettingHelp('فترة التقلب المحقق',
+      'عدد أيام التداول المستخدمة لحساب التقلب المحقق (انحراف العوائد اليومية × √252).',
+      suggested: '20', suffix: 'يوم'),
+  'maxBreakevenToExpectedMove': SettingHelp('حد حركة التعادل',
+      'يمنع الشراء إذا كانت الحركة اللازمة للتعادل عند الانتهاء أكبر من هذا المضاعف للحركة المتوقعة (السعر × RV × √الزمن). 0 = تعطيل هذا الشرط.',
+      suggested: '1.0'),
 };

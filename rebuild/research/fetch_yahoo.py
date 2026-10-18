@@ -3,6 +3,7 @@
   d1 : 2012-01-01 -> today (split/dividend adjusted via adjclose)
   h1 : last ~730 days (Yahoo limit)
   m5 : last 60 days
+  m15: last 60 days (Yahoo limit for 15-minute bars)
   m1 : last ~30 days (Yahoo serves 1-minute data in <= 8-day requests)
 
 Intraday rows are regular-session bars only (includePrePost=false), time = bar
@@ -11,6 +12,7 @@ start in UTC. Usage: python fetch_yahoo.py [SYMBOLS...]
 from __future__ import annotations
 
 import json
+import os
 import sys
 import time
 import urllib.error
@@ -85,6 +87,13 @@ def main(symbols):
                 n = save(out / "m5" / f"{name}.csv",
                          rows(get(sym, {"range": "60d", "interval": "5m", "includePrePost": "false"}), False), "5m RTH")
                 msg += f" m5={n}"
+                n = save(out / "m15" / f"{name}.csv",
+                         rows(get(sym, {"range": "60d", "interval": "15m", "includePrePost": "false"}), False), "15m RTH")
+                msg += f" m15={n}"
+                if os.environ.get("OAT_SKIP_M1"):
+                    print(msg, flush=True)
+                    time.sleep(1.0)
+                    continue
                 m1 = []
                 end = now
                 for _ in range(4):  # 4 x 7 days ~= the 30-day 1m window

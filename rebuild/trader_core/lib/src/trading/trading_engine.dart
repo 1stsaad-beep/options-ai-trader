@@ -14,6 +14,7 @@ library;
 
 import 'dart:math' as math;
 
+import '../analysis/volatility.dart';
 import '../analysis/analyzer.dart';
 import '../analysis/signal.dart';
 import '../brokers/broker_adapter.dart';
@@ -88,6 +89,37 @@ class TradingEngine {
   /// "No trade" notes are rate-limited per symbol (one per 30 minutes) so routine
   /// skips do not push real decisions out of the bounded journal.
   final Map<String, DateTime> _lastSkip = {};
+
+  /// Completed analysis bars per symbol of the current cycle (for intraday RV).
+  final Map<String, List<Candle>> _barsBySymbol = {};
+
+  static int barsPerSession(BarTimeframe tf) => switch (tf) {
+        BarTimeframe.m5 => 78,
+        BarTimeframe.m15 => 26,
+        BarTimeframe.h1 => 7,
+        BarTimeframe.d1 => 1,
+      };
+
+  /// IV / RV / break-even measurement for an entry candidate (always logged;
+  /// blocks only when the account enabled the filter).
+  Future<VolCheck?> _volCheck(String sym, OptionQuote q, double spot, DateTime now) async {
+    try {
+      final rawDaily = await broker.bars(sym, BarTimeframe.d1, limit: s.rvLookbackDays + 15);
+      final daily = completedBarsFor(broker.kind, rawDaily, BarTimeframe.d1, now, calendar: calendar);
+      return evaluateVolFilter(
+        f: s.volFilter,
+        q: q,
+        spot: spot,
+        now: now,
+        daily: daily,
+        intraday: s.timeframe == BarTimeframe.d1 ? null : _barsBySymbol[sym],
+        intradayBarsPerDay: barsPerSession(s.timeframe),
+      );
+    } catch (e) {
+      _log(JournalAction.error, 'تعذر قياس التقلب: $e', symbol: sym);
+      return null;
+    }
+  }
 
   /// Record of the cycle in progress (null between cycles).
   CycleRecord? _current;
@@ -182,6 +214,7 @@ class TradingEngine {
       final symbols = <String>{...profile.watchlist, ...positions.map((p) => p.contract.underlying)};
       final reports = <String, AnalysisReport>{};
       final prices = <String, double>{};
+      _barsBySymbol.clear();
       for (final sym in symbols) {
         try {
           final raw = await broker.bars(sym, s.timeframe, limit: 300);
@@ -191,6 +224,7 @@ class TradingEngine {
             _log(JournalAction.skip, 'بيانات غير كافية للتحليل (${bars.length} شمعة)', symbol: sym);
             continue;
           }
+          _barsBySymbol[sym] = bars;
           final report = reports[sym] = analyzer.analyze(sym, bars, weights: s.engineWeights);
           prices[sym] = bars.last.close;
           _current?.symbol(sym)
@@ -382,6 +416,21 @@ class TradingEngine {
     }
     final q = choice.quote;
     final occ = q.contract.occSymbol;
+    final spreadPct = q.isTwoSided && q.midCents > 0 ? (q.askCents - q.bidCents) / q.midCents * 100 : null;
+    final quoteInfo = <String, Object?>{
+      'contract': occ,
+      'bid': q.bidCents,
+      'ask': q.askCents,
+      'spreadPct': spreadPct == null ? null : double.parse(spreadPct.toStringAsFixed(2)),
+    };
+    final vol = await _volCheck(sym, q, intent.report.lastClose, now);
+    final volLine = '${vol?.summaryAr ?? 'تعذر قياس التقلب'} • العرض/الطلب ${formatUsd(q.bidCents)}/${formatUsd(q.askCents)}'
+        '${spreadPct == null ? '' : ' (فرق ${spreadPct.toStringAsFixed(1)}%)'}';
+    if (s.ivRvFilterEnabled && (vol == null || vol.blocked)) {
+      final reason = vol?.blockReasonAr ?? 'فلتر التقلب: تعذر القياس — لا دخول';
+      _log(JournalAction.blocked, '$reason\n$volLine', symbol: sym, details: {...quoteInfo, if (vol != null) 'vol': vol.toJson()});
+      return false;
+    }
     final price = limitPrice(q, state.escalate.remove(occ) ? 1.0 : s.entryAggressiveness);
     final sized = sizePosition(
       s: s,
@@ -414,7 +463,7 @@ class TradingEngine {
         limitPriceCents: price,
       ),
       purpose: 'entry',
-      reason: '${intent.reasonAr}\n${choice.reasonAr}\nالحجم: ${sized.reasonAr}',
+      reason: '${intent.reasonAr}\n${choice.reasonAr}\nالحجم: ${sized.reasonAr}\n$volLine',
       journalAction: JournalAction.entry,
       invalidation: intent.report.invalidationFor(bias),
       target: intent.report.firstTargetFor(bias),
@@ -422,9 +471,8 @@ class TradingEngine {
       engines: [for (final sig in intent.report.supporting(bias)) sig.engine.name],
       details: {
         'analysis': intent.report.toJson(),
-        'contract': occ,
-        'bid': q.bidCents,
-        'ask': q.askCents,
+        ...quoteInfo,
+        if (vol != null) 'vol': vol.toJson(),
         'limit': price,
         'qty': sized.quantity,
         'settings': s.toJson(),

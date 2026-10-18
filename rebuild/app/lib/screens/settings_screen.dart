@@ -223,6 +223,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _num('entryAggressiveness'),
             _num('orderTimeoutCycles', integer: true),
           ]),
+          _section('فلتر التقلب IV/RV (اختياري)', [
+            Text('القياس يُسجَّل دائمًا في سجل القرارات لكل دخول (IV وRV والنسبة والعرض/الطلب وفرقهما). '
+                'المنع لا يحدث إلا إذا فعّلت الفلتر هنا. بحث الجولة الرابعة: الفلتر لم يفصل الرابح عن الخاسر بثبات، فجرّبه على Paper أولًا.',
+                style: Theme.of(context).textTheme.bodySmall),
+            _flag('ivRvFilterEnabled', 'تفعيل فلتر التقلب',
+                help: 'منع شراء العقود الغالية مقارنة بالتقلب الفعلي للسهم؛ ويمنع الدخول إذا تعذر القياس'),
+            _num('maxIvRvRatio'),
+            _num('rvLookbackDays', integer: true),
+            _flag('rvUseIntraday', 'حساب RV من شموع إطار التحليل',
+                help: 'بدل الشموع اليومية؛ أكثر حساسية للتقلب الحالي (يتطلب إطارًا أصغر من اليومي)'),
+            _num('maxBreakevenToExpectedMove'),
+          ]),
           _section('الخروج', [
             _num('stopLossPercent'),
             _num('partialTakeProfitPercent'),
