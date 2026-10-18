@@ -284,7 +284,12 @@ trades, expectancy ≤ 0 or real IV/RV at entry is far above the 1.3 assumed for
   on real AAPL daily bars → one tagged Call next session, used once, nothing the day before;
   composite unaffected). App: strategy selection + warning + preset save.
 
-## 2.9 Limits
+## 2.9 Build 5.2
+`rebuild-v2-debug-7` (private builds repo), versionCode 7 / 2.0.0-dev.7 (source d3cb86b),
+164,911,746 bytes, SHA-256 `7b73e81209f4987e71671809224fdb2df343cd13e746b700003fda069d5e3af0`
+(verified by re-download), signer `dde693a8…6720` — updates debug-6 in place.
+
+## 2.10 Limits
 
 * All option P&L is modeled; real weekly IV for single stocks is unknown (proxy 1.3 × RV).
 * Daily-bar backtests fill at the next open; the app enters at the first cycle of the next

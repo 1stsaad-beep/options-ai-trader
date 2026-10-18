@@ -444,3 +444,6 @@ Full details: **[`ROUND5.md`](ROUND5.md)**. Branch `rebuild/strategies-ivrv-2026
   Paper only). Strategy B, the intraday Elliott specs and the Put mirror are not shipped.
   Default strategy stays negative in the model; IV/RV filter halves its loss on SPY/QQQ
   but does not make it positive.
+* Build 5.2: `rebuild-v2-debug-7`, versionCode 7 / 2.0.0-dev.7, 164,911,746 bytes, SHA-256
+  `7b73e81209f4987e71671809224fdb2df343cd13e746b700003fda069d5e3af0` (verified). Tests: core
+  121/121, app 40/40.
