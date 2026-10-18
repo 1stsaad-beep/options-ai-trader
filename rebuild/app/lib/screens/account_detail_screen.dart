@@ -3,6 +3,7 @@ import 'package:trader_core/trader_core.dart';
 
 import '../services/app_controller.dart';
 import 'add_account_screen.dart';
+import 'chart_screen.dart';
 import 'live_mode_screen.dart';
 import 'settings_screen.dart';
 
@@ -120,6 +121,9 @@ class _OverviewState extends State<_Overview> {
     _symbol.clear();
   }
 
+  void _openChart(String symbol) => Navigator.push(context,
+      MaterialPageRoute(builder: (_) => ChartScreen.forAccount(widget.controller, widget.rt.profile.id, symbol)));
+
   @override
   Widget build(BuildContext context) {
     final rt = widget.rt;
@@ -157,7 +161,7 @@ class _OverviewState extends State<_Overview> {
                     ]),
             ),
           ),
-          const _SectionTitle('الأسهم المسموح تداولها'),
+          const _SectionTitle('الأسهم المسموح تداولها — اضغط على السهم لفتح الشارت'),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -165,7 +169,11 @@ class _OverviewState extends State<_Overview> {
                 Wrap(spacing: 8, runSpacing: 4, children: [
                   for (final s in p.watchlist)
                     InputChip(
+                      key: Key('symbol-$s'),
+                      avatar: const Icon(Icons.candlestick_chart_outlined, size: 18),
                       label: Text(s),
+                      tooltip: 'فتح الشارت',
+                      onPressed: () => _openChart(s),
                       onDeleted: () => widget.controller
                           .updateProfile(p.copyWith(watchlist: p.watchlist.where((x) => x != s).toList())),
                     ),
@@ -193,6 +201,8 @@ class _OverviewState extends State<_Overview> {
             for (final pos in rt.positions)
               Card(
                 child: ListTile(
+                  onTap: () => _openChart(pos.contract.underlying),
+                  trailing: const Icon(Icons.candlestick_chart_outlined),
                   title: Text('${pos.contract.underlying} ${pos.contract.right.arabic} ${pos.contract.strike.toStringAsFixed(2)}',
                       textDirection: TextDirection.rtl),
                   subtitle: Text(

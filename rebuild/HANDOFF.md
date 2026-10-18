@@ -183,3 +183,41 @@ Toolchain: Flutter 3.47.7 / Dart 3.13.5, JDK 17, Android SDK 36.
   (`LiveTradingGuard.buildAllowsLive == false`). Paper only.
 * Not yet done: real Alpaca paper verification on a phone, TradeStation/IBKR
   verification, background execution, market calendar (see §5).
+
+## 9. Batch A — interactive per-symbol chart (2026-10-18, versionCode 2)
+
+Open: account → tap a watchlist symbol (or an open position) → chart.
+
+* **Same bars as the engines**: `AppController.chartBars` makes the exact engine
+  call `adapter.bars(symbol, timeframe, limit: 300)` (Alpaca `/v2/stocks/{sym}/bars`,
+  `feed=iex`; simulator → `SyntheticMarket`). `ChartAnalysis.compute` runs on those
+  bars in an isolate; every overlay is in bar indices of that list, so it aligns.
+* Timeframes 5m/15m/1h/1d (the account's analysis timeframe is marked `•`).
+* Pan (drag), pinch zoom around the focal bar, double-tap → latest bar,
+  long-press crosshair with O/H/L/C/V, % change, score at that bar and any
+  account decision on that bar; tap hides it. Chart is always LTR.
+* Layers (toggle sheet): EMA20/50/200 (off by default), support/resistance
+  (clustered confirmed swings), trend lines (last two swing highs/lows),
+  ZigZag + confirmed fractal pivots + dashed provisional last leg, classical
+  (double top/bottom + neckline, H&S + sloping neckline, triangle boundaries,
+  20-bar range box), harmonic (XABCD, XB/BD, PRZ box), Elliott wave labels,
+  divergence (swing-to-swing line with RSI values), targets/invalidation of the
+  signals that count in the score, account trade markers (hollow triangle =
+  order submitted, filled = fill; blue buy / orange sell), composite score
+  sub-pane (causal: score as known at each bar, re-analysed per prefix).
+* Engine geometry comes from the engines themselves (`EngineSignal.geometry`),
+  not re-derived in the UI; geometry is not journalled and does not affect
+  decisions (all previous core tests unchanged).
+* Performance: only visible bars are painted (culling for candles, series,
+  segments, points, markers); candle paths cached (`CandleCache`) and the
+  crosshair is a separate painter, so moving it never rebuilds candles;
+  candles sit in a `RepaintBoundary`.
+* Tests: core `chart_test.dart` (10), app `chart_viewport_test.dart` (6),
+  `chart_screen_test.dart` (6), `chart_account_test.dart` (1).
+
+Known gaps: engines only report patterns that are currently actionable
+(recent D/break), so harmonic/classical/Elliott overlays are often empty —
+that is the engines' behaviour, shown honestly. Exactly 300 bars per
+timeframe (no lazy loading of older history). Alpaca may include the
+still-forming last bar (same for the engine). Times are shown in device local
+time. Not yet tested on the phone.

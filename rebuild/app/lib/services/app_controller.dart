@@ -234,6 +234,16 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  /// Bars for the chart: exactly the call the trading engine makes
+  /// (`bars(symbol, timeframe, limit: 300)` on the account's own adapter), so
+  /// the chart and the engines see the same candles.
+  Future<List<Candle>> chartBars(String id, String symbol, BarTimeframe timeframe, {int limit = 300}) async {
+    final rt = _accounts[id];
+    if (rt == null) throw StateError('الحساب غير موجود');
+    final b = await _adapter(rt);
+    return b.bars(symbol, timeframe, limit: limit);
+  }
+
   void _captureBrokerState(AccountRuntime rt) {
     final b = rt.broker;
     if (b is SimulatorBroker) rt.state.brokerState = b.toJson();
