@@ -221,3 +221,38 @@ that is the engines' behaviour, shown honestly. Exactly 300 bars per
 timeframe (no lazy loading of older history). Alpaca may include the
 still-forming last bar (same for the engine). Times are shown in device local
 time. Not yet tested on the phone.
+
+## 10. Batch B — market hours, completed bars, NY day, account lock (versionCode 3)
+
+* **Calendar** (`trader_core/lib/src/market/market_calendar.dart`):
+  America/New_York from the US DST rule (exact for 2007+, no tz database needed;
+  tested across both 2026 transitions). Official NYSE holidays and 13:00 early
+  closes for 2026–2028 (nyse.com, fetched 2026-10-18); other years by NYSE rules
+  (tested to reproduce the official table). Phases: pre 04:00–09:30, regular
+  09:30–16:00 (13:00 early close), post until 20:00 (17:00) ET; next open/close.
+* **Broker clock**: `AlpacaAdapter` implements `MarketClockSource` (`GET /v2/clock`
+  on the paper host). `MarketHoursGate` = calendar AND broker clock (both must say
+  open); broker error → calendar alone. `/v2/calendar` is not used (the offline
+  table + clock cover it).
+* **Order policy**: outside regular hours a cycle does no analysis and places **no
+  orders of any kind** — entries, exits and scale-ins (US equity options trade in
+  RTH only; Alpaca would reject/queue them). Following existing orders/fills and
+  cancelling stale ones still happens. One journal note per closed period.
+  `_submit` re-checks the calendar right before `placeOrder` (last-line guard).
+  The simulator (synthetic 24/7 market) has no gate.
+* **Completed bars only**: engines drop the still-forming last bar
+  (`MarketCalendar.completedBars`: intraday end = start + length, capped at the
+  session close; a daily bar completes at its session's close). The chart draws
+  the forming bar hollow/faded, outside the analysis, and the readout says so.
+* **Daily-loss limit**: trading day = New York date (`yyyy-mm-dd`). On the first
+  cycle after updating, the old UTC key differs, so the day start equity is
+  re-taken once.
+* **Per-account lock** (`AccountLock`): refresh, runCycle and testConnection on one
+  account run strictly one after another. Adapter creation is shared by concurrent
+  callers (chart loads do not take the lock). A deadlock in the first version of
+  that sharing (whenComplete waiting on its own future) was caught by tests.
+* **UI**: market status card (accounts list + account overview): phase, holiday /
+  weekend reason, early close, next open/close in ET and the phone's time, source
+  (broker clock or NYSE calendar). Chart axis and readout times in New York (ET).
+* Tests: core `market_test.dart` (19); app `batch_b_app_test.dart` (6) and chart
+  updates. core 75/75, app 21/21.

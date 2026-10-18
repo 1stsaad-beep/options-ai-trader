@@ -43,6 +43,14 @@ final gartley = bars(path(120, [
   (1, 105.1)
 ]));
 
+/// One extra bar that is still forming at [formingNow].
+final formingBar = Candle(
+    time: gartley.last.time.add(const Duration(minutes: 15)), open: 105.1, high: 105.6, low: 104.9, close: 105.4);
+final formingNow = formingBar.time.add(const Duration(minutes: 5));
+final withForming = [...gartley, formingBar];
+List<Candle> completedAtFormingNow(List<Candle> b, BarTimeframe tf) =>
+    const MarketCalendar().completedBars(b, tf, formingNow);
+
 Future<ChartAnalysis> syncAnalyze(String s, List<Candle> b, Map<EngineId, double> w) async =>
     ChartAnalysis.compute(s, b, weights: w, scoreBars: b.length);
 
@@ -77,10 +85,11 @@ void main() {
         weights: const {},
         loadBars: (tf) async {
           loaded.add(tf);
-          return gartley;
+          return withForming;
         },
         journal: () => journal,
         analyze: syncAnalyze,
+        completed: completedAtFormingNow,
       );
 
   testWidgets('loads the same bars, shows the score and engine findings', (tester) async {
@@ -99,7 +108,12 @@ void main() {
     final chart = tester.widget<InteractiveChart>(find.byType(InteractiveChart));
     final g = chart.data.analysis.findings[EngineId.harmonic]!.firstWhere((s) => s.pattern == 'GARTLEY');
     expect(g.geometry.points.map((p) => p.label), ['X', 'A', 'B', 'C', 'D']);
-    expect(identical(chart.data.candles, gartley), isTrue);
+    // Engines analysed the completed bars only; the forming bar is drawn but flagged.
+    expect(chart.data.analysis.candles.length, gartley.length);
+    expect(chart.data.analysis.candles.last.time, gartley.last.time);
+    expect(chart.data.candles.length, gartley.length + 1);
+    expect(chart.data.formingFrom, gartley.length);
+    expect(find.textContaining('+ 1 قيد التكوين'), findsOneWidget);
     // Trade markers resolved onto bars 60 and 70.
     expect(chart.data.markers.map((m) => m.index), [60, 70]);
   });
@@ -170,10 +184,31 @@ void main() {
       loadBars: (_) async => throw const BrokerException(BrokerErrorCode.auth, 'HTTP 403'),
       journal: () => const [],
       analyze: syncAnalyze,
+      completed: (b, _) => b,
     )));
     await tester.pumpAndSettle();
     expect(find.textContaining('تعذر تحميل الشارت'), findsOneWidget);
     expect(find.textContaining('HTTP 403'), findsOneWidget);
+  });
+
+  testWidgets('readout of the forming bar says it is outside the analysis; times are ET', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2200);
+    tester.view.devicePixelRatio = 2.5;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(host(screen()));
+    await tester.pumpAndSettle();
+    final state = tester.state<InteractiveChartState>(find.byType(InteractiveChart));
+    final box = tester.getRect(find.byKey(const Key('interactive-chart')));
+    final plotW = box.width - 4 - ChartLayout.axisWidth;
+    final i = gartley.length; // forming bar
+    await tester.longPressAt(Offset(box.left + 4 + state.viewport.x(i, plotW), box.top + 100));
+    await tester.pumpAndSettle();
+    expect(state.crossIndex, i);
+    expect(find.byKey(const Key('readout-forming')), findsOneWidget);
+    // 2026-03-03 (EST): bar start in New York time.
+    expect(find.text(OhlcReadout.timeText(formingBar.time, BarTimeframe.m15)), findsOneWidget);
+    expect(OhlcReadout.timeText(DateTime.utc(2026, 7, 1, 13, 30), BarTimeframe.m15), '2026-07-01 09:30 ET');
+    expect(OhlcReadout.timeText(DateTime.utc(2026, 12, 1, 14, 30), BarTimeframe.m15), '2026-12-01 09:30 ET');
   });
 
   test('candle paths are cached across crosshair-only repaints', () {

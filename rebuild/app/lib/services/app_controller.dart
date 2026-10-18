@@ -20,6 +20,29 @@ class AccountRuntime {
   List<Position> positions = const [];
 
   AccountRuntime(this.profile, this.state);
+
+  /// Serialises refresh / runCycle / testConnection on this account so they
+  /// never touch the adapter and state at the same time.
+  final AccountLock lock = AccountLock();
+
+  /// Market status seen by this account's last cycle (broker-confirmed when
+  /// the adapter has a market clock).
+  MarketStatus? get lastMarketStatus => engine?.lastMarketStatus;
+}
+
+/// Minimal async mutex: tasks run one after another in call order.
+class AccountLock {
+  Future<void> _tail = Future<void>.value();
+  int _pending = 0;
+
+  bool get isBusy => _pending > 0;
+
+  Future<T> run<T>(Future<T> Function() task) {
+    _pending++;
+    final result = _tail.then((_) => task());
+    _tail = result.then<void>((_) {}, onError: (_) {}).whenComplete(() => _pending--);
+    return result;
+  }
 }
 
 /// App-wide state: accounts, automation timer and persistence.
@@ -130,9 +153,20 @@ class AppController extends ChangeNotifier {
 
   Future<void> _saveProfiles() => repo.saveProfiles([for (final a in accounts) a.profile]);
 
-  Future<BrokerAdapter> _adapter(AccountRuntime rt) async {
+  final Map<String, Future<BrokerAdapter>> _connecting = {};
+
+  /// One adapter per account; concurrent callers share one connection attempt.
+  Future<BrokerAdapter> _adapter(AccountRuntime rt) {
     final existing = rt.broker;
-    if (existing != null) return existing;
+    if (existing != null) return Future.value(existing);
+    // Note: the callback must not return the removed Future (whenComplete would
+    // wait on it, i.e. on itself).
+    return _connecting[rt.profile.id] ??= _createAdapter(rt).whenComplete(() {
+      _connecting.remove(rt.profile.id);
+    });
+  }
+
+  Future<BrokerAdapter> _createAdapter(AccountRuntime rt) async {
     final creds = await secrets.load(rt.profile.id, rt.profile.broker);
     if (!creds.isCompleteFor(rt.profile.broker)) {
       throw const BrokerException(BrokerErrorCode.auth, 'بيانات الدخول غير مكتملة');
@@ -164,6 +198,10 @@ class AppController extends ChangeNotifier {
   Future<String?> testConnection(String id) async {
     final rt = _accounts[id];
     if (rt == null) return 'الحساب غير موجود';
+    return rt.lock.run(() => _testConnection(rt));
+  }
+
+  Future<String?> _testConnection(AccountRuntime rt) async {
     try {
       rt.broker = null;
       final b = await _adapter(rt);
@@ -181,6 +219,10 @@ class AppController extends ChangeNotifier {
   Future<void> refresh(String id) async {
     final rt = _accounts[id];
     if (rt == null) return;
+    return rt.lock.run(() => _refresh(rt));
+  }
+
+  Future<void> _refresh(AccountRuntime rt) async {
     try {
       final b = await _adapter(rt);
       rt.snapshot = await b.account();
@@ -215,6 +257,11 @@ class AppController extends ChangeNotifier {
   Future<CycleSummary?> runCycle(String id) async {
     final rt = _accounts[id];
     if (rt == null) return null;
+    return rt.lock.run(() => _runCycle(rt));
+  }
+
+  Future<CycleSummary?> _runCycle(AccountRuntime rt) async {
+    final id = rt.profile.id;
     try {
       final b = await _adapter(rt);
       final engine = rt.engine ??= TradingEngine(profile: rt.profile, broker: b, state: rt.state);
@@ -242,6 +289,25 @@ class AppController extends ChangeNotifier {
     if (rt == null) throw StateError('الحساب غير موجود');
     final b = await _adapter(rt);
     return b.bars(symbol, timeframe, limit: limit);
+  }
+
+  /// Bars the engines would analyse: [chartBars] minus the still-forming bar
+  /// (same rule as `TradingEngine`).
+  List<Candle> completedBars(String id, List<Candle> bars, BarTimeframe timeframe, {DateTime? now}) {
+    final rt = _accounts[id];
+    final kind = rt?.profile.broker ?? BrokerKind.alpaca;
+    return TradingEngine.completedBarsFor(kind, bars, timeframe, now ?? DateTime.now().toUtc());
+  }
+
+  /// Market status for the UI: the most recent broker-confirmed status from a
+  /// cycle (if under 2 minutes old), otherwise the offline NYSE calendar.
+  MarketStatus marketStatus({DateTime? now}) {
+    final t = now ?? DateTime.now().toUtc();
+    for (final rt in accounts) {
+      final st = rt.lastMarketStatus;
+      if (st != null && st.source == StatusSource.broker && t.difference(st.at).inSeconds.abs() < 120) return st;
+    }
+    return const MarketCalendar().statusAt(t);
   }
 
   void _captureBrokerState(AccountRuntime rt) {

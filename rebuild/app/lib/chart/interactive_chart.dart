@@ -125,11 +125,10 @@ class OhlcReadout extends StatelessWidget {
   final int index;
   const OhlcReadout({super.key, required this.data, required this.index});
 
+  /// Bar start in New York time, labelled ET.
   static String timeText(DateTime t, BarTimeframe tf) {
-    final l = t.toLocal();
-    String two(int v) => v.toString().padLeft(2, '0');
-    final d = '${l.year}-${two(l.month)}-${two(l.day)}';
-    return tf == BarTimeframe.d1 ? d : '$d ${two(l.hour)}:${two(l.minute)}';
+    final d = NewYorkTime.dateKey(t);
+    return tf == BarTimeframe.d1 ? d : '$d ${NewYorkTime.hm(t)} ET';
   }
 
   @override
@@ -158,6 +157,9 @@ class OhlcReadout extends StatelessWidget {
               Text('L ${f(k.low)}  C ${f(k.close)}${change == null ? '' : '  ${change >= 0 ? '+' : ''}${change.toStringAsFixed(2)}%'}',
                   key: const Key('readout-lc')),
               Text('V ${k.volume.toStringAsFixed(0)}${score == null ? '' : '   Score ${score.toStringAsFixed(0)}'}'),
+              if (data.isForming(index))
+                const Text('شمعة قيد التكوين — خارج التحليل',
+                    key: Key('readout-forming'), textDirection: TextDirection.rtl),
               for (final m in marks.take(3))
                 Text(_markLabel(m.marker),
                     textDirection: TextDirection.rtl, maxLines: 2, overflow: TextOverflow.ellipsis),

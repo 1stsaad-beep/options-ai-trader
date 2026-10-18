@@ -9,19 +9,30 @@ import 'chart_viewport.dart';
 
 /// Immutable inputs of one chart: analysis (bars + engine outputs on the same
 /// bars) and the account's trade markers resolved to bar indices.
+///
+/// [candles] are all loaded bars; the analysis ran on the completed prefix
+/// (`analysis.candles`), so indices are shared. A still-forming last bar is
+/// drawn but never analysed.
 class ChartData {
   final ChartAnalysis analysis;
   final BarTimeframe timeframe;
+  final List<Candle> candles;
   final List<({int index, TradeMarker marker})> markers;
 
-  ChartData(this.analysis, this.timeframe, List<TradeMarker> tradeMarkers)
-      : markers = [
+  ChartData(this.analysis, this.timeframe, List<TradeMarker> tradeMarkers, {List<Candle>? allBars})
+      : candles = allBars ?? analysis.candles,
+        markers = [
           for (final m in tradeMarkers)
-            if (TradeMarker.candleIndexFor(analysis.candles, m.time, timeframe.duration) case final i when i >= 0)
+            if (TradeMarker.candleIndexFor(allBars ?? analysis.candles, m.time, timeframe.duration) case final i when i >= 0)
               (index: i, marker: m)
-        ];
+        ] {
+    assert(candles.length >= analysis.candles.length);
+  }
 
-  List<Candle> get candles => analysis.candles;
+  /// Index of the first bar that was not analysed (still forming), or null.
+  int? get formingFrom => candles.length > analysis.candles.length ? analysis.candles.length : null;
+
+  bool isForming(int i) => i >= analysis.candles.length;
 }
 
 class ChartColors {
@@ -221,10 +232,11 @@ class CandleChartPainter extends CustomPainter {
   }
 
   String _timeLabel(DateTime t, DateTime? prev) {
-    final l = t.toLocal();
+    // Axis times are New York (ET), the exchange's own clock.
+    final l = NewYorkTime.wall(t);
     String two(int v) => v.toString().padLeft(2, '0');
     if (data.timeframe == BarTimeframe.d1) return '${two(l.month)}-${two(l.day)}';
-    final newDay = prev == null || prev.toLocal().day != l.day;
+    final newDay = prev == null || NewYorkTime.wall(prev).day != l.day;
     return newDay ? '${two(l.month)}-${two(l.day)}' : '${two(l.hour)}:${two(l.minute)}';
   }
 
@@ -239,6 +251,7 @@ class CandleChartPainter extends CustomPainter {
       _text(canvas, _timeLabel(c[i].time, i - every >= 0 ? c[i - every].time : null), Offset(px, plot.bottom + 9),
           center: true, size: 9);
     }
+    _text(canvas, 'ET', Offset(plot.right + 4, plot.bottom + 3), size: 9, weight: FontWeight.bold);
   }
 
   void _candles(Canvas canvas, PriceScale ps, int first, int last, double Function(num) x, double bw, Size size) {
@@ -246,6 +259,7 @@ class CandleChartPainter extends CustomPainter {
     cache.ensure((first, last, rightIndex, barsVisible, size, ps.min, ps.max), (cc) {
       final body = math.max(1.0, bw * 0.7);
       for (var i = first; i <= last; i++) {
+        if (data.isForming(i)) continue; // drawn separately
         final k = c[i];
         final up = k.close >= k.open;
         final cx = x(i);
@@ -266,6 +280,27 @@ class CandleChartPainter extends CustomPainter {
     canvas.drawPath(cache.downWicks, wp..color = colors.down);
     canvas.drawPath(cache.upBodies, Paint()..color = colors.up);
     canvas.drawPath(cache.downBodies, Paint()..color = colors.down);
+    // Still-forming bar(s): hollow, faded — not part of the analysis.
+    final from = data.formingFrom;
+    if (from != null) {
+      final body = math.max(1.0, bw * 0.7);
+      for (var i = math.max(from, first); i <= last; i++) {
+        final k = c[i];
+        final color = (k.close >= k.open ? colors.up : colors.down).withValues(alpha: 0.6);
+        final p = Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1
+          ..color = color;
+        final cx = x(i);
+        final yo = ps.y(k.open), yc = ps.y(k.close);
+        canvas.drawLine(Offset(cx, ps.y(k.high)), Offset(cx, ps.y(k.low)), p);
+        canvas.drawRect(
+            Rect.fromLTRB(cx - body / 2, math.min(yo, yc), cx + body / 2, math.max(math.max(yo, yc), math.min(yo, yc) + 1)),
+            Paint()..color = colors.background);
+        canvas.drawRect(
+            Rect.fromLTRB(cx - body / 2, math.min(yo, yc), cx + body / 2, math.max(math.max(yo, yc), math.min(yo, yc) + 1)), p);
+      }
+    }
   }
 
   void _series(Canvas canvas, PriceScale ps, double Function(num) x, List<double?> s, int first, int last, Color color) {
@@ -374,6 +409,7 @@ class CandleChartPainter extends CustomPainter {
     if (sw.isNotEmpty) {
       final s = sw.last;
       final c = a.candles;
+      if (c.isEmpty) return;
       _dashed(canvas, Offset(x(s.index), ps.y(s.price)), Offset(x(c.length - 1), ps.y(c.last.close)),
           Paint()
             ..color = colors.zigzag.withValues(alpha: 0.6)

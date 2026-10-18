@@ -4,6 +4,7 @@ import 'package:trader_core/trader_core.dart';
 import '../services/app_controller.dart';
 import 'account_detail_screen.dart';
 import 'add_account_screen.dart';
+import '../widgets/market_status_card.dart';
 
 class AccountsScreen extends StatelessWidget {
   final AppController controller;
@@ -40,9 +41,11 @@ class AccountsScreen extends StatelessWidget {
                       onRefresh: controller.refreshAll,
                       child: ListView.separated(
                         padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
-                        itemCount: accounts.length,
+                        itemCount: accounts.length + 1,
                         separatorBuilder: (_, __) => const SizedBox(height: 8),
-                        itemBuilder: (context, i) => _AccountCard(controller: controller, rt: accounts[i]),
+                        itemBuilder: (context, i) => i == 0
+                            ? MarketStatusCard(controller: controller)
+                            : _AccountCard(controller: controller, rt: accounts[i - 1]),
                       ),
                     ),
         );

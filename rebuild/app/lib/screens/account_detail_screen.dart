@@ -4,6 +4,7 @@ import 'package:trader_core/trader_core.dart';
 import '../services/app_controller.dart';
 import 'add_account_screen.dart';
 import 'chart_screen.dart';
+import '../widgets/market_status_card.dart';
 import 'live_mode_screen.dart';
 import 'settings_screen.dart';
 
@@ -138,12 +139,13 @@ class _OverviewState extends State<_Overview> {
             child: SwitchListTile(
               title: const Text('التداول الآلي'),
               subtitle: Text(p.enabled
-                  ? 'مفعّل — يعمل كل دقيقة أثناء فتح التطبيق (${p.mode == TradingMode.paper ? 'Paper' : 'حقيقي'})'
+                  ? 'مفعّل — يعمل كل دقيقة أثناء فتح التطبيق، ويرسل أوامر فقط في ساعات السوق الرسمية (${p.mode == TradingMode.paper ? 'Paper' : 'حقيقي'})'
                   : 'متوقف'),
               value: p.enabled,
               onChanged: (v) => widget.controller.updateProfile(p.copyWith(enabled: v)),
             ),
           ),
+          MarketStatusCard(controller: widget.controller),
           if (rt.lastError != null)
             Card(
               color: Theme.of(context).colorScheme.errorContainer,

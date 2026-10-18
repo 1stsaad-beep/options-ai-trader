@@ -9,6 +9,7 @@ import '../chart/interactive_chart.dart';
 import '../services/app_controller.dart';
 
 typedef BarsLoader = Future<List<Candle>> Function(BarTimeframe timeframe);
+typedef CompletedFilter = List<Candle> Function(List<Candle> bars, BarTimeframe timeframe);
 typedef ChartAnalyzer = Future<ChartAnalysis> Function(String symbol, List<Candle> bars, Map<EngineId, double> weights);
 
 /// Off the UI thread: the full analysis (and per-bar score history) on the
@@ -37,6 +38,9 @@ class ChartScreen extends StatefulWidget {
   final List<JournalEntry> Function() journal;
   final ChartAnalyzer analyze;
 
+  /// Completed bars the engines analyse (drops the forming bar).
+  final CompletedFilter completed;
+
   const ChartScreen({
     super.key,
     required this.symbol,
@@ -46,6 +50,7 @@ class ChartScreen extends StatefulWidget {
     required this.weights,
     required this.loadBars,
     required this.journal,
+    required this.completed,
     this.analyze = analyzeInIsolate,
   });
 
@@ -60,6 +65,7 @@ class ChartScreen extends StatefulWidget {
       weights: rt.profile.settings.engineWeights,
       loadBars: (tf) => controller.chartBars(accountId, symbol, tf),
       journal: () => controller.account(accountId)?.state.journal ?? const [],
+      completed: (bars, tf) => controller.completedBars(accountId, bars, tf),
     );
   }
 
@@ -89,12 +95,13 @@ class _ChartScreenState extends State<ChartScreen> {
     });
     try {
       final bars = await widget.loadBars(_tf);
-      if (bars.isEmpty) throw const FormatException('لا توجد شموع لهذا الرمز/الإطار');
-      final analysis = await widget.analyze(widget.symbol, bars, widget.weights);
+      final done = widget.completed(bars, _tf);
+      if (done.isEmpty) throw const FormatException('لا توجد شموع مكتملة لهذا الرمز/الإطار');
+      final analysis = await widget.analyze(widget.symbol, done, widget.weights);
       final markers = TradeMarker.fromJournal(widget.journal(), widget.symbol);
       if (!mounted || req != _request) return;
       setState(() {
-        _data = ChartData(analysis, _tf, markers);
+        _data = ChartData(analysis, _tf, markers, allBars: bars);
         _loading = false;
       });
     } catch (e) {
@@ -193,7 +200,8 @@ class _ScoreHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final r = data.analysis.report;
     final colors = ChartColors.of(Theme.of(context));
-    final n = data.candles.length;
+    final n = data.analysis.candles.length;
+    final forming = data.candles.length - n;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       child: Row(children: [
@@ -207,7 +215,8 @@ class _ScoreHeader extends StatelessWidget {
         const SizedBox(width: 6),
         Expanded(
           child: Text(
-            '$n شمعة${n < 60 ? ' (أقل من 60: المحركات لا تحلل)' : ''}'
+            '$n شمعة مكتملة${forming > 0 ? ' + $forming قيد التكوين' : ''}'
+            '${n < 60 ? ' (أقل من 60: المحركات لا تحلل)' : ''}'
             '${accountTimeframe ? '' : ' • ليس إطار الحساب'}',
             style: Theme.of(context).textTheme.bodySmall,
             overflow: TextOverflow.ellipsis,
