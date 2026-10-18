@@ -33,6 +33,9 @@ class AccountSettings {
   /// After an entry or exit on a symbol, no new entry on it for this many minutes.
   final int symbolCooldownMinutes;
 
+  /// Per-account pause: no new entries or scale-ins; exits keep running.
+  final bool pauseNewEntries;
+
   // ---- entry criteria ----
   final BarTimeframe timeframe;
 
@@ -114,6 +117,7 @@ class AccountSettings {
     this.dailyLossLimitPercent = 3,
     this.maxOrdersPerDay = 10,
     this.symbolCooldownMinutes = 60,
+    this.pauseNewEntries = false,
     this.timeframe = BarTimeframe.m15,
     this.minScore = 35,
     this.minAgreeingEngines = 2,
@@ -151,6 +155,31 @@ class AccountSettings {
     this.scaleInMinScore = 50,
     this.scaleInFraction = 0.5,
   });
+
+  /// Allowed ranges enforced by [validate] (key = JSON key). Shown in the
+  /// settings screen next to each parameter.
+  static const Map<String, (num, num)> allowedRanges = {
+    'riskPerTradePercent': (0.1, 10),
+    'maxPositionPercent': (1, 100),
+    'maxContractsPerTrade': (1, 100),
+    'maxOpenPositions': (1, 50),
+    'maxTotalExposurePercent': (1, 100),
+    'dailyLossLimitPercent': (0.5, 50),
+    'maxOrdersPerDay': (1, 200),
+    'symbolCooldownMinutes': (0, 1440),
+    'minScore': (5, 100),
+    'minAgreeingEngines': (1, 6),
+    'minDaysToExpiry': (0, 365),
+    'maxDaysToExpiry': (0, 730),
+    'targetDelta': (0.1, 0.9),
+    'maxSpreadPercent': (1, 50),
+    'entryAggressiveness': (0, 1),
+    'stopLossPercent': (5, 95),
+    'takeProfitPercent': (5, 1000),
+    'partialTakeProfitFraction': (0, 0.9),
+    'trailingStopPercent': (1, 90),
+    'scaleInFraction': (0.1, 2),
+  };
 
   /// Returns a list of Arabic validation errors (empty = valid).
   List<String> validate() {
@@ -195,6 +224,7 @@ class AccountSettings {
     double? dailyLossLimitPercent,
     int? maxOrdersPerDay,
     int? symbolCooldownMinutes,
+    bool? pauseNewEntries,
     BarTimeframe? timeframe,
     double? minScore,
     int? minAgreeingEngines,
@@ -234,6 +264,7 @@ class AccountSettings {
         dailyLossLimitPercent: dailyLossLimitPercent ?? this.dailyLossLimitPercent,
         maxOrdersPerDay: maxOrdersPerDay ?? this.maxOrdersPerDay,
         symbolCooldownMinutes: symbolCooldownMinutes ?? this.symbolCooldownMinutes,
+        pauseNewEntries: pauseNewEntries ?? this.pauseNewEntries,
         timeframe: timeframe ?? this.timeframe,
         minScore: minScore ?? this.minScore,
         minAgreeingEngines: minAgreeingEngines ?? this.minAgreeingEngines,
@@ -274,6 +305,7 @@ class AccountSettings {
         'dailyLossLimitPercent': dailyLossLimitPercent,
         'maxOrdersPerDay': maxOrdersPerDay,
         'symbolCooldownMinutes': symbolCooldownMinutes,
+        'pauseNewEntries': pauseNewEntries,
         'timeframe': timeframe.name,
         'minScore': minScore,
         'minAgreeingEngines': minAgreeingEngines,
@@ -328,6 +360,7 @@ class AccountSettings {
       dailyLossLimitPercent: dbl('dailyLossLimitPercent', d.dailyLossLimitPercent),
       maxOrdersPerDay: integer('maxOrdersPerDay', d.maxOrdersPerDay),
       symbolCooldownMinutes: integer('symbolCooldownMinutes', d.symbolCooldownMinutes),
+      pauseNewEntries: flag('pauseNewEntries', d.pauseNewEntries),
       timeframe: BarTimeframe.values.firstWhere((t) => t.name == j['timeframe'], orElse: () => d.timeframe),
       minScore: dbl('minScore', d.minScore),
       minAgreeingEngines: integer('minAgreeingEngines', d.minAgreeingEngines),

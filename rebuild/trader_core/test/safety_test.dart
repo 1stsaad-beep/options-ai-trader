@@ -155,4 +155,40 @@ void main() {
     expect(q.vega, 0.12);
     expect(q.impliedVolatility, 0.31);
   });
+
+  test('per-account pause: no new entries, exits still managed', () async {
+    var e = engine(profile());
+    await e.runCycle(); // Call opened
+    expect(await broker.positions(), hasLength(1));
+    final paused = profile();
+    final pp = paused.copyWith(settings: paused.settings.copyWith(pauseNewEntries: true));
+    e = engine(pp);
+    bias = Bias.bearish;
+    now = now.add(const Duration(minutes: 1));
+    await e.runCycle(); // exit on opposite signal still happens
+    expect(await broker.positions(), isEmpty);
+    now = now.add(const Duration(hours: 3));
+    final r = await e.runCycle();
+    expect(await broker.positions(), isEmpty);
+    expect(r.noteAr, contains('موقوف مؤقتًا'));
+    expect(AccountSettings.fromJson(pp.settings.toJson()).pauseNewEntries, isTrue);
+  });
+
+  test('allowedRanges match validate() at both ends', () {
+    final base = const AccountSettings().toJson();
+    for (final MapEntry(key: k, value: (lo, hi)) in AccountSettings.allowedRanges.entries) {
+      if (k == 'maxDaysToExpiry') continue; // lower bound is minDaysToExpiry
+      AccountSettings at(num v) {
+        final j = {...base, k: base[k] is int ? v.toInt() : v.toDouble()};
+        if (k == 'partialTakeProfitFraction' || k == 'takeProfitPercent') j['partialTakeProfitPercent'] = 1;
+        if (k == 'minDaysToExpiry') j['maxDaysToExpiry'] = 730;
+        return AccountSettings.fromJson(j.cast<String, dynamic>());
+      }
+      expect(at(lo).validate(), isEmpty, reason: '$k=$lo');
+      expect(at(hi).validate(), isEmpty, reason: '$k=$hi');
+      final below = lo - (base[k] is int ? 1 : 0.05);
+      if (below >= 0 || lo > 0) expect(at(below).validate(), isNotEmpty, reason: '$k=$below');
+      expect(at(hi + (base[k] is int ? 1 : 0.05)).validate(), isNotEmpty, reason: '$k>$hi');
+    }
+  });
 }

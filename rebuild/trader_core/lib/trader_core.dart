@@ -33,4 +33,5 @@ export 'src/trading/risk.dart';
 export 'src/trading/decision_engine.dart';
 export 'src/trading/journal.dart';
 export 'src/trading/cycle_record.dart';
+export 'src/trading/report.dart';
 export 'src/trading/trading_engine.dart';

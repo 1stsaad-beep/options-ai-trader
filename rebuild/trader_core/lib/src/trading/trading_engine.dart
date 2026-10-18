@@ -266,6 +266,7 @@ class TradingEngine {
               multiplier: p.contract.multiplier,
               feePerContractCents: feePerContractCents,
             );
+            if (s.pauseNewEntries) continue;
             if (_openingCapReached()) {
               _log(JournalAction.skip, 'تعزيز غير ممكن: بلغ عدد أوامر الفتح اليوم الحد (${s.maxOrdersPerDay})',
                   symbol: p.contract.underlying);
@@ -300,6 +301,9 @@ class TradingEngine {
       // ---- entries ----
       if (_dailyLimitHit(account, now)) {
         return CycleSummary(ran: true, ordersSubmitted: submitted, errors: errors, noteAr: 'حد الخسارة اليومي');
+      }
+      if (s.pauseNewEntries) {
+        return CycleSummary(ran: true, ordersSubmitted: submitted, errors: errors, noteAr: 'الدخول الجديد موقوف مؤقتًا لهذا الحساب');
       }
       if (_openingCapReached()) {
         if (_capNotifiedFor != state.ordersDayKey) {
@@ -415,6 +419,7 @@ class TradingEngine {
       invalidation: intent.report.invalidationFor(bias),
       target: intent.report.firstTargetFor(bias),
       score: intent.report.score,
+      engines: [for (final sig in intent.report.supporting(bias)) sig.engine.name],
       details: {
         'analysis': intent.report.toJson(),
         'contract': occ,
@@ -437,6 +442,7 @@ class TradingEngine {
     double? invalidation,
     double? target,
     double score = 0,
+    List<String> engines = const [],
     Map<String, Object?> details = const {},
   }) async {
     if (marketHours != null) {
@@ -466,6 +472,7 @@ class TradingEngine {
       underlyingInvalidation: invalidation,
       underlyingTarget: target,
       score: score,
+      engines: engines,
     );
     _log(journalAction, reason, symbol: r.contract.underlying, details: {
       ...details,
@@ -533,6 +540,7 @@ class TradingEngine {
           entryReasonAr: t.reasonAr,
           underlyingInvalidation: t.underlyingInvalidation,
           underlyingTarget: t.underlyingTarget,
+          engines: t.engines,
         );
       } else {
         if (t.purpose == 'scaleIn' && t.processedFilled == delta) meta.scaleIns++;
@@ -555,6 +563,7 @@ class TradingEngine {
         exitKind: t.purpose,
         entryReasonAr: meta?.entryReasonAr ?? '',
         exitReasonAr: t.reasonAr,
+        engines: meta?.engines ?? const [],
       ));
       if (meta != null && t.purpose == ExitKind.partialProfit.name) meta.partialTaken = true;
     }

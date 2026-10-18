@@ -73,6 +73,10 @@ class TradeRecord {
   final String entryReasonAr;
   final String exitReasonAr;
 
+  /// Engines (EngineId names) that supported the entry; empty for trades
+  /// recorded before v2.0.0-dev.5 or positions not opened by the app.
+  final List<String> engines;
+
   const TradeRecord({
     required this.occSymbol,
     required this.underlying,
@@ -87,6 +91,7 @@ class TradeRecord {
     required this.entryReasonAr,
     required this.exitReasonAr,
     this.multiplier = 100,
+    this.engines = const [],
   });
 
   int get pnlCents => (exitPremiumCents - entryPremiumCents) * quantity * multiplier - feesCents;
@@ -106,6 +111,7 @@ class TradeRecord {
         'k': exitKind,
         'er': entryReasonAr,
         'xr': exitReasonAr,
+        if (engines.isNotEmpty) 'eng': engines,
       };
 
   factory TradeRecord.fromJson(Map<String, dynamic> j) => TradeRecord(
@@ -122,6 +128,7 @@ class TradeRecord {
         exitKind: j['k'] as String,
         entryReasonAr: j['er'] as String? ?? '',
         exitReasonAr: j['xr'] as String? ?? '',
+        engines: [for (final e in (j['eng'] as List? ?? const [])) e as String],
       );
 }
 
@@ -137,6 +144,9 @@ class PerformanceReport {
   final int trades;
   final int wins;
   final int losses;
+
+  /// Trades with exactly zero P/L after fees (neither a win nor a loss).
+  final int breakevens;
   final int realizedPnlCents;
   final int grossProfitCents;
   final int grossLossCents;
@@ -154,6 +164,7 @@ class PerformanceReport {
     required this.trades,
     required this.wins,
     required this.losses,
+    this.breakevens = 0,
     required this.realizedPnlCents,
     required this.grossProfitCents,
     required this.grossLossCents,
@@ -174,7 +185,7 @@ class PerformanceReport {
   double get averageLossCents => losses == 0 ? 0 : grossLossCents / losses;
 
   static PerformanceReport compute(List<TradeRecord> trades, List<EquityPoint> curve, {int? startingEquityCents}) {
-    var wins = 0, losses = 0, pnl = 0, gp = 0, gl = 0, fees = 0, best = 0, worst = 0;
+    var wins = 0, losses = 0, even = 0, pnl = 0, gp = 0, gl = 0, fees = 0, best = 0, worst = 0;
     for (final t in trades) {
       final p = t.pnlCents;
       pnl += p;
@@ -182,9 +193,11 @@ class PerformanceReport {
       if (p > 0) {
         wins++;
         gp += p;
-      } else {
+      } else if (p < 0) {
         losses++;
         gl += -p;
+      } else {
+        even++;
       }
       best = math.max(best, p);
       worst = math.min(worst, p);
@@ -203,6 +216,7 @@ class PerformanceReport {
       trades: trades.length,
       wins: wins,
       losses: losses,
+      breakevens: even,
       realizedPnlCents: pnl,
       grossProfitCents: gp,
       grossLossCents: gl,

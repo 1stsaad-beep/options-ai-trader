@@ -26,6 +26,9 @@ class TrackedOrder {
   final double? underlyingTarget;
   final double score;
 
+  /// Engines (EngineId names) that agreed with the entry direction.
+  final List<String> engines;
+
   TrackedOrder({
     required this.orderId,
     required this.clientOrderId,
@@ -38,6 +41,7 @@ class TrackedOrder {
     this.underlyingInvalidation,
     this.underlyingTarget,
     this.score = 0,
+    this.engines = const [],
   });
 
   Map<String, Object?> toJson() => {
@@ -52,6 +56,7 @@ class TrackedOrder {
         'inval': underlyingInvalidation,
         'target': underlyingTarget,
         'score': score,
+        if (engines.isNotEmpty) 'eng': engines,
       };
 
   factory TrackedOrder.fromJson(Map<String, dynamic> j) => TrackedOrder(
@@ -66,6 +71,7 @@ class TrackedOrder {
         underlyingInvalidation: (j['inval'] as num?)?.toDouble(),
         underlyingTarget: (j['target'] as num?)?.toDouble(),
         score: (j['score'] as num?)?.toDouble() ?? 0,
+        engines: [for (final e in (j['eng'] as List? ?? const [])) e as String],
       );
 }
 

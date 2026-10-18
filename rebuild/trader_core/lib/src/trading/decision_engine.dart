@@ -33,6 +33,9 @@ class PositionMeta {
   final double entryScore;
   final String entryReasonAr;
 
+  /// Engines (EngineId names) that supported the entry.
+  final List<String> engines;
+
   PositionMeta({
     required this.occSymbol,
     required this.entryTime,
@@ -45,6 +48,7 @@ class PositionMeta {
     this.scaleIns = 0,
     this.underlyingInvalidation,
     this.underlyingTarget,
+    this.engines = const [],
   }) : peakPremiumCents = peakPremiumCents ?? entryPremiumCents;
 
   Map<String, Object?> toJson() => {
@@ -59,6 +63,7 @@ class PositionMeta {
         'target': underlyingTarget,
         'score': entryScore,
         'reason': entryReasonAr,
+        if (engines.isNotEmpty) 'eng': engines,
       };
 
   factory PositionMeta.fromJson(Map<String, dynamic> j) => PositionMeta(
@@ -73,6 +78,7 @@ class PositionMeta {
         underlyingTarget: (j['target'] as num?)?.toDouble(),
         entryScore: (j['score'] as num?)?.toDouble() ?? 0,
         entryReasonAr: j['reason'] as String? ?? '',
+        engines: [for (final e in (j['eng'] as List? ?? const [])) e as String],
       );
 }
 
