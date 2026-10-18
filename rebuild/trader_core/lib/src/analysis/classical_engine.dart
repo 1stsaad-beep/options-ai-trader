@@ -11,6 +11,7 @@ library;
 import 'dart:math' as math;
 
 import '../models.dart';
+import 'geometry.dart';
 import 'pivots.dart';
 import 'signal.dart';
 
@@ -57,6 +58,17 @@ List<EngineSignal> classicalEngine(List<Candle> c, {double tolerance = 0.015, in
           invalidation: top ? math.max(p1.price, p2.price) : math.min(p1.price, p2.price),
           targets: [top ? neckline - height * 0.618 : neckline + height * 0.618, target],
           details: {'neckline': neckline, 'height': height},
+          geometry: () {
+            final pts = [
+              GeoPoint(p1.index, p1.price, top ? 'T1' : 'B1'),
+              GeoPoint(mid.index, mid.price, 'N'),
+              GeoPoint(p2.index, p2.price, top ? 'T2' : 'B2'),
+            ];
+            return ChartGeometry(points: pts, segments: [
+              ...ChartGeometry.polyline(pts),
+              GeoSegment(mid.index, neckline, at, neckline, role: GeoRole.neckline, label: 'neckline'),
+            ]);
+          }(),
         ));
       }
     }
@@ -96,6 +108,19 @@ List<EngineSignal> classicalEngine(List<Candle> c, {double tolerance = 0.015, in
           invalidation: rs.price,
           targets: [top ? neckNow - height * 0.618 : neckNow + height * 0.618, target],
           details: {'neckline': neckNow, 'head': h.price},
+          geometry: () {
+            final pts = [
+              GeoPoint(ls.index, ls.price, 'LS'),
+              GeoPoint(t1.index, t1.price, 'N1'),
+              GeoPoint(h.index, h.price, 'H'),
+              GeoPoint(t2.index, t2.price, 'N2'),
+              GeoPoint(rs.index, rs.price, 'RS'),
+            ];
+            return ChartGeometry(points: pts, segments: [
+              ...ChartGeometry.polyline(pts),
+              GeoSegment(t1.index, t1.price, last, neckNow, role: GeoRole.neckline, label: 'neckline'),
+            ]);
+          }(),
         ));
       }
     }
@@ -154,6 +179,13 @@ List<EngineSignal> classicalEngine(List<Candle> c, {double tolerance = 0.015, in
               invalidation: up ? lowerAt(last) : upperAt(last),
               targets: [up ? base + height * 0.618 : base - height * 0.618, target],
               details: {'upperSlope': hSlope, 'lowerSlope': lSlope},
+              geometry: ChartGeometry(
+                points: [for (final p in w) GeoPoint(p.index, p.price, p.isHigh ? 'H' : 'L')],
+                segments: [
+                  GeoSegment(highs[0].index, highs[0].price, at, upperAt(at), role: GeoRole.boundary),
+                  GeoSegment(lows[0].index, lows[0].price, at, lowerAt(at), role: GeoRole.boundary),
+                ],
+              ),
             ));
           }
         }
@@ -180,6 +212,7 @@ List<EngineSignal> classicalEngine(List<Candle> c, {double tolerance = 0.015, in
           knownAtIndex: last,
           invalidation: (hh + ll) / 2,
           targets: [hh + range * 0.618, hh + range],
+          geometry: ChartGeometry(zones: [GeoZone(last - 20, last, ll, hh, '20')]),
         ));
       } else if (close < ll) {
         out.add(EngineSignal(
@@ -191,6 +224,7 @@ List<EngineSignal> classicalEngine(List<Candle> c, {double tolerance = 0.015, in
           knownAtIndex: last,
           invalidation: (hh + ll) / 2,
           targets: [ll - range * 0.618, ll - range],
+          geometry: ChartGeometry(zones: [GeoZone(last - 20, last, ll, hh, '20')]),
         ));
       }
     }

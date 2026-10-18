@@ -15,6 +15,7 @@ export 'src/brokers/tradestation_adapter.dart';
 export 'src/brokers/ibkr_adapter.dart';
 
 export 'src/analysis/signal.dart';
+export 'src/analysis/geometry.dart';
 export 'src/analysis/indicators.dart';
 export 'src/analysis/pivots.dart';
 export 'src/analysis/indicator_engines.dart';
@@ -22,6 +23,7 @@ export 'src/analysis/harmonic_engine.dart';
 export 'src/analysis/elliott_engine.dart';
 export 'src/analysis/classical_engine.dart';
 export 'src/analysis/analyzer.dart';
+export 'src/analysis/chart_analysis.dart';
 
 export 'src/trading/account.dart';
 export 'src/trading/account_state.dart';

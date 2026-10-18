@@ -90,7 +90,17 @@ class Analyzer {
   };
 
   /// [weights]: engine -> weight (0 disables). Missing engines default to 1.
-  AnalysisReport analyze(String symbol, List<Candle> candles, {Map<EngineId, double> weights = const {}}) {
+  AnalysisReport analyze(String symbol, List<Candle> candles, {Map<EngineId, double> weights = const {}}) =>
+      analyzeWithFindings(symbol, candles, weights: weights).report;
+
+  /// Same as [analyze] but also returns every finding of every enabled engine
+  /// (not only the strongest), for charting. The report is identical.
+  ({AnalysisReport report, Map<EngineId, List<EngineSignal>> findings}) analyzeWithFindings(
+    String symbol,
+    List<Candle> candles, {
+    Map<EngineId, double> weights = const {},
+  }) {
+    final findings = <EngineId, List<EngineSignal>>{};
     if (candles.isEmpty) throw ArgumentError('No candles for $symbol');
     final best = <EngineSignal>[];
     var numerator = 0.0, denominator = 0.0;
@@ -99,6 +109,7 @@ class Analyzer {
       if (w <= 0) continue;
       denominator += w;
       final found = entry.value(candles);
+      findings[entry.key] = found;
       if (found.isEmpty) continue;
       // Strongest directional signal of this engine.
       final top = found.reduce((a, b) => b.strength > a.strength ? b : a);
@@ -110,7 +121,7 @@ class Analyzer {
       numerator += w * top.strength * top.bias.sign;
     }
     final score = denominator == 0 ? 0.0 : 100 * numerator / denominator;
-    return AnalysisReport(
+    final report = AnalysisReport(
       symbol: symbol,
       time: candles.last.time,
       lastClose: candles.last.close,
@@ -118,6 +129,7 @@ class Analyzer {
       signals: best,
       score: score,
     );
+    return (report: report, findings: findings);
   }
 }
 

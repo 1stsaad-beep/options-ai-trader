@@ -13,6 +13,7 @@ library;
 import 'dart:math' as math;
 
 import '../models.dart';
+import 'geometry.dart';
 import 'pivots.dart';
 import 'signal.dart';
 
@@ -39,6 +40,20 @@ const _arabicNames = {
   'CRAB': 'السلطعون',
   'CYPHER': 'سايفر',
 };
+
+ChartGeometry _xabcd(List<Pivot> p, double przA, double przB, int last) {
+  const names = ['X', 'A', 'B', 'C', 'D'];
+  final pts = [for (var k = 0; k < 5; k++) GeoPoint(p[k].index, p[k].price, names[k])];
+  return ChartGeometry(
+    points: pts,
+    segments: [
+      ...ChartGeometry.polyline(pts),
+      GeoSegment(pts[0].index, pts[0].price, pts[2].index, pts[2].price, label: 'XB'),
+      GeoSegment(pts[2].index, pts[2].price, pts[4].index, pts[4].price, label: 'BD'),
+    ],
+    zones: [GeoZone(p[3].index, last, math.min(przA, przB), math.max(przA, przB), 'PRZ')],
+  );
+}
 
 bool _within(double v, double lo, double hi, double tol) => v >= lo - tol && v <= hi + tol;
 
@@ -76,6 +91,7 @@ List<EngineSignal> harmonicEngine(List<Candle> c, {double tolerance = 0.04, int 
       invalidation: invalidation * sign,
       targets: [t1 * sign, t2 * sign],
       details: {for (final e in ratios.entries) e.key: double.parse(e.value.toStringAsFixed(3))},
+      geometry: _xabcd(p, przLo * sign, przHi * sign, last),
     ));
   }
 

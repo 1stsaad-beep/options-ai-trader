@@ -431,7 +431,15 @@ class TradingEngine {
     }
     _log(JournalAction.orderFilled,
         'تنفيذ ${o.side == OrderSide.buyToOpen ? 'شراء' : 'بيع'} $delta عقد ${t.occSymbol} بسعر ${formatUsd(price)}',
-        symbol: o.contract.underlying, details: {'orderId': o.id, 'filled': o.filledQuantity, 'of': o.quantity});
+        symbol: o.contract.underlying,
+        details: {
+          'orderId': o.id,
+          'filled': o.filledQuantity,
+          'of': o.quantity,
+          'side': o.side.name,
+          'contract': t.occSymbol,
+          'priceCents': price,
+        });
   }
 
   /// Keeps engine memory in line with what the broker actually holds.

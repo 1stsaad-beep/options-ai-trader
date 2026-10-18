@@ -1,6 +1,8 @@
 /// Output types shared by all analysis engines.
 library;
 
+import 'geometry.dart';
+
 enum Bias {
   bullish,
   bearish,
@@ -57,6 +59,10 @@ class EngineSignal {
 
   final Map<String, Object?> details;
 
+  /// What to draw on a chart (bar indices into the analysed candles). Not
+  /// serialised and never used for decisions.
+  final ChartGeometry geometry;
+
   EngineSignal({
     required this.engine,
     required this.bias,
@@ -67,6 +73,7 @@ class EngineSignal {
     this.invalidation,
     this.targets = const [],
     this.details = const {},
+    this.geometry = ChartGeometry.empty,
   }) : strength = strength.clamp(0.0, 1.0).toDouble();
 
   Map<String, Object?> toJson() => {

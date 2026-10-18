@@ -19,6 +19,7 @@ library;
 import 'dart:math' as math;
 
 import '../models.dart';
+import 'geometry.dart';
 import 'pivots.dart';
 import 'signal.dart';
 
@@ -57,6 +58,12 @@ List<EngineSignal> elliottEngine(List<Candle> c, {int recency = 20}) {
             'points': [for (var k = 0; k < labels.length; k++) swings[from + k].price],
             'indices': [for (var k = 0; k < labels.length; k++) swings[from + k].index],
           },
+          geometry: () {
+            final pts = [
+              for (var k = 0; k < labels.length; k++) GeoPoint(swings[from + k].index, swings[from + k].price, labels[k])
+            ];
+            return ChartGeometry(points: pts, segments: ChartGeometry.polyline(pts));
+          }(),
         );
 
     // --- WAVE3_START: [L0, H1, L2] at the end, wave 2 retraced 38–79% ---

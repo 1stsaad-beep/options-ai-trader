@@ -9,6 +9,7 @@ import 'dart:math' as math;
 
 import '../models.dart';
 import 'indicators.dart';
+import 'geometry.dart';
 import 'pivots.dart';
 import 'signal.dart';
 
@@ -161,6 +162,13 @@ List<EngineSignal> divergenceEngine(List<Candle> c, {int recency = 8}) {
       invalidation: p2.price,
       targets: target == null ? const [] : [target],
       details: {'p1': p1.price, 'p2': p2.price, 'rsi1': r1, 'rsi2': r2, 'gap': gap},
+      geometry: ChartGeometry(
+        points: [
+          GeoPoint(p1.index, p1.price, 'RSI ${r1.toStringAsFixed(0)}'),
+          GeoPoint(p2.index, p2.price, 'RSI ${r2.toStringAsFixed(0)}'),
+        ],
+        segments: [GeoSegment(p1.index, p1.price, p2.index, p2.price, role: GeoRole.divergence, label: kind)],
+      ),
     ));
   }
   return out;
