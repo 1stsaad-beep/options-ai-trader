@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 
 from . import options_model as om
-from .indicators import atr
+from .indicators import atr, bars_per_day
 
 
 @dataclass
@@ -35,6 +35,8 @@ class ExitRules:
     atr_target: float | None = None
     min_dte_exit: int = 7                 # close when <= x calendar days left
     exit_on_opposite: bool = True
+    flat_time: str | None = None          # intraday: close everything at/after HH:MM (exchange time)
+    no_entry_after: str | None = None     # intraday: no new entries at/after HH:MM
 
 
 @dataclass
@@ -101,7 +103,8 @@ def run(data: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: St
     ivs, atrs = {}, {}
     for s, df in data.items():
         c = (cost_overrides or {}).get(s, costs)
-        ivs[s] = om.iv_series(df, c, vix if s in ("SPY",) else None)
+        bpd = bars_per_day(df)
+        ivs[s] = om.iv_series(df, c, vix if (s in ("SPY",) and bpd == 1) else None, bpd)
         atrs[s] = atr(df)
     dates = sorted(set().union(*[df.index for df in data.values()]))
     if start is not None:
@@ -129,8 +132,11 @@ def run(data: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: St
             if not np.isfinite(iv):
                 continue
             is_call = direction > 0
-            k = om.choose_strike(is_call, spot, cfg.dte, iv, cfg.target_delta, c)
-            mid = om.mid_price(is_call, spot, k, cfg.dte, iv, c)
+            if cfg.exits.no_entry_after and d.strftime("%H:%M") >= cfg.exits.no_entry_after:
+                continue
+            dte_now = _days_left(_expiry(d, cfg.dte), d)
+            k = om.choose_strike(is_call, spot, max(dte_now, 0.05), iv, cfg.target_delta, c)
+            mid = om.mid_price(is_call, spot, k, dte_now, iv, c)
             px = om.buy_price(mid, c)
             equity = cash + sum(p.last_mid * 100 * p.contracts for p in open_pos.values())
             stop_frac = cfg.exits.option_stop or 1.0
@@ -141,7 +147,7 @@ def run(data: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: St
             if n < 1:
                 continue
             cash -= n * (px * 100 + c.commission)
-            open_pos[sym] = _Pos(sym, direction, d, d + pd.Timedelta(days=cfg.dte), k, n, px, spot,
+            open_pos[sym] = _Pos(sym, direction, d, _expiry(d, cfg.dte), k, n, px, spot,
                                  stop, target, reason, mid, 0, mid)
         pending.clear()
 
@@ -155,7 +161,7 @@ def run(data: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: St
             i = df.index.get_loc(d)
             spot = df["close"].iloc[i]
             iv = ivs[sym].iloc[i]
-            days_left = (p.expiry - d).days
+            days_left = _days_left(p.expiry, d)
             is_call = p.direction > 0
             mid = om.mid_price(is_call, spot, p.strike, days_left, iv, c)
             p.last_mid = mid
@@ -171,6 +177,8 @@ def run(data: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: St
                 reason = "underlying_stop"
             elif days_left <= ex.min_dte_exit:
                 reason = "dte"
+            elif ex.flat_time and d.strftime("%H:%M") >= ex.flat_time:
+                reason = "eod_flat"
             elif ex.trail_arm is not None and p.peak_mid >= p.entry_px * (1 + ex.trail_arm) and \
                     mid <= p.peak_mid * (1 - ex.trail_drop):
                 reason = "trailing"
@@ -206,6 +214,18 @@ def run(data: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: St
 
     curve_df = pd.DataFrame(curve, columns=["date", "equity", "open"]).set_index("date")
     return trades, curve_df
+
+
+def _expiry(d: pd.Timestamp, dte: int) -> pd.Timestamp:
+    """Option expires at 16:00 on (entry date + dte calendar days); dte=0 = same day."""
+    return d.normalize() + pd.Timedelta(days=dte, hours=16)
+
+
+def _days_left(expiry: pd.Timestamp, d: pd.Timestamp) -> float:
+    # Daily bars are stamped at midnight: treat them as the close (16:00).
+    if d.hour == 0 and d.minute == 0:
+        d = d + pd.Timedelta(hours=16)
+    return (expiry - d).total_seconds() / 86400.0
 
 
 # ---------------------------------------------------------------------------

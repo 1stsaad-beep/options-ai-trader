@@ -20,7 +20,14 @@ def load_csv(path: str | Path) -> pd.DataFrame:
     df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
     date_col = next(c for c in df.columns if c in ("date", "datetime", "timestamp", "time", "data"))
     dt = pd.to_datetime(df[date_col], utc=True)
-    df[date_col] = dt.dt.tz_convert(None).dt.normalize()
+    if dt.dt.normalize().duplicated().any():
+        # Intraday bars: keep the time, expressed in New York exchange time.
+        df[date_col] = dt.dt.tz_convert("America/New_York").dt.tz_localize(None)
+        # Drop zero-length 16:00 closing-print bars that some feeds append.
+        t = df[date_col].dt.strftime("%H:%M")
+        df = df[(t >= "09:30") & (t < "16:00")]
+    else:
+        df[date_col] = dt.dt.tz_convert(None).dt.normalize()
     df = df.rename(columns={date_col: "date"}).set_index("date").sort_index()
     for c in REQUIRED + ["adj_close"]:
         if c in df.columns:
@@ -45,7 +52,7 @@ def validate(df: pd.DataFrame, name: str = "") -> pd.DataFrame:
     if df.index.duplicated().any():
         df = df[~df.index.duplicated(keep="last")]
     if len(df) < 300:
-        raise ValueError(f"{name}: need >= 300 daily bars, got {len(df)}")
+        raise ValueError(f"{name}: need >= 300 bars, got {len(df)}")
     return df
 
 

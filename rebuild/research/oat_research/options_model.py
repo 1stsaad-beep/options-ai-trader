@@ -63,13 +63,19 @@ class OptionCosts:
     rate: float = 0.04
 
 
-def iv_series(df: pd.DataFrame, costs: OptionCosts, vix: pd.Series | None = None) -> pd.Series:
+def iv_series(df: pd.DataFrame, costs: OptionCosts, vix: pd.Series | None = None, bpd: int = 1) -> pd.Series:
+    """bpd = bars per trading day (1 daily, 7 hourly, 390 one-minute). Windows are
+    expressed in trading days so every timeframe gets a comparable IV proxy."""
     if vix is not None:
-        iv = (vix.reindex(df.index).ffill() / 100.0)
+        iv = (vix.reindex(df.index, method="ffill") / 100.0)
         return iv.clip(lower=0.08)
-    rv20 = realized_vol(df["close"], 20)
-    rv120 = realized_vol(df["close"], 120)
-    return (costs.vrp * (0.5 * rv20 + 0.5 * rv120)).clip(lower=0.10)
+    rv20 = realized_vol(df["close"], 20 * bpd, 252 * bpd)
+    rv120 = realized_vol(df["close"], 120 * bpd, 252 * bpd)
+    # Short histories (intraday downloads) lack 120 days: use the 20-day value alone.
+    if bpd > 1:
+        rv20 = rv20.fillna(realized_vol(df["close"], 5 * bpd, 252 * bpd))
+    blend = (0.5 * rv20 + 0.5 * rv120).fillna(rv20)
+    return (costs.vrp * blend).clip(lower=0.10)
 
 
 def strike_vol(atm_iv: float, s: float, k: float, is_call: bool, skew: float) -> float:
@@ -79,7 +85,7 @@ def strike_vol(atm_iv: float, s: float, k: float, is_call: bool, skew: float) ->
     return atm_iv * max(0.85, 1 - 0.3 * skew * m)
 
 
-def choose_strike(is_call: bool, s: float, dte_days: int, atm_iv: float, target_delta: float,
+def choose_strike(is_call: bool, s: float, dte_days: float, atm_iv: float, target_delta: float,
                   costs: OptionCosts) -> float:
     step = strike_step(s)
     t = dte_days / 365.0

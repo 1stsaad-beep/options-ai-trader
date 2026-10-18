@@ -60,8 +60,14 @@ def stoch_k(df: pd.DataFrame, n: int = 14, smooth: int = 3) -> pd.Series:
     return raw.rolling(smooth).mean()
 
 
-def realized_vol(close: pd.Series, n: int) -> pd.Series:
-    return np.log(close).diff().rolling(n, min_periods=n).std() * np.sqrt(252)
+def realized_vol(close: pd.Series, n: int, bars_per_year: float = 252) -> pd.Series:
+    return np.log(close).diff().rolling(n, min_periods=n).std() * np.sqrt(bars_per_year)
+
+
+def bars_per_day(df: pd.DataFrame) -> int:
+    """1 for daily data, ~7 for hourly, ~78 for 5-minute, ~390 for 1-minute."""
+    counts = pd.Series(df.index.normalize()).value_counts()
+    return max(1, int(round(counts.median())))
 
 
 def rolling_percentile(s: pd.Series, n: int) -> pd.Series:
