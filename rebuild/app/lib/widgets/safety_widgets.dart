@@ -185,6 +185,8 @@ class RiskSettingsCard extends StatelessWidget {
     final rights = [if (s.allowCalls) 'Call', if (s.allowPuts) 'Put'];
     final rows = <(String, String)>[
       ('الإيقاف الطارئ', killSwitch ? 'مفعّل — لا أوامر' : 'غير مفعّل'),
+      ('الاستراتيجية', s.strategy == StrategyKind.elliottDaily ? 'إليوت اليومي (تجريبية)' : 'المركّبة'),
+      ('فلتر التقلب IV/RV', s.ivRvFilterEnabled ? 'مفعّل (حد ${s.maxIvRvRatio.toStringAsFixed(2)})' : 'غير مفعّل (قياس فقط)'),
       ('الدخول الجديد', s.pauseNewEntries ? 'موقوف مؤقتًا (الخروج يعمل)' : 'مسموح'),
       ('المخاطرة لكل صفقة', '${s.riskPerTradePercent}% من قيمة الحساب'),
       ('أقصى حجم للمركز', '${s.maxPositionPercent}%'),

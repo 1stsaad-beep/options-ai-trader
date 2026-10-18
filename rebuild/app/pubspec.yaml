@@ -1,7 +1,7 @@
 name: options_ai_trader_app
 description: Options AI Trader — personal Arabic (RTL) automated options trading app.
 publish_to: none
-version: 2.0.0-dev.6+6
+version: 2.0.0-dev.7+7
 
 environment:
   sdk: '>=3.4.0 <4.0.0'

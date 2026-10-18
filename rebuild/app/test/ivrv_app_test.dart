@@ -51,6 +51,8 @@ void main() {
     final list = find.byType(Scrollable).first;
     await tester.scrollUntilVisible(find.text('تفعيل فلتر التقلب'), 200, scrollable: list);
     expect(find.text('فلتر التقلب IV/RV (اختياري)'), findsOneWidget);
+    await tester.ensureVisible(find.text('تفعيل فلتر التقلب'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('تفعيل فلتر التقلب'));
     await tester.pump();
     await tester.scrollUntilVisible(find.byKey(const Key('setting-maxIvRvRatio')), 200, scrollable: list);
@@ -65,5 +67,37 @@ void main() {
     expect(s.ivRvFilterEnabled, isTrue);
     expect(s.maxIvRvRatio, 1.3);
     expect(c.account(b)!.profile.settings.ivRvFilterEnabled, isFalse);
+  });
+
+  testWidgets('strategy: experimental daily Elliott selectable per account, warning shown, preset applied and saved', (tester) async {
+    late String a;
+    await tester.runAsync(() async {
+      await c.load();
+      a = (await c.addAccount(name: 'A', broker: BrokerKind.simulator, credentials: const {})).id;
+    });
+    expect(c.account(a)!.profile.settings.strategy, StrategyKind.composite);
+    await tester.pumpWidget(MaterialApp(
+        home: Directionality(textDirection: TextDirection.rtl, child: SettingsScreen(controller: c, accountId: a))));
+    expect(find.textContaining('تجريبية — للحساب الورقي'), findsNothing);
+    await tester.tap(find.byKey(const Key('setting-strategy')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('إليوت اليومي — تجريبية').last);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('تجريبية — للحساب الورقي'), findsOneWidget);
+    await tester.ensureVisible(find.byKey(const Key('elliott-preset')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('elliott-preset')));
+    await tester.pump();
+    expect(find.textContaining('طُبّقت الإعدادات المقترحة'), findsOneWidget);
+    await tester.pumpAndSettle();
+    await tester.runAsync(() async {
+      await tester.tap(find.text('حفظ').first);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    });
+    await tester.pumpAndSettle();
+    final s = c.account(a)!.profile.settings;
+    expect(s.strategy, StrategyKind.elliottDaily);
+    expect((s.minDaysToExpiry, s.maxDaysToExpiry, s.maxHoldingDays, s.exitDaysBeforeExpiry), (2, 9, 7, 1));
+    expect(s.elliottAllowPuts, isFalse);
   });
 }

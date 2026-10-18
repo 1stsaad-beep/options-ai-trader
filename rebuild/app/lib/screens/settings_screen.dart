@@ -67,6 +67,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  void _applyElliottPreset() {
+    final p = _build().withElliottDailyPreset();
+    setState(() {
+      _v = Map<String, Object?>.from(p.toJson());
+      for (final e in _text.entries) {
+        e.value.text = '${_v[e.key]}';
+      }
+    });
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(const SnackBar(
+        content: Text('طُبّقت الإعدادات المقترحة (عقود أسبوعية 2–9 أيام، احتفاظ حتى 7 أيام، خروج قبل الانتهاء بيوم، وقف طوارئ 90%). اضغط "حفظ".')));
+  }
+
   Future<void> _resetDefaults() async {
     final ok = await showDialog<bool>(
       context: context,
@@ -154,6 +166,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 'التداول الحقيقي مقفل في هذه النسخة؛ الإعدادات تعمل على حساب Paper أو المحاكي.',
                 style: Theme.of(context).textTheme.bodySmall),
           ),
+          _section('الاستراتيجية', [
+            DropdownButtonFormField<String>(
+              key: const Key('setting-strategy'),
+              initialValue: _v['strategy'] as String,
+              decoration: const InputDecoration(labelText: 'استراتيجية الدخول', helperMaxLines: 4),
+              items: const [
+                DropdownMenuItem(value: 'composite', child: Text('المركّبة (المحركات الستة) — الافتراضية')),
+                DropdownMenuItem(value: 'elliottDaily', child: Text('إليوت اليومي — تجريبية')),
+              ],
+              onChanged: (k) => setState(() => _v['strategy'] = k),
+            ),
+            if (_v['strategy'] == 'elliottDaily') ...[
+              Card(
+                color: Theme.of(context).colorScheme.errorContainer,
+                child: const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text('تجريبية — للحساب الورقي (Paper) فقط. القاعدة: نهاية الموجة 2 على الشموع اليومية (a-b-c) مع انحراف RSI '
+                      'إيجابي ← شراء Call أسبوعي يُحتفظ به نحو 5 جلسات. نتائج البحث (أسعار عقود نموذجية وليست حقيقية) إيجابية في '
+                      'فترات الاكتشاف والتحقق والاختبار النهائي، لكنها حساسة لإعداد حجم الموجات وعدد الصفقات قليل '
+                      '(بضع إشارات لكل سهم في السنة). نسخة Put معاكسة كانت خاسرة. التفاصيل في ROUND5.md.'),
+                ),
+              ),
+              _num('elliottZigZagAtr'),
+              _num('elliottFineAtr'),
+              _flag('elliottRequireWeeklyContext', 'اشتراط دافعة أسبوعية صاعدة',
+                  help: 'فلتر إضافي من الدرجة الأعلى؛ قلّل الإشارات ولم يحسّن النتائج في البحث'),
+              _flag('elliottAllowPuts', 'السماح بالنسخة المعاكسة (Put عند نهاية C)', help: 'كانت خاسرة في البحث — غير مُوصى بها'),
+              OutlinedButton.icon(
+                key: const Key('elliott-preset'),
+                onPressed: _applyElliottPreset,
+                icon: const Icon(Icons.auto_fix_high),
+                label: const Text('تطبيق الإعدادات المقترحة لهذه الاستراتيجية'),
+              ),
+            ],
+          ]),
           _section('حالة الحساب', [
             _flag('pauseNewEntries', 'إيقاف مؤقت للدخول الجديد',
                 help: 'لا صفقات جديدة ولا تعزيز، مع استمرار إدارة الخروج ووقف الخسارة للمراكز المفتوحة'),
