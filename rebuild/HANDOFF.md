@@ -15,6 +15,14 @@ compiler/tests report (see §5). Fixture values used by the tests were checked
 with a Python port of the same algorithms, so test expectations are believed
 correct; syntax/type errors are the main risk.
 
+## 0.1 Strategy research (2026-10-18)
+
+`rebuild/research/` holds a validated Python backtest harness, a port of the
+current engines, filtered engines and two new engines (RCB compression breakout,
+TPB trend pullback). Real-data results are pending CSV price files — see
+`rebuild/research/STRATEGY_RESEARCH.md` §5 for the exact commands and the
+acceptance criteria an engine must pass before it is ported to Dart.
+
 ## 1. Why a rebuild
 
 v1 (70 batches) drifted into server operations (alert receivers, health
