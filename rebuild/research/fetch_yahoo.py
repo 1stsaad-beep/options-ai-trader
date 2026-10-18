@@ -70,7 +70,7 @@ def save(path: Path, data, note: str):
 def main(symbols):
     out = Path(__file__).parent / "data"
     now = int(time.time())
-    p1 = int(datetime(2012, 1, 1, tzinfo=timezone.utc).timestamp())
+    p1 = int(datetime(1998, 1, 1, tzinfo=timezone.utc).timestamp())
     for sym in symbols:
         name = sym.replace("^", "")
         try:
@@ -78,7 +78,7 @@ def main(symbols):
                      rows(get(sym, {"period1": p1, "period2": now, "interval": "1d", "events": "div%7Csplit",
                                     "includeAdjustedClose": "true"}), True), "daily, dividend/split adjusted")
             msg = f"{sym}: d1={n}"
-            if sym != "^VIX":
+            if not sym.startswith("^"):
                 n = save(out / "h1" / f"{name}.csv",
                          rows(get(sym, {"range": "730d", "interval": "1h", "includePrePost": "false"}), False), "1h RTH, split adjusted")
                 msg += f" h1={n}"

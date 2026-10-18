@@ -1,0 +1,38 @@
+{
+  "Wave-2/B exhaustion @15:50": {
+    "delta": 0.5,
+    "exit": [
+      0.5,
+      1.0,
+      null
+    ],
+    "min_days": 2
+  },
+  "Wave-2 exhaustion calls only @15:50": {
+    "delta": 0.5,
+    "exit": [
+      0.5,
+      1.0,
+      null
+    ],
+    "min_days": 2
+  },
+  "Control: trend + RSI2 @15:50 (no wave)": {
+    "delta": 0.5,
+    "exit": [
+      null,
+      null,
+      null
+    ],
+    "min_days": 2
+  },
+  "Trend dip stocks @15:50 (calls)": {
+    "delta": 0.5,
+    "exit": [
+      0.5,
+      1.0,
+      null
+    ],
+    "min_days": 2
+  }
+}

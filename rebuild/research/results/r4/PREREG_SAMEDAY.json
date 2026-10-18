@@ -1,0 +1,10 @@
+{
+  "Noise-area momentum (SPY/QQQ)": {
+    "delta": 0.7,
+    "opt_stop": null
+  },
+  "ORB 5-min, in play (all)": {
+    "delta": 0.5,
+    "opt_stop": null
+  }
+}

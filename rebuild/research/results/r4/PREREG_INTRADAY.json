@@ -1,0 +1,68 @@
+{
+  "written": "before validation",
+  "disc": [
+    "2016-01-01 00:00:00",
+    "2020-12-31 23:59:00"
+  ],
+  "valid": [
+    "2021-01-01 00:00:00",
+    "2026-04-15 23:59:00"
+  ],
+  "rules": {
+    "Pre-FOMC 15:50\u219213:55": {
+      "delta": 0.7,
+      "exit": [
+        0.75,
+        1.0,
+        null
+      ],
+      "min_days": 2,
+      "disc_n": 117,
+      "disc_exp": -0.027692962690434163
+    },
+    "Pre-FOMC 15:50\u219215:50 (holds through statement)": {
+      "delta": 0.7,
+      "exit": [
+        null,
+        null,
+        null
+      ],
+      "min_days": 2,
+      "disc_n": 117,
+      "disc_exp": -0.01815958143254482
+    },
+    "ETF dip @15:50": {
+      "delta": 0.5,
+      "exit": [
+        0.75,
+        1.0,
+        null
+      ],
+      "min_days": 2,
+      "disc_n": 147,
+      "disc_exp": 0.1987721963492204
+    },
+    "ETF bear-rally puts @15:50": {
+      "delta": 0.7,
+      "exit": [
+        0.5,
+        1.0,
+        null
+      ],
+      "min_days": 2,
+      "disc_n": 51,
+      "disc_exp": -0.09881446992603037
+    },
+    "VIX spike reversal @15:50": {
+      "delta": 0.7,
+      "exit": [
+        null,
+        null,
+        null
+      ],
+      "min_days": 5,
+      "disc_n": 77,
+      "disc_exp": -0.0509428062909448
+    }
+  }
+}

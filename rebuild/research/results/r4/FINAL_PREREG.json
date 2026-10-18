@@ -1,0 +1,48 @@
+{
+  "written": "2026-10-18T21:25:29",
+  "note": "Frozen before the holdout was run. Costs: weekly spreads ETF 3% / stocks 6% of mid, $0.65/contract/side; IV proxy = VIX9D (SPY), VXN-scaled (QQQ), 1.10 x RV blend x VIX9D/VIX term ratio (others).",
+  "holdout": [
+    "2026-04-16 00:00:00",
+    "2026-10-16 23:59:00"
+  ],
+  "rules": {
+    "A Trend-dip @15:50": {
+      "bars": "segments",
+      "delta": 0.5,
+      "target_atr": 0.75,
+      "stop_atr": 1.0,
+      "min_days": 2,
+      "budget": 0.02,
+      "entry": "15:50 when RSI2(15:50 close) < 10, close > SMA200, VIX(prev) < 35",
+      "exit": "close >= entry + 0.75 ATR or <= entry - 1 ATR or close > SMA5 or RSI2 > 70 (decided 15:50, filled 15:50 next segment); sell by the close before expiry day"
+    },
+    "B Wave-2/B exhaustion @15:50": {
+      "bars": "segments",
+      "delta": 0.5,
+      "target_atr": 0.5,
+      "stop_atr": 1.0,
+      "min_days": 2,
+      "budget": 0.02,
+      "entry": "15:50; confirmed zig-zag (1.5 ATR) wave-1 >= 3 ATR breaking prior swing, retracement 38.2-78.6%, close above wave start and its anchored VWAP, weekly trend up, SMA200, RSI2 < 10 (mirror for Puts)",
+      "exit": "+0.5 ATR target / -1 ATR stop at 15:50 checks; sell by the close before expiry day"
+    },
+    "C ORB-5 in play": {
+      "bars": "m5",
+      "delta": 0.5,
+      "opt_stop": null,
+      "min_days": 0,
+      "budget": 0.01,
+      "entry": "09:35 open; first 5-min bar volume >= 2x its 14-day average; direction = first bar body",
+      "exit": "stop = first-bar extreme or 10% daily ATR (nearer), else 15:55 bar close"
+    },
+    "D Noise-area momentum": {
+      "bars": "m5",
+      "delta": 0.7,
+      "opt_stop": null,
+      "min_days": 0,
+      "budget": 0.01,
+      "entry": "half-hour marks 10:00-15:00: close beyond max/min(open, prev close) x (1 +/- 14-day avg |move| at that time)",
+      "exit": "half-hour close back inside max(UB, VWAP)/min(LB, VWAP), else the close"
+    }
+  }
+}

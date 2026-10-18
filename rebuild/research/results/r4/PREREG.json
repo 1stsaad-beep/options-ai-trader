@@ -1,0 +1,171 @@
+{
+  "written": "before validation",
+  "periods": {
+    "discovery": [
+      "1999-01-01 00:00:00",
+      "2012-12-31 00:00:00"
+    ],
+    "validation": [
+      "2013-01-01 00:00:00",
+      "2026-04-15 00:00:00"
+    ]
+  },
+  "rules": {
+    "ETF dip": {
+      "delta": 0.7,
+      "target_atr": 0.5,
+      "stop_atr": 1.0,
+      "max_hold_days": 2,
+      "min_days": 2,
+      "discovery": {
+        "n": 357,
+        "exp": 0.05636392188029187,
+        "t_week": 3.4640600608826624
+      }
+    },
+    "ETF bear-rally puts": {
+      "delta": 0.5,
+      "target_atr": 0.5,
+      "stop_atr": 1.0,
+      "max_hold_days": 2,
+      "min_days": 2,
+      "discovery": {
+        "n": 207,
+        "exp": 0.07782270711337899,
+        "t_week": 1.6893315588902378
+      }
+    },
+    "Pre-FOMC": {
+      "delta": 0.5,
+      "target_atr": null,
+      "stop_atr": null,
+      "max_hold_days": null,
+      "min_days": 2,
+      "discovery": {
+        "n": 320,
+        "exp": 0.280323349149905,
+        "t_week": 3.3195616802344596
+      }
+    },
+    "Turn of month": {
+      "delta": 0.7,
+      "target_atr": null,
+      "stop_atr": null,
+      "max_hold_days": null,
+      "min_days": 2,
+      "discovery": {
+        "n": 283,
+        "exp": -0.007116061222476774,
+        "t_week": -0.2449699643386436
+      }
+    },
+    "Turn of month (stocks)": {
+      "delta": 0.5,
+      "target_atr": null,
+      "stop_atr": null,
+      "max_hold_days": null,
+      "min_days": 2,
+      "discovery": {
+        "n": 538,
+        "exp": -0.01719473954983378,
+        "t_week": -0.3213541974547933
+      }
+    },
+    "Pre-holiday": {
+      "delta": 0.7,
+      "target_atr": null,
+      "stop_atr": null,
+      "max_hold_days": null,
+      "min_days": 2,
+      "discovery": {
+        "n": 278,
+        "exp": -0.10045833614273157,
+        "t_week": -1.8406514481296627
+      }
+    },
+    "Event gap drift": {
+      "delta": 0.7,
+      "target_atr": null,
+      "stop_atr": null,
+      "max_hold_days": null,
+      "min_days": 5,
+      "discovery": {
+        "n": 74,
+        "exp": 0.008869592089326786,
+        "t_week": -0.48795783733744297
+      }
+    },
+    "Wave 2->3 daily": {
+      "delta": 0.5,
+      "target_atr": 0.5,
+      "stop_atr": 1.0,
+      "max_hold_days": 2,
+      "min_days": 2,
+      "discovery": {
+        "n": 613,
+        "exp": -0.01220590737173852,
+        "t_week": -0.966353949211332
+      }
+    },
+    "Wave B->C daily": {
+      "delta": 0.5,
+      "target_atr": 0.75,
+      "stop_atr": 1.0,
+      "max_hold_days": 3,
+      "min_days": 2,
+      "discovery": {
+        "n": 102,
+        "exp": 0.20486950657393052,
+        "t_week": 1.9035681844049646
+      }
+    },
+    "VIX spike reversal": {
+      "delta": 0.7,
+      "target_atr": 1.0,
+      "stop_atr": 1.0,
+      "max_hold_days": 4,
+      "min_days": 5,
+      "discovery": {
+        "n": 88,
+        "exp": -0.018181076971546653,
+        "t_week": -0.4077831356120491
+      }
+    },
+    "20-day breakout": {
+      "delta": 0.7,
+      "target_atr": null,
+      "stop_atr": null,
+      "max_hold_days": null,
+      "min_days": 5,
+      "discovery": {
+        "n": 633,
+        "exp": -0.019358832542653408,
+        "t_week": -0.4767040637093322
+      }
+    },
+    "Wave-2/B exhaustion (new)": {
+      "delta": 0.5,
+      "target_atr": 0.5,
+      "stop_atr": 1.0,
+      "max_hold_days": 2,
+      "min_days": 2,
+      "discovery": {
+        "n": 106,
+        "exp": 0.03878774734659029,
+        "t_week": 1.0430954863244675
+      }
+    },
+    "Control: trend + RSI2 (no wave)": {
+      "delta": 0.5,
+      "target_atr": 0.5,
+      "stop_atr": 1.0,
+      "max_hold_days": 2,
+      "min_days": 2,
+      "discovery": {
+        "n": 2311,
+        "exp": 0.06727191583473756,
+        "t_week": 5.329074895431785
+      }
+    }
+  }
+}
