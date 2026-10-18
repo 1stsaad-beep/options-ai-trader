@@ -4,6 +4,7 @@ library;
 
 import '../analysis/signal.dart';
 import '../analysis/volatility.dart';
+import '../strategies/common.dart';
 import '../brokers/broker_adapter.dart';
 import '../brokers/live_guard.dart';
 import '../models.dart';
@@ -49,6 +50,17 @@ class AccountSettings {
   /// Block when the break-even move to expiry exceeds this multiple of the
   /// expected move (spot × RV × √T); 0 = off.
   final double maxBreakevenToExpectedMove;
+
+  /// Entry strategy (round 5). [StrategyKind.elliottDaily] is experimental.
+  final StrategyKind strategy;
+  /// Elliott (daily): ATR multiple of the wave zig-zag.
+  final double elliottZigZagAtr;
+  /// Elliott (daily): ATR multiple of the sub-wave (a-b-c) zig-zag.
+  final double elliottFineAtr;
+  /// Elliott (daily): also require a bullish weekly impulse context.
+  final bool elliottRequireWeeklyContext;
+  /// Elliott (daily): also trade the bearish mirror (Puts) — negative in research.
+  final bool elliottAllowPuts;
 
   // ---- entry criteria ----
   final BarTimeframe timeframe;
@@ -137,6 +149,11 @@ class AccountSettings {
     this.rvLookbackDays = 20,
     this.rvUseIntraday = false,
     this.maxBreakevenToExpectedMove = 1.0,
+    this.strategy = StrategyKind.composite,
+    this.elliottZigZagAtr = 1.5,
+    this.elliottFineAtr = 0.6,
+    this.elliottRequireWeeklyContext = false,
+    this.elliottAllowPuts = false,
     this.timeframe = BarTimeframe.m15,
     this.minScore = 35,
     this.minAgreeingEngines = 2,
@@ -175,6 +192,31 @@ class AccountSettings {
     this.scaleInFraction = 0.5,
   });
 
+  /// Recommended Paper settings for the experimental daily Elliott strategy
+  /// (round 5, rebuild/ROUND5.md): weekly ATM-ish Calls, held ~5 sessions,
+  /// no profit target/trailing (the research exit was time-based), a wide
+  /// emergency stop, out one day before expiry.
+  AccountSettings withElliottDailyPreset() => copyWith(
+        strategy: StrategyKind.elliottDaily,
+        elliottZigZagAtr: 1.5,
+        elliottFineAtr: 0.6,
+        elliottRequireWeeklyContext: false,
+        elliottAllowPuts: false,
+        allowCalls: true,
+        minDaysToExpiry: 2,
+        maxDaysToExpiry: 9,
+        targetDelta: 0.5,
+        stopLossPercent: 90,
+        takeProfitPercent: 1000,
+        partialTakeProfitFraction: 0,
+        trailingActivationPercent: 1000,
+        maxHoldingDays: 7,
+        exitDaysBeforeExpiry: 1,
+        exitOnOppositeSignal: false,
+        exitOnUnderlyingInvalidation: false,
+        scaleInEnabled: false,
+      );
+
   VolFilterSettings get volFilter => VolFilterSettings(
         enabled: ivRvFilterEnabled,
         maxIvRvRatio: maxIvRvRatio,
@@ -209,6 +251,8 @@ class AccountSettings {
     'maxIvRvRatio': (0.5, 5),
     'rvLookbackDays': (5, 120),
     'maxBreakevenToExpectedMove': (0, 5),
+    'elliottZigZagAtr': (0.75, 5),
+    'elliottFineAtr': (0.25, 1.4),
   };
 
   /// Returns a list of Arabic validation errors (empty = valid).
@@ -241,6 +285,9 @@ class AccountSettings {
     range(maxIvRvRatio, 0.5, 5, 'حد IV/RV');
     range(rvLookbackDays, 5, 120, 'أيام التقلب المحقق');
     range(maxBreakevenToExpectedMove, 0, 5, 'حد حركة التعادل');
+    range(elliottZigZagAtr, 0.75, 5, 'حجم موجات إليوت');
+    range(elliottFineAtr, 0.25, 1.4, 'حجم الموجات الفرعية');
+    if (elliottFineAtr >= elliottZigZagAtr) e.add('حجم الموجات الفرعية يجب أن يكون أصغر من حجم الموجات');
     if (!allowCalls && !allowPuts) e.add('يجب السماح بـ Call أو Put على الأقل');
     if (partialTakeProfitFraction > 0 && partialTakeProfitPercent >= takeProfitPercent) {
       e.add('الجني الجزئي يجب أن يكون أقل من هدف الربح الكامل');
@@ -263,6 +310,11 @@ class AccountSettings {
     int? rvLookbackDays,
     bool? rvUseIntraday,
     double? maxBreakevenToExpectedMove,
+    StrategyKind? strategy,
+    double? elliottZigZagAtr,
+    double? elliottFineAtr,
+    bool? elliottRequireWeeklyContext,
+    bool? elliottAllowPuts,
     BarTimeframe? timeframe,
     double? minScore,
     int? minAgreeingEngines,
@@ -308,6 +360,11 @@ class AccountSettings {
         rvLookbackDays: rvLookbackDays ?? this.rvLookbackDays,
         rvUseIntraday: rvUseIntraday ?? this.rvUseIntraday,
         maxBreakevenToExpectedMove: maxBreakevenToExpectedMove ?? this.maxBreakevenToExpectedMove,
+        strategy: strategy ?? this.strategy,
+        elliottZigZagAtr: elliottZigZagAtr ?? this.elliottZigZagAtr,
+        elliottFineAtr: elliottFineAtr ?? this.elliottFineAtr,
+        elliottRequireWeeklyContext: elliottRequireWeeklyContext ?? this.elliottRequireWeeklyContext,
+        elliottAllowPuts: elliottAllowPuts ?? this.elliottAllowPuts,
         timeframe: timeframe ?? this.timeframe,
         minScore: minScore ?? this.minScore,
         minAgreeingEngines: minAgreeingEngines ?? this.minAgreeingEngines,
@@ -354,6 +411,11 @@ class AccountSettings {
         'rvLookbackDays': rvLookbackDays,
         'rvUseIntraday': rvUseIntraday,
         'maxBreakevenToExpectedMove': maxBreakevenToExpectedMove,
+        'strategy': strategy.name,
+        'elliottZigZagAtr': elliottZigZagAtr,
+        'elliottFineAtr': elliottFineAtr,
+        'elliottRequireWeeklyContext': elliottRequireWeeklyContext,
+        'elliottAllowPuts': elliottAllowPuts,
         'timeframe': timeframe.name,
         'minScore': minScore,
         'minAgreeingEngines': minAgreeingEngines,
@@ -414,6 +476,11 @@ class AccountSettings {
       rvLookbackDays: integer('rvLookbackDays', d.rvLookbackDays),
       rvUseIntraday: flag('rvUseIntraday', d.rvUseIntraday),
       maxBreakevenToExpectedMove: dbl('maxBreakevenToExpectedMove', d.maxBreakevenToExpectedMove),
+      strategy: StrategyKind.values.firstWhere((k) => k.name == j['strategy'], orElse: () => d.strategy),
+      elliottZigZagAtr: dbl('elliottZigZagAtr', d.elliottZigZagAtr),
+      elliottFineAtr: dbl('elliottFineAtr', d.elliottFineAtr),
+      elliottRequireWeeklyContext: flag('elliottRequireWeeklyContext', d.elliottRequireWeeklyContext),
+      elliottAllowPuts: flag('elliottAllowPuts', d.elliottAllowPuts),
       timeframe: BarTimeframe.values.firstWhere((t) => t.name == j['timeframe'], orElse: () => d.timeframe),
       minScore: dbl('minScore', d.minScore),
       minAgreeingEngines: integer('minAgreeingEngines', d.minAgreeingEngines),

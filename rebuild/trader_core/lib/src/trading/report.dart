@@ -36,6 +36,9 @@ class PeriodPnl {
 
 /// Trades an engine supported at entry. A trade backed by 3 engines counts
 /// for each of them, so rows overlap and must not be summed.
+/// Attribution tag of entries opened by the experimental daily Elliott strategy.
+const elliottDailyTag = 'strategy:elliottDaily';
+
 class EngineStats {
   final String engine;
   int trades = 0;
@@ -50,6 +53,7 @@ class EngineStats {
     for (final e in EngineId.values) {
       if (e.name == engine) return e.arabic;
     }
+    if (engine == elliottDailyTag) return 'إليوت اليومي (تجريبي)';
     return engine;
   }
 

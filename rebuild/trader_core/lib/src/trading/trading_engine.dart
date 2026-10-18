@@ -15,6 +15,8 @@ library;
 import 'dart:math' as math;
 
 import '../analysis/volatility.dart';
+import '../strategies/common.dart';
+import '../strategies/mtf_elliott.dart';
 import '../analysis/analyzer.dart';
 import '../analysis/signal.dart';
 import '../brokers/broker_adapter.dart';
@@ -26,6 +28,7 @@ import 'cycle_record.dart';
 import 'decision_engine.dart';
 import 'direction_lock.dart';
 import 'journal.dart';
+import 'report.dart' show elliottDailyTag;
 import 'risk.dart';
 
 class CycleSummary {
@@ -369,8 +372,10 @@ class TradingEngine {
         }
         if (_openingCapReached()) break;
         try {
-          final intent = rules.evaluateEntry(sym, report,
-              rejection: (r) => _log(JournalAction.skip, r, symbol: sym, details: {'score': report.score}));
+          final intent = s.strategy == StrategyKind.elliottDaily
+              ? await _elliottDailyEntry(sym, report, now)
+              : rules.evaluateEntry(sym, report,
+                  rejection: (r) => _log(JournalAction.skip, r, symbol: sym, details: {'score': report.score}));
           if (intent == null) continue;
           final ok = await _enter(intent, account, positions, openOrders, now);
           if (ok) {
@@ -392,6 +397,62 @@ class TradingEngine {
     } finally {
       _running = false;
     }
+  }
+
+  /// Experimental round-5 strategy: a signal on the last *completed* daily bar
+  /// (wave-2 end + bullish RSI divergence, see mtf_elliott.dart) opens the
+  /// position in the next session. Each signal is used at most once.
+  Future<EntryIntent?> _elliottDailyEntry(String sym, AnalysisReport report, DateTime now) async {
+    void no(String r) => _log(JournalAction.skip, 'إليوت اليومي (تجريبي): $r', symbol: sym);
+    // The last completed daily bar does not change during a session: compute
+    // once per symbol, New York date and parameter set.
+    final key = '${NewYorkTime.dateKey(now)}|${s.elliottZigZagAtr}|${s.elliottFineAtr}|${s.elliottRequireWeeklyContext}|'
+        '${s.allowCalls}|${s.allowPuts && s.elliottAllowPuts}';
+    final cached = _elliottCache[sym];
+    final ({int last, StrategySignal? sig}) res;
+    if (cached != null && cached.key == key) {
+      res = cached.res;
+    } else {
+      res = await _elliottCompute(sym, now);
+      _elliottCache[sym] = (key: key, res: res);
+    }
+    if (res.last < 60) {
+      no('بيانات يومية غير كافية (${res.last} شمعة)');
+      return null;
+    }
+    final last = res.sig;
+    if (last == null) {
+      no('لا إشارة على آخر شمعة يومية مكتملة');
+      return null;
+    }
+    final used = state.lastTradeAt[sym];
+    if (used != null && used.isAfter(last.time)) {
+      no('إشارة ${NewYorkTime.dateKey(last.time)} استُخدمت سابقًا');
+      return null;
+    }
+    final right = last.bullish ? OptionRight.call : OptionRight.put;
+    return EntryIntent(sym, right, report,
+        'استراتيجية إليوت اليومية (تجريبية): ${last.reasonAr} • إشارة شمعة ${NewYorkTime.dateKey(last.time)}');
+  }
+
+  final Map<String, ({String key, ({int last, StrategySignal? sig}) res})> _elliottCache = {};
+
+  Future<({int last, StrategySignal? sig})> _elliottCompute(String sym, DateTime now) async {
+    final raw = await broker.bars(sym, BarTimeframe.d1, limit: 600);
+    final daily = completedBarsFor(broker.kind, raw, BarTimeframe.d1, now, calendar: calendar);
+    if (daily.length < 60) return (last: daily.length, sig: null);
+    final series = TfSeries.of(BarTimeframe.d1, daily);
+    final p = ElliottParams(
+      requireTop: false,
+      requireMid: s.elliottRequireWeeklyContext,
+      kEntry: s.elliottZigZagAtr,
+      kFine: s.elliottFineAtr,
+      calls: s.allowCalls,
+      puts: s.allowPuts && s.elliottAllowPuts,
+    );
+    final sigs = mtfElliottSignals(entry: series, mid: weeklyFromDaily(daily), ma: series, p: p);
+    final last = sigs.isEmpty ? null : sigs.last;
+    return (last: daily.length, sig: last != null && last.index == daily.length - 1 ? last : null);
   }
 
   Future<bool> _enter(EntryIntent intent, AccountSnapshot account, List<Position> positions,
@@ -468,7 +529,9 @@ class TradingEngine {
       invalidation: intent.report.invalidationFor(bias),
       target: intent.report.firstTargetFor(bias),
       score: intent.report.score,
-      engines: [for (final sig in intent.report.supporting(bias)) sig.engine.name],
+      engines: s.strategy == StrategyKind.elliottDaily
+          ? const [elliottDailyTag]
+          : [for (final sig in intent.report.supporting(bias)) sig.engine.name],
       details: {
         'analysis': intent.report.toJson(),
         ...quoteInfo,
