@@ -320,3 +320,84 @@ time. Not yet tested on the phone.
   162,610,015 bytes, SHA-256
   `a59ec4791a06fc0f944050bb6a80ed6b1bbf2f90baa0ea39077c82ca7744967c` (verified by
   re-download), signer SHA-256 `dde693a8…6720` (box debug cert, updates in place).
+
+## 12. Batch D — reports, exports, notifications, settings, real-bar tests (versionCode 5)
+
+* **Reports** (`trader_core/lib/src/trading/report.dart`, app `screens/reports_tab.dart`,
+  tab "التقارير"): realized P/L (after fees), unrealized P/L of open positions at the
+  last quotes, total return, max drawdown (% and $, from the per-cycle equity curve),
+  trades, **wins / losses / breakevens** (a zero-P/L trade is no longer counted as a
+  loss; win rate = wins ÷ all trades), profit factor, averages, fees; daily and
+  weekly breakdown by **New York exit date** (week = Monday NY); per-engine
+  contribution (each trade is credited to every engine that supported its entry,
+  so rows overlap — stated in the UI); closed trades with entry/exit reasons.
+  Engine attribution flows TrackedOrder → PositionMeta → TradeRecord (`eng` key,
+  optional; trades closed before dev.5 show as "untagged").
+* **Exports** (`services/report_exporter.dart`): CSV (RFC 4180, UTF-8 BOM so Arabic
+  opens correctly in spreadsheets) — `<name>_<NYdate>_trades.csv`,
+  `_daily_weekly.csv`; or one `_report.json`. Activity log (current filter):
+  `_activity.csv` (one row per symbol per cycle) or `_activity.json`. Files are
+  written to the app's temp dir and handed to the Android share sheet (share_plus
+  12.0.x — 13.x needs flutter_secure_storage 10+, deliberately not upgraded to
+  avoid touching the stored keys).
+* **Local notifications** (`services/notifier.dart`, flutter_local_notifications
+  22.3.2; core-library desugaring enabled in `android/app/build.gradle.kts`):
+  fills, errors (same account+text at most once per 30 min), kill switch on/off,
+  market open/close (observed transition while the app/service runs). Each kind is
+  a switch in the "الإشعارات" card (defaults: market off, others on), persisted in
+  `app.json`. On-device only, no push server.
+* **Settings**: sections حالة الحساب / المخاطرة / حدود الأمان / الدخول / الأوزان /
+  اختيار العقد / الخروج / التعزيز; every number shows an Arabic explanation, the
+  allowed range (`AccountSettings.allowedRanges`, same numbers `validate()` enforces
+  — tested) and a conservative suggestion. Reset-to-defaults (confirm; not saved
+  until "حفظ"; watchlist and keys untouched). **Per-account pause**
+  (`pauseNewEntries`, also a switch on the overview): no entries or scale-ins, exits
+  and stops keep running — distinct from the account's on/off switch (no cycles)
+  and the global kill switch (nothing sent).
+* **Real historical bars** (`trader_core/test/fixtures/*.csv`, `real_bars_test.dart`):
+  AAPL and SPY, daily (2 years, 501 bars) and hourly (60 days, RTH only, 420 bars),
+  fetched 2026-10-18 from the public Yahoo Finance chart API **without any key**
+  (Stooq now requires a JS challenge). Tests: data sanity; all six engines over
+  rolling windows (finite score ≤ 100, strengths 0..1, signals known inside the
+  window, deterministic); full engine replays (hourly and daily, Alpaca-like
+  adapter so the NYSE gate and completed-bar rule apply) asserting: engines never
+  see the forming bar, Call/Put lock, max open positions, max opening orders per NY
+  day, no errors, every closed trade has entry/exit reasons and engines, report
+  totals reconcile. Options in the replay are Black-Scholes-priced on the real
+  underlying (no public options history without keys) — **behaviour/safety tests,
+  not a backtest**. Replay results with default-ish settings (informational, all
+  negative): AAPL h1 3 trades −$3,534; SPY h1 1 trade −$440; AAPL d1 5 trades
+  −$1,122; SPY d1 14 trades −$17,931 (max DD 18.3% on $100k, risk 2%/trade).
+* **CI**: workflow "rebuild (v2 core + app)" was green for every Batch A–C push
+  (latest before this batch: run 39120616763, success). Only a stale comment was
+  fixed.
+* Tests: core 94/94 (report_test 5, real_bars_test 6, safety_test +2); app 37/37
+  (batch_d_app_test 8: fill notification + engine attribution, error rate-limit /
+  toggles / persistence, exports (BOM, JSON, share), reports tab, activity export,
+  settings explanations/reset/pause/validation, live screen locked, unrealized P/L).
+* Build: `rebuild-v2-debug-5`, versionCode 5 / 2.0.0-dev.5, 189,512,450 bytes,
+  SHA-256 `86f56f6b2b37d04190efd884b185659778be1b12990631aeb223e363548c9511`
+  (verified by re-download), signer `dde693a8…6720`.
+
+### What remains (honest list after Batch D)
+
+1. **Device validation** by the user: foreground service with screen off for a full
+   session, OEM battery killers, notification permission flow, share sheet, and the
+   update-in-place from debug-4 (keys/state preserved).
+2. **Strategy quality is unproven.** The real-bar replays lose money with the
+   current defaults; before any thought of live, run Paper for weeks, review the
+   per-engine report, and tune/disable weak engines. No backtest on real options
+   prices exists (needs an options-history source; Alpaca historical options bars
+   need the user's keys — could be added as an opt-in in-app backtest).
+3. Live trading remains compiled out (`OAT_ENABLE_LIVE`); enabling it would need a
+   deliberate release build, a release keystore and a separate review.
+4. Release signing / Play-style release build (debug builds only so far; APK ~190 MB
+   because debug includes all ABIs and JIT).
+5. Market open/close notifications only fire while the app or service is running;
+   the transition is not tested with an injected clock.
+6. Background run stops on swipe-from-recents/reboot (by design, `stopWithTask`);
+   no auto-start on boot.
+7. TradeStation and IBKR adapters are unit-tested with fakes only (no real
+   accounts tested); Alpaca is the only broker exercised by the user.
+8. iOS: CI can build an unsigned archive on demand; no background execution on iOS.
+9. Dependency updates (flutter_secure_storage 10 migration, share_plus 13) deferred.
