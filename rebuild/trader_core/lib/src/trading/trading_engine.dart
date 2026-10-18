@@ -17,6 +17,7 @@ import 'dart:math' as math;
 import '../analysis/analyzer.dart';
 import '../analysis/signal.dart';
 import '../brokers/broker_adapter.dart';
+import '../market/market_calendar.dart';
 import '../models.dart';
 import 'account.dart';
 import 'account_state.dart';
@@ -41,6 +42,15 @@ class TradingEngine {
   final DateTime Function() clock;
   final int feePerContractCents;
 
+  /// Regular-hours gate. Null = no gate (the simulator's synthetic market is
+  /// 24/7). Real brokers get the NYSE calendar, confirmed by the broker clock
+  /// when the adapter implements [MarketClockSource].
+  final MarketHoursGate? marketHours;
+  final MarketCalendar calendar;
+
+  /// Market status seen by the last cycle (for the UI).
+  MarketStatus? lastMarketStatus;
+
   bool _running = false;
 
   TradingEngine({
@@ -50,8 +60,26 @@ class TradingEngine {
     Analyzer? analyzer,
     DateTime Function()? clock,
     this.feePerContractCents = 65,
+    MarketHoursGate? marketHours,
+    bool useDefaultMarketHours = true,
+    this.calendar = const MarketCalendar(),
   })  : analyzer = analyzer ?? Analyzer(),
-        clock = clock ?? (() => DateTime.now().toUtc());
+        clock = clock ?? (() => DateTime.now().toUtc()),
+        marketHours = marketHours ?? (useDefaultMarketHours ? defaultMarketHours(broker) : null);
+
+  /// Gate used for [broker] when none is given: none for the simulator,
+  /// calendar (+ broker clock if offered) for every real broker.
+  static MarketHoursGate? defaultMarketHours(BrokerAdapter broker) => broker.kind == BrokerKind.simulator
+      ? null
+      : MarketHoursGate(clockSource: broker is MarketClockSource ? broker as MarketClockSource : null);
+
+  /// Completed bars only (drops the still-forming last bar). The simulator's
+  /// synthetic bars are complete by construction.
+  static List<Candle> completedBarsFor(
+          BrokerKind kind, List<Candle> bars, BarTimeframe tf, DateTime now, {MarketCalendar calendar = const MarketCalendar()}) =>
+      kind == BrokerKind.simulator ? bars : calendar.completedBars(bars, tf, now);
+
+  String? _closedLoggedFor;
 
   AccountSettings get s => profile.settings;
   DecisionEngine get rules => DecisionEngine(s);
@@ -91,13 +119,32 @@ class TradingEngine {
       _dailyBookkeeping(account, now);
       _syncMetas(positions, now);
 
+      // ---- market hours: no order of any kind outside regular hours ----
+      final gate = marketHours;
+      if (gate != null) {
+        final st = await gate.status(now);
+        lastMarketStatus = st;
+        if (!st.isOpen) {
+          final key = '${st.phase.name}:${st.nextOpen.toIso8601String()}';
+          if (_closedLoggedFor != key) {
+            _closedLoggedFor = key;
+            _log(JournalAction.info, 'لا تحليل ولا أوامر: ${st.summaryAr()}${st.noteAr != null ? ' — ${st.noteAr}' : ''}',
+                details: {'phase': st.phase.name, 'nextOpen': st.nextOpen.toIso8601String(), 'source': st.source.name});
+          }
+          return CycleSummary(ran: true, noteAr: st.summaryAr());
+        }
+        if (st.noteAr != null) _log(JournalAction.info, st.noteAr!);
+      }
+
       // ---- analysis ----
       final symbols = <String>{...profile.watchlist, ...positions.map((p) => p.contract.underlying)};
       final reports = <String, AnalysisReport>{};
       final prices = <String, double>{};
       for (final sym in symbols) {
         try {
-          final bars = await broker.bars(sym, s.timeframe, limit: 300);
+          final raw = await broker.bars(sym, s.timeframe, limit: 300);
+          // Engines see completed bars only (the forming bar would repaint).
+          final bars = completedBarsFor(broker.kind, raw, s.timeframe, now, calendar: calendar);
           if (bars.length < 60) {
             _log(JournalAction.skip, 'بيانات غير كافية للتحليل (${bars.length} شمعة)', symbol: sym);
             continue;
@@ -138,7 +185,7 @@ class TradingEngine {
           if (exit != null) {
             final escalated = state.escalate.remove(occ);
             final price = exit.urgent || escalated ? q.bidCents : sellLimitPrice(q, s.entryAggressiveness);
-            await _submit(
+            final sent = await _submit(
               OrderRequest(
                 clientOrderId: _clientId('x', occ),
                 contract: p.contract,
@@ -151,8 +198,10 @@ class TradingEngine {
               journalAction: JournalAction.exit,
               details: {'markCents': q.bidCents, 'entryCents': meta.entryPremiumCents, if (report != null) 'analysis': report.toJson()},
             );
-            submitted++;
-            exitedUnderlyings.add(p.contract.underlying);
+            if (sent) {
+              submitted++;
+              exitedUnderlyings.add(p.contract.underlying);
+            }
             continue;
           }
           final scale = rules.evaluateScaleIn(position: p, meta: meta, markCents: q.bidCents, report: report);
@@ -177,7 +226,7 @@ class TradingEngine {
               _log(JournalAction.skip, 'تعزيز غير ممكن: ${sized.reasonAr}', symbol: p.contract.underlying);
               continue;
             }
-            await _submit(
+            final sent = await _submit(
               OrderRequest(
                 clientOrderId: _clientId('s', occ),
                 contract: p.contract,
@@ -190,7 +239,7 @@ class TradingEngine {
               journalAction: JournalAction.scaleIn,
               details: {if (report != null) 'analysis': report.toJson()},
             );
-            submitted++;
+            if (sent) submitted++;
           }
         } catch (e) {
           errors++;
@@ -289,7 +338,7 @@ class TradingEngine {
       return false;
     }
     final bias = intent.right == OptionRight.call ? Bias.bullish : Bias.bearish;
-    await _submit(
+    return _submit(
       OrderRequest(
         clientOrderId: _clientId('e', occ),
         contract: q.contract,
@@ -313,10 +362,11 @@ class TradingEngine {
         'settings': s.toJson(),
       },
     );
-    return true;
   }
 
-  Future<void> _submit(
+  /// Places [r] and journals it. Returns false (and places nothing) when the
+  /// market is outside regular hours at this exact moment (last-line guard).
+  Future<bool> _submit(
     OrderRequest r, {
     required String purpose,
     required String reason,
@@ -326,6 +376,13 @@ class TradingEngine {
     double score = 0,
     Map<String, Object?> details = const {},
   }) async {
+    if (marketHours != null) {
+      final st = calendar.statusAt(clock());
+      if (!st.isOpen) {
+        _log(JournalAction.blocked, 'لم يُرسل الأمر: ${st.summaryAr()}', symbol: r.contract.underlying);
+        return false;
+      }
+    }
     final o = await broker.placeOrder(r);
     state.tracked[o.id] = TrackedOrder(
       orderId: o.id,
@@ -352,6 +409,7 @@ class TradingEngine {
     }
     await _applyFill(state.tracked[o.id]!, o);
     if (!o.status.isOpen) state.tracked.remove(o.id);
+    return true;
   }
 
   /// Books new fills of tracked orders and cancels stale ones.
@@ -469,7 +527,9 @@ class TradingEngine {
 
   void _dailyBookkeeping(AccountSnapshot a, DateTime now) {
     state.addEquity(EquityPoint(now, a.equityCents));
-    final key = '${now.year}-${now.month}-${now.day}';
+    // The trading day is the New York date (the daily-loss limit resets at
+    // midnight ET, not UTC).
+    final key = NewYorkTime.dateKey(now);
     if (state.dayKey != key) {
       state.dayKey = key;
       state.dayStartEquityCents = a.equityCents;

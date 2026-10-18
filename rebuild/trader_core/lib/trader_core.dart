@@ -14,6 +14,7 @@ export 'src/brokers/alpaca_adapter.dart';
 export 'src/brokers/tradestation_adapter.dart';
 export 'src/brokers/ibkr_adapter.dart';
 
+export 'src/market/market_calendar.dart';
 export 'src/analysis/signal.dart';
 export 'src/analysis/geometry.dart';
 export 'src/analysis/indicators.dart';

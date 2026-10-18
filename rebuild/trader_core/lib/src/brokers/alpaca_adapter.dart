@@ -19,8 +19,9 @@ import '../models.dart';
 import 'broker_adapter.dart';
 import 'json_util.dart';
 import 'live_guard.dart';
+import '../market/market_calendar.dart';
 
-class AlpacaAdapter implements BrokerAdapter {
+class AlpacaAdapter implements BrokerAdapter, MarketClockSource {
   final String accountId; // application account id (for the live guard)
   final BrokerCredentials credentials;
   final HttpTransport http;
@@ -67,6 +68,21 @@ class AlpacaAdapter implements BrokerAdapter {
     if (a is! Map || a['status'] != 'ACTIVE') {
       throw BrokerException(BrokerErrorCode.auth, 'Alpaca account not active: ${a is Map ? a['status'] : a}');
     }
+  }
+
+  /// Exchange clock (`GET /v2/clock`), used to confirm the offline calendar.
+  @override
+  Future<BrokerMarketClock> marketClock() async {
+    final j = jMap(await _get(_trading, '/v2/clock'));
+    DateTime t(String k) {
+      final v = DateTime.tryParse('${j[k]}');
+      if (v == null) throw BrokerException(BrokerErrorCode.invalidResponse, 'Alpaca clock: bad $k');
+      return v.toUtc();
+    }
+
+    final open = j['is_open'];
+    if (open is! bool) throw const BrokerException(BrokerErrorCode.invalidResponse, 'Alpaca clock: is_open missing');
+    return BrokerMarketClock(timestamp: t('timestamp'), isOpen: open, nextOpen: t('next_open'), nextClose: t('next_close'));
   }
 
   @override
