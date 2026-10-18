@@ -90,6 +90,10 @@ class SDConfig:
     daily_expiry_syms: tuple = ()         # symbols with an expiry every weekday (SPY/QQQ since 2022)
     daily_expiry_from: str = "2022-11-15"
     iv_term: object = None                # callable(sym, days_left) -> IV multiplier (round-5 calibration)
+    max_days: float | None = None         # skip the entry if the chosen expiry is further than this (calendar days)
+    premium_cap_atr: float | None = None  # skip if (ask + commission/100) / ATR > cap
+    ivrv_max: float | None = None         # skip if (model) IV / RV20(previous day) > cap
+    target_days: float | None = None      # SPY/QQQ daily expiries: pick the expiry closest to entry + target_days
     ref_price: float | None = 100.0       # price the option on an underlying rescaled to this level at entry
                                           # (split-adjusted history makes old prices tiny: $0.30 AAPL would
                                           # otherwise pay absurd minimum spreads / strike steps)
@@ -190,12 +194,14 @@ def run(bars: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: SD
 
     IVd = {s: prev_map(ivs[s]) for s in syms}
     ATd = {s: prev_map(atr(daily[s])) for s in syms}
+    from .indicators import realized_vol as _rv
+    RVd = {s: prev_map(_rv(daily[s]["close"], 20)) for s in syms}
     cache: dict = {}
 
     def prev_val(kind, sym, day):
         key = (kind, sym, day)
         if key not in cache:
-            sr = (IVd if kind == "iv" else ATd)[sym]
+            sr = {"iv": IVd, "atr": ATd, "rv": RVd}[kind][sym]
             j = sr.index.searchsorted(day) - 1
             cache[key] = float(sr.iloc[j]) if j >= 0 else np.nan
         return cache[key]
@@ -248,17 +254,25 @@ def run(bars: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: SD
                 spot = O[sym][i]
                 mdays = int(md) if np.isfinite(md) else cfg.min_days
                 if sym in cfg.daily_expiry_syms and t_open >= pd.Timestamp(cfg.daily_expiry_from):
-                    expiry = t_open.normalize() + pd.Timedelta(days=mdays, hours=16)
+                    expiry = t_open.normalize() + pd.Timedelta(days=(cfg.target_days if cfg.target_days is not None else mdays), hours=16)
                     while expiry.weekday() >= 5:
                         expiry += pd.Timedelta(days=1)
                 else:
                     expiry = friday_expiry(t_open, mdays)
                 dl = _days_left(expiry, t_open)
+                if cfg.max_days is not None and (expiry.normalize() - t_open.normalize()).days > cfg.max_days:
+                    continue
                 iv = iv0 * ivm(sym, dl)
+                if cfg.ivrv_max is not None:
+                    rv = prev_val("rv", sym, day)
+                    if not (np.isfinite(rv) and rv > 0 and iv / rv <= cfg.ivrv_max):
+                        continue
                 c = costs[sym]
                 f = max(1.0, cfg.ref_price / spot) if cfg.ref_price else 1.0  # only scale UP tiny adjusted prices
                 k = om.choose_strike(d > 0, spot * f, max(dl, 0.25), iv, cfg.target_delta, c)
                 ask = om.buy_price(om.mid_price(d > 0, spot * f, k, dl, iv, c), c)
+                if cfg.premium_cap_atr is not None and (ask + c.commission / 100) / (a * f) > cfg.premium_cap_atr:
+                    continue
                 nav = cash + sum(q.n * 100 * om.sell_price(q.mark, costs[q.sym]) for q in pos.values())
                 n = math.floor(nav * cfg.budget / (100 * ask + c.commission))
                 n = min(n, math.floor(cash / (100 * ask + c.commission)))
@@ -317,6 +331,8 @@ def run(bars: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: SD
                 pending.append(e)
         nav = cash + sum(q.n * 100 * om.sell_price(q.mark, costs[q.sym]) for q in pos.values())
         nav_rows.append((ts, nav, len(pos)))
+    if not nav_rows:
+        return trades, pd.Series(dtype=float)
     nav = pd.DataFrame(nav_rows, columns=["ts", "nav", "open"]).set_index("ts")
     nav_daily = nav["nav"].groupby(nav.index.normalize()).last()
     return trades, nav_daily

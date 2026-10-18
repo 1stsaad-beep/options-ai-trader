@@ -1,0 +1,37 @@
+{
+  "MTF-RSI Call": {
+    "run": "+ daily close > SMA200",
+    "sig_kw": {
+      "regime": true
+    },
+    "overrides": {},
+    "exits": {},
+    "label": "+ daily close > SMA200",
+    "dev_exp": 0.12292285005775268
+  },
+  "Squeeze-Breakout Call (daily @15:50)": {
+    "run": "target 1.5 ATR / stop 0.75",
+    "sig_kw": {},
+    "overrides": {
+      "ex": [
+        1.5,
+        0.75,
+        30
+      ]
+    },
+    "exits": {},
+    "label": "target 1.5 ATR / stop 0.75",
+    "dev_exp": 0.3601833446223278
+  },
+  "Trend-Dip Call @15:50": {
+    "run": "base rule",
+    "sig_kw": {},
+    "overrides": {},
+    "exits": {
+      "tp": 0.5,
+      "sl": 0.5
+    },
+    "label": "base rule \u00b7 TP+50% SL-50%",
+    "dev_exp": -0.027354252105074483
+  }
+}

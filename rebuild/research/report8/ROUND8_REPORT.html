@@ -1,0 +1,3353 @@
+<!doctype html><html lang='ar' dir='rtl'><head><meta charset='utf-8'><style>
+@page { size: A4; margin: 16mm 13mm 16mm 13mm; }
+body { font-family: 'DejaVu Sans', sans-serif; direction: rtl; font-size: 9.6pt; line-height: 1.6; color: #1d2433; }
+h1 { font-size: 17pt; color: #0b4f6c; border-bottom: 2px solid #0b4f6c; padding-bottom: 4px; margin-top: 0; }
+h2 { font-size: 13pt; color: #0b4f6c; margin-top: 18px; }
+h3 { font-size: 11pt; color: #234; }
+h4 { font-size: 10pt; }
+table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 7.6pt; page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+th, td { border: 1px solid #c9d3de; padding: 3px 4px; vertical-align: top; unicode-bidi: plaintext; text-align: start; }
+th { background: #e8f1f7; }
+tr:nth-child(even) td { background: #f8fafc; }
+code { font-family: 'DejaVu Sans Mono', monospace; font-size: 8pt; background: #f1f4f7; padding: 0 2px; direction: ltr; unicode-bidi: embed; }
+pre { direction: ltr; text-align: left; background: #f4f6f9; border: 1px solid #dde3ea; padding: 8px; font-size: 7.8pt; white-space: pre-wrap; }
+pre code { background: none; }
+blockquote { border-right: 4px solid #e0a100; margin: 8px 0; padding: 4px 10px; background: #fff8e6; }
+.pb { page-break-after: always; }
+.raw { direction: ltr; text-align: left; } .raw table { font-size: 6.6pt; } .raw h2, .raw h3, .raw h4 { text-align: left; }
+.cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+.cover h1 { border: none; font-size: 26pt; }
+.cover .sub { font-size: 13pt; color: #456; margin: 6px 0; }
+.toc ul { list-style: none; padding-right: 12px; } .toc > ul > li { margin-top: 4px; font-weight: bold; } .toc ul ul li { font-weight: normal; }
+a { color: #0b4f6c; text-decoration: none; }
+</style></head><body><div class='cover'><h1>Options AI Trader</h1>
+<div class='sub'>اختبار مستقل للتقرير الشامل + اختبار وتطوير الدراسة الجديدة (A/B/C)</div>
+<div class='sub'>30 سهمًا جديدًا خارج العينة · أسعار عقود حقيقية 2024–2026 · فحص تسرّب المستقبل</div>
+<div class='sub' style='margin-top:30px;font-size:11pt'>19 أكتوبر 2026 · الفرع rebuild/hybrid-engines-20261018</div>
+<div class='sub' style='font-size:10pt'>Alpaca 5 دقائق 2016–2026 · أسعار عقود حقيقية 2024–2026 · 15 رمزًا</div>
+</div><div class='pb'></div><h1>المحتويات</h1><div class="toc">
+<ul>
+<li><a href="#_1">الملخص التنفيذي</a></li>
+<li><a href="#_2">الجزء الأول: الاختبار المستقل للتقرير الشامل</a><ul>
+<li><a href="#1">1. فحص تسرّب المستقبل (اختبار البتر)</a></li>
+<li><a href="#2-30">2. الاختبار خارج العينة على 30 سهمًا جديدًا</a></li>
+<li><a href="#3">3. محاولة التطوير على الأسهم الأصلية</a></li>
+</ul>
+</li>
+<li><a href="#a-b-c">الجزء الثاني: اختبار الدراسة الجديدة (A وB وC)</a><ul>
+<li><a href="#_3">طريقة الاختبار</a></li>
+<li><a href="#a-call">A — قبول فجوة الأرباح (Call)</a></li>
+<li><a href="#b-put">B — ضغط بيع واسع في سوق هابط (Put)</a></li>
+<li><a href="#c-qqq-call">C — استدراك سهم متأخر عن QQQ (Call)</a></li>
+<li><a href="#_4">تقييم حسابات الدراسة</a></li>
+</ul>
+</li>
+<li><a href="#_5">الخلاصة والتوصيات</a></li>
+<li><a href="#resultsr7-resultsr8">ملحق: النتائج الخام (results/r7 و results/r8)</a><ul>
+<li><a href="#r7auditmd">r7/AUDIT.md</a></li>
+<li><a href="#r7judgemd">r7/JUDGE.md</a></li>
+<li><a href="#r7diagmd">r7/DIAG.md</a></li>
+<li><a href="#r7devmd">r7/DEV.md</a></li>
+<li><a href="#r8amd">r8/A.md</a></li>
+<li><a href="#r8a_devmd">r8/A_DEV.md</a></li>
+<li><a href="#r8bmd">r8/B.md</a></li>
+<li><a href="#r8b_devmd">r8/B_DEV.md</a></li>
+<li><a href="#r8b_noregimemd">r8/B_NOREGIME.md</a></li>
+<li><a href="#r8cmd">r8/C.md</a></li>
+<li><a href="#r8c_devmd">r8/C_DEV.md</a></li>
+</ul>
+</li>
+</ul>
+</div><div class='pb'></div><h1 id="_1">الملخص التنفيذي</h1>
+<p>يتضمن هذا التقرير عملين:</p>
+<p><strong>الأول: الاختبار المستقل للتقرير الشامل (158 صفحة).</strong></p>
+<ul>
+<li><strong>الفحص:</strong> فحصنا الكود بحثًا عن تسرّب المستقبل، ثم اختبرنا أفضل استراتيجياته <strong>بقواعدها المجمّدة</strong> على <strong>30 سهمًا جديدًا لم تُستخدم أبدًا</strong>، بأسعار عقود حقيقية من 2024-02 إلى 2026-10.</li>
+<li><strong>النتيجة: الاستنتاجات الإيجابية الرئيسية لم تصمد خارج الأسهم الـ 15 الأصلية.</strong></li>
+</ul>
+<p><strong>الثاني: الدراسة الجديدة "ثلاث استراتيجيات لشراء الخيارات"</strong> (22 صفحة، A وB وC).</p>
+<ul>
+<li>اختبرناها بقواعدها الحرفية، ثم طوّرناها بشبكة معلنة مسبقًا، اخترنا منها على فترة الاكتشاف وحدها، وحكمنا بأسعار حقيقية وعلى أسهم جديدة.</li>
+<li><strong>النتيجة: القواعد الحرفية نادرة جدًا</strong> (1–8 إشارات في 10 سنوات لكل استراتيجية). <strong>والنسخ المطوّرة كلها خاسرة</strong> بالأسعار الحقيقية.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>القواعد الحرفية</th>
+<th>النسخة المطوّرة — حقيقي 2024–26</th>
+<th>الحكم</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI Call (أفضل ما في التقرير الشامل)</td>
+<td>الأسهم الأصلية، فترة الاختبار: <strong>+15.9%</strong> (45 صفقة)</td>
+<td><strong>الأسهم الجديدة: −17.3%</strong> (188 صفقة، t −3.9)</td>
+<td>❌ لم تصمد</td>
+</tr>
+<tr>
+<td>Squeeze-Breakout يومي @15:50</td>
+<td>الأسهم الأصلية، الاختبار: +25.3% (14 صفقة)</td>
+<td>الأسهم الجديدة: <strong>+9.5%</strong> (71 صفقة، t 0.91)، وبدون أفضل 5: −5.1%</td>
+<td>🟠 هشة</td>
+</tr>
+<tr>
+<td>Trend-Dip @15:50</td>
+<td>الأسهم الأصلية، الاختبار: +2.0% (195 صفقة)</td>
+<td>الأسهم الجديدة: <strong>−15.1%</strong> (478 صفقة)</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>A</strong> قبول فجوة الأرباح</td>
+<td>8 إشارات و3 صفقات في 10 سنوات</td>
+<td>الأسهم الأصلية −14.4% (28)، والجديدة <strong>−21.6%</strong> (33)</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>B</strong> Put ضغط بيع واسع</td>
+<td>8 إشارات وصفقة واحدة</td>
+<td>لا صفقات في فترة الأسعار الحقيقية. بدون شرط السوق الهابط: −5.9% (65)</td>
+<td>❌ / غير قابلة للاختبار</td>
+</tr>
+<tr>
+<td><strong>C</strong> استدراك السهم المتأخر</td>
+<td>إشارة واحدة في 10 سنوات</td>
+<td>الأسهم الأصلية −6.9% (36)، والجديدة <strong>−8.9%</strong> (21)</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<p><strong>أهم استنتاج:</strong></p>
+<ul>
+<li>الحافة التي ظهرت في الجولات السابقة كانت <strong>خاصة بالأسهم الـ 15 المختارة</strong>: أسهم كبرى صعدت بقوة طوال 2016–2026.</li>
+<li>على الأسهم الجديدة، حركة السهم بعد إشارة MTF-RSI صفر تقريبًا (−0.001 ATR)، بعد أن كانت +0.13 ATR على الأسهم الأصلية.</li>
+<li>هذا هو <strong>انحياز الاختيار والنجاة</strong> الذي حذّرت منه كل التقارير، وقد ثبت الآن عمليًا.</li>
+</ul>
+<blockquote>
+<p><strong>التوصية:</strong> لا تُضاف أي من هذه الاستراتيجيات للتشغيل، ولا حتى كـ "مرشح قوي". إن جُرّبت في Paper فللمراقبة فقط.</p>
+</blockquote>
+<h1 id="_2">الجزء الأول: الاختبار المستقل للتقرير الشامل</h1>
+<h2 id="1">1. فحص تسرّب المستقبل (اختبار البتر)</h2>
+<p><strong>الطريقة:</strong> حسبنا إشارات الاستراتيجيات الثلاث الإيجابية مرتين:</p>
+<ul>
+<li><strong>مرة على البيانات كاملة.</strong></li>
+<li><strong>مرة على بيانات مبتورة عند لحظة T.</strong> استخدمنا ثلاث لحظات وثلاثة رموز (AAPL وNVDA وQQQ).</li>
+</ul>
+<p><strong>الشرط:</strong> يجب أن تتطابق كل الإشارات قبل T.</p>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الشموع المقارنة</th>
+<th>الإشارات</th>
+<th>الاختلافات</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI Call</td>
+<td>~55–66 ألف شمعة لكل حالة</td>
+<td>93–124</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>Squeeze يومي @15:50</td>
+<td>~2,000–2,400 يوم</td>
+<td>7–19</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>Trend-Dip @15:50</td>
+<td>~2,000–2,400 يوم</td>
+<td>115–167</td>
+<td><strong>0</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>النتيجة:</strong> لا يوجد تسرّب مستقبل في حساب الإشارات.</p>
+<p><strong>اختبار إضافي:</strong> أخّرنا الدخول شمعة واحدة. النتائج على الأسهم الجديدة بقيت في نفس الاتجاه:</p>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>التغيّر</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI</td>
+<td>−17.3% → −13.0%</td>
+</tr>
+<tr>
+<td>Squeeze</td>
+<td>+9.5% → −6.8%</td>
+</tr>
+<tr>
+<td>Trend-Dip</td>
+<td>−15.1% → −21.0%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-30">2. الاختبار خارج العينة على 30 سهمًا جديدًا</h2>
+<p><strong>الأسهم:</strong> AVGO, NFLX, CRM, ORCL, ADBE, INTC, QCOM, MU, BAC, WFC, GS, C, V, MA, PYPL, DIS, NKE, WMT, HD, KO, PEP, MRK, PFE, LLY, BA, CAT, CVX, UBER, ABNB, PLTR.</p>
+<p><strong>البيانات:</strong></p>
+<ul>
+<li>شموع 5 دقائق من Alpaca منذ 2023.</li>
+<li>يومي من Yahoo منذ 1998.</li>
+<li>أسعار عقودها الحقيقية 2024-02 → 2026-10.</li>
+</ul>
+<p><strong>القواعد:</strong> كما هي في التقرير بلا أي تعديل.</p>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الصفقات</th>
+<th>نسبة الربح</th>
+<th>العائد/صفقة</th>
+<th>PF</th>
+<th>t</th>
+<th>فروق ×2</th>
+<th>بسعر الوسط</th>
+<th>بدون أفضل 5</th>
+<th>2024-02→2025-06</th>
+<th>2025-07→2026-10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI Call</td>
+<td>188</td>
+<td>35%</td>
+<td><strong>−17.3%</strong></td>
+<td>0.53</td>
+<td>−3.90</td>
+<td>−22.2%</td>
+<td>−12.2%</td>
+<td>−21.2%</td>
+<td>−23.2%</td>
+<td>−11.1%</td>
+</tr>
+<tr>
+<td>Squeeze يومي @15:50</td>
+<td>71</td>
+<td>48%</td>
+<td><strong>+9.5%</strong></td>
+<td>1.29</td>
+<td>0.91</td>
+<td>+3.1%</td>
+<td>+16.3%</td>
+<td>−5.1%</td>
+<td>+13.8%</td>
+<td>+3.0%</td>
+</tr>
+<tr>
+<td>Trend-Dip @15:50</td>
+<td>478</td>
+<td>36%</td>
+<td><strong>−15.1%</strong></td>
+<td>0.65</td>
+<td>−3.91</td>
+<td>−20.0%</td>
+<td>−9.8%</td>
+<td>−18.7%</td>
+<td>−10.0%</td>
+<td>−20.1%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>تشخيص السبب</strong> (حركة السهم بعد يومين، بوحدة ATR، 2024–2026):</p>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الأسهم الأصلية</th>
+<th>الأسهم الجديدة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI Call</td>
+<td><strong>+0.132</strong> (136 إشارة)</td>
+<td><strong>−0.001</strong> (333)</td>
+</tr>
+<tr>
+<td>Squeeze يومي</td>
+<td>+0.228 (36)</td>
+<td>+0.073 (78)</td>
+</tr>
+<tr>
+<td>Trend-Dip</td>
+<td>+0.137 (698)</td>
+<td>+0.042 (1,215)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>المشكلة في الإشارة نفسها لا في تكلفة العقد:</strong> على الأسهم الجديدة لا توجد حركة تستحق الشراء.</li>
+<li><strong>توزيع العائد حسب السهم (MTF-RSI):</strong><ul>
+<li>الأسوأ: PFE −91%، QCOM −61%، CVX −60%، LLY −52%، HD −46%.</li>
+<li>الأفضل: MA +25%، MU +19%، UBER +14%.</li>
+<li><strong>شراء الارتداد ينجح في الأسهم القائدة الصاعدة ويفشل في غيرها.</strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="3">3. محاولة التطوير على الأسهم الأصلية</h2>
+<p>اخترنا النسخ على فترة التطوير 2024-02 → 2025-06 فقط:</p>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>النسخة المختارة</th>
+<th>الأسهم الأصلية، الاختبار 2025-07→2026-10</th>
+<th>الأسهم الجديدة 2024–26</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI Call</td>
+<td>+ الإغلاق اليومي فوق SMA200</td>
+<td>+15.5% (29)</td>
+<td><strong>−17.5%</strong> (90)</td>
+</tr>
+<tr>
+<td>Squeeze يومي</td>
+<td>هدف 1.5 ATR ووقف 0.75</td>
+<td>+32.1% (12)</td>
+<td><strong>−2.3%</strong> (70)</td>
+</tr>
+<tr>
+<td>Trend-Dip</td>
+<td>جني ربح +50% ووقف −50% على سعر العقد</td>
+<td>−1.5% (195)</td>
+<td><strong>−13.4%</strong> (478)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>التطوير لم يُصلح شيئًا.</strong> حسّن النتيجة على الأسهم الأصلية فقط (إفراط مطابقة)، وفشل على الأسهم الجديدة.</p>
+<h1 id="a-b-c">الجزء الثاني: اختبار الدراسة الجديدة (A وB وC)</h1>
+<h2 id="_3">طريقة الاختبار</h2>
+<ul>
+<li><strong>القواعد كما في الشبه-كود حرفيًا.</strong> القرار عند الوقت المحدد (09:35 / 12:30 / 12:00) على شموع 5 دقائق مكتملة، والتنفيذ في افتتاح الشمعة التالية.</li>
+<li><strong>الهدف والوقف:</strong> محسوبان بـ A0 كما في الدراسة، ويُفحصان على إغلاقات 5 دقائق.</li>
+<li><strong>الخروج الزمني:</strong> كما حُدد (09:35 اليوم التالي / 15:30 / 15:50).</li>
+<li><strong>فلاتر العقد كما في الدراسة:</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الفلتر</th>
+<th>القيمة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>الدلتا</td>
+<td>0.50</td>
+</tr>
+<tr>
+<td>الأيام للانتهاء</td>
+<td>3–6</td>
+</tr>
+<tr>
+<td>IV/RV</td>
+<td>≤ 1.30</td>
+</tr>
+<tr>
+<td>سقف تكلفة العقد ÷ ATR</td>
+<td>0.70 / 0.60 / 0.70</td>
+</tr>
+<tr>
+<td>(لـ A) IV ≤ 0.80 ×</td>
+<td>IV نفس العقد قبل الحدث (15:45)</td>
+</tr>
+</tbody>
+</table>
+<p>طُبّقت كلها على أسعار حقيقية.</p>
+<ul>
+<li><strong>المراحل:</strong><ul>
+<li>(1) حركة السهم.</li>
+<li>(2) نموذج معايَر: اكتشاف 2016–2020، تحقق 2021 → 2026-04، نهائية.</li>
+<li>(3) <strong>أسعار عقود حقيقية 2024-02 → 2026-10</strong>.</li>
+<li>(4) شبكة تطوير مسجّلة مسبقًا، الاختيار على الاكتشاف فقط، ثم الحكم بأسعار حقيقية على الأسهم الأصلية وعلى أسهم جديدة.</li>
+</ul>
+</li>
+</ul>
+<p><strong>قيود صريحة:</strong></p>
+<table>
+<thead>
+<tr>
+<th>القيد</th>
+<th>المعالجة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>مواعيد الأرباح غير متاحة</strong></td>
+<td>لـ A: "حدث الأرباح" = فجوة ≥ 0.5 A0 بحجم ≥ 2× المتوسط، وتباعد 40 جلسة. لـ B وC: استبعاد يوم الفجوة الكبيرة واليومين بعدها</td>
+</tr>
+<tr>
+<td><strong>لا يوجد سجل لسعري الطلب والعرض</strong></td>
+<td>التنفيذ = VWAP لشمعة العقد ± نصف الفرق (3% سهم، 1.5% ETF)، كما في الدراسة. فلتر "الفرق ≤ 6%/3%" لم يمكن تطبيقه</td>
+</tr>
+<tr>
+<td><strong>إصدارات الاقتصاد والتوزيعات</strong></td>
+<td>لم تُستبعد</td>
+</tr>
+</tbody>
+</table>
+<h2 id="a-call">A — قبول فجوة الأرباح (Call)</h2>
+<ul>
+<li><strong>الحرفية:</strong> 8 إشارات في 10 سنوات على 12 سهمًا. 3 صفقات فقط وجدت عقدًا بانتهاء 3–6 أيام، لأن الأسهم ليس لها إلا انتهاء الجمعة، فلا يتاح الدخول إلا الإثنين والثلاثاء. <strong>غير قابلة للحكم.</strong></li>
+<li><strong>التطوير:</strong><ul>
+<li><strong>الشبكة المعلنة (24 نسخة):</strong> نطاق ثبات 09:35 بين 0.25 و0.5 وبلا شرط، وحد الفجوة الأعلى 1.5 أو 3.0، والتباعد 40 أو بلا، وموقع الإغلاق 0.75 أو 0.5.</li>
+<li><strong>وسّعنا الانتهاء</strong> إلى 3–8 أيام.</li>
+<li><strong>النسخة المختارة:</strong> الأكبر عينة (45 صفقة اكتشاف)، والوحيدة التي بلغت 40 صفقة.</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الاختبار</th>
+<th>الصفقات</th>
+<th>العائد/صفقة</th>
+<th>t</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>نموذج — اكتشاف / تحقق / نهائية</td>
+<td>45 / 47 / 10</td>
+<td>−7.9% / −2.1% / +11.3%</td>
+<td>−1.39 / −0.34 / 0.39</td>
+</tr>
+<tr>
+<td>حركة السهم بوحدة ATR (اكتشاف / تحقق)</td>
+<td>—</td>
+<td>−0.02 / +0.09</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>حقيقي — الأسهم الأصلية</strong></td>
+<td>28</td>
+<td><strong>−14.4%</strong></td>
+<td>−1.39</td>
+</tr>
+<tr>
+<td>حقيقي — الأصلية، مع فلاتر الدراسة</td>
+<td>3</td>
+<td>+28.9%</td>
+<td>— (عينة غير كافية)</td>
+</tr>
+<tr>
+<td><strong>حقيقي — 12 سهمًا جديدًا</strong></td>
+<td>33</td>
+<td><strong>−21.6%</strong></td>
+<td>−3.41</td>
+</tr>
+<tr>
+<td>حقيقي — الجديدة، مع فلاتر الدراسة</td>
+<td>7</td>
+<td>−26.7%</td>
+<td>−3.45</td>
+</tr>
+<tr>
+<td>حقيقي — الأصلية: فروق ×2 / بدون أفضل 5</td>
+<td>28 / 23</td>
+<td>−19.4% / −36.0%</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>الحكم ❌:</strong> الفكرة لا تعطي حركة كافية بعد "قبول الفجوة"، وفلاتر الدراسة تترك عينة صغيرة جدًا.</p>
+</blockquote>
+<h2 id="b-put">B — ضغط بيع واسع في سوق هابط (Put)</h2>
+<ul>
+<li><strong>الحرفية:</strong> 8 إشارات في 10 سنوات، وصفقة واحدة نُفذت. <strong>لا توجد أي صفقة في فترة الأسعار الحقيقية</strong>، لأن نظام السوق الهابط الذي تشترطه الدراسة شبه غائب في 2024–2026.</li>
+<li><strong>التطوير:</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>النسخة</th>
+<th>الصفقات</th>
+<th>النتيجة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>الشبكة المعلنة (اتساع 5/7، هبوط 0.3/0.5، حجم 1.2/1.5)</td>
+<td>14 اكتشاف / 10 تحقق</td>
+<td>نموذج +0.6% / +1.3%</td>
+</tr>
+<tr>
+<td><strong>بدون شرط السوق الهابط</strong> (حرفية)</td>
+<td>47 / 30</td>
+<td>حركة السهم +0.14% ثم <strong>−0.20%</strong>؛ نموذج +1.5% ثم −9.8%؛ <strong>حقيقي −9.4%</strong> (11)</td>
+</tr>
+<tr>
+<td>بدون شرط السوق الهابط + عتبات مخففة</td>
+<td>136 / 129</td>
+<td>حركة السهم +0.09% ثم <strong>−0.10%</strong>؛ <strong>حقيقي −5.9%</strong> (65 صفقة)، ومع الفلاتر −0.8% (14)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>الحكم:</strong> في نظامها المحدد غير قابلة للاختبار لندرتها. وبدونه ❌: لا حافة في فترة التحقق.</p>
+</blockquote>
+<h2 id="c-qqq-call">C — استدراك سهم متأخر عن QQQ (Call)</h2>
+<ul>
+<li><strong>الحرفية:</strong> <strong>إشارة واحدة في 10 سنوات</strong> على 8 أسهم. الشروط مجتمعة نادرة جدًا: QQQ صاعد ≥ 0.4 ATR حتى 11:30 (16% من الأيام)، مع تأخر ≥ 2 انحراف معياري و≥ 0.9 ATR.</li>
+<li><strong>التطوير:</strong><ul>
+<li><strong>الشبكة المعلنة (36 نسخة):</strong> z بين −2 و−1، والتأخر 0.9 / 0.5 / 0 ATR، وصعود QQQ 0.4 أو 0.2، والتأكيد 0.1 أو 0.</li>
+<li><strong>أفضل ما في الاكتشاف:</strong> حركة سهم ≈ 0 (+0.002 ATR، ثم +0.029 في التحقق).</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الاختبار</th>
+<th>الصفقات</th>
+<th>العائد/صفقة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>نموذج — اكتشاف / تحقق / نهائية</td>
+<td>85 / 83 / 10</td>
+<td>−5.7% / −4.1% / +1.3%</td>
+</tr>
+<tr>
+<td><strong>حقيقي — الأسهم الأصلية</strong></td>
+<td>36</td>
+<td><strong>−6.9%</strong> (t −2.0)؛ مع الفلاتر −5.7%</td>
+</tr>
+<tr>
+<td><strong>حقيقي — 8 أسهم جديدة</strong></td>
+<td>21</td>
+<td><strong>−8.9%</strong>؛ مع الفلاتر −7.2%</td>
+</tr>
+<tr>
+<td>حقيقي — الأصلية: فروق ×2 / بدون أفضل 5</td>
+<td>36 / 31</td>
+<td>−12.3% / −13.2%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>الحكم ❌:</strong> لا توجد حركة "استدراك" قابلة للربح خلال ساعات.</p>
+</blockquote>
+<h2 id="_4">تقييم حسابات الدراسة</h2>
+<ul>
+<li><strong>حسابات "احتمال النجاح اللازم"</strong> في الدراسة صحيحة كحساب: A يحتاج ~47%، وB ~37%، وC ~46% لتحقيق شرطي Paper.</li>
+<li><strong>الاحتمالات الفعلية</strong> كانت أقل بوضوح. نسبة الصفقات الرابحة بالأسعار الحقيقية:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>نسبة الربح الفعلية</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>18–24%</td>
+</tr>
+<tr>
+<td>B (بدون نظام)</td>
+<td>34%</td>
+</tr>
+<tr>
+<td>C</td>
+<td>19–25%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>صدقت الدراسة حين صنّفت B وC "هشة" وA "واعدة بحثيًا" فقط.</strong> الاختبار يؤكد ذلك، ويرفض A أيضًا.</li>
+</ul>
+<h1 id="_5">الخلاصة والتوصيات</h1>
+<ul>
+<li><strong>(1)</strong> <strong>بعد سبع جولات وأكثر من 50 استراتيجية</strong>، لم تُثبت أي استراتيجية شراء خيارات قصيرة الأجل ربحًا بأسعار حقيقية <strong>خارج العينة</strong> على أسهم لم تُستخدم في التطوير. الاستثناء الوحيد Squeeze اليومي: +9.5% على الأسهم الجديدة، لكن t = 0.91، ويصبح سالبًا بدون أفضل 5 صفقات.</li>
+<li><strong>(2)</strong> <strong>الدرس الأكبر:</strong> كل ما بدا رابحًا كان مرتبطًا بالأسهم القائدة التي صعدت بقوة في 2016–2026. <strong>أي استراتيجية مستقبلية يجب أن تُطوَّر على مجموعة رموز، وتُحكم على مجموعة أخرى لم تُرَ.</strong></li>
+<li><strong>(3)</strong> <strong>للتطبيق:</strong><ul>
+<li>لا تفعيل لأي استراتيجية بأموال حقيقية.</li>
+<li>الأولوية لبنية الأمان والتسجيل: IV، والطلب والعرض، والتنفيذ الفعلي.</li>
+<li>تشغيل Squeeze اليومي في Paper للمراقبة فقط، على قائمة رموز واسعة.</li>
+</ul>
+</li>
+<li><strong>(4)</strong> <strong>إن أردت الاستمرار في البحث، فالخطوات الأعلى قيمة:</strong><ul>
+<li>(أ) بيانات خيارات تاريخية بسعري الطلب والعرض منذ 2016 (ThetaData أو Polygon).</li>
+<li>(ب) قائمة رموز تاريخية بلا انحياز نجاة.</li>
+<li>(ج) تقويم أرباح حقيقي.</li>
+</ul>
+</li>
+</ul>
+<p>بدونها ستبقى العيّنات صغيرة والأحكام ضعيفة.</p>
+<blockquote>
+<p><strong>أمان:</strong> لم تُفعَّل أي أوامر Live. مفتاح Alpaca محفوظ خارج المستودع، <strong>ويُنصح بإلغائه.</strong></p>
+</blockquote>
+<p><strong>الكود والنتائج الخام</strong> (فرع <code>rebuild/hybrid-engines-20261018</code>):</p>
+<ul>
+<li><code>r7_audit.py</code> و<code>r7_run.py</code> و<code>r7_diag.py</code>.</li>
+<li><code>oat_research/strat8.py</code> و<code>r8_run.py</code> و<code>r8_dev.py</code> و<code>r8_b_noregime.py</code>.</li>
+<li><code>results/r7/*.md</code> و<code>results/r8/*.md</code>.</li>
+</ul>
+<div class='pb'></div>
+
+<h1 id="resultsr7-resultsr8">ملحق: النتائج الخام (results/r7 و results/r8)</h1>
+<h2 id="r7auditmd">r7/AUDIT.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>strategy</th>
+<th>symbol</th>
+<th>cut time</th>
+<th>bars compared</th>
+<th>signals in window</th>
+<th>mismatches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI</td>
+<td>AAPL</td>
+<td>2024-06-12 11:20:00</td>
+<td>55176</td>
+<td>106</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Squeeze daily @15:50</td>
+<td>AAPL</td>
+<td>2024-06-12 11:20:00</td>
+<td>2021</td>
+<td>11</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Trend-dip @15:50</td>
+<td>AAPL</td>
+<td>2024-06-12 11:20:00</td>
+<td>2021</td>
+<td>132</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MTF-RSI</td>
+<td>AAPL</td>
+<td>2025-04-08 15:00:00</td>
+<td>60521</td>
+<td>117</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Squeeze daily @15:50</td>
+<td>AAPL</td>
+<td>2025-04-08 15:00:00</td>
+<td>2226</td>
+<td>12</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Trend-dip @15:50</td>
+<td>AAPL</td>
+<td>2025-04-08 15:00:00</td>
+<td>2226</td>
+<td>152</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MTF-RSI</td>
+<td>AAPL</td>
+<td>2026-02-03 13:55:00</td>
+<td>65872</td>
+<td>124</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Squeeze daily @15:50</td>
+<td>AAPL</td>
+<td>2026-02-03 13:55:00</td>
+<td>2432</td>
+<td>15</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Trend-dip @15:50</td>
+<td>AAPL</td>
+<td>2026-02-03 13:55:00</td>
+<td>2432</td>
+<td>167</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MTF-RSI</td>
+<td>NVDA</td>
+<td>2024-06-12 11:20:00</td>
+<td>55164</td>
+<td>104</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Squeeze daily @15:50</td>
+<td>NVDA</td>
+<td>2024-06-12 11:20:00</td>
+<td>2021</td>
+<td>18</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Trend-dip @15:50</td>
+<td>NVDA</td>
+<td>2024-06-12 11:20:00</td>
+<td>2021</td>
+<td>115</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MTF-RSI</td>
+<td>NVDA</td>
+<td>2025-04-08 15:00:00</td>
+<td>60509</td>
+<td>113</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Squeeze daily @15:50</td>
+<td>NVDA</td>
+<td>2025-04-08 15:00:00</td>
+<td>2226</td>
+<td>18</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Trend-dip @15:50</td>
+<td>NVDA</td>
+<td>2025-04-08 15:00:00</td>
+<td>2226</td>
+<td>137</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MTF-RSI</td>
+<td>NVDA</td>
+<td>2026-02-03 13:55:00</td>
+<td>65860</td>
+<td>121</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Squeeze daily @15:50</td>
+<td>NVDA</td>
+<td>2026-02-03 13:55:00</td>
+<td>2432</td>
+<td>19</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Trend-dip @15:50</td>
+<td>NVDA</td>
+<td>2026-02-03 13:55:00</td>
+<td>2432</td>
+<td>146</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MTF-RSI</td>
+<td>QQQ</td>
+<td>2024-06-12 11:20:00</td>
+<td>55174</td>
+<td>93</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Squeeze daily @15:50</td>
+<td>QQQ</td>
+<td>2024-06-12 11:20:00</td>
+<td>2021</td>
+<td>7</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Trend-dip @15:50</td>
+<td>QQQ</td>
+<td>2024-06-12 11:20:00</td>
+<td>2021</td>
+<td>120</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MTF-RSI</td>
+<td>QQQ</td>
+<td>2025-04-08 15:00:00</td>
+<td>60519</td>
+<td>112</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Squeeze daily @15:50</td>
+<td>QQQ</td>
+<td>2025-04-08 15:00:00</td>
+<td>2226</td>
+<td>7</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Trend-dip @15:50</td>
+<td>QQQ</td>
+<td>2025-04-08 15:00:00</td>
+<td>2226</td>
+<td>142</td>
+<td>0</td>
+</tr>
+<tr>
+<td>MTF-RSI</td>
+<td>QQQ</td>
+<td>2026-02-03 13:55:00</td>
+<td>65870</td>
+<td>124</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Squeeze daily @15:50</td>
+<td>QQQ</td>
+<td>2026-02-03 13:55:00</td>
+<td>2432</td>
+<td>7</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Trend-dip @15:50</td>
+<td>QQQ</td>
+<td>2026-02-03 13:55:00</td>
+<td>2432</td>
+<td>156</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="r7judgemd">r7/JUDGE.md</h2>
+<div class="raw">
+<p><strong>Base</strong> = rule exactly as in the report. <strong>Developed</strong> = variant chosen on DEV (original 15, 2024-02 → 2025-06).</p>
+<h4 id="original-15-symbols-test-period-2025-07-2026-10">ORIGINAL 15 symbols — test period 2025-07 → 2026-10</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI Call — base</td>
+<td>45</td>
+<td>0.69</td>
+<td>+52.2%</td>
+<td>-64.5%</td>
+<td><strong>+15.9%</strong></td>
+<td>1.79</td>
+<td>1.75</td>
+<td>-3.9%</td>
+</tr>
+<tr>
+<td>MTF-RSI Call — developed (+ daily close &gt; SMA200)</td>
+<td>29</td>
+<td>0.69</td>
+<td>+54.8%</td>
+<td>-72.0%</td>
+<td><strong>+15.5%</strong></td>
+<td>1.69</td>
+<td>1.28</td>
+<td>-2.9%</td>
+</tr>
+<tr>
+<td>Squeeze-Breakout Call (daily @15:50) — base</td>
+<td>14</td>
+<td>0.43</td>
+<td>+141.2%</td>
+<td>-61.7%</td>
+<td><strong>+25.3%</strong></td>
+<td>1.72</td>
+<td>0.81</td>
+<td>-4.5%</td>
+</tr>
+<tr>
+<td>Squeeze-Breakout Call (daily @15:50) — developed (target 1.5 ATR / stop 0.75)</td>
+<td>12</td>
+<td>0.50</td>
+<td>+133.8%</td>
+<td>-69.7%</td>
+<td><strong>+32.1%</strong></td>
+<td>1.92</td>
+<td>0.87</td>
+<td>-4.0%</td>
+</tr>
+<tr>
+<td>Trend-Dip Call @15:50 — base</td>
+<td>195</td>
+<td>0.49</td>
+<td>+70.1%</td>
+<td>-62.7%</td>
+<td><strong>+2.0%</strong></td>
+<td>1.06</td>
+<td>0.36</td>
+<td>-17.0%</td>
+</tr>
+<tr>
+<td>Trend-Dip Call @15:50 — developed (base rule · TP+50% SL-50%)</td>
+<td>195</td>
+<td>0.48</td>
+<td>+58.2%</td>
+<td>-56.0%</td>
+<td><strong>-1.5%</strong></td>
+<td>0.95</td>
+<td>-0.34</td>
+<td>-31.2%</td>
+</tr>
+</tbody>
+</table>
+<h4 id="new-30-symbols-never-used-full-2024-02-2026-10">NEW 30 symbols (never used) — full 2024-02 → 2026-10</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MTF-RSI Call — base</td>
+<td>188</td>
+<td>0.35</td>
+<td>+55.5%</td>
+<td>-56.8%</td>
+<td><strong>-17.3%</strong></td>
+<td>0.53</td>
+<td>-3.90</td>
+<td>-50.6%</td>
+</tr>
+<tr>
+<td>↳ 2× half-spread</td>
+<td>188</td>
+<td>0.33</td>
+<td>+49.7%</td>
+<td>-57.5%</td>
+<td><strong>-22.2%</strong></td>
+<td>0.43</td>
+<td>-5.30</td>
+<td>-57.6%</td>
+</tr>
+<tr>
+<td>↳ at VWAP (no spread)</td>
+<td>188</td>
+<td>0.36</td>
+<td>+63.3%</td>
+<td>-55.0%</td>
+<td><strong>-12.2%</strong></td>
+<td>0.65</td>
+<td>-2.59</td>
+<td>-42.9%</td>
+</tr>
+<tr>
+<td>↳ without 5 best</td>
+<td>183</td>
+<td>0.33</td>
+<td>+49.8%</td>
+<td>-56.8%</td>
+<td><strong>-21.2%</strong></td>
+<td>0.44</td>
+<td>-5.05</td>
+<td>-55.7%</td>
+</tr>
+<tr>
+<td>↳ 2024-02→2025-06</td>
+<td>97</td>
+<td>0.31</td>
+<td>+52.3%</td>
+<td>-57.0%</td>
+<td><strong>-23.2%</strong></td>
+<td>0.41</td>
+<td>-3.98</td>
+<td>-37.2%</td>
+</tr>
+<tr>
+<td>↳ 2025-07→2026-10</td>
+<td>91</td>
+<td>0.40</td>
+<td>+58.3%</td>
+<td>-56.4%</td>
+<td><strong>-11.1%</strong></td>
+<td>0.68</td>
+<td>-1.64</td>
+<td>-23.9%</td>
+</tr>
+<tr>
+<td>MTF-RSI Call — developed (+ daily close &gt; SMA200)</td>
+<td>90</td>
+<td>0.36</td>
+<td>+59.9%</td>
+<td>-60.2%</td>
+<td><strong>-17.5%</strong></td>
+<td>0.55</td>
+<td>-2.57</td>
+<td>-32.1%</td>
+</tr>
+<tr>
+<td>↳ 2× half-spread</td>
+<td>90</td>
+<td>0.34</td>
+<td>+52.3%</td>
+<td>-61.5%</td>
+<td><strong>-22.3%</strong></td>
+<td>0.45</td>
+<td>-3.49</td>
+<td>-36.4%</td>
+</tr>
+<tr>
+<td>↳ at VWAP (no spread)</td>
+<td>90</td>
+<td>0.37</td>
+<td>+67.8%</td>
+<td>-58.8%</td>
+<td><strong>-12.4%</strong></td>
+<td>0.67</td>
+<td>-1.72</td>
+<td>-27.2%</td>
+</tr>
+<tr>
+<td>↳ without 5 best</td>
+<td>85</td>
+<td>0.32</td>
+<td>+50.1%</td>
+<td>-60.2%</td>
+<td><strong>-25.2%</strong></td>
+<td>0.39</td>
+<td>-4.04</td>
+<td>-35.3%</td>
+</tr>
+<tr>
+<td>↳ 2024-02→2025-06</td>
+<td>52</td>
+<td>0.35</td>
+<td>+59.2%</td>
+<td>-59.1%</td>
+<td><strong>-18.1%</strong></td>
+<td>0.53</td>
+<td>-2.06</td>
+<td>-22.7%</td>
+</tr>
+<tr>
+<td>↳ 2025-07→2026-10</td>
+<td>38</td>
+<td>0.37</td>
+<td>+60.7%</td>
+<td>-61.7%</td>
+<td><strong>-16.6%</strong></td>
+<td>0.57</td>
+<td>-1.54</td>
+<td>-13.0%</td>
+</tr>
+<tr>
+<td>↳ AUDIT: base with entry delayed one bar</td>
+<td>184</td>
+<td>0.38</td>
+<td>+61.7%</td>
+<td>-57.8%</td>
+<td><strong>-13.0%</strong></td>
+<td>0.64</td>
+<td>-2.72</td>
+<td>-42.1%</td>
+</tr>
+<tr>
+<td>Squeeze-Breakout Call (daily @15:50) — base</td>
+<td>71</td>
+<td>0.48</td>
+<td>+88.3%</td>
+<td>-62.9%</td>
+<td><strong>+9.5%</strong></td>
+<td>1.29</td>
+<td>0.91</td>
+<td>-13.4%</td>
+</tr>
+<tr>
+<td>↳ 2× half-spread</td>
+<td>71</td>
+<td>0.48</td>
+<td>+77.3%</td>
+<td>-65.1%</td>
+<td><strong>+3.1%</strong></td>
+<td>1.09</td>
+<td>0.32</td>
+<td>-14.2%</td>
+</tr>
+<tr>
+<td>↳ at VWAP (no spread)</td>
+<td>71</td>
+<td>0.48</td>
+<td>+100.0%</td>
+<td>-60.6%</td>
+<td><strong>+16.3%</strong></td>
+<td>1.52</td>
+<td>1.47</td>
+<td>-12.5%</td>
+</tr>
+<tr>
+<td>↳ without 5 best</td>
+<td>66</td>
+<td>0.44</td>
+<td>+68.7%</td>
+<td>-62.9%</td>
+<td><strong>-5.1%</strong></td>
+<td>0.86</td>
+<td>-0.58</td>
+<td>-14.9%</td>
+</tr>
+<tr>
+<td>↳ 2024-02→2025-06</td>
+<td>43</td>
+<td>0.49</td>
+<td>+96.5%</td>
+<td>-65.2%</td>
+<td><strong>+13.8%</strong></td>
+<td>1.41</td>
+<td>0.94</td>
+<td>-13.4%</td>
+</tr>
+<tr>
+<td>↳ 2025-07→2026-10</td>
+<td>28</td>
+<td>0.46</td>
+<td>+75.2%</td>
+<td>-59.6%</td>
+<td><strong>+3.0%</strong></td>
+<td>1.09</td>
+<td>0.21</td>
+<td>-7.1%</td>
+</tr>
+<tr>
+<td>Squeeze-Breakout Call (daily @15:50) — developed (target 1.5 ATR / stop 0.75)</td>
+<td>70</td>
+<td>0.40</td>
+<td>+98.7%</td>
+<td>-69.6%</td>
+<td><strong>-2.3%</strong></td>
+<td>0.94</td>
+<td>-0.20</td>
+<td>-19.8%</td>
+</tr>
+<tr>
+<td>↳ 2× half-spread</td>
+<td>70</td>
+<td>0.39</td>
+<td>+90.4%</td>
+<td>-69.8%</td>
+<td><strong>-8.0%</strong></td>
+<td>0.81</td>
+<td>-0.75</td>
+<td>-21.1%</td>
+</tr>
+<tr>
+<td>↳ at VWAP (no spread)</td>
+<td>70</td>
+<td>0.41</td>
+<td>+107.1%</td>
+<td>-69.4%</td>
+<td><strong>+3.7%</strong></td>
+<td>1.09</td>
+<td>0.31</td>
+<td>-18.5%</td>
+</tr>
+<tr>
+<td>↳ without 5 best</td>
+<td>65</td>
+<td>0.35</td>
+<td>+75.8%</td>
+<td>-69.6%</td>
+<td><strong>-18.2%</strong></td>
+<td>0.60</td>
+<td>-1.88</td>
+<td>-26.4%</td>
+</tr>
+<tr>
+<td>↳ 2024-02→2025-06</td>
+<td>42</td>
+<td>0.40</td>
+<td>+102.7%</td>
+<td>-72.4%</td>
+<td><strong>-1.5%</strong></td>
+<td>0.96</td>
+<td>-0.10</td>
+<td>-19.8%</td>
+</tr>
+<tr>
+<td>↳ 2025-07→2026-10</td>
+<td>28</td>
+<td>0.39</td>
+<td>+92.4%</td>
+<td>-65.5%</td>
+<td><strong>-3.5%</strong></td>
+<td>0.91</td>
+<td>-0.22</td>
+<td>-6.1%</td>
+</tr>
+<tr>
+<td>↳ AUDIT: base with entry delayed one bar</td>
+<td>68</td>
+<td>0.35</td>
+<td>+79.3%</td>
+<td>-53.8%</td>
+<td><strong>-6.8%</strong></td>
+<td>0.80</td>
+<td>-0.76</td>
+<td>-16.1%</td>
+</tr>
+<tr>
+<td>Trend-Dip Call @15:50 — base</td>
+<td>478</td>
+<td>0.36</td>
+<td>+78.1%</td>
+<td>-66.5%</td>
+<td><strong>-15.1%</strong></td>
+<td>0.65</td>
+<td>-3.91</td>
+<td>-79.1%</td>
+</tr>
+<tr>
+<td>↳ 2× half-spread</td>
+<td>478</td>
+<td>0.34</td>
+<td>+71.2%</td>
+<td>-66.8%</td>
+<td><strong>-20.0%</strong></td>
+<td>0.55</td>
+<td>-5.51</td>
+<td>-86.5%</td>
+</tr>
+<tr>
+<td>↳ at VWAP (no spread)</td>
+<td>478</td>
+<td>0.38</td>
+<td>+83.8%</td>
+<td>-66.9%</td>
+<td><strong>-9.8%</strong></td>
+<td>0.76</td>
+<td>-2.39</td>
+<td>-67.2%</td>
+</tr>
+<tr>
+<td>↳ without 5 best</td>
+<td>473</td>
+<td>0.35</td>
+<td>+70.6%</td>
+<td>-66.5%</td>
+<td><strong>-18.7%</strong></td>
+<td>0.57</td>
+<td>-5.28</td>
+<td>-84.2%</td>
+</tr>
+<tr>
+<td>↳ 2024-02→2025-06</td>
+<td>239</td>
+<td>0.40</td>
+<td>+74.0%</td>
+<td>-65.5%</td>
+<td><strong>-10.0%</strong></td>
+<td>0.75</td>
+<td>-1.88</td>
+<td>-45.0%</td>
+</tr>
+<tr>
+<td>↳ 2025-07→2026-10</td>
+<td>239</td>
+<td>0.31</td>
+<td>+83.4%</td>
+<td>-67.4%</td>
+<td><strong>-20.1%</strong></td>
+<td>0.57</td>
+<td>-3.61</td>
+<td>-62.9%</td>
+</tr>
+<tr>
+<td>Trend-Dip Call @15:50 — developed (base rule · TP+50% SL-50%)</td>
+<td>478</td>
+<td>0.38</td>
+<td>+55.2%</td>
+<td>-56.2%</td>
+<td><strong>-13.4%</strong></td>
+<td>0.61</td>
+<td>-4.88</td>
+<td>-74.8%</td>
+</tr>
+<tr>
+<td>↳ 2× half-spread</td>
+<td>478</td>
+<td>0.38</td>
+<td>+47.2%</td>
+<td>-58.1%</td>
+<td><strong>-18.4%</strong></td>
+<td>0.49</td>
+<td>-7.14</td>
+<td>-84.2%</td>
+</tr>
+<tr>
+<td>↳ at VWAP (no spread)</td>
+<td>478</td>
+<td>0.39</td>
+<td>+63.4%</td>
+<td>-54.3%</td>
+<td><strong>-8.0%</strong></td>
+<td>0.76</td>
+<td>-2.75</td>
+<td>-58.7%</td>
+</tr>
+<tr>
+<td>↳ without 5 best</td>
+<td>473</td>
+<td>0.38</td>
+<td>+50.9%</td>
+<td>-56.2%</td>
+<td><strong>-15.7%</strong></td>
+<td>0.55</td>
+<td>-6.13</td>
+<td>-79.4%</td>
+</tr>
+<tr>
+<td>↳ 2024-02→2025-06</td>
+<td>239</td>
+<td>0.42</td>
+<td>+55.6%</td>
+<td>-57.7%</td>
+<td><strong>-10.3%</strong></td>
+<td>0.69</td>
+<td>-2.56</td>
+<td>-45.2%</td>
+</tr>
+<tr>
+<td>↳ 2025-07→2026-10</td>
+<td>239</td>
+<td>0.35</td>
+<td>+54.6%</td>
+<td>-55.0%</td>
+<td><strong>-16.5%</strong></td>
+<td>0.54</td>
+<td>-4.41</td>
+<td>-55.5%</td>
+</tr>
+<tr>
+<td>↳ AUDIT: base with entry delayed one bar</td>
+<td>448</td>
+<td>0.36</td>
+<td>+56.6%</td>
+<td>-65.4%</td>
+<td><strong>-21.0%</strong></td>
+<td>0.50</td>
+<td>-6.48</td>
+<td>-85.3%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="r7diagmd">r7/DIAG.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>universe</th>
+<th>strategy</th>
+<th>signals</th>
+<th>underlying close day 2 (ATR)</th>
+<th>P(+0.5 ATR before −1 ATR, 2d)</th>
+<th>median IV/RV20 at entry (real)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orig</td>
+<td>MTF-RSI Call</td>
+<td>136</td>
+<td>+0.132</td>
+<td>60%</td>
+<td></td>
+</tr>
+<tr>
+<td>orig</td>
+<td>Squeeze-Breakout Call (daily @15:50)</td>
+<td>36</td>
+<td>+0.228</td>
+<td>56%</td>
+<td></td>
+</tr>
+<tr>
+<td>orig</td>
+<td>Trend-Dip Call @15:50</td>
+<td>698</td>
+<td>+0.137</td>
+<td>51%</td>
+<td></td>
+</tr>
+<tr>
+<td>new</td>
+<td>MTF-RSI Call</td>
+<td>333</td>
+<td>-0.001</td>
+<td>52%</td>
+<td></td>
+</tr>
+<tr>
+<td>new</td>
+<td>Squeeze-Breakout Call (daily @15:50)</td>
+<td>78</td>
+<td>+0.073</td>
+<td>45%</td>
+<td></td>
+</tr>
+<tr>
+<td>new</td>
+<td>Trend-Dip Call @15:50</td>
+<td>1215</td>
+<td>+0.042</td>
+<td>47%</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>MTF-RSI Call (base) on the new universe — real return by symbol: PFE -91% (1), QCOM -61% (5), CVX -60% (4), CAT -58% (2), LLY -52% (6), HD -46% (8), PLTR -34% (7), CRM -31% (12), INTC -29% (10), WMT -29% (8), MRK -26% (6), PYPL -23% (8), BAC -22% (4), GS -22% (1), KO -21% (4), BA -20% (9), DIS -19% (5), ORCL -16% (6), PEP -15% (5), NKE -12% (12), WFC -6% (5), ABNB -2% (3), AVGO +1% (7), C +3% (7), NFLX +4% (9), ADBE +4% (11), V +5% (3), UBER +14% (8), MU +19% (9), MA +25% (3)</p>
+</div>
+<h2 id="r7devmd">r7/DEV.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MTF-RSI Call</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>dev — base rule · base</td>
+<td>54</td>
+<td>0.50</td>
+<td>+69.5%</td>
+<td>-52.3%</td>
+<td><strong>+8.6%</strong></td>
+<td>1.33</td>
+<td>0.84</td>
+<td>-13.8%</td>
+</tr>
+<tr>
+<td>dev — base rule · TP+50%</td>
+<td>54</td>
+<td>0.57</td>
+<td>+49.1%</td>
+<td>-51.9%</td>
+<td><strong>+6.0%</strong></td>
+<td>1.27</td>
+<td>0.78</td>
+<td>-9.2%</td>
+</tr>
+<tr>
+<td>dev — base rule · TP+100%</td>
+<td>54</td>
+<td>0.52</td>
+<td>+66.5%</td>
+<td>-54.0%</td>
+<td><strong>+8.5%</strong></td>
+<td>1.33</td>
+<td>0.86</td>
+<td>-13.8%</td>
+</tr>
+<tr>
+<td>dev — base rule · SL-50%</td>
+<td>54</td>
+<td>0.44</td>
+<td>+74.5%</td>
+<td>-49.3%</td>
+<td><strong>+5.7%</strong></td>
+<td>1.21</td>
+<td>0.57</td>
+<td>-13.2%</td>
+</tr>
+<tr>
+<td>dev — base rule · TP+50% SL-50%</td>
+<td>54</td>
+<td>0.50</td>
+<td>+50.7%</td>
+<td>-48.9%</td>
+<td><strong>+0.9%</strong></td>
+<td>1.04</td>
+<td>0.12</td>
+<td>-12.8%</td>
+</tr>
+<tr>
+<td>dev — base rule · TP+100% SL-50%</td>
+<td>54</td>
+<td>0.46</td>
+<td>+70.9%</td>
+<td>-49.3%</td>
+<td><strong>+6.3%</strong></td>
+<td>1.24</td>
+<td>0.66</td>
+<td>-14.1%</td>
+</tr>
+<tr>
+<td>dev — expiry &gt;= 5 days</td>
+<td>50</td>
+<td>0.50</td>
+<td>+50.0%</td>
+<td>-45.6%</td>
+<td><strong>+2.2%</strong></td>
+<td>1.10</td>
+<td>0.28</td>
+<td>-12.3%</td>
+</tr>
+<tr>
+<td>dev — delta 0.6</td>
+<td>45</td>
+<td>0.47</td>
+<td>+53.8%</td>
+<td>-48.4%</td>
+<td><strong>-0.7%</strong></td>
+<td>0.97</td>
+<td>-0.08</td>
+<td>-12.0%</td>
+</tr>
+<tr>
+<td>dev — + daily close &gt; SMA200</td>
+<td>32</td>
+<td>0.56</td>
+<td>+65.7%</td>
+<td>-56.4%</td>
+<td><strong>+12.3%</strong></td>
+<td>1.50</td>
+<td>0.95</td>
+<td>-6.8%</td>
+</tr>
+<tr>
+<td>dev — hold 3 sessions</td>
+<td>55</td>
+<td>0.47</td>
+<td>+75.1%</td>
+<td>-58.2%</td>
+<td><strong>+4.8%</strong></td>
+<td>1.16</td>
+<td>0.46</td>
+<td>-15.8%</td>
+</tr>
+</tbody>
+</table>
+<p>| <strong>Squeeze-Breakout Call (daily @15:50)</strong> | | | | | | | | |
+| dev — base rule · base | 20 | 0.50 | +102.2% | -61.4% | <strong>+20.4%</strong> | 1.67 | 0.97 | -5.3% |
+| dev — base rule · TP+50% | 20 | 0.55 | +50.2% | -64.6% | <strong>-1.5%</strong> | 0.95 | -0.11 | -5.5% |
+| dev — base rule · TP+100% | 20 | 0.50 | +84.8% | -61.4% | <strong>+11.7%</strong> | 1.38 | 0.67 | -5.9% |
+| dev — base rule · SL-50% | 20 | 0.45 | +107.9% | -54.2% | <strong>+18.7%</strong> | 1.63 | 0.91 | -4.8% |
+| dev — base rule · TP+50% SL-50% | 20 | 0.55 | +50.2% | -54.7% | <strong>+3.0%</strong> | 1.12 | 0.24 | -4.5% |
+| dev — base rule · TP+100% SL-50% | 20 | 0.50 | +84.8% | -54.6% | <strong>+15.1%</strong> | 1.56 | 0.90 | -5.4% |
+| dev — expiry &gt;= 5 days | 20 | 0.50 | +92.3% | -59.8% | <strong>+16.3%</strong> | 1.54 | 0.86 | -5.6% |
+| dev — delta 0.6 | 19 | 0.53 | +87.2% | -55.0% | <strong>+19.8%</strong> | 1.76 | 1.06 | -3.1% |
+| dev — volume 1.2x | 36 | 0.56 | +98.3% | -61.3% | <strong>+27.4%</strong> | 2.00 | 1.84 | -4.3% |
+| dev — target 1.5 ATR / stop 0.75 | 21 | 0.52 | +134.5% | -72.3% | <strong>+36.0%</strong> | 2.05 | 1.44 | -5.3% |</p>
+<p>| <strong>Trend-Dip Call @15:50</strong> | | | | | | | | |
+| dev — base rule · base | 185 | 0.42 | +70.0% | -67.5% | <strong>-9.5%</strong> | 0.76 | -1.60 | -38.9% |
+| dev — base rule · TP+50% | 185 | 0.53 | +54.6% | -70.0% | <strong>-4.0%</strong> | 0.88 | -0.77 | -25.3% |
+| dev — base rule · TP+100% | 185 | 0.44 | +69.7% | -68.7% | <strong>-8.1%</strong> | 0.79 | -1.42 | -35.4% |
+| dev — base rule · SL-50% | 185 | 0.38 | +71.8% | -55.0% | <strong>-6.3%</strong> | 0.81 | -1.16 | -30.9% |
+| dev — base rule · TP+50% SL-50% | 185 | 0.48 | +56.1% | -56.1% | <strong>-2.7%</strong> | 0.91 | -0.59 | -22.3% |
+| dev — base rule · TP+100% SL-50% | 185 | 0.40 | +71.8% | -55.6% | <strong>-4.7%</strong> | 0.86 | -0.90 | -27.1% |
+| dev — expiry &gt;= 5 days | 174 | 0.49 | +51.3% | -62.4% | <strong>-6.2%</strong> | 0.80 | -1.23 | -29.4% |
+| dev — delta 0.6 | 164 | 0.43 | +60.3% | -64.2% | <strong>-10.3%</strong> | 0.72 | -1.78 | -35.9% |
+| dev — target 1.0 ATR | 182 | 0.38 | +76.5% | -66.9% | <strong>-11.8%</strong> | 0.71 | -1.90 | -43.4% |</p>
+</div>
+<h2 id="r8amd">r8/A.md</h2>
+<div class="raw">
+<p>Signals 2016–2026 (all symbols): 8</p>
+<h4 id="1-underlying-model-trades-before-option-filters">1. Underlying (model trades, before option filters)</h4>
+<table>
+<thead>
+<tr>
+<th>period</th>
+<th>trades</th>
+<th>underlying move/trade (dir.)</th>
+<th>hit target</th>
+<th>hit stop</th>
+<th>time exit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>discovery 2016–20</td>
+<td>1</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>validation 2021–26/04</td>
+<td>2</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>holdout 26/04–26/10</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-calibrated-model-weekly-options-36-dte-reports-filters-model-ivrv-130-premium-cap">2. Calibrated model, weekly options 3–6 DTE, report's filters (model IV/RV ≤ 1.30, premium cap)</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>model — discovery</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model — validation</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model — holdout</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model — discovery+validation, no contract filters</td>
+<td>3</td>
+<td>0.33</td>
+<td>+57.3%</td>
+<td>-20.3%</td>
+<td><strong>+5.6%</strong></td>
+<td>1.41</td>
+<td>0.21</td>
+<td>-0.1%</td>
+</tr>
+<tr>
+<td>model validation — 2× costs</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-real-option-prices-2024-02-2026-10-1-trades-before-filters-0-matched-to-a-traded-contract-0-pass-the-reports-contract-filters">3. REAL option prices 2024-02 → 2026-10 (1 trades before filters; 0 matched to a traded contract; 0 pass the report's contract filters)</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REAL — all matched (no contract filters)</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>REAL — with the report's filters (THE RULE)</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Rejected by the contract filters: </p>
+</div>
+<h2 id="r8a_devmd">r8/A_DEV.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>DISC trades</th>
+<th>DISC underlying E[ATR]</th>
+<th>VALID trades</th>
+<th>VALID underlying E[ATR]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>{'hold_band': 0.25, 'gap_hi': 1.5, 'spacing': 40, 'clv_min': 0.75}</td>
+<td>2</td>
+<td>+nan</td>
+<td>4</td>
+<td>+0.557</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.25, 'gap_hi': 1.5, 'spacing': 40, 'clv_min': 0.5}</td>
+<td>4</td>
+<td>-0.149</td>
+<td>7</td>
+<td>+0.297</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.25, 'gap_hi': 1.5, 'spacing': 1, 'clv_min': 0.75}</td>
+<td>4</td>
+<td>-0.459</td>
+<td>8</td>
+<td>+0.021</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.25, 'gap_hi': 1.5, 'spacing': 1, 'clv_min': 0.5}</td>
+<td>6</td>
+<td>-0.258</td>
+<td>12</td>
+<td>+0.039</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.25, 'gap_hi': 3.0, 'spacing': 40, 'clv_min': 0.75}</td>
+<td>2</td>
+<td>+nan</td>
+<td>4</td>
+<td>+0.557</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.25, 'gap_hi': 3.0, 'spacing': 40, 'clv_min': 0.5}</td>
+<td>5</td>
+<td>-0.185</td>
+<td>7</td>
+<td>+0.297</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.25, 'gap_hi': 3.0, 'spacing': 1, 'clv_min': 0.75}</td>
+<td>5</td>
+<td>-0.199</td>
+<td>8</td>
+<td>+0.021</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.25, 'gap_hi': 3.0, 'spacing': 1, 'clv_min': 0.5}</td>
+<td>10</td>
+<td>-0.081</td>
+<td>13</td>
+<td>+0.013</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.5, 'gap_hi': 1.5, 'spacing': 40, 'clv_min': 0.75}</td>
+<td>3</td>
+<td>-0.262</td>
+<td>7</td>
+<td>+0.449</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.5, 'gap_hi': 1.5, 'spacing': 40, 'clv_min': 0.5}</td>
+<td>5</td>
+<td>-0.100</td>
+<td>10</td>
+<td>+0.299</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.5, 'gap_hi': 1.5, 'spacing': 1, 'clv_min': 0.75}</td>
+<td>13</td>
+<td>+0.071</td>
+<td>18</td>
+<td>+0.039</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.5, 'gap_hi': 1.5, 'spacing': 1, 'clv_min': 0.5}</td>
+<td>17</td>
+<td>+0.005</td>
+<td>23</td>
+<td>+0.023</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.5, 'gap_hi': 3.0, 'spacing': 40, 'clv_min': 0.75}</td>
+<td>3</td>
+<td>-0.262</td>
+<td>8</td>
+<td>+0.407</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.5, 'gap_hi': 3.0, 'spacing': 40, 'clv_min': 0.5}</td>
+<td>6</td>
+<td>-0.138</td>
+<td>12</td>
+<td>+0.290</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.5, 'gap_hi': 3.0, 'spacing': 1, 'clv_min': 0.75}</td>
+<td>18</td>
+<td>+0.040</td>
+<td>19</td>
+<td>+0.043</td>
+</tr>
+<tr>
+<td>{'hold_band': 0.5, 'gap_hi': 3.0, 'spacing': 1, 'clv_min': 0.5}</td>
+<td>26</td>
+<td>-0.026</td>
+<td>26</td>
+<td>+0.028</td>
+</tr>
+<tr>
+<td>{'hold_band': 99, 'gap_hi': 1.5, 'spacing': 40, 'clv_min': 0.75}</td>
+<td>9</td>
+<td>+0.149</td>
+<td>9</td>
+<td>+0.295</td>
+</tr>
+<tr>
+<td>{'hold_band': 99, 'gap_hi': 1.5, 'spacing': 40, 'clv_min': 0.5}</td>
+<td>13</td>
+<td>+0.164</td>
+<td>15</td>
+<td>+0.159</td>
+</tr>
+<tr>
+<td>{'hold_band': 99, 'gap_hi': 1.5, 'spacing': 1, 'clv_min': 0.75}</td>
+<td>24</td>
+<td>+0.040</td>
+<td>27</td>
+<td>+0.204</td>
+</tr>
+<tr>
+<td>{'hold_band': 99, 'gap_hi': 1.5, 'spacing': 1, 'clv_min': 0.5}</td>
+<td>31</td>
+<td>-0.007</td>
+<td>37</td>
+<td>+0.113</td>
+</tr>
+<tr>
+<td>{'hold_band': 99, 'gap_hi': 3.0, 'spacing': 40, 'clv_min': 0.75}</td>
+<td>13</td>
+<td>+0.076</td>
+<td>12</td>
+<td>+0.347</td>
+</tr>
+<tr>
+<td>{'hold_band': 99, 'gap_hi': 3.0, 'spacing': 40, 'clv_min': 0.5}</td>
+<td>19</td>
+<td>+0.094</td>
+<td>20</td>
+<td>+0.191</td>
+</tr>
+<tr>
+<td>{'hold_band': 99, 'gap_hi': 3.0, 'spacing': 1, 'clv_min': 0.75}</td>
+<td>33</td>
+<td>+0.012</td>
+<td>32</td>
+<td>+0.231</td>
+</tr>
+<tr>
+<td>{'hold_band': 99, 'gap_hi': 3.0, 'spacing': 1, 'clv_min': 0.5}</td>
+<td>45</td>
+<td>-0.022</td>
+<td>47</td>
+<td>+0.094</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Chosen on discovery:</strong> {'hold_band': 99, 'gap_hi': 3.0, 'spacing': 1, 'clv_min': 0.5}</p>
+<h4 id="judgement-of-the-developed-variant-backtested">Judgement of the developed variant (backtested)</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>model discovery — without contract filters</td>
+<td>45</td>
+<td>0.33</td>
+<td>+39.2%</td>
+<td>-31.5%</td>
+<td><strong>-7.9%</strong></td>
+<td>0.62</td>
+<td>-1.39</td>
+<td>-8.1%</td>
+</tr>
+<tr>
+<td>model discovery — with contract filters</td>
+<td>4</td>
+<td>0.00</td>
+<td>+0.0%</td>
+<td>-39.5%</td>
+<td><strong>-39.5%</strong></td>
+<td>0.00</td>
+<td>-5.83</td>
+<td>-2.0%</td>
+</tr>
+<tr>
+<td>model validation — without contract filters</td>
+<td>47</td>
+<td>0.36</td>
+<td>+48.2%</td>
+<td>-30.5%</td>
+<td><strong>-2.1%</strong></td>
+<td>0.89</td>
+<td>-0.34</td>
+<td>-8.2%</td>
+</tr>
+<tr>
+<td>model validation — with contract filters</td>
+<td>3</td>
+<td>0.67</td>
+<td>+54.7%</td>
+<td>-35.1%</td>
+<td><strong>+24.8%</strong></td>
+<td>3.12</td>
+<td>0.72</td>
+<td>-0.7%</td>
+</tr>
+<tr>
+<td>model holdout — without contract filters</td>
+<td>10</td>
+<td>0.30</td>
+<td>+101.9%</td>
+<td>-27.5%</td>
+<td><strong>+11.3%</strong></td>
+<td>1.59</td>
+<td>0.39</td>
+<td>-2.8%</td>
+</tr>
+<tr>
+<td>model holdout — with contract filters</td>
+<td>2</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched</td>
+<td>28</td>
+<td>0.18</td>
+<td>+84.9%</td>
+<td>-36.0%</td>
+<td><strong>-14.4%</strong></td>
+<td>0.51</td>
+<td>-1.39</td>
+<td>-10.1%</td>
+</tr>
+<tr>
+<td>REAL development symbols — with report's contract filters</td>
+<td>3</td>
+<td>0.33</td>
+<td>+108.4%</td>
+<td>-10.9%</td>
+<td><strong>+28.9%</strong></td>
+<td>4.99</td>
+<td>0.73</td>
+<td>-0.3%</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched, dev 24/02–25/06</td>
+<td>9</td>
+<td>0.00</td>
+<td>+0.0%</td>
+<td>-37.8%</td>
+<td><strong>-37.8%</strong></td>
+<td>0.00</td>
+<td>-7.75</td>
+<td>-6.4%</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched, test 25/07–26/10</td>
+<td>19</td>
+<td>0.26</td>
+<td>+84.9%</td>
+<td>-34.8%</td>
+<td><strong>-3.3%</strong></td>
+<td>0.87</td>
+<td>-0.23</td>
+<td>-4.4%</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched, 2× half-spread</td>
+<td>28</td>
+<td>0.18</td>
+<td>+74.1%</td>
+<td>-39.7%</td>
+<td><strong>-19.4%</strong></td>
+<td>0.41</td>
+<td>-1.99</td>
+<td>-11.9%</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched, without 5 best</td>
+<td>23</td>
+<td>0.00</td>
+<td>+0.0%</td>
+<td>-36.0%</td>
+<td><strong>-36.0%</strong></td>
+<td>0.00</td>
+<td>-11.06</td>
+<td>-15.2%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — all matched</td>
+<td>33</td>
+<td>0.24</td>
+<td>+33.3%</td>
+<td>-39.1%</td>
+<td><strong>-21.6%</strong></td>
+<td>0.27</td>
+<td>-3.41</td>
+<td>-13.6%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — with report's contract filters</td>
+<td>7</td>
+<td>0.14</td>
+<td>+10.3%</td>
+<td>-32.8%</td>
+<td><strong>-26.7%</strong></td>
+<td>0.05</td>
+<td>-3.45</td>
+<td>-3.4%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — all matched, dev 24/02–25/06</td>
+<td>23</td>
+<td>0.22</td>
+<td>+29.4%</td>
+<td>-36.4%</td>
+<td><strong>-22.1%</strong></td>
+<td>0.22</td>
+<td>-3.26</td>
+<td>-10.2%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — all matched, test 25/07–26/10</td>
+<td>10</td>
+<td>0.30</td>
+<td>+39.6%</td>
+<td>-46.2%</td>
+<td><strong>-20.4%</strong></td>
+<td>0.37</td>
+<td>-1.40</td>
+<td>-4.0%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — all matched, 2× half-spread</td>
+<td>33</td>
+<td>0.24</td>
+<td>+25.5%</td>
+<td>-42.7%</td>
+<td><strong>-26.2%</strong></td>
+<td>0.19</td>
+<td>-4.38</td>
+<td>-15.9%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — all matched, without 5 best</td>
+<td>28</td>
+<td>0.11</td>
+<td>+15.3%</td>
+<td>-39.1%</td>
+<td><strong>-33.3%</strong></td>
+<td>0.05</td>
+<td>-7.22</td>
+<td>-16.8%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="r8bmd">r8/B.md</h2>
+<div class="raw">
+<p>Signals 2016–2026 (all symbols): 8</p>
+<h4 id="1-underlying-model-trades-before-option-filters_1">1. Underlying (model trades, before option filters)</h4>
+<table>
+<thead>
+<tr>
+<th>period</th>
+<th>trades</th>
+<th>underlying move/trade (dir.)</th>
+<th>hit target</th>
+<th>hit stop</th>
+<th>time exit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>discovery 2016–20</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>validation 2021–26/04</td>
+<td>1</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>holdout 26/04–26/10</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-calibrated-model-weekly-options-36-dte-reports-filters-model-ivrv-130-premium-cap_1">2. Calibrated model, weekly options 3–6 DTE, report's filters (model IV/RV ≤ 1.30, premium cap)</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>model — discovery</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model — validation</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model — holdout</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model — discovery+validation, no contract filters</td>
+<td>1</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model validation — 2× costs</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-real-option-prices-2024-02-2026-10-0-trades-before-filters-0-matched-to-a-traded-contract-0-pass-the-reports-contract-filters">3. REAL option prices 2024-02 → 2026-10 (0 trades before filters; 0 matched to a traded contract; 0 pass the report's contract filters)</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REAL — all matched (no contract filters)</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>REAL — with the report's filters (THE RULE)</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Rejected by the contract filters: </p>
+</div>
+<h2 id="r8b_devmd">r8/B_DEV.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>DISC trades</th>
+<th>DISC underlying E[ATR]</th>
+<th>VALID trades</th>
+<th>VALID underlying E[ATR]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>{'breadth_min': 7, 'drop': 0.5, 'vol_mult': 1.5}</td>
+<td>5</td>
+<td>+0.060</td>
+<td>1</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'breadth_min': 7, 'drop': 0.5, 'vol_mult': 1.2}</td>
+<td>6</td>
+<td>-0.013</td>
+<td>3</td>
+<td>-0.114</td>
+</tr>
+<tr>
+<td>{'breadth_min': 7, 'drop': 0.3, 'vol_mult': 1.5}</td>
+<td>8</td>
+<td>-0.098</td>
+<td>3</td>
+<td>-0.093</td>
+</tr>
+<tr>
+<td>{'breadth_min': 7, 'drop': 0.3, 'vol_mult': 1.2}</td>
+<td>11</td>
+<td>-0.015</td>
+<td>10</td>
+<td>+0.050</td>
+</tr>
+<tr>
+<td>{'breadth_min': 5, 'drop': 0.5, 'vol_mult': 1.5}</td>
+<td>5</td>
+<td>+0.060</td>
+<td>1</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'breadth_min': 5, 'drop': 0.5, 'vol_mult': 1.2}</td>
+<td>6</td>
+<td>-0.013</td>
+<td>3</td>
+<td>-0.114</td>
+</tr>
+<tr>
+<td>{'breadth_min': 5, 'drop': 0.3, 'vol_mult': 1.5}</td>
+<td>10</td>
+<td>-0.010</td>
+<td>3</td>
+<td>-0.093</td>
+</tr>
+<tr>
+<td>{'breadth_min': 5, 'drop': 0.3, 'vol_mult': 1.2}</td>
+<td>14</td>
+<td>+0.035</td>
+<td>10</td>
+<td>+0.050</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Chosen on discovery:</strong> {'breadth_min': 5, 'drop': 0.3, 'vol_mult': 1.2}</p>
+<h4 id="judgement-of-the-developed-variant-backtested_1">Judgement of the developed variant (backtested)</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>model discovery — without contract filters</td>
+<td>14</td>
+<td>0.50</td>
+<td>+21.7%</td>
+<td>-20.6%</td>
+<td><strong>+0.6%</strong></td>
+<td>1.05</td>
+<td>0.08</td>
+<td>-1.6%</td>
+</tr>
+<tr>
+<td>model discovery — with contract filters</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model validation — without contract filters</td>
+<td>10</td>
+<td>0.50</td>
+<td>+19.5%</td>
+<td>-16.9%</td>
+<td><strong>+1.3%</strong></td>
+<td>1.16</td>
+<td>0.18</td>
+<td>-0.9%</td>
+</tr>
+<tr>
+<td>model validation — with contract filters</td>
+<td>2</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model holdout — without contract filters</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model holdout — with contract filters</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>REAL development symbols — with report's contract filters</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="r8b_noregimemd">r8/B_NOREGIME.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>{'regime': False}</strong> — signals 90</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>model discovery — no contract filters</td>
+<td>47</td>
+<td>0.47</td>
+<td>+26.4%</td>
+<td>-20.4%</td>
+<td><strong>+1.5%</strong></td>
+<td>1.14</td>
+<td>0.38</td>
+<td>-3.7%</td>
+</tr>
+<tr>
+<td>↳ underlying move/trade +0.144% (n 47)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>model validation — no contract filters</td>
+<td>30</td>
+<td>0.27</td>
+<td>+18.5%</td>
+<td>-20.2%</td>
+<td><strong>-9.8%</strong></td>
+<td>0.33</td>
+<td>-2.67</td>
+<td>-6.5%</td>
+</tr>
+<tr>
+<td>↳ underlying move/trade -0.197% (n 30)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>model holdout — no contract filters</td>
+<td>1</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>↳ underlying move/trade -0.104% (n 1)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>REAL 2024-26 — all matched</td>
+<td>11</td>
+<td>0.36</td>
+<td>+15.4%</td>
+<td>-23.5%</td>
+<td><strong>-9.4%</strong></td>
+<td>0.37</td>
+<td>-1.42</td>
+<td>-2.3%</td>
+</tr>
+<tr>
+<td>REAL 2024-26 — with report's contract filters</td>
+<td>4</td>
+<td>0.50</td>
+<td>+5.6%</td>
+<td>-21.5%</td>
+<td><strong>-8.0%</strong></td>
+<td>0.26</td>
+<td>-1.00</td>
+<td>-0.4%</td>
+</tr>
+<tr>
+<td><strong>{'regime': False, 'breadth_min': 5, 'drop': 0.3, 'vol_mult': 1.2}</strong> — signals 310</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>model discovery — no contract filters</td>
+<td>136</td>
+<td>0.41</td>
+<td>+23.8%</td>
+<td>-18.6%</td>
+<td><strong>-1.1%</strong></td>
+<td>0.90</td>
+<td>-0.53</td>
+<td>-9.7%</td>
+</tr>
+<tr>
+<td>↳ underlying move/trade +0.088% (n 136)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>model validation — no contract filters</td>
+<td>129</td>
+<td>0.36</td>
+<td>+15.4%</td>
+<td>-17.5%</td>
+<td><strong>-5.8%</strong></td>
+<td>0.49</td>
+<td>-3.44</td>
+<td>-13.4%</td>
+</tr>
+<tr>
+<td>↳ underlying move/trade -0.095% (n 129)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>model holdout — no contract filters</td>
+<td>9</td>
+<td>0.56</td>
+<td>+26.2%</td>
+<td>-12.4%</td>
+<td><strong>+9.0%</strong></td>
+<td>2.63</td>
+<td>1.24</td>
+<td>-0.5%</td>
+</tr>
+<tr>
+<td>↳ underlying move/trade +0.285% (n 9)</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>REAL 2024-26 — all matched</td>
+<td>65</td>
+<td>0.34</td>
+<td>+28.4%</td>
+<td>-23.5%</td>
+<td><strong>-5.9%</strong></td>
+<td>0.62</td>
+<td>-1.61</td>
+<td>-10.7%</td>
+</tr>
+<tr>
+<td>REAL 2024-26 — with report's contract filters</td>
+<td>14</td>
+<td>0.50</td>
+<td>+24.8%</td>
+<td>-26.5%</td>
+<td><strong>-0.8%</strong></td>
+<td>0.94</td>
+<td>-0.10</td>
+<td>-1.2%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="r8cmd">r8/C.md</h2>
+<div class="raw">
+<p>Signals 2016–2026 (all symbols): 1</p>
+<h4 id="1-underlying-model-trades-before-option-filters_2">1. Underlying (model trades, before option filters)</h4>
+<table>
+<thead>
+<tr>
+<th>period</th>
+<th>trades</th>
+<th>underlying move/trade (dir.)</th>
+<th>hit target</th>
+<th>hit stop</th>
+<th>time exit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>discovery 2016–20</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>validation 2021–26/04</td>
+<td>1</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>holdout 26/04–26/10</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-calibrated-model-weekly-options-36-dte-reports-filters-model-ivrv-130-premium-cap_2">2. Calibrated model, weekly options 3–6 DTE, report's filters (model IV/RV ≤ 1.30, premium cap)</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>model — discovery</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model — validation</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model — holdout</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model — discovery+validation, no contract filters</td>
+<td>1</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>model validation — 2× costs</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-real-option-prices-2024-02-2026-10-0-trades-before-filters-0-matched-to-a-traded-contract-0-pass-the-reports-contract-filters_1">3. REAL option prices 2024-02 → 2026-10 (0 trades before filters; 0 matched to a traded contract; 0 pass the report's contract filters)</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REAL — all matched (no contract filters)</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>REAL — with the report's filters (THE RULE)</td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Rejected by the contract filters: </p>
+</div>
+<h2 id="r8c_devmd">r8/C_DEV.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>variant</th>
+<th>DISC trades</th>
+<th>DISC underlying E[ATR]</th>
+<th>VALID trades</th>
+<th>VALID underlying E[ATR]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.9, 'ref_up': 0.4, 'confirm': 0.1}</td>
+<td>0</td>
+<td>+nan</td>
+<td>1</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.9, 'ref_up': 0.4, 'confirm': 0.0}</td>
+<td>0</td>
+<td>+nan</td>
+<td>1</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.9, 'ref_up': 0.2, 'confirm': 0.1}</td>
+<td>1</td>
+<td>+nan</td>
+<td>1</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.9, 'ref_up': 0.2, 'confirm': 0.0}</td>
+<td>2</td>
+<td>+nan</td>
+<td>3</td>
+<td>+0.275</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.5, 'ref_up': 0.4, 'confirm': 0.1}</td>
+<td>2</td>
+<td>+nan</td>
+<td>3</td>
+<td>+0.271</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.5, 'ref_up': 0.4, 'confirm': 0.0}</td>
+<td>3</td>
+<td>-0.221</td>
+<td>5</td>
+<td>+0.215</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.5, 'ref_up': 0.2, 'confirm': 0.1}</td>
+<td>4</td>
+<td>-0.130</td>
+<td>4</td>
+<td>+0.215</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.5, 'ref_up': 0.2, 'confirm': 0.0}</td>
+<td>8</td>
+<td>-0.140</td>
+<td>8</td>
+<td>+0.181</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.0, 'ref_up': 0.4, 'confirm': 0.1}</td>
+<td>3</td>
+<td>-0.199</td>
+<td>3</td>
+<td>+0.271</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.0, 'ref_up': 0.4, 'confirm': 0.0}</td>
+<td>4</td>
+<td>-0.259</td>
+<td>5</td>
+<td>+0.215</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.0, 'ref_up': 0.2, 'confirm': 0.1}</td>
+<td>5</td>
+<td>-0.178</td>
+<td>4</td>
+<td>+0.215</td>
+</tr>
+<tr>
+<td>{'z_max': -2.0, 'lag_atr': 0.0, 'ref_up': 0.2, 'confirm': 0.0}</td>
+<td>9</td>
+<td>-0.166</td>
+<td>8</td>
+<td>+0.181</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.9, 'ref_up': 0.4, 'confirm': 0.1}</td>
+<td>0</td>
+<td>+nan</td>
+<td>2</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.9, 'ref_up': 0.4, 'confirm': 0.0}</td>
+<td>0</td>
+<td>+nan</td>
+<td>2</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.9, 'ref_up': 0.2, 'confirm': 0.1}</td>
+<td>1</td>
+<td>+nan</td>
+<td>2</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.9, 'ref_up': 0.2, 'confirm': 0.0}</td>
+<td>2</td>
+<td>+nan</td>
+<td>4</td>
+<td>+0.303</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.5, 'ref_up': 0.4, 'confirm': 0.1}</td>
+<td>2</td>
+<td>+nan</td>
+<td>8</td>
+<td>+0.083</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.5, 'ref_up': 0.4, 'confirm': 0.0}</td>
+<td>11</td>
+<td>+0.030</td>
+<td>15</td>
+<td>+0.101</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.5, 'ref_up': 0.2, 'confirm': 0.1}</td>
+<td>6</td>
+<td>+0.018</td>
+<td>13</td>
+<td>+0.062</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.5, 'ref_up': 0.2, 'confirm': 0.0}</td>
+<td>20</td>
+<td>+0.046</td>
+<td>26</td>
+<td>+0.086</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.0, 'ref_up': 0.4, 'confirm': 0.1}</td>
+<td>4</td>
+<td>+0.003</td>
+<td>8</td>
+<td>+0.083</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.0, 'ref_up': 0.4, 'confirm': 0.0}</td>
+<td>14</td>
+<td>+0.031</td>
+<td>16</td>
+<td>+0.105</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.0, 'ref_up': 0.2, 'confirm': 0.1}</td>
+<td>9</td>
+<td>+0.065</td>
+<td>15</td>
+<td>+0.058</td>
+</tr>
+<tr>
+<td>{'z_max': -1.5, 'lag_atr': 0.0, 'ref_up': 0.2, 'confirm': 0.0}</td>
+<td>26</td>
+<td>+0.050</td>
+<td>30</td>
+<td>+0.086</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.9, 'ref_up': 0.4, 'confirm': 0.1}</td>
+<td>0</td>
+<td>+nan</td>
+<td>2</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.9, 'ref_up': 0.4, 'confirm': 0.0}</td>
+<td>0</td>
+<td>+nan</td>
+<td>2</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.9, 'ref_up': 0.2, 'confirm': 0.1}</td>
+<td>1</td>
+<td>+nan</td>
+<td>2</td>
+<td>+nan</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.9, 'ref_up': 0.2, 'confirm': 0.0}</td>
+<td>2</td>
+<td>+nan</td>
+<td>4</td>
+<td>+0.303</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.5, 'ref_up': 0.4, 'confirm': 0.1}</td>
+<td>3</td>
+<td>+0.054</td>
+<td>15</td>
+<td>+0.107</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.5, 'ref_up': 0.4, 'confirm': 0.0}</td>
+<td>19</td>
+<td>+0.069</td>
+<td>25</td>
+<td>+0.114</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.5, 'ref_up': 0.2, 'confirm': 0.1}</td>
+<td>8</td>
+<td>+0.016</td>
+<td>22</td>
+<td>+0.050</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.5, 'ref_up': 0.2, 'confirm': 0.0}</td>
+<td>34</td>
+<td>+0.052</td>
+<td>41</td>
+<td>+0.060</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.0, 'ref_up': 0.4, 'confirm': 0.1}</td>
+<td>11</td>
+<td>-0.027</td>
+<td>15</td>
+<td>+0.107</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.0, 'ref_up': 0.4, 'confirm': 0.0}</td>
+<td>42</td>
+<td>-0.014</td>
+<td>41</td>
+<td>+0.092</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.0, 'ref_up': 0.2, 'confirm': 0.1}</td>
+<td>25</td>
+<td>+0.038</td>
+<td>33</td>
+<td>+0.004</td>
+</tr>
+<tr>
+<td>{'z_max': -1.0, 'lag_atr': 0.0, 'ref_up': 0.2, 'confirm': 0.0}</td>
+<td>85</td>
+<td>+0.002</td>
+<td>83</td>
+<td>+0.029</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Chosen on discovery:</strong> {'z_max': -1.0, 'lag_atr': 0.0, 'ref_up': 0.2, 'confirm': 0.0}</p>
+<h4 id="judgement-of-the-developed-variant-backtested_2">Judgement of the developed variant (backtested)</h4>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>n</th>
+<th>win</th>
+<th>avg win</th>
+<th>avg loss</th>
+<th>return/trade</th>
+<th>PF</th>
+<th>t</th>
+<th>maxDD*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>model discovery — without contract filters</td>
+<td>85</td>
+<td>0.35</td>
+<td>+14.4%</td>
+<td>-16.7%</td>
+<td><strong>-5.7%</strong></td>
+<td>0.47</td>
+<td>-2.69</td>
+<td>-8.9%</td>
+</tr>
+<tr>
+<td>model discovery — with contract filters</td>
+<td>12</td>
+<td>0.33</td>
+<td>+11.7%</td>
+<td>-14.0%</td>
+<td><strong>-5.4%</strong></td>
+<td>0.42</td>
+<td>-1.24</td>
+<td>-1.8%</td>
+</tr>
+<tr>
+<td>model validation — without contract filters</td>
+<td>83</td>
+<td>0.36</td>
+<td>+16.2%</td>
+<td>-15.5%</td>
+<td><strong>-4.1%</strong></td>
+<td>0.59</td>
+<td>-1.97</td>
+<td>-7.7%</td>
+</tr>
+<tr>
+<td>model validation — with contract filters</td>
+<td>8</td>
+<td>0.38</td>
+<td>+17.8%</td>
+<td>-14.7%</td>
+<td><strong>-2.5%</strong></td>
+<td>0.72</td>
+<td>-0.35</td>
+<td>-0.6%</td>
+</tr>
+<tr>
+<td>model holdout — without contract filters</td>
+<td>10</td>
+<td>0.40</td>
+<td>+25.3%</td>
+<td>-14.6%</td>
+<td><strong>+1.3%</strong></td>
+<td>1.15</td>
+<td>0.17</td>
+<td>-1.2%</td>
+</tr>
+<tr>
+<td>model holdout — with contract filters</td>
+<td>3</td>
+<td>0.67</td>
+<td>+7.7%</td>
+<td>-13.0%</td>
+<td><strong>+0.8%</strong></td>
+<td>1.18</td>
+<td>0.11</td>
+<td>-0.3%</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched</td>
+<td>36</td>
+<td>0.25</td>
+<td>+20.3%</td>
+<td>-15.9%</td>
+<td><strong>-6.9%</strong></td>
+<td>0.42</td>
+<td>-2.00</td>
+<td>-5.6%</td>
+</tr>
+<tr>
+<td>REAL development symbols — with report's contract filters</td>
+<td>22</td>
+<td>0.27</td>
+<td>+23.1%</td>
+<td>-16.5%</td>
+<td><strong>-5.7%</strong></td>
+<td>0.53</td>
+<td>-1.15</td>
+<td>-3.0%</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched, dev 24/02–25/06</td>
+<td>16</td>
+<td>0.25</td>
+<td>+8.6%</td>
+<td>-16.9%</td>
+<td><strong>-10.5%</strong></td>
+<td>0.17</td>
+<td>-2.49</td>
+<td>-2.6%</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched, test 25/07–26/10</td>
+<td>20</td>
+<td>0.25</td>
+<td>+29.6%</td>
+<td>-15.2%</td>
+<td><strong>-4.0%</strong></td>
+<td>0.65</td>
+<td>-0.77</td>
+<td>-2.7%</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched, 2× half-spread</td>
+<td>36</td>
+<td>0.19</td>
+<td>+18.5%</td>
+<td>-19.8%</td>
+<td><strong>-12.3%</strong></td>
+<td>0.23</td>
+<td>-3.80</td>
+<td>-8.7%</td>
+</tr>
+<tr>
+<td>REAL development symbols — all matched, without 5 best</td>
+<td>31</td>
+<td>0.13</td>
+<td>+5.3%</td>
+<td>-15.9%</td>
+<td><strong>-13.2%</strong></td>
+<td>0.05</td>
+<td>-5.79</td>
+<td>-7.2%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — all matched</td>
+<td>21</td>
+<td>0.19</td>
+<td>+37.7%</td>
+<td>-19.9%</td>
+<td><strong>-8.9%</strong></td>
+<td>0.45</td>
+<td>-1.30</td>
+<td>-4.0%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — with report's contract filters</td>
+<td>16</td>
+<td>0.25</td>
+<td>+37.7%</td>
+<td>-22.2%</td>
+<td><strong>-7.2%</strong></td>
+<td>0.57</td>
+<td>-0.81</td>
+<td>-3.6%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — all matched, dev 24/02–25/06</td>
+<td>15</td>
+<td>0.13</td>
+<td>+67.4%</td>
+<td>-20.8%</td>
+<td><strong>-9.1%</strong></td>
+<td>0.50</td>
+<td>-0.97</td>
+<td>-3.8%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — all matched, test 25/07–26/10</td>
+<td>6</td>
+<td>0.33</td>
+<td>+8.0%</td>
+<td>-16.8%</td>
+<td><strong>-8.6%</strong></td>
+<td>0.24</td>
+<td>-1.17</td>
+<td>-1.3%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — all matched, 2× half-spread</td>
+<td>21</td>
+<td>0.19</td>
+<td>+29.6%</td>
+<td>-24.6%</td>
+<td><strong>-14.2%</strong></td>
+<td>0.28</td>
+<td>-2.20</td>
+<td>-5.5%</td>
+</tr>
+<tr>
+<td>REAL NEW symbols (never used) — all matched, without 5 best</td>
+<td>16</td>
+<td>0.00</td>
+<td>+0.0%</td>
+<td>-21.1%</td>
+<td><strong>-21.1%</strong></td>
+<td>0.00</td>
+<td>-5.12</td>
+<td>-6.0%</td>
+</tr>
+</tbody>
+</table>
+</div></body></html>
