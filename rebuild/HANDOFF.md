@@ -428,6 +428,10 @@ Full details: **[`ROUND5.md`](ROUND5.md)**. Branch `rebuild/strategies-ivrv-2026
   (`ivRvFilterEnabled`, `maxIvRvRatio` 1.5, `rvLookbackDays` 20, `rvUseIntraday`,
   `maxBreakevenToExpectedMove` 1.0). Settings section with Arabic help.
 * Tests: core 105/105 (+11 volatility_test); app 39/39 (+2 ivrv_app_test).
-* Build: see ROUND5.md / release `rebuild-v2-debug-6` (versionCode 6, 2.0.0-dev.6).
+* Build: `rebuild-v2-debug-6`, versionCode 6 / 2.0.0-dev.6 (source ff5b32c), 164,876,346 bytes,
+  SHA-256 `430871e1959b2baed61a6f0d76541a1a0a2c87a02363098669bc1a65face379c` (verified by
+  re-download), signer `dde693a8…6720`. Box note: the NDK 28.2 install and Gradle
+  transform cache were found corrupted; NDK reinstalled via sdkmanager (broken copy kept in
+  `/workspace/tools/ndk-28.2-broken-*`), transforms cache rebuilt.
 * Next (5.2): strategies A (MTF Elliott) and B (MTF RSI, both directions), real-bar
   backtests with discovery/validation/holdout, results and recommendations.

@@ -81,6 +81,11 @@ enabled blocks with reason in journal + cycle log and no position, JSON round tr
 validation. App: `test/ivrv_app_test.dart` (every ranged setting has Arabic help; the
 filter is enabled per account from the settings screen and the other account is untouched).
 
+### Build 5.1
+`rebuild-v2-debug-6` (private builds repo), versionCode 6 / 2.0.0-dev.6, 164,876,346 bytes,
+SHA-256 `430871e1959b2baed61a6f0d76541a1a0a2c87a02363098669bc1a65face379c`, same app id
+(`.rebuildv2`) and debug cert → updates debug-5 in place.
+
 ### Not done in 5.1 (moved to 5.2)
 * Re-running the default strategy with vs without the filter on real bars: in the
   real-bar replay the option IV is itself a realised-vol proxy, so the comparison is
