@@ -1,0 +1,86 @@
+name: rebuild (v2 core + app)
+
+# Runs only for the new rebuild/ tree so the historical workflows stay untouched.
+on:
+  push:
+    paths: ["rebuild/**", ".github/workflows/rebuild.yaml"]
+  pull_request:
+    paths: ["rebuild/**", ".github/workflows/rebuild.yaml"]
+  workflow_dispatch:
+    inputs:
+      build_ios:
+        description: "Also build an unsigned iOS archive"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rebuild/trader_core
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - run: dart pub get
+      - run: dart format --output=none --set-exit-if-changed --line-length 120 lib test || echo "::warning::format differences"
+      - run: dart analyze
+      - run: dart test --reporter expanded
+
+  app:
+    runs-on: ubuntu-latest
+    needs: core
+    defaults:
+      run:
+        working-directory: rebuild/app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      # Platform folders are generated, not committed (see rebuild/HANDOFF.md).
+      - run: flutter create --platforms=android,ios --org com.optionsaitrader --project-name options_ai_trader_app . && rm -f test/widget_test.dart
+      - run: flutter pub get
+      - run: flutter analyze --no-fatal-infos
+      - run: flutter test
+      - run: flutter build apk --debug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: options-ai-trader-v2-debug-apk
+          path: rebuild/app/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 14
+
+  ios:
+    if: github.event_name == 'workflow_dispatch' && inputs.build_ios
+    runs-on: macos-latest
+    needs: core
+    defaults:
+      run:
+        working-directory: rebuild/app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter create --platforms=android,ios --org com.optionsaitrader --project-name options_ai_trader_app . && rm -f test/widget_test.dart
+      - run: flutter pub get
+      - run: flutter build ios --release --no-codesign
+      - run: |
+          mkdir -p build/ipa/Payload
+          cp -R build/ios/iphoneos/Runner.app build/ipa/Payload/
+          cd build/ipa && zip -qr options-ai-trader-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: options-ai-trader-v2-unsigned-ipa
+          path: rebuild/app/build/ipa/options-ai-trader-unsigned.ipa
+          retention-days: 14

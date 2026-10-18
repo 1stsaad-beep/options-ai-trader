@@ -1,0 +1,15 @@
+name: trader_core
+description: >-
+  Pure-Dart core of Options AI Trader: domain models, broker adapters,
+  deterministic technical-analysis engines, decision engine, risk rules,
+  opposite-direction lock, decision journal and performance reports.
+  No Flutter dependency, so the same engine runs on the phone or a headless host.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^4.0.0

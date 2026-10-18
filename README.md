@@ -1,3 +1,5 @@
+> **v2 (إعادة بناء، 2026-10-18):** الفرع `rebuild/hybrid-engines-20261018` يحتوي تطبيقًا جديدًا في `rebuild/` (نواة Dart + تطبيق Flutter عربي). ابدأ من [rebuild/HANDOFF.md](rebuild/HANDOFF.md). كود v1 أدناه محفوظ كما هو للمرجع.
+
 > أحدث حالة: [استكمال ما بعد Build23 والجاهزية الصريحة](docs/RESUME_POST_BUILD23_20261014_AR.md) و[سجل الدفعات والاستئناف](docs/CONTINUATION_20261014.md). المشروع جزئي؛ لا APK جديد أو اختبار هاتف نهائي حتى إغلاق النواقص. تقارير Lab17–Build23 أدناه تاريخية مرتبطة بمصادرها.
 
 # Options AI Trader — V1.0 RC2 Recovery (محاكاة وبحث)

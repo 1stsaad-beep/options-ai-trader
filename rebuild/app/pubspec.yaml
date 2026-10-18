@@ -1,0 +1,27 @@
+name: options_ai_trader_app
+description: Options AI Trader — personal Arabic (RTL) automated options trading app.
+publish_to: none
+version: 2.0.0-dev.1+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.22.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  http: ^1.2.2
+  flutter_secure_storage: ^9.2.2
+  path_provider: ^2.1.4
+  trader_core:
+    path: ../trader_core
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
