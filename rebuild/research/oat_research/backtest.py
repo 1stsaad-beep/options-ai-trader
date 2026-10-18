@@ -35,6 +35,8 @@ class ExitRules:
     atr_target: float | None = None
     min_dte_exit: int = 7                 # close when <= x calendar days left
     exit_on_opposite: bool = True
+    chandelier_atr: float | None = None   # exit if close < highest close since entry - k*ATR (calls; mirror for puts)
+    breakeven_after_atr: float | None = None  # after a favourable move of k*ATR, the underlying stop moves to entry
     flat_time: str | None = None          # intraday: close everything at/after HH:MM (exchange time)
     no_entry_after: str | None = None     # intraday: no new entries at/after HH:MM
 
@@ -92,6 +94,7 @@ class _Pos:
     peak_mid: float
     bars: int = 0
     last_mid: float = 0.0
+    best_spot: float = 0.0
 
 
 def run(data: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: StrategyConfig,
@@ -166,6 +169,14 @@ def run(data: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: St
             mid = om.mid_price(is_call, spot, p.strike, days_left, iv, c)
             p.last_mid = mid
             p.peak_mid = max(p.peak_mid, mid)
+            if p.best_spot == 0.0:
+                p.best_spot = p.entry_spot
+            p.best_spot = max(p.best_spot, spot) if is_call else min(p.best_spot, spot)
+            a_now = atrs[sym].iloc[i]
+            if cfg.exits.breakeven_after_atr is not None and np.isfinite(a_now):
+                if abs(p.best_spot - p.entry_spot) >= cfg.exits.breakeven_after_atr * a_now:
+                    if p.stop is None or not np.isfinite(p.stop) or (is_call and p.stop < p.entry_spot) or (not is_call and p.stop > p.entry_spot):
+                        p.stop = p.entry_spot
             p.bars += 1
             ex = cfg.exits
             sell = om.sell_price(mid, c)
@@ -175,6 +186,10 @@ def run(data: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: St
             elif ex.use_signal_stop and p.stop is not None and np.isfinite(p.stop) and (
                     (is_call and spot < p.stop) or (not is_call and spot > p.stop)):
                 reason = "underlying_stop"
+            elif ex.chandelier_atr is not None and np.isfinite(a_now) and (
+                    (is_call and spot < p.best_spot - ex.chandelier_atr * a_now) or
+                    (not is_call and spot > p.best_spot + ex.chandelier_atr * a_now)):
+                reason = "chandelier"
             elif days_left <= ex.min_dte_exit:
                 reason = "dte"
             elif ex.flat_time and d.strftime("%H:%M") >= ex.flat_time:

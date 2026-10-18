@@ -1,0 +1,14 @@
+== h1 ORB (2023-11-17 -> 2026-10-16, split 2025-05-02); grid 48, cells positive in 1st half: 35/48; in 2nd half: 10/48
+  base                 {'rvol': 1.0, 'spy_agree': False, 'daily_trend': False, 'gap_agree': False, 'vwap_exit': False}
+     1st half: n=1385 win=0.41 avgW=+85.3% avgL=-48.4% exp=+6.2% t=+2.25 PF=1.22
+     2nd half: n=1451 win=0.39 avgW=+68.6% avgL=-43.3% exp=+0.1% t=+0.04 PF=1.00
+  chosen on 1st half   {'rvol': 1.5, 'spy_agree': True, 'daily_trend': False, 'gap_agree': False, 'vwap_exit': False}
+     1st half: n=362 win=0.49 avgW=+105.6% avgL=-50.6% exp=+26.2% t=+3.61 PF=2.02
+     2nd half: n=362 win=0.39 avgW=+70.4% avgL=-48.6% exp=-1.9% t=-0.46 PF=0.93
+== m5 ORB (2026-07-24 -> 2026-10-16, split 2026-09-04); grid 48, cells positive in 1st half: 5/14; in 2nd half: 13/14
+  base                 {'rvol': 1.0, 'spy_agree': False, 'daily_trend': False, 'gap_agree': False, 'vwap_exit': False}
+     1st half: n=100 win=0.34 avgW=+86.0% avgL=-35.6% exp=+5.8% t=+0.64 PF=1.25
+     2nd half: n=122 win=0.26 avgW=+133.7% avgL=-42.1% exp=+4.0% t=+0.47 PF=1.13
+  chosen on 1st half   {'rvol': 1.0, 'spy_agree': True, 'daily_trend': False, 'gap_agree': True, 'vwap_exit': False}
+     1st half: n=46 win=0.43 avgW=+90.5% avgL=-36.0% exp=+19.0% t=+1.41 PF=1.93
+     2nd half: n=64 win=0.25 avgW=+130.9% avgL=-40.1% exp=+2.7% t=+0.22 PF=1.09

@@ -154,3 +154,35 @@ def tom_trend(ctx: Ctx, calendar: pd.DatetimeIndex) -> pd.DataFrame:
     a = ctx.atr
     return _frame(df, np.where(up, 1, 0), stop=_w(up, df["close"] - 3 * a), reason=_w(up, "turn-of-month window", ""),
                   xl=exit_day.fillna(False).to_numpy())
+
+
+# ---------------------------------------------------------------- extra published (round 2)
+def dual_momentum(ctxs: dict, data: dict, top: int = 3) -> dict:
+    """Antonacci dual momentum adapted to single names: at each month end rank the
+    universe by 12-1 month return; buy Calls on the top `top` names whose own
+    12-month return is positive (absolute momentum) while SPY > SMA200."""
+    spy = data["SPY"]
+    mom = pd.DataFrame({s: df["close"].shift(21) / df["close"].shift(252) - 1 for s, df in data.items()}).reindex(spy.index)
+    abs12 = pd.DataFrame({s: df["close"] / df["close"].shift(252) - 1 for s, df in data.items()}).reindex(spy.index)
+    rank = mom.rank(axis=1, ascending=False)
+    per = pd.Series(spy.index.to_period("M"), index=spy.index)
+    month_end = per != per.shift(-1)
+    mkt_up = spy["close"] > ind.sma(spy["close"], 200)
+    out = {}
+    for s, df in data.items():
+        pick = (month_end & mkt_up & (rank[s] <= top) & (abs12[s] > 0)).reindex(df.index).fillna(False)
+        out[s] = _frame(df, np.where(pick, 1, 0), reason=np.where(pick, "dual momentum top-3", ""))
+    return out
+
+
+def nr7_trend(ctx: Ctx) -> pd.DataFrame:
+    """Crabel NR7 in an up-trend: yesterday had the narrowest range of 7 days and
+    today closes above yesterday's high; stop below yesterday's low."""
+    df = ctx.df
+    rng = df["high"] - df["low"]
+    nr7_prev = (rng == rng.rolling(7).min()).shift(1).fillna(False).astype(bool)
+    c = df["close"]
+    up = nr7_prev & (c > df["high"].shift(1)) & (c > ctx.sma50) & (ctx.sma50 > ctx.sma200) & ctx.mkt_up
+    a = ctx.atr
+    return _frame(df, np.where(up, 1, 0), stop=_w(up, df["low"].shift(1) - 0.1 * a), target=_w(up, c + 2.5 * a),
+                  reason=_w(up, "NR7 breakout in up-trend", ""))
