@@ -271,3 +271,44 @@ def vwap_pullback(df: pd.DataFrame, p: VWAPParams = VWAPParams()) -> pd.DataFram
             out_t[t] = c[t] - p.target_r * (stop - c[t])
             out_r[t] = "VWAP pullback reject (down-trend day)"
     return _frame(df, out_d, out_s, out_t, out_r)
+
+
+# ---------------------------------------------------------------------------
+# P5 (as published) and N5 (in-play + VWAP exit) — 5-minute bars
+# ---------------------------------------------------------------------------
+
+def daily_atr_from_intraday(df: pd.DataFrame, n: int = 14) -> pd.Series:
+    """ATR of daily bars built from intraday bars, known at the open (previous days only)."""
+    day = df.index.normalize()
+    d = df.groupby(day).agg(open=("open", "first"), high=("high", "max"), low=("low", "min"), close=("close", "last"))
+    a = ind.atr(d, n).shift(1)
+    return pd.Series(a.reindex(day).to_numpy(), index=df.index)
+
+
+def orb_published(df: pd.DataFrame, rvol_min: float = 1.0, stop_atr_frac: float = 0.10) -> pd.DataFrame:
+    """Zarattini-Barbon-Aziz: direction of the first 5-minute candle, entry at the
+    next open, stop at 10% of the 14-day ATR from the entry area, exit at the close;
+    only 'stocks in play' (opening volume >= its 14-day average)."""
+    base = orb(df, ORBParams(rvol_min=rvol_min, target_r=1e9))
+    datr = daily_atr_from_intraday(df).to_numpy()
+    c = df["close"].to_numpy()
+    d = base["dir"].to_numpy()
+    stop = np.where(d != 0, c - d * stop_atr_frac * datr, np.nan)
+    base["stop"] = stop
+    base["target"] = np.nan
+    base["reason"] = np.where(d != 0, "ORB (published: 10% ATR stop, EOD exit)", "")
+    return base
+
+
+def orb_inplay_vwap(df: pd.DataFrame, rvol_min: float = 2.0) -> pd.DataFrame:
+    """N5: ORB only when opening volume >= 2x its 14-day average; stop at the
+    opposite end of the opening range; exit when price closes back across the
+    session VWAP (trend day failed) or at the end of the day."""
+    base = orb(df, ORBParams(rvol_min=rvol_min, target_r=1e9))
+    vw = session_vwap(df)
+    c = df["close"]
+    base["target"] = np.nan
+    base["xl"] = (c < vw).to_numpy()
+    base["xs"] = (c > vw).to_numpy()
+    base["reason"] = np.where(base["dir"] != 0, "ORB in-play (RVOL>=2) + VWAP exit", "")
+    return base

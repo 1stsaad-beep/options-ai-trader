@@ -189,10 +189,15 @@ def run(data: dict[str, pd.DataFrame], signals: dict[str, pd.DataFrame], cfg: St
                 reason = "underlying_target"
             elif ex.time_stop_days is not None and p.bars >= ex.time_stop_days:
                 reason = "time"
-            elif ex.exit_on_opposite:
+            else:
                 sig = signals[sym]
-                if d in sig.index and sig["dir"].loc[d] == -p.direction:
-                    reason = "opposite"
+                if d in sig.index:
+                    # strategy-specific exit rule (column xl for calls, xs for puts)
+                    col = "xl" if p.direction > 0 else "xs"
+                    if col in sig.columns and bool(sig[col].loc[d]):
+                        reason = "rule_exit"
+                    elif ex.exit_on_opposite and sig["dir"].loc[d] == -p.direction:
+                        reason = "opposite"
             if reason:
                 cash += sell * 100 * p.contracts - c.commission * p.contracts
                 trades.append(Trade(sym, p.direction, p.entry_date, d, p.entry_px, sell, p.contracts, p.strike,
