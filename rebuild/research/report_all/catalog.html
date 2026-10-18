@@ -1,0 +1,478 @@
+<!doctype html><html lang='ar' dir='rtl'><head><meta charset='utf-8'><style>
+@page { size: A4; margin: 16mm 13mm 16mm 13mm; }
+body { font-family: 'DejaVu Sans', sans-serif; direction: rtl; font-size: 9.6pt; line-height: 1.6; color: #1d2433; }
+h1 { font-size: 17pt; color: #0b4f6c; border-bottom: 2px solid #0b4f6c; padding-bottom: 4px; margin-top: 0; }
+h2 { font-size: 13pt; color: #0b4f6c; margin-top: 18px; }
+h3 { font-size: 11pt; color: #234; }
+h4 { font-size: 10pt; }
+table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 7.6pt; page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+th, td { border: 1px solid #c9d3de; padding: 3px 4px; vertical-align: top; unicode-bidi: plaintext; text-align: start; }
+th { background: #e8f1f7; }
+tr:nth-child(even) td { background: #f8fafc; }
+code { font-family: 'DejaVu Sans Mono', monospace; font-size: 8pt; background: #f1f4f7; padding: 0 2px; direction: ltr; unicode-bidi: embed; }
+pre { direction: ltr; text-align: left; background: #f4f6f9; border: 1px solid #dde3ea; padding: 8px; font-size: 7.8pt; white-space: pre-wrap; }
+pre code { background: none; }
+blockquote { border-right: 4px solid #e0a100; margin: 8px 0; padding: 4px 10px; background: #fff8e6; }
+.pb { page-break-after: always; }
+.raw { direction: ltr; text-align: left; } .raw table { font-size: 6.6pt; } .raw h2, .raw h3, .raw h4 { text-align: left; }
+.cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+.cover h1 { border: none; font-size: 26pt; }
+.cover .sub { font-size: 13pt; color: #456; margin: 6px 0; }
+.toc ul { list-style: none; padding-right: 12px; } .toc > ul > li { margin-top: 4px; font-weight: bold; } .toc ul ul li { font-weight: normal; }
+a { color: #0b4f6c; text-decoration: none; }
+</style></head><body><div class='cover'><h1>Options AI Trader</h1>
+<div class='sub'>التقرير الشامل لكل جولات البحث (0 → 5)</div>
+<div class='sub'>دليل وفهرس كل الاستراتيجيات · تقارير الجولات كاملة · نتائج بأسعار خيارات حقيقية</div>
+<div class='sub' style='margin-top:30px;font-size:11pt'>18 أكتوبر 2026 · github.com/1stsaad-beep/options-ai-trader · rebuild/hybrid-engines-20261018</div>
+</div><div class='pb'></div><h1 id="_1">دليل الملف: كيف تقرأ هذا التقرير الشامل</h1>
+<p>هذا الملف يجمع <strong>كل</strong> البحوث التي أُجريت على استراتيجيات شراء الخيارات لتطبيق Options AI Trader:</p>
+<table>
+<thead>
+<tr>
+<th>الجزء</th>
+<th>المحتوى</th>
+<th>الصفحات التقريبية</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>أ. هذا الدليل</strong></td>
+<td>فهرس كل الاستراتيجيات المختبرة ونتائجها، والدروس، والقيود، والبيانات</td>
+<td>البداية</td>
+</tr>
+<tr>
+<td><strong>ب. تقرير الجولات 0–2</strong></td>
+<td>تشخيص محركات التطبيق، و5+6 استراتيجيات منشورة ومطوّرة، والموجات والدايفرجنس (32 مؤكدًا)، و21 فلترًا، وطرق الخروج والعقود</td>
+<td>~41 صفحة</td>
+</tr>
+<tr>
+<td><strong>ج. تقرير الجولة 3</strong> (باحث آخر)</td>
+<td>تدقيق مستقل وإعادة إنتاج، وتمديد إلى 2000–2026، وأخطاء منهجية مكتشفة</td>
+<td>~66 صفحة</td>
+</tr>
+<tr>
+<td><strong>د. تقرير الجولة 4</strong></td>
+<td>عقود أسبوعية (≤ 7 أيام)، ودراسة زمن الوصول للهدف، والتنفيذ عند 15:50، و<strong>أول تحقق بأسعار خيارات حقيقية</strong></td>
+<td>~22 صفحة</td>
+</tr>
+<tr>
+<td><strong>هـ. تقرير الجولة 5</strong></td>
+<td>موجات إليوت متعددة الإطارات، وRSI متعدد الإطارات، وفلتر التقلب، ومعايرة التقلب الضمني</td>
+<td>~23 صفحة</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>أهم حقيقة في هذا الملف كله:</strong>
+- أرقام الجولات 0–4 (ما عدا قسم "الأسعار الحقيقية") محسوبة بنموذج Black–Scholes بتقلب مُقدَّر.
+- في الجولة 4 اتضح أن <strong>العقود الحقيقية أغلى من النموذج بـ 13%–79%</strong> في اللحظات التي تشتري فيها الإشارات. لذلك <strong>كل أرقام النموذج متفائلة</strong>.
+- المعيار الحاسم هو عمود "الأسعار الحقيقية".</p>
+</blockquote>
+<h1 id="_2">قيود التطبيق (ثابتة)</h1>
+<ul>
+<li><strong>شراء فقط:</strong> Call وPut للأسهم الأمريكية. بلا بيع خيارات وبلا سبريد.</li>
+<li><strong>قفل الاتجاه:</strong> لا Call وPut على نفس السهم في نفس الحساب في نفس الوقت.</li>
+<li><strong>قرارات حتمية بالكامل:</strong> لا نموذج لغوي في الدخول أو الخروج. القواعد تُبرمج في Dart.</li>
+<li><strong>حسابات متعددة مستقلة:</strong> لدى Alpaca وIBKR وTradeStation، ولكل حساب رموزه وإعداداته.</li>
+<li><strong>Paper أولًا:</strong> لا تداول Live إلا بموافقة صريحة.</li>
+<li><strong>تفضيل المستخدم:</strong> عقود قريبة الانتهاء (أقل من أسبوع) وأهداف قريبة.</li>
+</ul>
+<h1 id="_3">البيانات المتاحة وحدودها</h1>
+<table>
+<thead>
+<tr>
+<th>البيانات</th>
+<th>الفترة</th>
+<th>المصدر</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>يومي لـ 15 رمزًا</td>
+<td>1998–2026</td>
+<td>Yahoo</td>
+</tr>
+<tr>
+<td>SPY, QQQ, IWM, AAPL, MSFT, NVDA, AMZN, GOOGL, META, TSLA, AMD, JPM, XOM, UNH, COST</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>VIX, VIX9D, VIX1D, VIX3M, VXN</td>
+<td>يومي</td>
+<td>Yahoo</td>
+</tr>
+<tr>
+<td>شموع 5 دقائق SIP معدّلة</td>
+<td>2016–2026</td>
+<td>Alpaca</td>
+</tr>
+<tr>
+<td>أسعار عقود خيارات حقيقية (شموع 5 دقائق)</td>
+<td>2024-02 → 2026-10</td>
+<td>Alpaca</td>
+</tr>
+<tr>
+<td>تواريخ FOMC</td>
+<td>1999–2026</td>
+<td>federalreserve.gov</td>
+</tr>
+</tbody>
+</table>
+<p><strong>غير متاح:</strong></p>
+<ul>
+<li>مواعيد الأرباح.</li>
+<li>سعرا الطلب والعرض التاريخيان للخيارات.</li>
+<li>خيارات قبل 2024.</li>
+<li>قائمة رموز بلا انحياز نجاة.</li>
+</ul>
+<h1 id="_4">فهرس كل الاستراتيجيات المختبرة</h1>
+<p><strong>الرموز:</strong> ✅ قوية · 🟡 واعدة · 🟠 هشة/غير حاسمة · ❌ مرفوضة.</p>
+<p><strong>الأعمدة:</strong></p>
+<ul>
+<li><strong>"نموذج":</strong> عائد لكل صفقة على علاوة الخيار، بالنموذج.</li>
+<li><strong>"حقيقي":</strong> إعادة تسعير نفس الصفقات بأسعار عقود متداولة فعلًا (2024–2026).</li>
+</ul>
+<h2 id="02-3060">الجولات 0–2 (عقود 30–60 يومًا، نموذج)</h2>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الفكرة</th>
+<th>نموذج</th>
+<th>حقيقي</th>
+<th>الحكم</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>المحرك المركّب الحالي في التطبيق</td>
+<td>إليوت + هارمونيك + دايفرجنس + أنماط كلاسيكية + مؤشرات</td>
+<td>−13% إلى −20%</td>
+<td>—</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>كل الاستراتيجيات على 1د / 5د / ساعة (عقود 30–60 يومًا)</td>
+<td>—</td>
+<td>خاسرة غالبًا</td>
+<td>—</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>دايفرجنس RSI/MACD عند نهاية الموجة 2 وB</td>
+<td>4 فريمات، 32 مؤكدًا</td>
+<td>−3% إلى −15%</td>
+<td>—</td>
+<td>❌ (ساعد فقط: الترند الأكبر + VWAP المثبّت)</td>
+</tr>
+<tr>
+<td><strong>S1 TSMOM Calls شهرية</strong></td>
+<td>عائد 12 شهرًا موجب + فوق SMA200، شراء Call بدلتا 0.75 نهاية كل شهر</td>
+<td>+15.8% (t 4.54، 2013–26)</td>
+<td>لم يُختبر</td>
+<td>🟡 (ضعيفة 2000–2012 حسب الجولة 3)</td>
+</tr>
+<tr>
+<td><strong>S2 ارتداد ETF في الترند</strong></td>
+<td>RSI2 منخفض فوق SMA200 على SPY/QQQ/IWM</td>
+<td>+8.4% (t 2.76)</td>
+<td>انظر A في الجولة 4</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>S3 قمة 52 أسبوعًا + "غير ممتد"</td>
+<td>—</td>
+<td>+8.5% (+38.8% على 34 صفقة)</td>
+<td>—</td>
+<td>🟠</td>
+</tr>
+<tr>
+<td>S4 Turtle-55 الجودة</td>
+<td>—</td>
+<td>يعتمد على حالة السوق</td>
+<td>—</td>
+<td>🟠</td>
+</tr>
+<tr>
+<td>Connors RSI2، Turtle-20، Dual Momentum، NR7، بداية الشهر</td>
+<td>استراتيجيات منشورة</td>
+<td>ضعيفة أو متقلبة</td>
+<td>—</td>
+<td>🟠/❌</td>
+</tr>
+<tr>
+<td>ORB منشور (Zarattini) على 5د</td>
+<td>—</td>
+<td>+26% ← −1.9% خارج العينة</td>
+<td>—</td>
+<td>❌ (في تلك النسخة)</td>
+</tr>
+<tr>
+<td>21 فلترًا إضافيًا (ADX، بولنجر، حجم، …)</td>
+<td>—</td>
+<td>انهار معظمها خارج العينة</td>
+<td>—</td>
+<td>❌ (إفراط مطابقة)</td>
+</tr>
+<tr>
+<td>التنويع بين الاستراتيجيات</td>
+<td>—</td>
+<td>أقصى تراجع −32% ← −15.7%</td>
+<td>—</td>
+<td>✅ (إدارة مخاطر)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3">الجولة 3 (باحث مستقل)</h2>
+<ul>
+<li><strong>ما أعاد إنتاجه:</strong> نتائج الجولات السابقة قابلة لإعادة الإنتاج حسابيًا.</li>
+<li><strong>ما وجده:</strong> S1 ضعيفة 2000–2012.</li>
+<li><strong>أخطاء منهجية وجدها:</strong><ul>
+<li>الخروج المشروط عند نفس الإغلاق.</li>
+<li>أولوية أبجدية للإشارات.</li>
+<li>خطأ "آخر صف كأنه نهاية شهر".</li>
+<li>فترة نهائية مُعاد استخدامها.</li>
+</ul>
+</li>
+<li><strong>حكمه:</strong> لا توجد استراتيجية مثبتة بخيارات حقيقية.</li>
+</ul>
+<h2 id="4-7">الجولة 4 (عقود أسبوعية ≤ 7 أيام)</h2>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الفكرة</th>
+<th>نموذج (تحقق 2021–26)</th>
+<th><strong>حقيقي 2024–26</strong></th>
+<th>الحكم</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A ارتداد الترند <strong>عند 15:50</strong></td>
+<td>RSI2&lt;10، فوق SMA200، VIX&lt;35، شراء قبل الإغلاق (يلتقط ارتداد الليل)</td>
+<td>+17.4% (t 3.78)</td>
+<td><strong>−1.7%</strong> (بسعر الوسط +3.7%)</td>
+<td>🟠</td>
+</tr>
+<tr>
+<td>B إنهاك الموجة 2/B @15:50</td>
+<td>نهاية تصحيح الموجة 2 + RSI2 + VWAP مثبّت</td>
+<td>+19.9% (54 صفقة)</td>
+<td><strong>−3.7%</strong></td>
+<td>❌</td>
+</tr>
+<tr>
+<td>C ORB أول 5 دقائق، أسهم نشطة</td>
+<td>Zarattini 2024، 0DTE/أسبوعي</td>
+<td>+42.3%</td>
+<td><strong>−12.1%</strong> (العقد أغلى بـ 60–79%)</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>D زخم "منطقة الضجيج" SPY/QQQ</td>
+<td>Zarattini 2024، 0DTE</td>
+<td>+9.8%</td>
+<td><strong>−2.1%</strong></td>
+<td>❌</td>
+</tr>
+<tr>
+<td>قبل FOMC</td>
+<td>شراء 15:50 قبل يوم البيان، بيع 13:55</td>
+<td>+4% إلى +12%</td>
+<td><strong>+4.5%</strong> (63 صفقة)، لكن الاختبار وحده −5.9%</td>
+<td>🟠</td>
+</tr>
+<tr>
+<td>نفس A بعقود 7 / 14 / 28 يومًا</td>
+<td>—</td>
+<td>—</td>
+<td>−0.8% / −2.4% / −2.4%</td>
+<td>🟠</td>
+</tr>
+<tr>
+<td>بداية الشهر، قبل العطلة، اختراق 20 يومًا، انعكاس VIX، فجوة حدث، Puts الارتداد الهابط</td>
+<td>—</td>
+<td>سالبة أو ≈0</td>
+<td>—</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>الدخول عند افتتاح اليوم التالي (لكل استراتيجيات الارتداد)</td>
+<td>—</td>
+<td>يضيّع ارتداد الليل (+0.11 ATR)</td>
+<td>—</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5">الجولة 5</h2>
+<table>
+<thead>
+<tr>
+<th>الاستراتيجية</th>
+<th>الفكرة</th>
+<th>نموذج معايَر</th>
+<th><strong>حقيقي 2024–26</strong></th>
+<th>الحكم</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MTF-RSI Call</strong></td>
+<td>RSI14 الساعة &lt; 25، و15د يعود إلى &lt; 25 مرة ثانية</td>
+<td>+20.4% / +14.8%</td>
+<td><strong>+12.9%</strong> (100 صفقة، t 1.87؛ تطوير +8.6%، اختبار +18%)</td>
+<td>🟡 <strong>الوحيدة الموجبة حقيقيًا في الفترتين</strong></td>
+</tr>
+<tr>
+<td>MTF-RSI Put</td>
+<td>الساعة &gt; 70، و15د يعود للتشبع</td>
+<td>السهم يواصل الصعود (−0.05 ATR)</td>
+<td>—</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>MTF Elliott Call (الحرفية، 5د)</td>
+<td>يومي دافع صاعد + الساعة موجة 3 + الأحفاد نهاية موجة 2 + دايفرجنس</td>
+<td>≈0%</td>
+<td>+18.3% (54 صفقة)، والنموذج على نفس الصفقات +2%</td>
+<td>🟠</td>
+</tr>
+<tr>
+<td>MTF Elliott Call (المطوّرة، 15د)</td>
+<td>—</td>
+<td>−3% / −6%</td>
+<td>−4.6% / −7.8%</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>MTF Elliott Put (موجة C)</td>
+<td>—</td>
+<td>سالبة في كل الفترات</td>
+<td>—</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>فلتر التقلب IV/RV20 ≤ 1.3</strong> (IV حي من السلسلة)</td>
+<td>—</td>
+<td>التقدير لا يعمل</td>
+<td>MTF-RSI: +12.4% → <strong>+23.1%</strong> في الاختبار</td>
+<td>🟡</td>
+</tr>
+</tbody>
+</table>
+<h1 id="_5">الدروس الحاكمة (يجب أن تبني عليها أي استراتيجية جديدة)</h1>
+<ul>
+<li><strong>(1)</strong> <strong>علاوة العقد الأسبوعي ≈ حركة يوم كامل</strong>: نحو 0.9 انحراف معياري يومي لعقد بدلتا 0.5 ومدة 4 أيام.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>نوع العقد</th>
+<th>التقلب الضمني ÷ المحقق 20 يومًا</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>أسبوعي، سهم</td>
+<td>1.26</td>
+</tr>
+<tr>
+<td>أسبوعي، ETF</td>
+<td>1.45</td>
+</tr>
+<tr>
+<td>0DTE</td>
+<td>2.0–2.4</td>
+</tr>
+</tbody>
+</table>
+<p><strong>أي إشارة تتوقع حركة أقل من ~0.3–0.5 ATR خلال يومين لن تربح بالعقود.</strong></p>
+<ul>
+<li><strong>(2)</strong> <strong>إشارات "الارتداد بعد الهبوط"</strong> تشتري تقلبًا مرتفعًا ينخفض بعد الارتداد، فتخسر قيمة "vega".</li>
+<li><strong>(3)</strong> <strong>في الأسهم الأمريكية 2016–2026 التشبع الشرائي = زخم.</strong> الـ Puts المعاكسة للترند خاسرة في كل النسخ. أما الـ Puts الناجحة فتحتاج نظام سوق هابطًا، ولم نجد نسخة ناجحة بعد.</li>
+<li><strong>(4)</strong> <strong>التنفيذ:</strong> الحافة غالبًا بحجم الفرق بين الطلب والعرض. أوامر Limit قرب المنتصف شرط. والتنفيذ عند 15:50 أفضل من افتتاح اليوم التالي لاستراتيجيات الارتداد.</li>
+<li><strong>(5)</strong> <strong>ما لم يضف شيئًا:</strong> الدايفرجنس، وفيبوناتشي (السعر والزمن)، والدعوم والمقاومات، ولمس المتوسطات، والأنماط الكلاسيكية، والفريمات الصغيرة.</li>
+<li><strong>(6)</strong> <strong>ما أضاف قليلًا وبثبات:</strong><ul>
+<li>السعر فوق EMA200.</li>
+<li>MACD فوق خط الإشارة.</li>
+<li>سرعة الموجة الدافعة.</li>
+<li>شمعة انعكاسية عند نهاية التصحيح.</li>
+<li>VWAP المثبّت من بداية الحركة.</li>
+<li>التوافق مع الترند الأكبر.</li>
+</ul>
+</li>
+<li><strong>(7)</strong> <strong>الفلاتر الكثيرة تسبب إفراط مطابقة.</strong> الحد الأقصى المعقول 2–3 شروط تأكيد، تُختار على فترة الاكتشاف وحدها.</li>
+<li><strong>(8)</strong> <strong>نموذج Black–Scholes بتقلب تقديري يجب أن يُعاير.</strong> معامل الضرب حسب الأيام للانتهاء:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الأيام للانتهاء</th>
+<th>ETF</th>
+<th>سهم</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–1</td>
+<td>1.62</td>
+<td>2.29</td>
+</tr>
+<tr>
+<td>1–3</td>
+<td>1.39</td>
+<td>1.46</td>
+</tr>
+<tr>
+<td>3–8</td>
+<td>1.23</td>
+<td>1.28</td>
+</tr>
+<tr>
+<td>8+</td>
+<td>1.13</td>
+<td>1.17</td>
+</tr>
+</tbody>
+</table>
+<p><strong>والحكم النهائي دائمًا بأسعار حقيقية.</strong></p>
+<h1 id="_6">البروتوكول المعتمد للاختبار</h1>
+<ul>
+<li><strong>(1)</strong> <strong>فصل الفترات:</strong><ul>
+<li>اكتشاف (5 دقائق: 2016–2020؛ يومي: 1999–2012).</li>
+<li>تحقق (2021 → 2026-04).</li>
+<li>نهائية (آخر 6 أشهر) لا تُستخدم إلا مرة واحدة.</li>
+<li>أسعار حقيقية: تطوير 2024-02 → 2025-06، واختبار 2025-07 → 2026-10.</li>
+</ul>
+</li>
+<li><strong>(2)</strong> <strong>السببية:</strong><ul>
+<li>قيم الفريم الأكبر لا تُستخدم إلا بعد إغلاق شمعتها.</li>
+<li>القمم والقيعان بعد تأكيدها فقط.</li>
+<li>الدخول في الشمعة التالية.</li>
+<li>الخروج المشروط في افتتاح الشمعة التالية.</li>
+</ul>
+</li>
+<li><strong>(3)</strong> <strong>التحقق من الإطار:</strong> بيانات عشوائية لا تُظهر حافة، وحافة مزروعة تُكتشف.</li>
+<li><strong>(4)</strong> <strong>المتانة:</strong><ul>
+<li>فروق مضاعفة.</li>
+<li>حذف أفضل 5 صفقات.</li>
+<li>كل سنة على حدة.</li>
+<li>ETF مقابل أسهم.</li>
+<li>حذف NVDA/TSLA/AMD/META.</li>
+<li>عتبات مجاورة.</li>
+<li>IV ×0.8 و×1.25.</li>
+</ul>
+</li>
+<li><strong>(5)</strong> <strong>الحد الأدنى:</strong> 100 صفقة للحكم.</li>
+<li><strong>(6)</strong> <strong>التكاليف:</strong><ul>
+<li>نصف فرق 1.5% (ETF) / 3% (سهم) على أسعار التداول الحقيقية.</li>
+<li>عمولة 0.65$ لكل عقد في كل اتجاه.</li>
+</ul>
+</li>
+<li><strong>(7)</strong> <strong>القواعد تُسجَّل في JSON قبل تشغيل الفترة النهائية.</strong></li>
+<li><strong>الكود:</strong> <code>github.com/1stsaad-beep/options-ai-trader</code>، فرع <code>rebuild/hybrid-engines-20261018</code>، مجلد <code>rebuild/research</code>.</li>
+</ul></body></html>
