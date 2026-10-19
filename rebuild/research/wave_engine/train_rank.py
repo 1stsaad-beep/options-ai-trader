@@ -61,7 +61,7 @@ def fit(D, target="ys", l2=0.3, iters=400, lr=0.05):
 
 
 def evaluate(D, model, target="ys"):
-    X = D[model["cols"]].fillna(0).to_numpy(float); s = ((X - np.array(model["mu"])) / np.array(model["sd"])) @ np.array(model["w"])
+    X = D.reindex(columns=model["cols"]).fillna(0).to_numpy(float); s = ((X - np.array(model["mu"])) / np.array(model["sd"])) @ np.array(model["w"])
     D = D.assign(s=s)
     res = {}
     for name, key in (("hand", "rank0"), ("learned", "s")):
@@ -82,3 +82,21 @@ if __name__ == "__main__":
         m = fit(tr, target)
         json.dump(m, open(OUT / f"rank_weights_{target}.json", "w"))
         print(target, "train", evaluate(tr, m, target), "test", evaluate(te, m, target))
+
+
+def fit_pairwise(D, target="ys", C=0.3, max_neg=25, seed=0):
+    """pairwise logistic ranking: for every chart, (true - other) feature differences -> label 1 (and the mirror -> 0)."""
+    from sklearn.linear_model import LogisticRegression
+    cols = [c for c in D.columns if c not in ("inst", "y", "ys", "rank0", "prior_score", "depth")]
+    X = D[cols].fillna(0).to_numpy(float); mu = X.mean(0); sd = X.std(0) + 1e-9; Xs = (X - mu) / sd
+    rng = np.random.default_rng(seed); A, Y = [], []
+    for inst, idx in D.groupby("inst").indices.items():
+        yy = D[target].to_numpy()[idx]
+        pos = idx[yy > 0]; neg = idx[yy == 0]
+        if not len(pos) or not len(neg): continue
+        neg = rng.choice(neg, min(max_neg, len(neg)), replace=False)
+        for p in pos[:3]:
+            for q in neg:
+                A.append(Xs[p] - Xs[q]); Y.append(1); A.append(Xs[q] - Xs[p]); Y.append(0)
+    lr = LogisticRegression(C=C, fit_intercept=False, max_iter=2000).fit(np.array(A), np.array(Y))
+    return dict(cols=cols, w=lr.coef_[0].tolist(), mu=mu.tolist(), sd=sd.tolist())
