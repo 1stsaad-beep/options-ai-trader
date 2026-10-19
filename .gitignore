@@ -39,3 +39,5 @@ flutter-tests.json
 rebuild/research/results/r11/*.pkl
 rebuild/research/results/r11/opt_cache_r11.json
 rebuild/research/results/r11/*.log
+rebuild/research/results/r12/*.pkl
+rebuild/research/results/r12/*.log

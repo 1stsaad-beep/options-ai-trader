@@ -1,0 +1,14 @@
+{
+ "written": "2026-10-19, after the NON-directional discovery search (group A, 2020-2023), before any holdout look",
+ "event": "the stock touches +5% OR -5% (first touch) from the signal-bar close before the close of the next session",
+ "unit": "first signal per symbol per day",
+ "combos": [
+  {"id": "N1 capitulation in play", "frame": 30, "features": ["m_daily_capit", "vo_in_play2", "p_day_dn3"],
+   "plain": "stock down >15% over 20 days (as of yesterday) AND today's cumulative volume >2x normal for this time of day AND stock down >3% today"},
+  {"id": "N2 momentum gap-up breakout", "frame": 15, "features": ["m_daily_strong", "p_gap_up5", "p_break_hi20"],
+   "plain": "stock up >20% over 20 days AND gapped up >5% today AND a 15-min bar closes above the highest high of the previous 20 bars"},
+  {"id": "N3 gap-down breakdown in a downtrend", "frame": 15, "features": ["t_daily_dn", "p_gap_dn5", "p_break_lo20"],
+   "plain": "stock below its daily 50-SMA AND gapped down >5% today AND a 15-min bar closes below the lowest low of the previous 20 bars"}
+ ],
+ "pass": "P(big move) at least 1.5x the base rate of the same set in B_disc, A_hold, B_hold, and above base in LARGE"
+}

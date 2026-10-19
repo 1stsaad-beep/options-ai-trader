@@ -1,0 +1,18 @@
+{
+ "written": "2026-10-19, after the discovery search (group-A symbols, 2020-2023) and BEFORE looking at any holdout set",
+ "search_size": "about 150,000 singles/pairs/triples over 3 frames x 2 directions -> expect strong decay out of sample",
+ "event": "first touch of +5% (LONG) / -5% (SHORT) from the signal-bar close before the opposite 5%, up to the close of the next session",
+ "trade": "first signal per symbol per day; entry at signal-bar close; +-5% bracket; exit at next-session close otherwise; 0.10% round-trip cost",
+ "combos": [
+  {"id": "C1 momentum-contraction-volume", "frame": 15, "dir": "LONG",
+   "features": ["m_daily_strong", "v_daily_nr7", "vo_relvol2"],
+   "plain": "stock up >20% over 20 days (as of yesterday) AND yesterday's daily range was the narrowest of 7 days (NR7) AND today a 15-min bar trades >2x its usual volume for that time of day"},
+  {"id": "C2 gap-down reversal", "frame": 30, "dir": "LONG",
+   "features": ["v_daily_atr_high", "p_gap_dn5", "p_close_strong"],
+   "plain": "daily ATR% in the top 20% of its 120-day range (as of yesterday) AND today gapped down >5% AND a 30-min bar closes in the top 20% of its range"},
+  {"id": "C3 high-volume MACD breakdown", "frame": 30, "dir": "SHORT",
+   "features": ["m_macd_x_dn", "vo_relvol2", "p_day_dn3"],
+   "plain": "30-min MACD histogram crosses below zero AND that bar has >2x usual volume AND the stock is already down >3% vs yesterday's close"}
+ ],
+ "pass": "net mean trade > 0 in B_disc, A_hold and B_hold, and day-clustered t >= 2 on the pooled holdout (A_hold+B_hold+B_disc); LARGE is an extra stress test"
+}
