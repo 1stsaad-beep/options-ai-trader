@@ -1,0 +1,4801 @@
+<!doctype html><html lang='ar' dir='rtl'><head><meta charset='utf-8'><style>
+@page { size: A4; margin: 16mm 13mm 16mm 13mm; }
+body { font-family: 'DejaVu Sans', sans-serif; direction: rtl; font-size: 9.6pt; line-height: 1.6; color: #1d2433; }
+h1 { font-size: 17pt; color: #0b4f6c; border-bottom: 2px solid #0b4f6c; padding-bottom: 4px; margin-top: 0; }
+h2 { font-size: 13pt; color: #0b4f6c; margin-top: 18px; }
+h3 { font-size: 11pt; color: #234; }
+h4 { font-size: 10pt; }
+table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 7.6pt; page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+th, td { border: 1px solid #c9d3de; padding: 3px 4px; vertical-align: top; unicode-bidi: plaintext; text-align: start; }
+th { background: #e8f1f7; }
+tr:nth-child(even) td { background: #f8fafc; }
+code { font-family: 'DejaVu Sans Mono', monospace; font-size: 8pt; background: #f1f4f7; padding: 0 2px; direction: ltr; unicode-bidi: embed; }
+pre { direction: ltr; text-align: left; background: #f4f6f9; border: 1px solid #dde3ea; padding: 8px; font-size: 7.8pt; white-space: pre-wrap; }
+pre code { background: none; }
+blockquote { border-right: 4px solid #e0a100; margin: 8px 0; padding: 4px 10px; background: #fff8e6; }
+.pb { page-break-after: always; }
+.raw { direction: ltr; text-align: left; } .raw table { font-size: 6.6pt; } .raw h2, .raw h3, .raw h4 { text-align: left; }
+.cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+.cover h1 { border: none; font-size: 26pt; }
+.cover .sub { font-size: 13pt; color: #456; margin: 6px 0; }
+.toc ul { list-style: none; padding-right: 12px; } .toc > ul > li { margin-top: 4px; font-weight: bold; } .toc ul ul li { font-weight: normal; }
+a { color: #0b4f6c; text-decoration: none; }
+</style></head><body><div class='cover'><h1>Options AI Trader</h1>
+<div class='sub'>أدوات أفضل لنفس الإشارات + ما الذي يسبق حركة 5% في يومين؟</div>
+<div class='sub'>سبريد مدين · عقود طويلة · 64 مؤشرًا · 45 سهمًا 1999–2026 · أسعار عقود حقيقية</div>
+<div class='sub' style='margin-top:30px;font-size:11pt'>19 أكتوبر 2026 · الفرع rebuild/hybrid-engines-20261018</div>
+<div class='sub' style='font-size:10pt'>Alpaca 5 دقائق 2016–2026 · أسعار عقود حقيقية 2024–2026 · 15 رمزًا</div>
+</div><div class='pb'></div><h1>المحتويات</h1><div class="toc">
+<ul>
+<li><a href="#_1">الملخص التنفيذي</a><ul>
+<li><a href="#_2">أهم النتائج</a></li>
+</ul>
+</li>
+<li><a href="#10-5">الجولة 10: ما الذي يسبق حركة ≥ 5% خلال يومين؟</a><ul>
+<li><a href="#_3">المنهجية: لماذا "الرفع" لا "التكرار"</a></li>
+<li><a href="#5">النتائج: المؤشرات المنفردة (صعود ≥ 5%)</a></li>
+<li><a href="#_4">أفضل تركيبة (المرتبة الأولى في الاكتشاف، ثم اختُبرت كما هي)</a></li>
+<li><a href="#_5">كاستراتيجية: "ارتداد ما بعد الانهيار"</a></li>
+<li><a href="#paper">القاعدة المقترحة (للتجربة في Paper)</a></li>
+</ul>
+</li>
+<li><a href="#9">الجولة 9: أداة أفضل لنفس الإشارات؟</a></li>
+<li><a href="#_6">التوصيات</a></li>
+<li><a href="#resultsr9-resultsr10">ملحق: النتائج الخام (results/r9 و results/r10)</a><ul>
+<li><a href="#r9resultsmd">r9/RESULTS.md</a></li>
+<li><a href="#r10bigmovemd">r10/BIGMOVE.md</a></li>
+<li><a href="#r10topcombo_symmetrymd">r10/TOPCOMBO_SYMMETRY.md</a></li>
+<li><a href="#r10model_historymd">r10/MODEL_HISTORY.md</a></li>
+<li><a href="#r10optionsmd">r10/OPTIONS.md</a></li>
+<li><a href="#r10real_robustmd">r10/REAL_ROBUST.md</a></li>
+</ul>
+</li>
+</ul>
+</div><div class='pb'></div><h1 id="_1">الملخص التنفيذي</h1>
+<p>يغطي هذا التقرير عملين طلبتهما:</p>
+<p><strong>الأول (الجولة 9): هل تنقذ أداة أفضل الإشارات الجيدة؟</strong></p>
+<ul>
+<li>اختبرنا 5 إشارات أعطت حركة سهم إيجابية في الجولات السابقة، بأربع أدوات لكل صفقة:<ul>
+<li><strong>السهم نفسه.</strong></li>
+<li><strong>Call أسبوعي.</strong></li>
+<li><strong>سبريد مدين أسبوعي.</strong></li>
+<li><strong>عقد طويل</strong> (45–90 يومًا، دلتا 0.75).</li>
+</ul>
+</li>
+<li>البيانات: أسعار عقود حقيقية 2024-02 → 2026-10، على الأسهم الأصلية والجديدة.</li>
+<li>معايير القبول سُجّلت مسبقًا قبل التشغيل.</li>
+</ul>
+<p><strong>الثاني (الجولة 10، فكرتك): ما الذي يسبق صعود السهم 5% أو أكثر خلال يومين؟</strong></p>
+<ul>
+<li>درسنا 64 مؤشرًا ومجموعاتها على 45 سهمًا منذ 1999.</li>
+<li>بنينا استراتيجية من أفضل تركيبة، ثم اختبرناها:<ul>
+<li>على الأسهم كأسهم: 1999–2026.</li>
+<li>بالخيارات بنموذج معايَر: 1999–2026.</li>
+<li>بأسعار عقود حقيقية: 2024–2026.</li>
+</ul>
+</li>
+</ul>
+<h2 id="_2">أهم النتائج</h2>
+<table>
+<thead>
+<tr>
+<th>النتيجة</th>
+<th>التفاصيل</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>✅ <strong>فكرتك أنتجت أفضل استراتيجية حتى الآن: "ارتداد ما بعد الانهيار"</strong></td>
+<td>سهم هبط &gt; 10% في 20 يومًا، وتقلبه مرتفع (عرض بولنجر في أعلى 20%)، والسوق هبط &gt; 3% في 5 أيام ← شراء Call عند 15:50 والخروج بعد يومين</td>
+</tr>
+<tr>
+<td>↳ على السهم 1999–2026</td>
+<td><strong>+1.14% لكل صفقة</strong>، 2,935 صفقة، 59% رابحة. موجبة في 26 من 27 سنة. <strong>t = 6.8</strong> على 129 موجة هبوط مستقلة</td>
+</tr>
+<tr>
+<td>↳ Call أسبوعي، أسعار حقيقية 2024–26</td>
+<td><strong>+19.5%</strong> (الأسهم الأصلية، 64 صفقة) و<strong>+18.6%</strong> (الأسهم الجديدة، 106 صفقات). مع فروق مضاعفة: +13% / +11.7%</td>
+</tr>
+<tr>
+<td>⚠️ لكن</td>
+<td>الصفقات الحقيقية تتركز في 3 موجات هبوط فقط (أغسطس 2024، ومارس–أبريل 2025). بدون أفضل 10 صفقات: +4.1%</td>
+</tr>
+<tr>
+<td>🟡 <strong>Squeeze اليومي بـ Call أسبوعي</strong></td>
+<td>الوحيد الذي اجتاز معايير القبول المسجّلة مسبقًا في الجولة 9: +14.3% (107 صفقات، t = 1.51). لكن بدون أفضل 5 صفقات: +1.0%</td>
+</tr>
+<tr>
+<td>❌ <strong>السبريد المدين والعقد الطويل لم يُنقذا شيئًا</strong></td>
+<td>السبريد أسوأ في كل الحالات، لأنه يدفع فرق سعرين. والعقد الطويل ≈ صفر</td>
+</tr>
+<tr>
+<td>💡 <strong>S1 (زخم 12 شهرًا) قوي جدًا على السهم نفسه</strong></td>
+<td>+2.6% (الأصلية) و<strong>+3.4%</strong> (الجديدة) لكل شهر احتفاظ، t = 4–5. لكن العقد الطويل لم يلتقط هذا الربح (≈ 0%)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>الاستنتاج العملي:</strong></p>
+<ul>
+<li><strong>(1)</strong> الحافة الحقيقية الوحيدة القابلة للتداول بالخيارات حتى الآن هي <strong>شراء Call أسبوعي بعد انهيار حاد في سهم مع هبوط السوق</strong>. هي حافة "انعكاس قصير المدى"، موثقة في الأدبيات ومتسقة عبر 27 سنة.</li>
+<li><strong>(2)</strong> إشارات الزخم الطويل (S1) مربحة <strong>على السهم</strong> لا على الخيارات. إن سمحت بإضافة تداول الأسهم للتطبيق، فهي الأقوى إحصائيًا.</li>
+<li><strong>(3)</strong> فرضيتي بأن "السبريد والعقود الطويلة أفضل" <strong>لم تتأكد</strong> بأسعار حقيقية. تكلفة تنفيذ ساقين أكبر من فائدة تقليل علاوة التقلب.</li>
+</ul>
+<h1 id="10-5">الجولة 10: ما الذي يسبق حركة ≥ 5% خلال يومين؟</h1>
+<h2 id="_3">المنهجية: لماذا "الرفع" لا "التكرار"</h2>
+<p>لو بحثنا فقط عن المؤشرات الموجودة قبل الحركات الكبيرة، فسنجد مؤشرات شائعة في كل الأيام. لذلك قسنا:</p>
+<p><strong>الرفع = P(حركة كبيرة | المؤشر) ÷ P(حركة كبيرة في أي يوم)</strong></p>
+<table>
+<thead>
+<tr>
+<th>العنصر</th>
+<th>التفاصيل</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>الحدث</strong></td>
+<td>إغلاق اليوم t+2 ÷ إغلاق اليوم t − 1 ≥ +5% (Call) أو ≤ −5% (Put). نسخة ثانية بالتقلب: ≥ 2 ATR</td>
+</tr>
+<tr>
+<td><strong>المؤشرات (64)، كلها عند إغلاق اليوم t</strong></td>
+<td>MACD (موجب، صاعد، تقاطع)؛ المتوسطات (20/50/200، الترتيب، الميل، العبور)؛ RSI14 وRSI2 وStochastic؛ ADX؛ انضغاط واتساع بولنجر؛ ATR%؛ NR7 والشمعة الداخلية؛ الحجم وOBV؛ موقع الإغلاق؛ القرب من قمة/قاع 52 أسبوعًا؛ العوائد السابقة؛ القوة النسبية؛ اتجاه SPY وVIX؛ <strong>رقم موجة إليوت اليومية</strong>؛ يوم الأسبوع</td>
+</tr>
+<tr>
+<td><strong>الاكتشاف</strong></td>
+<td>الأسهم الـ 15 الأصلية، 1999–2015. البحث عن التركيبات تم هنا فقط، واشترطنا ثباتها في نصفي الفترة (1999–2007 و2008–2015)</td>
+</tr>
+<tr>
+<td><strong>الاختبار</strong></td>
+<td>الأسهم الأصلية 2016–2026، و<strong>30 سهمًا جديدًا</strong> 1999–2026</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5">النتائج: المؤشرات المنفردة (صعود ≥ 5%)</h2>
+<p><strong>النسبة الأساسية:</strong> 6.0% من الأيام في الاكتشاف، و4.6% في التحقق والأسهم الجديدة.</p>
+<table>
+<thead>
+<tr>
+<th>المؤشر</th>
+<th>الرفع: اكتشاف</th>
+<th>تحقق</th>
+<th>أسهم جديدة</th>
+<th>متوسط عائد يومين</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>عائد 20 يومًا &lt; −10%</td>
+<td><strong>2.94</strong></td>
+<td>3.05</td>
+<td>3.05</td>
+<td>+0.36% / +0.48% / +0.41%</td>
+</tr>
+<tr>
+<td>RSI14 &lt; 30</td>
+<td><strong>2.60</strong></td>
+<td>2.74</td>
+<td>2.41</td>
+<td>+0.81% / +0.57% / +0.60%</td>
+</tr>
+<tr>
+<td>عائد 5 أيام &lt; −5%</td>
+<td><strong>2.53</strong></td>
+<td>2.74</td>
+<td>2.70</td>
+<td>+0.38% / +0.50% / +0.50%</td>
+</tr>
+<tr>
+<td>SPY هبط &gt; 3% في 5 أيام</td>
+<td><strong>2.13</strong></td>
+<td>2.31</td>
+<td>2.52</td>
+<td>+0.45% / +0.45% / +0.52%</td>
+</tr>
+<tr>
+<td>VIX &gt; 25</td>
+<td><strong>2.06</strong></td>
+<td>2.24</td>
+<td>2.35</td>
+<td>+0.30% / +0.36% / +0.31%</td>
+</tr>
+<tr>
+<td>حجم &gt; 2× المتوسط</td>
+<td><strong>1.86</strong></td>
+<td>1.98</td>
+<td>1.72</td>
+<td>+0.23% / +0.33% / +0.13%</td>
+</tr>
+<tr>
+<td>إغلاق تحت بولنجر السفلي</td>
+<td><strong>1.65</strong></td>
+<td>1.60</td>
+<td>1.59</td>
+<td>+0.54% / +0.46% / +0.28%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>المؤشرات "الإيجابية" التقليدية تُضعف احتمال الحركة الكبيرة.</strong></p>
+<table>
+<thead>
+<tr>
+<th>المؤشر</th>
+<th>الرفع</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MACD &gt; 0</td>
+<td>0.75</td>
+</tr>
+<tr>
+<td>SMA50 &gt; SMA200</td>
+<td>0.70</td>
+</tr>
+<tr>
+<td>ترتيب EMA9 &gt; EMA20 &gt; EMA50</td>
+<td>0.70</td>
+</tr>
+</tbody>
+</table>
+<p>السبب: الأسهم في ترند هادئ تتحرك ببطء. <strong>أرقام موجات إليوت لم تظهر في أي تركيبة ذات رفع ثابت للصعود.</strong></p>
+<p><strong>تنبيه مهم:</strong> نفس المؤشرات ترفع احتمال <strong>الهبوط</strong> الكبير أيضًا. مثلًا، عائد 20 يومًا &lt; −10% يرفع احتمال الهبوط ≥ 5% بمعامل 2.73. أي أنها تتنبأ <strong>بحجم</strong> الحركة أكثر من اتجاهها.</p>
+<p>لكن الاتجاه يميل للصعود: في أفضل تركيبة احتمال الصعود ≥ 5% ضعف احتمال الهبوط ≥ 5%.</p>
+<table>
+<thead>
+<tr>
+<th>المجموعة</th>
+<th>صعود ≥ 5%</th>
+<th>هبوط ≥ 5%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>الاكتشاف</td>
+<td>29%</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>التحقق</td>
+<td>22%</td>
+<td>11%</td>
+</tr>
+<tr>
+<td>الأسهم الجديدة</td>
+<td>24%</td>
+<td>13%</td>
+</tr>
+</tbody>
+</table>
+<p>ومتوسط العائد +1.0% إلى +1.5%، و60% من الحالات موجبة.</p>
+<h2 id="_4">أفضل تركيبة (المرتبة الأولى في الاكتشاف، ثم اختُبرت كما هي)</h2>
+<p><strong>عرض بولنجر في أعلى 20% + عائد 20 يومًا &lt; −10% + SPY هبط &gt; 3% في 5 أيام</strong></p>
+<table>
+<thead>
+<tr>
+<th>المجموعة</th>
+<th>الأيام</th>
+<th>الرفع</th>
+<th>P(صعود ≥ 5%)</th>
+<th>متوسط عائد يومين</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>اكتشاف 1999–2015</td>
+<td>781</td>
+<td><strong>4.84</strong></td>
+<td>29%</td>
+<td>+1.53%</td>
+</tr>
+<tr>
+<td>تحقق 2016–2026</td>
+<td>536</td>
+<td><strong>4.77</strong></td>
+<td>22%</td>
+<td>+1.02%</td>
+</tr>
+<tr>
+<td>أسهم جديدة 1999–2026</td>
+<td>2,418</td>
+<td><strong>5.28</strong></td>
+<td>24%</td>
+<td>+1.38%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>نسخة 2 ATR (تُطبّع التقلب) أضعف خارج العينة.</strong> أفضل مؤشراتها: الحجم الكبير مع هبوط السوق.</p>
+<h2 id="_5">كاستراتيجية: "ارتداد ما بعد الانهيار"</h2>
+<p><strong>على 27 سنة</strong> (يومي، 45 سهمًا، الدخول عند الإغلاق والخروج بعد يومين):</p>
+<table>
+<thead>
+<tr>
+<th>المقياس</th>
+<th>النتيجة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>السهم</td>
+<td><strong>+1.14% لكل صفقة</strong>، 2,935 صفقة، 59% رابحة</td>
+</tr>
+<tr>
+<td>سنوات موجبة</td>
+<td><strong>26 من 27</strong> (الاستثناء 2023: 9 صفقات فقط)</td>
+</tr>
+<tr>
+<td>موجات الهبوط المستقلة</td>
+<td>129؛ 73% منها موجبة؛ <strong>t = 6.8</strong> على مستوى الموجات</td>
+</tr>
+<tr>
+<td>Call أسبوعي (نموذج معايَر)</td>
+<td>+13.6% لكل صفقة؛ t = 3.4 على مستوى الموجات</td>
+</tr>
+<tr>
+<td>أزمات صعبة</td>
+<td>2008: سهم +1.7%، Call +22%؛ 2020: +0.3% / +6.6%؛ 2022: +1.0% / +3.9%؛ 2001: +0.2% / −1.7%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>بأسعار عقود حقيقية 2024-02 → 2026-10:</strong></p>
+<table>
+<thead>
+<tr>
+<th>الأداة</th>
+<th>الأسهم الأصلية</th>
+<th>الأسهم الجديدة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>السهم</td>
+<td>+2.4% (73، t 3.3)</td>
+<td>+2.6% (155، t 6.1)</td>
+</tr>
+<tr>
+<td><strong>Call أسبوعي</strong></td>
+<td><strong>+19.5%</strong> (64، t 1.71)</td>
+<td><strong>+18.6%</strong> (106، t 1.83)</td>
+</tr>
+<tr>
+<td>Call — فروق ×2</td>
+<td>+13.0%</td>
+<td>+11.7%</td>
+</tr>
+<tr>
+<td>سبريد مدين</td>
+<td>+5.7%</td>
+<td>+4.3%</td>
+</tr>
+<tr>
+<td>سبريد — فروق ×2</td>
+<td>−7.3%</td>
+<td>−9.5%</td>
+</tr>
+<tr>
+<td>عقد طويل</td>
+<td>+4.6% (4 فقط)</td>
+<td>−5.7% (11)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>المتانة (Call، كل الأسهم، 170 صفقة):</strong></p>
+<table>
+<thead>
+<tr>
+<th>الاختبار</th>
+<th>النتيجة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>الكل</td>
+<td>+19.0%</td>
+</tr>
+<tr>
+<td>بدون أفضل 5</td>
+<td>+9.3%</td>
+</tr>
+<tr>
+<td>بدون أفضل 10</td>
+<td>+4.1%</td>
+</tr>
+<tr>
+<td>أغسطس 2024</td>
+<td>+12.0% (28)</td>
+</tr>
+<tr>
+<td>مارس 2025</td>
+<td>+14.1% (52)</td>
+</tr>
+<tr>
+<td>أبريل 2025</td>
+<td>+26.2% (77)</td>
+</tr>
+<tr>
+<td>فبراير 2025</td>
+<td>−55% (3)</td>
+</tr>
+<tr>
+<td>نوفمبر 2025</td>
+<td>−70% (5)</td>
+</tr>
+<tr>
+<td>الأسهم / ETF</td>
+<td>+20.2% / −0.7%</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>التقييم 🟡+ (أقوى مرشح حتى الآن):</strong>
+- <strong>ما يدعمها:</strong> الحافة في السهم ثابتة عبر 27 سنة و45 سهمًا. الخيارات بأسعار حقيقية موجبة على مجموعتين مستقلتين من الأسهم.
+- <strong>ما يحدّ منها:</strong>
+  - الإشارات نادرة ومتجمعة: تظهر فقط في موجات هبوط السوق، 2–4 مرات في السنة.
+  - الربح يعتمد على صفقات كبيرة قليلة.
+  - فترة الأسعار الحقيقية تحتوي 3 موجات فقط.
+  - في هبوط طويل ممتد (مثل 2001) العائد قريب من الصفر.</p>
+</blockquote>
+<h2 id="paper">القاعدة المقترحة (للتجربة في Paper)</h2>
+<pre><code>CAPITULATION REBOUND CALL  (status: Paper candidate)
+UNIVERSE  liquid US stocks with weekly options (ETFs showed no edge)
+AT 15:50  (daily series whose close = 15:50 price)
+  bbw_pct  = percentile rank of BB-width(20,2) over the last 126 days      &gt; 0.80
+  ret20    = close / close[20 days ago] - 1                                 &lt; -0.10
+  spy_ret5 = SPY close / SPY close[5 days ago] - 1                          &lt; -0.03
+  -&gt; BUY CALL, delta ~0.50, first Friday &gt;= entry + 4 days, LIMIT at mid
+EXIT      at 15:50 two sessions later (time exit only; no stop - the edge is a 2-day rebound)
+SIZE      0.5-1 % of NAV premium per trade; max 5 positions; one per symbol;
+          expect clusters: cap total premium per selloff episode at 5 % of NAV
+SKIP      earnings within the holding window (when a calendar is available)
+</code></pre>
+<h1 id="9">الجولة 9: أداة أفضل لنفس الإشارات؟</h1>
+<p><strong>القواعد ومعايير القبول</strong> سُجّلت في <code>results/r9/PREREG.json</code> قبل التشغيل. القبول يتطلب كل ما يلي:</p>
+<ul>
+<li>عائد موجب على الأسهم الأصلية <strong>و</strong>الجديدة.</li>
+<li>t مجمّع &gt; 1.</li>
+<li>عائد موجب في نصفي الفترة.</li>
+<li>عائد موجب مع فروق مضاعفة.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>الإشارة</th>
+<th>السهم (أصلية / جديدة)</th>
+<th>Call أسبوعي</th>
+<th>سبريد مدين</th>
+<th>عقد طويل</th>
+<th>الحكم</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SQZ</strong> انضغاط يومي</td>
+<td>+0.9% / +0.3%</td>
+<td><strong>+19.4% / +11.9%</strong></td>
+<td>−4.5% / −5.8%</td>
+<td>+0.1% / −7.0%</td>
+<td><strong>Call: مرشح Paper</strong> (مجمّع +14.3%، t 1.51؛ بدون أفضل 5: +1.0%)</td>
+</tr>
+<tr>
+<td><strong>TDL</strong> ارتداد الترند (قادة فقط)</td>
+<td>+0.4% / +0.3%</td>
+<td>−4.2% / −10.5%</td>
+<td>−9.9% / −15.0%</td>
+<td>−2.6% / −10.5%</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>FOMC</strong></td>
+<td>+0.2%</td>
+<td>+4.2% (النصف الثاني −6.5%)</td>
+<td>−3.2%</td>
+<td>−0.5%</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>S1</strong> زخم 12 شهرًا</td>
+<td><strong>+2.6% / +3.4%</strong> (t 4.0 / 5.0)</td>
+<td>—</td>
+<td>—</td>
+<td>−1.3% / +0.3%</td>
+<td>❌ بالخيارات، ✅ بالسهم</td>
+</tr>
+<tr>
+<td><strong>S3</strong> قمة 52 أسبوعًا</td>
+<td>+0.8% / +0.4%</td>
+<td>—</td>
+<td>—</td>
+<td>+4.6% / −3.8%</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<p><strong>لماذا لم يعمل السبريد والعقد الطويل؟</strong></p>
+<ul>
+<li><strong>(1) السبريد:</strong> يدفع نصف الفرق مرتين، لأنه ساقان. والساق المباعة تقصّ الربح في الحركات الكبيرة، وهي بالضبط ما يصنع ربح هذه الإشارات.</li>
+<li><strong>(2) العقد الطويل بدلتا 0.75:</strong> أقل سيولة. طابقنا 40% فقط من صفقات S1 بتداول فعلي. وعلاوته الزمنية ما زالت تأكل حركة شهر عادي.</li>
+<li><strong>(3) S1:</strong> أفضل إشارة لدينا على السهم (+2.6% إلى +3.4% شهريًا على مجموعتين مستقلتين). <strong>أداتها الصحيحة هي السهم نفسه أو عقد شبه-سهم بدلتا 0.9.</strong></li>
+</ul>
+<h1 id="_6">التوصيات</h1>
+<ul>
+<li><strong>(1)</strong> <strong>أضف للتطبيق (Paper فقط):</strong> "ارتداد ما بعد الانهيار" بـ Call أسبوعي، و"Squeeze اليومي" بـ Call أسبوعي، بحجم صغير. القواعد أعلاه.</li>
+<li><strong>(2)</strong> <strong>فكّر في السماح بتداول الأسهم:</strong> لأن S1 وارتداد ما بعد الانهيار أقوى على السهم نفسه منهما على الخيارات. أو جرّب عقودًا بدلتا 0.9 كبديل للسهم.</li>
+<li><strong>(3)</strong> <strong>لا تُضف</strong> السبريد المدين ولا العقود الطويلة لهذه الإشارات، فقد فشلت بأسعار حقيقية.</li>
+<li><strong>(4)</strong> <strong>لا تعتمد</strong> أي شيء على أموال حقيقية قبل 60 صفقة Paper بأسعار التنفيذ الفعلية. ولاحظ أن "ارتداد ما بعد الانهيار" قد يحتاج سنة كاملة لجمع 60 صفقة بسبب ندرته.</li>
+</ul>
+<blockquote>
+<p><strong>تحفّظ:</strong> كل الأرقام مختبرة تاريخيًا. لا ضمان ربح. والقرار لك.</p>
+</blockquote>
+<p><strong>الكود والنتائج:</strong></p>
+<ul>
+<li><code>r9_run.py</code> و<code>r10_bigmove.py</code> و<code>r10_options.py</code> و<code>r10_model.py</code>.</li>
+<li><code>results/r9/</code> و<code>results/r10/</code>.</li>
+</ul>
+<div class='pb'></div>
+
+<h1 id="resultsr9-resultsr10">ملحق: النتائج الخام (results/r9 و results/r10)</h1>
+<h2 id="r9resultsmd">r9/RESULTS.md</h2>
+<div class="raw">
+<p>Return per trade: STOCK on notional; CALL/LONG on premium; SPREAD on net debit. Each leg pays a half-spread (ETF 1.5 %, stock 3 %) + $0.65/contract/side.</p>
+<h4 id="sqz">SQZ</h4>
+<table>
+<thead>
+<tr>
+<th>universe</th>
+<th>period</th>
+<th>STOCK</th>
+<th>CALL (weekly)</th>
+<th>SPREAD (weekly)</th>
+<th>LONG (45–90 d, Δ0.75)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orig</td>
+<td>all</td>
+<td>+0.9% (n 36, t 1.47, win 53%)</td>
+<td>+19.4% (n 34, t 1.10, win 47%)</td>
+<td>-4.5% (n 34, t -0.40, win 47%)</td>
+<td>+0.1% (n 20, t 0.02, win 55%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2024-02→2025-06</td>
+<td>+0.7% (n 22, t 0.98, win 59%)</td>
+<td>+15.3% (n 20, t 0.72, win 50%)</td>
+<td>-5.1% (n 20, t -0.34, win 50%)</td>
+<td>-1.4% (n 12, t -0.16, win 50%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2025-07→2026-10</td>
+<td>+1.2% (n 14, t 1.08, win 43%)</td>
+<td>+25.3% (n 14, t 0.81, win 43%)</td>
+<td>-3.7% (n 14, t -0.20, win 43%)</td>
+<td>+2.4% (n 8, t 0.32, win 62%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2× half-spread</td>
+<td></td>
+<td>+12.4% (n 34, t 0.75, win 47%)</td>
+<td>-22.1% (n 34, t -2.40, win 35%)</td>
+<td>-5.7% (n 20, t -1.01, win 55%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>all</td>
+<td>+0.3% (n 79, t 0.88, win 53%)</td>
+<td>+11.9% (n 73, t 1.06, win 48%)</td>
+<td>-5.8% (n 72, t -0.72, win 50%)</td>
+<td>-7.0% (n 37, t -1.53, win 46%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2024-02→2025-06</td>
+<td>+0.7% (n 47, t 1.24, win 57%)</td>
+<td>+17.6% (n 44, t 1.17, win 52%)</td>
+<td>-0.4% (n 44, t -0.04, win 52%)</td>
+<td>-8.1% (n 20, t -1.22, win 45%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2025-07→2026-10</td>
+<td>-0.1% (n 32, t -0.22, win 47%)</td>
+<td>+3.4% (n 29, t 0.20, win 41%)</td>
+<td>-14.2% (n 28, t -1.20, win 46%)</td>
+<td>-5.7% (n 17, t -0.89, win 47%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2× half-spread</td>
+<td></td>
+<td>+5.4% (n 73, t 0.51, win 45%)</td>
+<td>-20.8% (n 72, t -3.02, win 40%)</td>
+<td>-12.4% (n 37, t -2.89, win 38%)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tdl">TDL</h4>
+<table>
+<thead>
+<tr>
+<th>universe</th>
+<th>period</th>
+<th>STOCK</th>
+<th>CALL (weekly)</th>
+<th>SPREAD (weekly)</th>
+<th>LONG (45–90 d, Δ0.75)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orig</td>
+<td>all</td>
+<td>+0.4% (n 317, t 1.95, win 57%)</td>
+<td>-4.2% (n 298, t -0.89, win 45%)</td>
+<td>-9.9% (n 289, t -2.62, win 47%)</td>
+<td>-2.6% (n 89, t -1.10, win 49%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2024-02→2025-06</td>
+<td>+0.1% (n 153, t 0.52, win 55%)</td>
+<td>-9.5% (n 144, t -1.36, win 41%)</td>
+<td>-15.1% (n 139, t -2.67, win 42%)</td>
+<td>-0.1% (n 42, t -0.02, win 57%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2025-07→2026-10</td>
+<td>+0.5% (n 164, t 2.39, win 60%)</td>
+<td>+0.8% (n 154, t 0.13, win 49%)</td>
+<td>-5.2% (n 150, t -1.02, win 52%)</td>
+<td>-4.9% (n 47, t -1.86, win 43%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2× half-spread</td>
+<td></td>
+<td>-9.2% (n 298, t -2.09, win 44%)</td>
+<td>-20.5% (n 289, t -6.09, win 42%)</td>
+<td>-7.9% (n 89, t -3.50, win 36%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>all</td>
+<td>+0.3% (n 564, t 1.87, win 58%)</td>
+<td>-10.5% (n 444, t -2.51, win 38%)</td>
+<td>-15.0% (n 404, t -4.34, win 39%)</td>
+<td>-10.5% (n 89, t -3.71, win 34%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2024-02→2025-06</td>
+<td>+0.1% (n 303, t 0.64, win 56%)</td>
+<td>-9.6% (n 244, t -1.78, win 41%)</td>
+<td>-15.4% (n 224, t -3.47, win 41%)</td>
+<td>-13.5% (n 48, t -3.16, win 29%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2025-07→2026-10</td>
+<td>+0.4% (n 261, t 2.00, win 60%)</td>
+<td>-11.6% (n 200, t -1.77, win 34%)</td>
+<td>-14.4% (n 180, t -2.66, win 38%)</td>
+<td>-6.9% (n 41, t -1.97, win 39%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2× half-spread</td>
+<td></td>
+<td>-15.7% (n 444, t -3.99, win 36%)</td>
+<td>-25.9% (n 404, t -8.49, win 31%)</td>
+<td>-15.7% (n 89, t -5.91, win 26%)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="fomc">FOMC</h4>
+<table>
+<thead>
+<tr>
+<th>universe</th>
+<th>period</th>
+<th>STOCK</th>
+<th>CALL (weekly)</th>
+<th>SPREAD (weekly)</th>
+<th>LONG (45–90 d, Δ0.75)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orig</td>
+<td>all</td>
+<td>+0.2% (n 63, t 1.93, win 57%)</td>
+<td>+4.2% (n 63, t 0.77, win 49%)</td>
+<td>-3.2% (n 63, t -0.78, win 43%)</td>
+<td>-0.5% (n 16, t -0.25, win 62%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2024-02→2025-06</td>
+<td>+0.4% (n 33, t 2.37, win 67%)</td>
+<td>+13.9% (n 33, t 1.67, win 55%)</td>
+<td>+5.1% (n 33, t 0.83, win 52%)</td>
+<td>+2.3% (n 8, t 0.69, win 75%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2025-07→2026-10</td>
+<td>-0.0% (n 30, t -0.06, win 47%)</td>
+<td>-6.5% (n 30, t -1.05, win 43%)</td>
+<td>-12.3% (n 30, t -2.48, win 33%)</td>
+<td>-3.3% (n 8, t -1.68, win 50%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2× half-spread</td>
+<td></td>
+<td>+1.1% (n 63, t 0.21, win 48%)</td>
+<td>-9.3% (n 63, t -2.45, win 25%)</td>
+<td>-3.5% (n 16, t -1.78, win 19%)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="s1">S1</h4>
+<table>
+<thead>
+<tr>
+<th>universe</th>
+<th>period</th>
+<th>STOCK</th>
+<th>CALL (weekly)</th>
+<th>SPREAD (weekly)</th>
+<th>LONG (45–90 d, Δ0.75)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orig</td>
+<td>all</td>
+<td>+2.6% (n 237, t 3.97, win 60%)</td>
+<td>—</td>
+<td>—</td>
+<td>-1.3% (n 92, t -0.16, win 42%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2024-02→2025-06</td>
+<td>+3.0% (n 114, t 3.92, win 67%)</td>
+<td>—</td>
+<td>—</td>
+<td>+0.8% (n 37, t 0.08, win 49%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2025-07→2026-10</td>
+<td>+2.2% (n 123, t 2.14, win 54%)</td>
+<td>—</td>
+<td>—</td>
+<td>-2.7% (n 55, t -0.24, win 38%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2× half-spread</td>
+<td></td>
+<td>—</td>
+<td>—</td>
+<td>-6.6% (n 92, t -0.89, win 39%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>all</td>
+<td>+3.4% (n 387, t 5.01, win 58%)</td>
+<td>—</td>
+<td>—</td>
+<td>+0.3% (n 79, t 0.03, win 39%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2024-02→2025-06</td>
+<td>+3.8% (n 200, t 5.41, win 65%)</td>
+<td>—</td>
+<td>—</td>
+<td>+0.4% (n 34, t 0.03, win 38%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2025-07→2026-10</td>
+<td>+3.0% (n 187, t 2.50, win 51%)</td>
+<td>—</td>
+<td>—</td>
+<td>+0.2% (n 45, t 0.01, win 40%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2× half-spread</td>
+<td></td>
+<td>—</td>
+<td>—</td>
+<td>-5.6% (n 79, t -0.57, win 34%)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="s3">S3</h4>
+<table>
+<thead>
+<tr>
+<th>universe</th>
+<th>period</th>
+<th>STOCK</th>
+<th>CALL (weekly)</th>
+<th>SPREAD (weekly)</th>
+<th>LONG (45–90 d, Δ0.75)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orig</td>
+<td>all</td>
+<td>+0.8% (n 22, t 0.68, win 45%)</td>
+<td>—</td>
+<td>—</td>
+<td>+4.6% (n 10, t 0.13, win 30%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2024-02→2025-06</td>
+<td>+0.7% (n 10, t 0.38, win 50%)</td>
+<td>—</td>
+<td>—</td>
+<td>-31.1% (n 5, t -3.37, win 20%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2025-07→2026-10</td>
+<td>+0.9% (n 12, t 0.55, win 42%)</td>
+<td>—</td>
+<td>—</td>
+<td>+40.3% (n 5, t 0.59, win 40%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2× half-spread</td>
+<td></td>
+<td>—</td>
+<td>—</td>
+<td>-1.0% (n 10, t -0.03, win 20%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>all</td>
+<td>+0.4% (n 34, t 0.30, win 44%)</td>
+<td>—</td>
+<td>—</td>
+<td>-3.8% (n 6, t -0.12, win 33%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2024-02→2025-06</td>
+<td>+2.8% (n 16, t 1.54, win 56%)</td>
+<td>—</td>
+<td>—</td>
+<td>+45.8% (n 3, t 1.00, win 67%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2025-07→2026-10</td>
+<td>-1.8% (n 18, t -1.05, win 33%)</td>
+<td>—</td>
+<td>—</td>
+<td>-53.5% (n 3, t -4.38, win 0%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2× half-spread</td>
+<td></td>
+<td>—</td>
+<td>—</td>
+<td>-9.4% (n 6, t -0.33, win 33%)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="pre-registered-acceptance-check">Pre-registered acceptance check</h4>
+<table>
+<thead>
+<tr>
+<th>signal</th>
+<th>instrument</th>
+<th>orig &gt; 0</th>
+<th>new &gt; 0</th>
+<th>pooled t &gt; 1</th>
+<th>both halves &gt; 0</th>
+<th>2× spreads &gt; 0</th>
+<th><strong>verdict</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQZ</td>
+<td>CALL</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td><strong>Paper candidate</strong></td>
+</tr>
+<tr>
+<td>SQZ</td>
+<td>SPREAD</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>SQZ</td>
+<td>LONG</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>TDL</td>
+<td>CALL</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>TDL</td>
+<td>SPREAD</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>TDL</td>
+<td>LONG</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>FOMC</td>
+<td>CALL</td>
+<td>✅</td>
+<td>n/a</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>FOMC</td>
+<td>SPREAD</td>
+<td>❌</td>
+<td>n/a</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>FOMC</td>
+<td>LONG</td>
+<td>❌</td>
+<td>n/a</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>S1</td>
+<td>CALL</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>S1</td>
+<td>SPREAD</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>S1</td>
+<td>LONG</td>
+<td>❌</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>S3</td>
+<td>CALL</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>S3</td>
+<td>SPREAD</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+<tr>
+<td>S3</td>
+<td>LONG</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td><strong>reject</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="r10bigmovemd">r10/BIGMOVE.md</h2>
+<div class="raw">
+<h4 id="up-5-in-2-days">UP ≥ 5% in 2 days</h4>
+<p>Base rate: discovery 5.98 %, validation 4.57 %, new symbols 4.61 %. Share of these moves that came with an earnings-like gap (≥1.5 ATR on ≥2.5× volume): 8 %.</p>
+<p><strong>Single indicators — lift = P(event | indicator) / P(event)</strong> (sorted by discovery lift; indicators true on ≥ 1 % of days)</p>
+<table>
+<thead>
+<tr>
+<th>indicator</th>
+<th>days (disc.)</th>
+<th>lift DISC</th>
+<th>lift VALID</th>
+<th>lift NEW</th>
+<th>mean 2d return DISC / VALID / NEW</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20d return &lt; -10%</td>
+<td>5499</td>
+<td><strong>2.94</strong></td>
+<td>3.05</td>
+<td>3.05</td>
+<td>+0.36% / +0.48% / +0.41%</td>
+</tr>
+<tr>
+<td>RSI14 &lt; 30</td>
+<td>1428</td>
+<td><strong>2.60</strong></td>
+<td>2.74</td>
+<td>2.41</td>
+<td>+0.81% / +0.57% / +0.60%</td>
+</tr>
+<tr>
+<td>5d return &lt; -5%</td>
+<td>5906</td>
+<td><strong>2.53</strong></td>
+<td>2.74</td>
+<td>2.70</td>
+<td>+0.38% / +0.50% / +0.50%</td>
+</tr>
+<tr>
+<td>SPY 5d return &lt; -3%</td>
+<td>4706</td>
+<td><strong>2.13</strong></td>
+<td>2.31</td>
+<td>2.52</td>
+<td>+0.45% / +0.45% / +0.52%</td>
+</tr>
+<tr>
+<td>VIX &gt; 25</td>
+<td>12088</td>
+<td><strong>2.06</strong></td>
+<td>2.24</td>
+<td>2.35</td>
+<td>+0.30% / +0.36% / +0.31%</td>
+</tr>
+<tr>
+<td>volume &gt; 2x avg</td>
+<td>1850</td>
+<td><strong>1.86</strong></td>
+<td>1.98</td>
+<td>1.72</td>
+<td>+0.23% / +0.33% / +0.13%</td>
+</tr>
+<tr>
+<td>5d return &gt; +5%</td>
+<td>6969</td>
+<td><strong>1.70</strong></td>
+<td>1.93</td>
+<td>1.60</td>
+<td>+0.07% / +0.25% / -0.01%</td>
+</tr>
+<tr>
+<td>VIX up &gt; 15% today</td>
+<td>1451</td>
+<td><strong>1.69</strong></td>
+<td>1.11</td>
+<td>1.39</td>
+<td>+0.48% / +0.02% / +0.17%</td>
+</tr>
+<tr>
+<td>ATR% top 20% of year</td>
+<td>10901</td>
+<td><strong>1.68</strong></td>
+<td>1.74</td>
+<td>1.76</td>
+<td>+0.17% / +0.18% / +0.17%</td>
+</tr>
+<tr>
+<td>close &lt; lower BB</td>
+<td>2710</td>
+<td><strong>1.65</strong></td>
+<td>1.60</td>
+<td>1.59</td>
+<td>+0.54% / +0.46% / +0.28%</td>
+</tr>
+<tr>
+<td>close &lt; SMA200</td>
+<td>18628</td>
+<td><strong>1.64</strong></td>
+<td>1.67</td>
+<td>1.59</td>
+<td>+0.16% / +0.26% / +0.17%</td>
+</tr>
+<tr>
+<td>close &lt; SMA20 - 1.5 ATR</td>
+<td>7892</td>
+<td><strong>1.61</strong></td>
+<td>1.62</td>
+<td>1.58</td>
+<td>+0.39% / +0.32% / +0.30%</td>
+</tr>
+<tr>
+<td>20d return &gt; +10%</td>
+<td>7690</td>
+<td><strong>1.61</strong></td>
+<td>1.81</td>
+<td>1.46</td>
+<td>+0.21% / +0.46% / +0.12%</td>
+</tr>
+<tr>
+<td>volume &gt; 1.5x avg</td>
+<td>5435</td>
+<td><strong>1.58</strong></td>
+<td>1.67</td>
+<td>1.57</td>
+<td>+0.24% / +0.28% / +0.14%</td>
+</tr>
+<tr>
+<td>Stoch %K &lt; 20</td>
+<td>8728</td>
+<td><strong>1.56</strong></td>
+<td>1.66</td>
+<td>1.50</td>
+<td>+0.34% / +0.36% / +0.32%</td>
+</tr>
+<tr>
+<td>within 10% of 52w low</td>
+<td>4978</td>
+<td><strong>1.41</strong></td>
+<td>1.63</td>
+<td>1.48</td>
+<td>+0.20% / +0.22% / +0.22%</td>
+</tr>
+<tr>
+<td>RSI2 &lt; 10</td>
+<td>6291</td>
+<td><strong>1.40</strong></td>
+<td>1.46</td>
+<td>1.36</td>
+<td>+0.41% / +0.42% / +0.31%</td>
+</tr>
+<tr>
+<td>BB width pct &gt; 80%</td>
+<td>11055</td>
+<td><strong>1.29</strong></td>
+<td>1.35</td>
+<td>1.32</td>
+<td>+0.21% / +0.24% / +0.19%</td>
+</tr>
+<tr>
+<td>close in bottom 20% of range</td>
+<td>11631</td>
+<td><strong>1.29</strong></td>
+<td>1.31</td>
+<td>1.30</td>
+<td>+0.37% / +0.41% / +0.31%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 2</td>
+<td>3667</td>
+<td><strong>1.27</strong></td>
+<td>1.19</td>
+<td>1.22</td>
+<td>+0.07% / +0.35% / +0.17%</td>
+</tr>
+<tr>
+<td>ADX &gt; 25</td>
+<td>21535</td>
+<td><strong>1.19</strong></td>
+<td>1.18</td>
+<td>1.12</td>
+<td>+0.20% / +0.26% / +0.16%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 3</td>
+<td>2776</td>
+<td><strong>1.11</strong></td>
+<td>1.35</td>
+<td>1.11</td>
+<td>+0.12% / +0.29% / +0.14%</td>
+</tr>
+<tr>
+<td>volume &lt; 0.7x avg</td>
+<td>10759</td>
+<td><strong>1.09</strong></td>
+<td>0.84</td>
+<td>0.92</td>
+<td>+0.11% / +0.27% / +0.11%</td>
+</tr>
+<tr>
+<td>MACD hist &lt; 0 &amp; rising</td>
+<td>12391</td>
+<td><strong>1.03</strong></td>
+<td>1.02</td>
+<td>1.06</td>
+<td>+0.09% / +0.21% / +0.16%</td>
+</tr>
+<tr>
+<td>Monday</td>
+<td>10275</td>
+<td><strong>1.02</strong></td>
+<td>1.02</td>
+<td>1.09</td>
+<td>+0.19% / +0.31% / +0.21%</td>
+</tr>
+<tr>
+<td>MACD bull cross (3d)</td>
+<td>6536</td>
+<td><strong>1.01</strong></td>
+<td>0.87</td>
+<td>0.99</td>
+<td>+0.16% / +0.26% / +0.11%</td>
+</tr>
+<tr>
+<td>inside day</td>
+<td>6498</td>
+<td><strong>1.00</strong></td>
+<td>1.04</td>
+<td>0.99</td>
+<td>+0.17% / +0.21% / +0.18%</td>
+</tr>
+<tr>
+<td>60d return &gt; SPY 60d</td>
+<td>27700</td>
+<td><strong>0.99</strong></td>
+<td>0.97</td>
+<td>0.94</td>
+<td>+0.17% / +0.24% / +0.14%</td>
+</tr>
+<tr>
+<td>MACD hist rising</td>
+<td>26964</td>
+<td><strong>0.99</strong></td>
+<td>0.98</td>
+<td>0.97</td>
+<td>+0.11% / +0.21% / +0.11%</td>
+</tr>
+<tr>
+<td>NR7</td>
+<td>8440</td>
+<td><strong>0.96</strong></td>
+<td>0.88</td>
+<td>0.93</td>
+<td>+0.11% / +0.20% / +0.15%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 5</td>
+<td>2134</td>
+<td><strong>0.96</strong></td>
+<td>1.28</td>
+<td>0.95</td>
+<td>+0.19% / +0.22% / +0.05%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 2/4/B</td>
+<td>8537</td>
+<td><strong>0.94</strong></td>
+<td>0.95</td>
+<td>1.03</td>
+<td>+0.19% / +0.18% / +0.18%</td>
+</tr>
+<tr>
+<td>Friday</td>
+<td>10922</td>
+<td><strong>0.94</strong></td>
+<td>1.06</td>
+<td>0.94</td>
+<td>+0.17% / +0.32% / +0.14%</td>
+</tr>
+<tr>
+<td>MACD hist &gt; 0</td>
+<td>27652</td>
+<td><strong>0.94</strong></td>
+<td>0.97</td>
+<td>0.92</td>
+<td>+0.12% / +0.23% / +0.10%</td>
+</tr>
+<tr>
+<td>BB squeeze (width pct &lt; 20%)</td>
+<td>12764</td>
+<td><strong>0.90</strong></td>
+<td>0.81</td>
+<td>0.85</td>
+<td>+0.18% / +0.26% / +0.13%</td>
+</tr>
+<tr>
+<td>close crossed above SMA50 (3d)</td>
+<td>5614</td>
+<td><strong>0.89</strong></td>
+<td>0.87</td>
+<td>0.95</td>
+<td>+0.18% / +0.08% / +0.12%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 3</td>
+<td>3745</td>
+<td><strong>0.88</strong></td>
+<td>0.90</td>
+<td>0.78</td>
+<td>+0.10% / +0.16% / +0.03%</td>
+</tr>
+<tr>
+<td>close &gt; SMA20</td>
+<td>31034</td>
+<td><strong>0.80</strong></td>
+<td>0.83</td>
+<td>0.79</td>
+<td>+0.13% / +0.22% / +0.09%</td>
+</tr>
+<tr>
+<td>RSI14 50-70</td>
+<td>28024</td>
+<td><strong>0.78</strong></td>
+<td>0.77</td>
+<td>0.77</td>
+<td>+0.14% / +0.20% / +0.11%</td>
+</tr>
+<tr>
+<td>close &gt; upper BB</td>
+<td>3571</td>
+<td><strong>0.78</strong></td>
+<td>1.00</td>
+<td>0.75</td>
+<td>-0.01% / +0.29% / +0.01%</td>
+</tr>
+<tr>
+<td>OBV at 20-day high</td>
+<td>7504</td>
+<td><strong>0.77</strong></td>
+<td>0.79</td>
+<td>0.73</td>
+<td>+0.07% / +0.18% / +0.07%</td>
+</tr>
+<tr>
+<td>SMA50 rising</td>
+<td>33391</td>
+<td><strong>0.77</strong></td>
+<td>0.78</td>
+<td>0.78</td>
+<td>+0.16% / +0.21% / +0.12%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 4</td>
+<td>2518</td>
+<td><strong>0.76</strong></td>
+<td>0.81</td>
+<td>0.83</td>
+<td>+0.02% / +0.20% / +0.11%</td>
+</tr>
+<tr>
+<td>ADX &lt; 15</td>
+<td>8235</td>
+<td><strong>0.76</strong></td>
+<td>0.84</td>
+<td>0.92</td>
+<td>+0.09% / +0.24% / +0.10%</td>
+</tr>
+<tr>
+<td>close &gt; SMA50</td>
+<td>32549</td>
+<td><strong>0.75</strong></td>
+<td>0.76</td>
+<td>0.75</td>
+<td>+0.14% / +0.21% / +0.10%</td>
+</tr>
+<tr>
+<td>MACD line &gt; 0</td>
+<td>32674</td>
+<td><strong>0.75</strong></td>
+<td>0.78</td>
+<td>0.75</td>
+<td>+0.15% / +0.22% / +0.11%</td>
+</tr>
+<tr>
+<td>close in top 20% of range</td>
+<td>13307</td>
+<td><strong>0.75</strong></td>
+<td>0.89</td>
+<td>0.90</td>
+<td>-0.04% / +0.13% / -0.00%</td>
+</tr>
+<tr>
+<td>SMA200 rising</td>
+<td>37371</td>
+<td><strong>0.70</strong></td>
+<td>0.84</td>
+<td>0.72</td>
+<td>+0.15% / +0.21% / +0.13%</td>
+</tr>
+<tr>
+<td>SMA50 &gt; SMA200</td>
+<td>36029</td>
+<td><strong>0.70</strong></td>
+<td>0.85</td>
+<td>0.75</td>
+<td>+0.14% / +0.23% / +0.13%</td>
+</tr>
+<tr>
+<td>EMA9 &gt; EMA20 &gt; EMA50</td>
+<td>27538</td>
+<td><strong>0.70</strong></td>
+<td>0.74</td>
+<td>0.69</td>
+<td>+0.13% / +0.21% / +0.10%</td>
+</tr>
+<tr>
+<td>close &gt; 1.5 ATR above SMA20</td>
+<td>12751</td>
+<td><strong>0.69</strong></td>
+<td>0.82</td>
+<td>0.68</td>
+<td>+0.08% / +0.22% / +0.04%</td>
+</tr>
+<tr>
+<td>RSI2 &gt; 90</td>
+<td>8402</td>
+<td><strong>0.69</strong></td>
+<td>0.80</td>
+<td>0.73</td>
+<td>+0.00% / +0.17% / +0.01%</td>
+</tr>
+<tr>
+<td>SPY &gt; SMA200</td>
+<td>38415</td>
+<td><strong>0.69</strong></td>
+<td>0.78</td>
+<td>0.70</td>
+<td>+0.15% / +0.22% / +0.13%</td>
+</tr>
+<tr>
+<td>close &gt; SMA200</td>
+<td>35935</td>
+<td><strong>0.67</strong></td>
+<td>0.78</td>
+<td>0.69</td>
+<td>+0.14% / +0.22% / +0.12%</td>
+</tr>
+<tr>
+<td>RSI14 &gt; 70</td>
+<td>3977</td>
+<td><strong>0.66</strong></td>
+<td>0.92</td>
+<td>0.62</td>
+<td>+0.09% / +0.23% / -0.01%</td>
+</tr>
+<tr>
+<td>ATR% bottom 20% of year</td>
+<td>15986</td>
+<td><strong>0.66</strong></td>
+<td>0.61</td>
+<td>0.58</td>
+<td>+0.18% / +0.23% / +0.10%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 5</td>
+<td>1950</td>
+<td><strong>0.65</strong></td>
+<td>0.63</td>
+<td>0.95</td>
+<td>-0.09% / +0.02% / +0.12%</td>
+</tr>
+<tr>
+<td>Stoch %K &gt; 80</td>
+<td>15014</td>
+<td><strong>0.65</strong></td>
+<td>0.68</td>
+<td>0.66</td>
+<td>+0.07% / +0.17% / +0.04%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave C</td>
+<td>1511</td>
+<td><strong>0.59</strong></td>
+<td>0.54</td>
+<td>0.69</td>
+<td>+0.09% / +0.18% / +0.09%</td>
+</tr>
+<tr>
+<td>VIX &lt; 15</td>
+<td>15796</td>
+<td><strong>0.45</strong></td>
+<td>0.57</td>
+<td>0.38</td>
+<td>+0.11% / +0.24% / +0.10%</td>
+</tr>
+<tr>
+<td>within 3% of 52w high</td>
+<td>11704</td>
+<td><strong>0.27</strong></td>
+<td>0.33</td>
+<td>0.34</td>
+<td>+0.05% / +0.15% / +0.06%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Best combinations found on DISCOVERY (stable in both halves 1999–2007 / 2008–2015), then checked out of sample</strong> — 938 stable combos found</p>
+<table>
+<thead>
+<tr>
+<th>combination</th>
+<th>days DISC</th>
+<th>lift DISC</th>
+<th>lift VALID</th>
+<th>lift NEW</th>
+<th>P(event) VALID / NEW</th>
+<th>mean 2d return DISC / VALID / NEW</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BB width pct &gt; 80% + 20d return &lt; -10% + SPY 5d return &lt; -3%</td>
+<td>781</td>
+<td><strong>4.84</strong></td>
+<td>4.77</td>
+<td>5.28</td>
+<td>21.8% / 24.4%</td>
+<td>+1.53% / +1.02% / +1.38%</td>
+</tr>
+<tr>
+<td>ATR% top 20% of year + 20d return &lt; -10% + VIX up &gt; 15% today</td>
+<td>208</td>
+<td><strong>4.82</strong></td>
+<td>3.08</td>
+<td>3.92</td>
+<td>14.1% / 18.1%</td>
+<td>+1.53% / -0.44% / +0.27%</td>
+</tr>
+<tr>
+<td>ATR% top 20% of year + 20d return &lt; -10% + SPY 5d return &lt; -3%</td>
+<td>940</td>
+<td><strong>4.77</strong></td>
+<td>4.96</td>
+<td>5.45</td>
+<td>22.7% / 25.2%</td>
+<td>+1.25% / +0.88% / +1.36%</td>
+</tr>
+<tr>
+<td>RSI14 &lt; 30 + volume &gt; 1.5x avg + VIX &gt; 25</td>
+<td>222</td>
+<td><strong>4.75</strong></td>
+<td>3.68</td>
+<td>4.30</td>
+<td>16.8% / 19.8%</td>
+<td>+1.89% / +0.32% / +0.80%</td>
+</tr>
+<tr>
+<td>20d return &lt; -10% + VIX &gt; 25 + VIX up &gt; 15% today</td>
+<td>217</td>
+<td><strong>4.70</strong></td>
+<td>3.49</td>
+<td>4.08</td>
+<td>16.0% / 18.8%</td>
+<td>+1.61% / -0.49% / +0.19%</td>
+</tr>
+<tr>
+<td>RSI14 &lt; 30 + 20d return &lt; -10% + SPY 5d return &lt; -3%</td>
+<td>426</td>
+<td><strong>4.55</strong></td>
+<td>4.31</td>
+<td>4.73</td>
+<td>19.7% / 21.8%</td>
+<td>+1.47% / +1.07% / +1.26%</td>
+</tr>
+<tr>
+<td>RSI14 &lt; 30 + ATR% top 20% of year + VIX &gt; 25</td>
+<td>498</td>
+<td><strong>4.53</strong></td>
+<td>4.76</td>
+<td>4.95</td>
+<td>21.8% / 22.8%</td>
+<td>+1.87% / +0.97% / +1.45%</td>
+</tr>
+<tr>
+<td>RSI14 &lt; 30 + ATR% top 20% of year + SPY 5d return &lt; -3%</td>
+<td>384</td>
+<td><strong>4.53</strong></td>
+<td>4.30</td>
+<td>4.86</td>
+<td>19.7% / 22.4%</td>
+<td>+1.93% / +1.05% / +1.54%</td>
+</tr>
+<tr>
+<td>volume &gt; 1.5x avg + 20d return &lt; -10% + SPY 5d return &lt; -3%</td>
+<td>329</td>
+<td><strong>4.52</strong></td>
+<td>3.32</td>
+<td>4.76</td>
+<td>15.2% / 21.9%</td>
+<td>+1.34% / +0.03% / +0.88%</td>
+</tr>
+<tr>
+<td>RSI14 &lt; 30 + 20d return &lt; -10% + VIX &gt; 25</td>
+<td>573</td>
+<td><strong>4.52</strong></td>
+<td>4.73</td>
+<td>4.62</td>
+<td>21.6% / 21.3%</td>
+<td>+1.55% / +1.01% / +1.19%</td>
+</tr>
+</tbody>
+</table>
+<h4 id="up-2atr-in-2-days">UP ≥ 2ATR in 2 days</h4>
+<p>Base rate: discovery 2.58 %, validation 3.07 %, new symbols 2.68 %. Share of these moves that came with an earnings-like gap (≥1.5 ATR on ≥2.5× volume): 14 %.</p>
+<p><strong>Single indicators — lift = P(event | indicator) / P(event)</strong> (sorted by discovery lift; indicators true on ≥ 1 % of days)</p>
+<table>
+<thead>
+<tr>
+<th>indicator</th>
+<th>days (disc.)</th>
+<th>lift DISC</th>
+<th>lift VALID</th>
+<th>lift NEW</th>
+<th>mean 2d return DISC / VALID / NEW</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>volume &gt; 2x avg</td>
+<td>1850</td>
+<td><strong>2.27</strong></td>
+<td>2.45</td>
+<td>1.80</td>
+<td>+0.23% / +0.33% / +0.13%</td>
+</tr>
+<tr>
+<td>volume &gt; 1.5x avg</td>
+<td>5435</td>
+<td><strong>1.89</strong></td>
+<td>1.94</td>
+<td>1.70</td>
+<td>+0.24% / +0.28% / +0.14%</td>
+</tr>
+<tr>
+<td>VIX up &gt; 15% today</td>
+<td>1451</td>
+<td><strong>1.77</strong></td>
+<td>1.30</td>
+<td>1.49</td>
+<td>+0.48% / +0.02% / +0.17%</td>
+</tr>
+<tr>
+<td>close &lt; lower BB</td>
+<td>2710</td>
+<td><strong>1.49</strong></td>
+<td>1.39</td>
+<td>1.24</td>
+<td>+0.54% / +0.46% / +0.28%</td>
+</tr>
+<tr>
+<td>RSI14 &lt; 30</td>
+<td>1428</td>
+<td><strong>1.41</strong></td>
+<td>1.74</td>
+<td>1.32</td>
+<td>+0.81% / +0.57% / +0.60%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave C</td>
+<td>1511</td>
+<td><strong>1.36</strong></td>
+<td>0.94</td>
+<td>0.94</td>
+<td>+0.09% / +0.18% / +0.09%</td>
+</tr>
+<tr>
+<td>20d return &gt; +10%</td>
+<td>7690</td>
+<td><strong>1.30</strong></td>
+<td>1.33</td>
+<td>1.06</td>
+<td>+0.21% / +0.46% / +0.12%</td>
+</tr>
+<tr>
+<td>ATR% bottom 20% of year</td>
+<td>15986</td>
+<td><strong>1.29</strong></td>
+<td>1.25</td>
+<td>1.20</td>
+<td>+0.18% / +0.23% / +0.10%</td>
+</tr>
+<tr>
+<td>RSI2 &lt; 10</td>
+<td>6291</td>
+<td><strong>1.27</strong></td>
+<td>1.33</td>
+<td>1.14</td>
+<td>+0.41% / +0.42% / +0.31%</td>
+</tr>
+<tr>
+<td>close in bottom 20% of range</td>
+<td>11631</td>
+<td><strong>1.26</strong></td>
+<td>1.17</td>
+<td>1.11</td>
+<td>+0.37% / +0.41% / +0.31%</td>
+</tr>
+<tr>
+<td>RSI14 &gt; 70</td>
+<td>3977</td>
+<td><strong>1.21</strong></td>
+<td>1.25</td>
+<td>1.04</td>
+<td>+0.09% / +0.23% / -0.01%</td>
+</tr>
+<tr>
+<td>SPY 5d return &lt; -3%</td>
+<td>4706</td>
+<td><strong>1.19</strong></td>
+<td>0.97</td>
+<td>1.21</td>
+<td>+0.45% / +0.45% / +0.52%</td>
+</tr>
+<tr>
+<td>BB squeeze (width pct &lt; 20%)</td>
+<td>12764</td>
+<td><strong>1.19</strong></td>
+<td>1.28</td>
+<td>1.22</td>
+<td>+0.18% / +0.26% / +0.13%</td>
+</tr>
+<tr>
+<td>60d return &gt; SPY 60d</td>
+<td>27700</td>
+<td><strong>1.10</strong></td>
+<td>1.05</td>
+<td>1.02</td>
+<td>+0.17% / +0.24% / +0.14%</td>
+</tr>
+<tr>
+<td>within 10% of 52w low</td>
+<td>4978</td>
+<td><strong>1.08</strong></td>
+<td>1.03</td>
+<td>1.03</td>
+<td>+0.20% / +0.22% / +0.22%</td>
+</tr>
+<tr>
+<td>SPY &gt; SMA200</td>
+<td>38415</td>
+<td><strong>1.08</strong></td>
+<td>1.04</td>
+<td>1.05</td>
+<td>+0.15% / +0.22% / +0.13%</td>
+</tr>
+<tr>
+<td>Stoch %K &lt; 20</td>
+<td>8728</td>
+<td><strong>1.08</strong></td>
+<td>1.16</td>
+<td>1.04</td>
+<td>+0.34% / +0.36% / +0.32%</td>
+</tr>
+<tr>
+<td>close &lt; SMA20 - 1.5 ATR</td>
+<td>7892</td>
+<td><strong>1.08</strong></td>
+<td>1.02</td>
+<td>1.02</td>
+<td>+0.39% / +0.32% / +0.30%</td>
+</tr>
+<tr>
+<td>EMA9 &gt; EMA20 &gt; EMA50</td>
+<td>27538</td>
+<td><strong>1.08</strong></td>
+<td>1.06</td>
+<td>1.01</td>
+<td>+0.13% / +0.21% / +0.10%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 3</td>
+<td>2776</td>
+<td><strong>1.08</strong></td>
+<td>1.10</td>
+<td>1.06</td>
+<td>+0.12% / +0.29% / +0.14%</td>
+</tr>
+<tr>
+<td>MACD line &gt; 0</td>
+<td>32674</td>
+<td><strong>1.06</strong></td>
+<td>1.04</td>
+<td>1.03</td>
+<td>+0.15% / +0.22% / +0.11%</td>
+</tr>
+<tr>
+<td>SMA50 rising</td>
+<td>33391</td>
+<td><strong>1.06</strong></td>
+<td>1.06</td>
+<td>1.05</td>
+<td>+0.16% / +0.21% / +0.12%</td>
+</tr>
+<tr>
+<td>ADX &gt; 25</td>
+<td>21535</td>
+<td><strong>1.05</strong></td>
+<td>1.05</td>
+<td>0.99</td>
+<td>+0.20% / +0.26% / +0.16%</td>
+</tr>
+<tr>
+<td>close &gt; upper BB</td>
+<td>3571</td>
+<td><strong>1.04</strong></td>
+<td>1.25</td>
+<td>1.05</td>
+<td>-0.01% / +0.29% / +0.01%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 5</td>
+<td>2134</td>
+<td><strong>1.04</strong></td>
+<td>0.63</td>
+<td>0.76</td>
+<td>+0.19% / +0.22% / +0.05%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 3</td>
+<td>3745</td>
+<td><strong>1.04</strong></td>
+<td>1.14</td>
+<td>0.87</td>
+<td>+0.10% / +0.16% / +0.03%</td>
+</tr>
+<tr>
+<td>close &gt; SMA50</td>
+<td>32549</td>
+<td><strong>1.03</strong></td>
+<td>1.01</td>
+<td>1.03</td>
+<td>+0.14% / +0.21% / +0.10%</td>
+</tr>
+<tr>
+<td>OBV at 20-day high</td>
+<td>7504</td>
+<td><strong>1.03</strong></td>
+<td>0.99</td>
+<td>1.11</td>
+<td>+0.07% / +0.18% / +0.07%</td>
+</tr>
+<tr>
+<td>inside day</td>
+<td>6498</td>
+<td><strong>1.03</strong></td>
+<td>1.02</td>
+<td>0.97</td>
+<td>+0.17% / +0.21% / +0.18%</td>
+</tr>
+<tr>
+<td>close &gt; SMA200</td>
+<td>35935</td>
+<td><strong>1.02</strong></td>
+<td>1.01</td>
+<td>1.01</td>
+<td>+0.14% / +0.22% / +0.12%</td>
+</tr>
+<tr>
+<td>SMA200 rising</td>
+<td>37371</td>
+<td><strong>1.02</strong></td>
+<td>1.00</td>
+<td>0.99</td>
+<td>+0.15% / +0.21% / +0.13%</td>
+</tr>
+<tr>
+<td>VIX &lt; 15</td>
+<td>15796</td>
+<td><strong>1.02</strong></td>
+<td>1.04</td>
+<td>0.99</td>
+<td>+0.11% / +0.24% / +0.10%</td>
+</tr>
+<tr>
+<td>5d return &gt; +5%</td>
+<td>6969</td>
+<td><strong>1.01</strong></td>
+<td>1.30</td>
+<td>0.97</td>
+<td>+0.07% / +0.25% / -0.01%</td>
+</tr>
+<tr>
+<td>SMA50 &gt; SMA200</td>
+<td>36029</td>
+<td><strong>1.01</strong></td>
+<td>1.00</td>
+<td>0.99</td>
+<td>+0.14% / +0.23% / +0.13%</td>
+</tr>
+<tr>
+<td>5d return &lt; -5%</td>
+<td>5906</td>
+<td><strong>1.01</strong></td>
+<td>0.99</td>
+<td>0.99</td>
+<td>+0.38% / +0.50% / +0.50%</td>
+</tr>
+<tr>
+<td>close &gt; 1.5 ATR above SMA20</td>
+<td>12751</td>
+<td><strong>1.01</strong></td>
+<td>1.00</td>
+<td>0.98</td>
+<td>+0.08% / +0.22% / +0.04%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 2/4/B</td>
+<td>8537</td>
+<td><strong>1.00</strong></td>
+<td>0.83</td>
+<td>0.96</td>
+<td>+0.19% / +0.18% / +0.18%</td>
+</tr>
+<tr>
+<td>ADX &lt; 15</td>
+<td>8235</td>
+<td><strong>1.00</strong></td>
+<td>1.07</td>
+<td>1.10</td>
+<td>+0.09% / +0.24% / +0.10%</td>
+</tr>
+<tr>
+<td>close &gt; SMA20</td>
+<td>31034</td>
+<td><strong>0.99</strong></td>
+<td>0.96</td>
+<td>1.00</td>
+<td>+0.13% / +0.22% / +0.09%</td>
+</tr>
+<tr>
+<td>RSI14 50-70</td>
+<td>28024</td>
+<td><strong>0.98</strong></td>
+<td>0.93</td>
+<td>1.01</td>
+<td>+0.14% / +0.20% / +0.11%</td>
+</tr>
+<tr>
+<td>MACD hist &gt; 0</td>
+<td>27652</td>
+<td><strong>0.97</strong></td>
+<td>0.98</td>
+<td>0.96</td>
+<td>+0.12% / +0.23% / +0.10%</td>
+</tr>
+<tr>
+<td>close &lt; SMA200</td>
+<td>18628</td>
+<td><strong>0.96</strong></td>
+<td>0.96</td>
+<td>0.98</td>
+<td>+0.16% / +0.26% / +0.17%</td>
+</tr>
+<tr>
+<td>MACD bull cross (3d)</td>
+<td>6536</td>
+<td><strong>0.94</strong></td>
+<td>0.91</td>
+<td>1.00</td>
+<td>+0.16% / +0.26% / +0.11%</td>
+</tr>
+<tr>
+<td>MACD hist rising</td>
+<td>26964</td>
+<td><strong>0.93</strong></td>
+<td>0.94</td>
+<td>1.00</td>
+<td>+0.11% / +0.21% / +0.11%</td>
+</tr>
+<tr>
+<td>close crossed above SMA50 (3d)</td>
+<td>5614</td>
+<td><strong>0.92</strong></td>
+<td>0.85</td>
+<td>1.04</td>
+<td>+0.18% / +0.08% / +0.12%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 4</td>
+<td>2518</td>
+<td><strong>0.91</strong></td>
+<td>0.98</td>
+<td>0.97</td>
+<td>+0.02% / +0.20% / +0.11%</td>
+</tr>
+<tr>
+<td>within 3% of 52w high</td>
+<td>11704</td>
+<td><strong>0.91</strong></td>
+<td>0.96</td>
+<td>0.99</td>
+<td>+0.05% / +0.15% / +0.06%</td>
+</tr>
+<tr>
+<td>Stoch %K &gt; 80</td>
+<td>15014</td>
+<td><strong>0.90</strong></td>
+<td>0.90</td>
+<td>0.94</td>
+<td>+0.07% / +0.17% / +0.04%</td>
+</tr>
+<tr>
+<td>Monday</td>
+<td>10275</td>
+<td><strong>0.89</strong></td>
+<td>0.96</td>
+<td>1.08</td>
+<td>+0.19% / +0.31% / +0.21%</td>
+</tr>
+<tr>
+<td>Friday</td>
+<td>10922</td>
+<td><strong>0.87</strong></td>
+<td>0.94</td>
+<td>0.91</td>
+<td>+0.17% / +0.32% / +0.14%</td>
+</tr>
+<tr>
+<td>NR7</td>
+<td>8440</td>
+<td><strong>0.87</strong></td>
+<td>0.71</td>
+<td>0.83</td>
+<td>+0.11% / +0.20% / +0.15%</td>
+</tr>
+<tr>
+<td>MACD hist &lt; 0 &amp; rising</td>
+<td>12391</td>
+<td><strong>0.87</strong></td>
+<td>0.92</td>
+<td>1.02</td>
+<td>+0.09% / +0.21% / +0.16%</td>
+</tr>
+<tr>
+<td>VIX &gt; 25</td>
+<td>12088</td>
+<td><strong>0.86</strong></td>
+<td>1.08</td>
+<td>0.94</td>
+<td>+0.30% / +0.36% / +0.31%</td>
+</tr>
+<tr>
+<td>RSI2 &gt; 90</td>
+<td>8402</td>
+<td><strong>0.85</strong></td>
+<td>0.99</td>
+<td>0.97</td>
+<td>+0.00% / +0.17% / +0.01%</td>
+</tr>
+<tr>
+<td>volume &lt; 0.7x avg</td>
+<td>10759</td>
+<td><strong>0.83</strong></td>
+<td>0.61</td>
+<td>0.70</td>
+<td>+0.11% / +0.27% / +0.11%</td>
+</tr>
+<tr>
+<td>20d return &lt; -10%</td>
+<td>5499</td>
+<td><strong>0.83</strong></td>
+<td>0.74</td>
+<td>0.92</td>
+<td>+0.36% / +0.48% / +0.41%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 2</td>
+<td>3667</td>
+<td><strong>0.81</strong></td>
+<td>1.08</td>
+<td>0.98</td>
+<td>+0.07% / +0.35% / +0.17%</td>
+</tr>
+<tr>
+<td>close in top 20% of range</td>
+<td>13307</td>
+<td><strong>0.81</strong></td>
+<td>0.83</td>
+<td>0.90</td>
+<td>-0.04% / +0.13% / -0.00%</td>
+</tr>
+<tr>
+<td>BB width pct &gt; 80%</td>
+<td>11055</td>
+<td><strong>0.79</strong></td>
+<td>0.86</td>
+<td>0.76</td>
+<td>+0.21% / +0.24% / +0.19%</td>
+</tr>
+<tr>
+<td>ATR% top 20% of year</td>
+<td>10901</td>
+<td><strong>0.74</strong></td>
+<td>0.63</td>
+<td>0.71</td>
+<td>+0.17% / +0.18% / +0.17%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 5</td>
+<td>1950</td>
+<td><strong>0.56</strong></td>
+<td>0.55</td>
+<td>1.14</td>
+<td>-0.09% / +0.02% / +0.12%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Best combinations found on DISCOVERY (stable in both halves 1999–2007 / 2008–2015), then checked out of sample</strong> — 64 stable combos found</p>
+<table>
+<thead>
+<tr>
+<th>combination</th>
+<th>days DISC</th>
+<th>lift DISC</th>
+<th>lift VALID</th>
+<th>lift NEW</th>
+<th>P(event) VALID / NEW</th>
+<th>mean 2d return DISC / VALID / NEW</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>volume &gt; 1.5x avg + close in bottom 20% of range + SPY 5d return &lt; -3%</td>
+<td>350</td>
+<td><strong>3.66</strong></td>
+<td>1.67</td>
+<td>2.06</td>
+<td>5.1% / 5.5%</td>
+<td>+1.01% / +0.44% / +0.60%</td>
+</tr>
+<tr>
+<td>volume &gt; 2x avg + volume &gt; 1.5x avg + SPY 5d return &lt; -3%</td>
+<td>319</td>
+<td><strong>3.53</strong></td>
+<td>3.55</td>
+<td>2.01</td>
+<td>10.9% / 5.4%</td>
+<td>+1.14% / +0.85% / +0.39%</td>
+</tr>
+<tr>
+<td>volume &gt; 2x avg + SPY 5d return &lt; -3%</td>
+<td>319</td>
+<td><strong>3.53</strong></td>
+<td>3.55</td>
+<td>2.01</td>
+<td>10.9% / 5.4%</td>
+<td>+1.14% / +0.85% / +0.39%</td>
+</tr>
+<tr>
+<td>ATR% bottom 20% of year + volume &gt; 1.5x avg + 20d return &gt; +10%</td>
+<td>343</td>
+<td><strong>3.28</strong></td>
+<td>3.62</td>
+<td>1.78</td>
+<td>11.1% / 4.8%</td>
+<td>+0.38% / +1.42% / -0.06%</td>
+</tr>
+<tr>
+<td>volume &gt; 1.5x avg + SPY 5d return &lt; -3% + VIX up &gt; 15% today</td>
+<td>213</td>
+<td><strong>3.28</strong></td>
+<td>2.06</td>
+<td>2.16</td>
+<td>6.3% / 5.8%</td>
+<td>+1.20% / +0.14% / +0.41%</td>
+</tr>
+<tr>
+<td>close &lt; lower BB + volume &gt; 1.5x avg + SPY 5d return &lt; -3%</td>
+<td>441</td>
+<td><strong>3.17</strong></td>
+<td>2.64</td>
+<td>2.19</td>
+<td>8.1% / 5.9%</td>
+<td>+1.37% / +0.62% / +0.69%</td>
+</tr>
+<tr>
+<td>volume &gt; 1.5x avg + close in bottom 20% of range + VIX up &gt; 15% today</td>
+<td>255</td>
+<td><strong>2.89</strong></td>
+<td>2.56</td>
+<td>1.70</td>
+<td>7.9% / 4.6%</td>
+<td>+0.58% / +0.35% / -0.12%</td>
+</tr>
+<tr>
+<td>close &lt; lower BB + volume &gt; 2x avg + close in bottom 20% of range</td>
+<td>209</td>
+<td><strong>2.79</strong></td>
+<td>1.92</td>
+<td>1.54</td>
+<td>5.9% / 4.1%</td>
+<td>+0.43% / +0.28% / +0.01%</td>
+</tr>
+<tr>
+<td>volume &gt; 2x avg + volume &gt; 1.5x avg + close in bottom 20% of range</td>
+<td>467</td>
+<td><strong>2.74</strong></td>
+<td>2.34</td>
+<td>1.55</td>
+<td>7.2% / 4.2%</td>
+<td>+0.47% / +0.59% / +0.16%</td>
+</tr>
+<tr>
+<td>volume &gt; 2x avg + close in bottom 20% of range</td>
+<td>467</td>
+<td><strong>2.74</strong></td>
+<td>2.34</td>
+<td>1.55</td>
+<td>7.2% / 4.2%</td>
+<td>+0.47% / +0.59% / +0.16%</td>
+</tr>
+</tbody>
+</table>
+<h4 id="down-5-in-2-days">DOWN ≥ 5% in 2 days</h4>
+<p>Base rate: discovery 5.25 %, validation 3.67 %, new symbols 4.10 %. Share of these moves that came with an earnings-like gap (≥1.5 ATR on ≥2.5× volume): 9 %.</p>
+<p><strong>Single indicators — lift = P(event | indicator) / P(event)</strong> (sorted by discovery lift; indicators true on ≥ 1 % of days)</p>
+<table>
+<thead>
+<tr>
+<th>indicator</th>
+<th>days (disc.)</th>
+<th>lift DISC</th>
+<th>lift VALID</th>
+<th>lift NEW</th>
+<th>mean 2d return DISC / VALID / NEW</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20d return &lt; -10%</td>
+<td>5499</td>
+<td><strong>2.73</strong></td>
+<td>2.65</td>
+<td>2.68</td>
+<td>-0.36% / -0.48% / -0.41%</td>
+</tr>
+<tr>
+<td>5d return &lt; -5%</td>
+<td>5906</td>
+<td><strong>2.37</strong></td>
+<td>2.38</td>
+<td>2.18</td>
+<td>-0.38% / -0.50% / -0.50%</td>
+</tr>
+<tr>
+<td>volume &gt; 2x avg</td>
+<td>1850</td>
+<td><strong>2.02</strong></td>
+<td>1.82</td>
+<td>1.84</td>
+<td>-0.23% / -0.33% / -0.13%</td>
+</tr>
+<tr>
+<td>RSI14 &lt; 30</td>
+<td>1428</td>
+<td><strong>2.00</strong></td>
+<td>1.87</td>
+<td>1.75</td>
+<td>-0.81% / -0.57% / -0.60%</td>
+</tr>
+<tr>
+<td>VIX &gt; 25</td>
+<td>12088</td>
+<td><strong>1.99</strong></td>
+<td>2.22</td>
+<td>2.17</td>
+<td>-0.30% / -0.36% / -0.31%</td>
+</tr>
+<tr>
+<td>SPY 5d return &lt; -3%</td>
+<td>4706</td>
+<td><strong>1.94</strong></td>
+<td>2.19</td>
+<td>2.02</td>
+<td>-0.45% / -0.45% / -0.52%</td>
+</tr>
+<tr>
+<td>5d return &gt; +5%</td>
+<td>6969</td>
+<td><strong>1.88</strong></td>
+<td>1.83</td>
+<td>1.88</td>
+<td>-0.07% / -0.25% / +0.01%</td>
+</tr>
+<tr>
+<td>ATR% top 20% of year</td>
+<td>10901</td>
+<td><strong>1.81</strong></td>
+<td>2.01</td>
+<td>1.84</td>
+<td>-0.17% / -0.18% / -0.17%</td>
+</tr>
+<tr>
+<td>20d return &gt; +10%</td>
+<td>7690</td>
+<td><strong>1.61</strong></td>
+<td>1.48</td>
+<td>1.55</td>
+<td>-0.21% / -0.46% / -0.12%</td>
+</tr>
+<tr>
+<td>close &lt; SMA200</td>
+<td>18628</td>
+<td><strong>1.58</strong></td>
+<td>1.60</td>
+<td>1.52</td>
+<td>-0.16% / -0.26% / -0.17%</td>
+</tr>
+<tr>
+<td>volume &gt; 1.5x avg</td>
+<td>5435</td>
+<td><strong>1.58</strong></td>
+<td>1.71</td>
+<td>1.65</td>
+<td>-0.24% / -0.28% / -0.14%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 2</td>
+<td>3667</td>
+<td><strong>1.50</strong></td>
+<td>0.98</td>
+<td>1.20</td>
+<td>-0.07% / -0.35% / -0.17%</td>
+</tr>
+<tr>
+<td>VIX up &gt; 15% today</td>
+<td>1451</td>
+<td><strong>1.43</strong></td>
+<td>1.48</td>
+<td>1.45</td>
+<td>-0.48% / -0.02% / -0.17%</td>
+</tr>
+<tr>
+<td>close &lt; SMA20 - 1.5 ATR</td>
+<td>7892</td>
+<td><strong>1.39</strong></td>
+<td>1.51</td>
+<td>1.39</td>
+<td>-0.39% / -0.32% / -0.30%</td>
+</tr>
+<tr>
+<td>close &lt; lower BB</td>
+<td>2710</td>
+<td><strong>1.39</strong></td>
+<td>1.23</td>
+<td>1.42</td>
+<td>-0.54% / -0.46% / -0.28%</td>
+</tr>
+<tr>
+<td>Stoch %K &lt; 20</td>
+<td>8728</td>
+<td><strong>1.34</strong></td>
+<td>1.42</td>
+<td>1.24</td>
+<td>-0.34% / -0.36% / -0.32%</td>
+</tr>
+<tr>
+<td>BB width pct &gt; 80%</td>
+<td>11055</td>
+<td><strong>1.34</strong></td>
+<td>1.36</td>
+<td>1.27</td>
+<td>-0.21% / -0.24% / -0.19%</td>
+</tr>
+<tr>
+<td>within 10% of 52w low</td>
+<td>4978</td>
+<td><strong>1.29</strong></td>
+<td>1.60</td>
+<td>1.25</td>
+<td>-0.20% / -0.22% / -0.22%</td>
+</tr>
+<tr>
+<td>RSI2 &lt; 10</td>
+<td>6291</td>
+<td><strong>1.16</strong></td>
+<td>1.17</td>
+<td>1.10</td>
+<td>-0.41% / -0.42% / -0.31%</td>
+</tr>
+<tr>
+<td>ADX &gt; 25</td>
+<td>21535</td>
+<td><strong>1.16</strong></td>
+<td>1.17</td>
+<td>1.10</td>
+<td>-0.20% / -0.26% / -0.16%</td>
+</tr>
+<tr>
+<td>volume &lt; 0.7x avg</td>
+<td>10759</td>
+<td><strong>1.10</strong></td>
+<td>0.75</td>
+<td>0.91</td>
+<td>-0.11% / -0.27% / -0.11%</td>
+</tr>
+<tr>
+<td>MACD hist &lt; 0 &amp; rising</td>
+<td>12391</td>
+<td><strong>1.07</strong></td>
+<td>1.02</td>
+<td>1.03</td>
+<td>-0.09% / -0.21% / -0.16%</td>
+</tr>
+<tr>
+<td>close in bottom 20% of range</td>
+<td>11631</td>
+<td><strong>1.06</strong></td>
+<td>0.99</td>
+<td>1.02</td>
+<td>-0.37% / -0.41% / -0.31%</td>
+</tr>
+<tr>
+<td>close &gt; upper BB</td>
+<td>3571</td>
+<td><strong>1.05</strong></td>
+<td>0.85</td>
+<td>0.94</td>
+<td>+0.01% / -0.29% / -0.01%</td>
+</tr>
+<tr>
+<td>60d return &gt; SPY 60d</td>
+<td>27700</td>
+<td><strong>1.02</strong></td>
+<td>1.01</td>
+<td>0.96</td>
+<td>-0.17% / -0.24% / -0.14%</td>
+</tr>
+<tr>
+<td>MACD hist rising</td>
+<td>26964</td>
+<td><strong>1.01</strong></td>
+<td>0.98</td>
+<td>1.01</td>
+<td>-0.11% / -0.21% / -0.11%</td>
+</tr>
+<tr>
+<td>MACD bull cross (3d)</td>
+<td>6536</td>
+<td><strong>1.01</strong></td>
+<td>0.79</td>
+<td>1.00</td>
+<td>-0.16% / -0.26% / -0.11%</td>
+</tr>
+<tr>
+<td>close in top 20% of range</td>
+<td>13307</td>
+<td><strong>1.00</strong></td>
+<td>1.00</td>
+<td>1.10</td>
+<td>+0.04% / -0.13% / +0.00%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 5</td>
+<td>2134</td>
+<td><strong>0.98</strong></td>
+<td>1.42</td>
+<td>1.15</td>
+<td>-0.19% / -0.22% / -0.05%</td>
+</tr>
+<tr>
+<td>Monday</td>
+<td>10275</td>
+<td><strong>0.98</strong></td>
+<td>0.76</td>
+<td>0.90</td>
+<td>-0.19% / -0.31% / -0.21%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 3</td>
+<td>2776</td>
+<td><strong>0.98</strong></td>
+<td>1.23</td>
+<td>1.17</td>
+<td>-0.12% / -0.29% / -0.14%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 2/4/B</td>
+<td>8537</td>
+<td><strong>0.97</strong></td>
+<td>1.09</td>
+<td>0.96</td>
+<td>-0.19% / -0.18% / -0.18%</td>
+</tr>
+<tr>
+<td>NR7</td>
+<td>8440</td>
+<td><strong>0.96</strong></td>
+<td>0.91</td>
+<td>0.92</td>
+<td>-0.11% / -0.20% / -0.15%</td>
+</tr>
+<tr>
+<td>inside day</td>
+<td>6498</td>
+<td><strong>0.95</strong></td>
+<td>1.13</td>
+<td>0.93</td>
+<td>-0.17% / -0.21% / -0.18%</td>
+</tr>
+<tr>
+<td>MACD hist &gt; 0</td>
+<td>27652</td>
+<td><strong>0.95</strong></td>
+<td>0.93</td>
+<td>0.97</td>
+<td>-0.12% / -0.23% / -0.10%</td>
+</tr>
+<tr>
+<td>close crossed above SMA50 (3d)</td>
+<td>5614</td>
+<td><strong>0.93</strong></td>
+<td>1.17</td>
+<td>1.07</td>
+<td>-0.18% / -0.08% / -0.12%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 3</td>
+<td>3745</td>
+<td><strong>0.92</strong></td>
+<td>0.98</td>
+<td>0.89</td>
+<td>-0.10% / -0.16% / -0.03%</td>
+</tr>
+<tr>
+<td>OBV at 20-day high</td>
+<td>7504</td>
+<td><strong>0.89</strong></td>
+<td>0.84</td>
+<td>0.83</td>
+<td>-0.07% / -0.18% / -0.07%</td>
+</tr>
+<tr>
+<td>Friday</td>
+<td>10922</td>
+<td><strong>0.88</strong></td>
+<td>0.82</td>
+<td>0.91</td>
+<td>-0.17% / -0.32% / -0.14%</td>
+</tr>
+<tr>
+<td>RSI2 &gt; 90</td>
+<td>8402</td>
+<td><strong>0.86</strong></td>
+<td>0.78</td>
+<td>0.86</td>
+<td>-0.00% / -0.17% / -0.01%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 4</td>
+<td>2518</td>
+<td><strong>0.86</strong></td>
+<td>0.71</td>
+<td>0.85</td>
+<td>-0.02% / -0.20% / -0.11%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 5</td>
+<td>1950</td>
+<td><strong>0.83</strong></td>
+<td>0.94</td>
+<td>0.97</td>
+<td>+0.09% / -0.02% / -0.12%</td>
+</tr>
+<tr>
+<td>BB squeeze (width pct &lt; 20%)</td>
+<td>12764</td>
+<td><strong>0.83</strong></td>
+<td>0.69</td>
+<td>0.80</td>
+<td>-0.18% / -0.26% / -0.13%</td>
+</tr>
+<tr>
+<td>ADX &lt; 15</td>
+<td>8235</td>
+<td><strong>0.81</strong></td>
+<td>0.73</td>
+<td>0.92</td>
+<td>-0.09% / -0.24% / -0.10%</td>
+</tr>
+<tr>
+<td>close &gt; SMA20</td>
+<td>31034</td>
+<td><strong>0.80</strong></td>
+<td>0.81</td>
+<td>0.84</td>
+<td>-0.13% / -0.22% / -0.09%</td>
+</tr>
+<tr>
+<td>SMA50 rising</td>
+<td>33391</td>
+<td><strong>0.78</strong></td>
+<td>0.80</td>
+<td>0.79</td>
+<td>-0.16% / -0.21% / -0.12%</td>
+</tr>
+<tr>
+<td>RSI14 50-70</td>
+<td>28024</td>
+<td><strong>0.77</strong></td>
+<td>0.77</td>
+<td>0.83</td>
+<td>-0.14% / -0.20% / -0.11%</td>
+</tr>
+<tr>
+<td>close &gt; SMA50</td>
+<td>32549</td>
+<td><strong>0.77</strong></td>
+<td>0.78</td>
+<td>0.80</td>
+<td>-0.14% / -0.21% / -0.10%</td>
+</tr>
+<tr>
+<td>MACD line &gt; 0</td>
+<td>32674</td>
+<td><strong>0.76</strong></td>
+<td>0.76</td>
+<td>0.80</td>
+<td>-0.15% / -0.22% / -0.11%</td>
+</tr>
+<tr>
+<td>close &gt; 1.5 ATR above SMA20</td>
+<td>12751</td>
+<td><strong>0.75</strong></td>
+<td>0.75</td>
+<td>0.80</td>
+<td>-0.08% / -0.22% / -0.04%</td>
+</tr>
+<tr>
+<td>RSI14 &gt; 70</td>
+<td>3977</td>
+<td><strong>0.75</strong></td>
+<td>0.84</td>
+<td>0.70</td>
+<td>-0.09% / -0.23% / +0.01%</td>
+</tr>
+<tr>
+<td>SMA50 &gt; SMA200</td>
+<td>36029</td>
+<td><strong>0.74</strong></td>
+<td>0.86</td>
+<td>0.76</td>
+<td>-0.14% / -0.23% / -0.13%</td>
+</tr>
+<tr>
+<td>SMA200 rising</td>
+<td>37371</td>
+<td><strong>0.73</strong></td>
+<td>0.88</td>
+<td>0.75</td>
+<td>-0.15% / -0.21% / -0.13%</td>
+</tr>
+<tr>
+<td>EMA9 &gt; EMA20 &gt; EMA50</td>
+<td>27538</td>
+<td><strong>0.71</strong></td>
+<td>0.73</td>
+<td>0.73</td>
+<td>-0.13% / -0.21% / -0.10%</td>
+</tr>
+<tr>
+<td>Stoch %K &gt; 80</td>
+<td>15014</td>
+<td><strong>0.71</strong></td>
+<td>0.74</td>
+<td>0.79</td>
+<td>-0.07% / -0.17% / -0.04%</td>
+</tr>
+<tr>
+<td>close &gt; SMA200</td>
+<td>35935</td>
+<td><strong>0.70</strong></td>
+<td>0.80</td>
+<td>0.72</td>
+<td>-0.14% / -0.22% / -0.12%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave C</td>
+<td>1511</td>
+<td><strong>0.67</strong></td>
+<td>0.63</td>
+<td>0.84</td>
+<td>-0.09% / -0.18% / -0.09%</td>
+</tr>
+<tr>
+<td>SPY &gt; SMA200</td>
+<td>38415</td>
+<td><strong>0.64</strong></td>
+<td>0.75</td>
+<td>0.68</td>
+<td>-0.15% / -0.22% / -0.13%</td>
+</tr>
+<tr>
+<td>ATR% bottom 20% of year</td>
+<td>15986</td>
+<td><strong>0.52</strong></td>
+<td>0.47</td>
+<td>0.53</td>
+<td>-0.18% / -0.23% / -0.10%</td>
+</tr>
+<tr>
+<td>VIX &lt; 15</td>
+<td>15796</td>
+<td><strong>0.36</strong></td>
+<td>0.51</td>
+<td>0.34</td>
+<td>-0.11% / -0.24% / -0.10%</td>
+</tr>
+<tr>
+<td>within 3% of 52w high</td>
+<td>11704</td>
+<td><strong>0.29</strong></td>
+<td>0.37</td>
+<td>0.37</td>
+<td>-0.05% / -0.15% / -0.06%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Best combinations found on DISCOVERY (stable in both halves 1999–2007 / 2008–2015), then checked out of sample</strong> — 774 stable combos found</p>
+<table>
+<thead>
+<tr>
+<th>combination</th>
+<th>days DISC</th>
+<th>lift DISC</th>
+<th>lift VALID</th>
+<th>lift NEW</th>
+<th>P(event) VALID / NEW</th>
+<th>mean 2d return DISC / VALID / NEW</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BB width pct &gt; 80% + 5d return &gt; +5% + Elliott: up count, wave 2</td>
+<td>235</td>
+<td><strong>4.14</strong></td>
+<td>1.55</td>
+<td>2.20</td>
+<td>5.7% / 9.0%</td>
+<td>+1.22% / -0.29% / +0.14%</td>
+</tr>
+<tr>
+<td>ATR% top 20% of year + 20d return &lt; -10% + Elliott: up count, wave 2</td>
+<td>239</td>
+<td><strong>3.99</strong></td>
+<td>2.24</td>
+<td>4.04</td>
+<td>8.2% / 16.6%</td>
+<td>+0.19% / -0.81% / -0.29%</td>
+</tr>
+<tr>
+<td>5d return &gt; +5% + 20d return &lt; -10% + VIX &gt; 25</td>
+<td>298</td>
+<td><strong>3.90</strong></td>
+<td>5.44</td>
+<td>4.86</td>
+<td>20.0% / 19.9%</td>
+<td>-0.48% / +0.67% / +0.02%</td>
+</tr>
+<tr>
+<td>20d return &lt; -10% + VIX &gt; 25 + Elliott: up count, wave 2</td>
+<td>240</td>
+<td><strong>3.89</strong></td>
+<td>3.49</td>
+<td>4.32</td>
+<td>12.8% / 17.7%</td>
+<td>-0.18% / -1.30% / -0.24%</td>
+</tr>
+<tr>
+<td>ATR% top 20% of year + 5d return &lt; -5% + Elliott: up count, wave 2</td>
+<td>211</td>
+<td><strong>3.79</strong></td>
+<td>3.89</td>
+<td>3.12</td>
+<td>14.3% / 12.8%</td>
+<td>-0.31% / -0.47% / -0.49%</td>
+</tr>
+<tr>
+<td>5d return &gt; +5% + 20d return &gt; +10% + Elliott: up count, wave 2</td>
+<td>279</td>
+<td><strong>3.76</strong></td>
+<td>1.50</td>
+<td>2.24</td>
+<td>5.5% / 9.2%</td>
+<td>+0.83% / -0.34% / +0.03%</td>
+</tr>
+<tr>
+<td>close &lt; SMA200 + 20d return &lt; -10% + Elliott: up count, wave 2</td>
+<td>336</td>
+<td><strong>3.69</strong></td>
+<td>1.88</td>
+<td>3.55</td>
+<td>6.9% / 14.6%</td>
+<td>+0.07% / -0.86% / -0.18%</td>
+</tr>
+<tr>
+<td>20d return &lt; -10% + Elliott: up count, wave 2</td>
+<td>342</td>
+<td><strong>3.62</strong></td>
+<td>1.94</td>
+<td>3.51</td>
+<td>7.1% / 14.4%</td>
+<td>+0.06% / -0.76% / -0.18%</td>
+</tr>
+<tr>
+<td>BB width pct &gt; 80% + 5d return &gt; +5% + VIX &gt; 25</td>
+<td>623</td>
+<td><strong>3.61</strong></td>
+<td>4.49</td>
+<td>3.66</td>
+<td>16.5% / 15.0%</td>
+<td>+0.49% / +0.72% / +0.59%</td>
+</tr>
+<tr>
+<td>5d return &gt; +5% + VIX &gt; 25 + Elliott: up count, wave 2</td>
+<td>295</td>
+<td><strong>3.55</strong></td>
+<td>4.19</td>
+<td>3.81</td>
+<td>15.4% / 15.6%</td>
+<td>-0.02% / +0.26% / +0.62%</td>
+</tr>
+</tbody>
+</table>
+<h4 id="down-2atr-in-2-days">DOWN ≥ 2ATR in 2 days</h4>
+<p>Base rate: discovery 2.35 %, validation 2.88 %, new symbols 2.48 %. Share of these moves that came with an earnings-like gap (≥1.5 ATR on ≥2.5× volume): 17 %.</p>
+<p><strong>Single indicators — lift = P(event | indicator) / P(event)</strong> (sorted by discovery lift; indicators true on ≥ 1 % of days)</p>
+<table>
+<thead>
+<tr>
+<th>indicator</th>
+<th>days (disc.)</th>
+<th>lift DISC</th>
+<th>lift VALID</th>
+<th>lift NEW</th>
+<th>mean 2d return DISC / VALID / NEW</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VIX up &gt; 15% today</td>
+<td>1451</td>
+<td><strong>2.23</strong></td>
+<td>1.18</td>
+<td>1.73</td>
+<td>-0.48% / -0.02% / -0.17%</td>
+</tr>
+<tr>
+<td>volume &gt; 2x avg</td>
+<td>1850</td>
+<td><strong>2.10</strong></td>
+<td>1.81</td>
+<td>1.88</td>
+<td>-0.23% / -0.33% / -0.13%</td>
+</tr>
+<tr>
+<td>volume &gt; 1.5x avg</td>
+<td>5435</td>
+<td><strong>1.87</strong></td>
+<td>1.76</td>
+<td>1.85</td>
+<td>-0.24% / -0.28% / -0.14%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave C</td>
+<td>1511</td>
+<td><strong>1.49</strong></td>
+<td>1.05</td>
+<td>1.11</td>
+<td>-0.09% / -0.18% / -0.09%</td>
+</tr>
+<tr>
+<td>close &lt; lower BB</td>
+<td>2710</td>
+<td><strong>1.41</strong></td>
+<td>0.96</td>
+<td>1.34</td>
+<td>-0.54% / -0.46% / -0.28%</td>
+</tr>
+<tr>
+<td>within 3% of 52w high</td>
+<td>11704</td>
+<td><strong>1.39</strong></td>
+<td>1.12</td>
+<td>1.10</td>
+<td>-0.05% / -0.15% / -0.06%</td>
+</tr>
+<tr>
+<td>SPY 5d return &lt; -3%</td>
+<td>4706</td>
+<td><strong>1.22</strong></td>
+<td>1.33</td>
+<td>1.32</td>
+<td>-0.45% / -0.45% / -0.52%</td>
+</tr>
+<tr>
+<td>MACD hist &lt; 0 &amp; rising</td>
+<td>12391</td>
+<td><strong>1.21</strong></td>
+<td>1.09</td>
+<td>1.05</td>
+<td>-0.09% / -0.21% / -0.16%</td>
+</tr>
+<tr>
+<td>RSI14 &lt; 30</td>
+<td>1428</td>
+<td><strong>1.19</strong></td>
+<td>1.25</td>
+<td>1.18</td>
+<td>-0.81% / -0.57% / -0.60%</td>
+</tr>
+<tr>
+<td>BB squeeze (width pct &lt; 20%)</td>
+<td>12764</td>
+<td><strong>1.18</strong></td>
+<td>1.03</td>
+<td>1.15</td>
+<td>-0.18% / -0.26% / -0.13%</td>
+</tr>
+<tr>
+<td>RSI14 &gt; 70</td>
+<td>3977</td>
+<td><strong>1.15</strong></td>
+<td>1.27</td>
+<td>1.07</td>
+<td>-0.09% / -0.23% / +0.01%</td>
+</tr>
+<tr>
+<td>60d return &gt; SPY 60d</td>
+<td>27700</td>
+<td><strong>1.13</strong></td>
+<td>1.05</td>
+<td>1.04</td>
+<td>-0.17% / -0.24% / -0.14%</td>
+</tr>
+<tr>
+<td>SMA50 rising</td>
+<td>33391</td>
+<td><strong>1.12</strong></td>
+<td>1.08</td>
+<td>1.06</td>
+<td>-0.16% / -0.21% / -0.12%</td>
+</tr>
+<tr>
+<td>SMA50 &gt; SMA200</td>
+<td>36029</td>
+<td><strong>1.12</strong></td>
+<td>1.05</td>
+<td>1.07</td>
+<td>-0.14% / -0.23% / -0.13%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 3</td>
+<td>3745</td>
+<td><strong>1.11</strong></td>
+<td>1.03</td>
+<td>1.09</td>
+<td>-0.10% / -0.16% / -0.03%</td>
+</tr>
+<tr>
+<td>SMA200 rising</td>
+<td>37371</td>
+<td><strong>1.11</strong></td>
+<td>1.04</td>
+<td>1.07</td>
+<td>-0.15% / -0.21% / -0.13%</td>
+</tr>
+<tr>
+<td>close &gt; upper BB</td>
+<td>3571</td>
+<td><strong>1.11</strong></td>
+<td>0.89</td>
+<td>1.08</td>
+<td>+0.01% / -0.29% / -0.01%</td>
+</tr>
+<tr>
+<td>EMA9 &gt; EMA20 &gt; EMA50</td>
+<td>27538</td>
+<td><strong>1.10</strong></td>
+<td>1.07</td>
+<td>1.05</td>
+<td>-0.13% / -0.21% / -0.10%</td>
+</tr>
+<tr>
+<td>close &gt; SMA200</td>
+<td>35935</td>
+<td><strong>1.09</strong></td>
+<td>1.03</td>
+<td>1.06</td>
+<td>-0.14% / -0.22% / -0.12%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 4</td>
+<td>2518</td>
+<td><strong>1.08</strong></td>
+<td>0.85</td>
+<td>0.96</td>
+<td>-0.02% / -0.20% / -0.11%</td>
+</tr>
+<tr>
+<td>close in top 20% of range</td>
+<td>13307</td>
+<td><strong>1.08</strong></td>
+<td>1.10</td>
+<td>1.07</td>
+<td>+0.04% / -0.13% / +0.00%</td>
+</tr>
+<tr>
+<td>VIX &lt; 15</td>
+<td>15796</td>
+<td><strong>1.07</strong></td>
+<td>0.95</td>
+<td>0.96</td>
+<td>-0.11% / -0.24% / -0.10%</td>
+</tr>
+<tr>
+<td>close &gt; SMA50</td>
+<td>32549</td>
+<td><strong>1.05</strong></td>
+<td>1.03</td>
+<td>1.03</td>
+<td>-0.14% / -0.21% / -0.10%</td>
+</tr>
+<tr>
+<td>MACD line &gt; 0</td>
+<td>32674</td>
+<td><strong>1.05</strong></td>
+<td>1.03</td>
+<td>1.03</td>
+<td>-0.15% / -0.22% / -0.11%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 5</td>
+<td>1950</td>
+<td><strong>1.05</strong></td>
+<td>1.09</td>
+<td>0.99</td>
+<td>+0.09% / -0.02% / -0.12%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 2/4/B</td>
+<td>8537</td>
+<td><strong>1.05</strong></td>
+<td>0.97</td>
+<td>0.99</td>
+<td>-0.19% / -0.18% / -0.18%</td>
+</tr>
+<tr>
+<td>ATR% bottom 20% of year</td>
+<td>15986</td>
+<td><strong>1.05</strong></td>
+<td>1.03</td>
+<td>1.11</td>
+<td>-0.18% / -0.23% / -0.10%</td>
+</tr>
+<tr>
+<td>MACD hist rising</td>
+<td>26964</td>
+<td><strong>1.04</strong></td>
+<td>0.96</td>
+<td>0.96</td>
+<td>-0.11% / -0.21% / -0.11%</td>
+</tr>
+<tr>
+<td>ATR% top 20% of year</td>
+<td>10901</td>
+<td><strong>1.04</strong></td>
+<td>1.04</td>
+<td>0.96</td>
+<td>-0.17% / -0.18% / -0.17%</td>
+</tr>
+<tr>
+<td>SPY &gt; SMA200</td>
+<td>38415</td>
+<td><strong>1.03</strong></td>
+<td>0.96</td>
+<td>1.00</td>
+<td>-0.15% / -0.22% / -0.13%</td>
+</tr>
+<tr>
+<td>RSI14 50-70</td>
+<td>28024</td>
+<td><strong>1.02</strong></td>
+<td>0.93</td>
+<td>0.98</td>
+<td>-0.14% / -0.20% / -0.11%</td>
+</tr>
+<tr>
+<td>OBV at 20-day high</td>
+<td>7504</td>
+<td><strong>1.01</strong></td>
+<td>1.04</td>
+<td>1.00</td>
+<td>-0.07% / -0.18% / -0.07%</td>
+</tr>
+<tr>
+<td>MACD bull cross (3d)</td>
+<td>6536</td>
+<td><strong>1.00</strong></td>
+<td>0.62</td>
+<td>0.94</td>
+<td>-0.16% / -0.26% / -0.11%</td>
+</tr>
+<tr>
+<td>Stoch %K &gt; 80</td>
+<td>15014</td>
+<td><strong>1.00</strong></td>
+<td>0.96</td>
+<td>0.95</td>
+<td>-0.07% / -0.17% / -0.04%</td>
+</tr>
+<tr>
+<td>inside day</td>
+<td>6498</td>
+<td><strong>0.99</strong></td>
+<td>1.01</td>
+<td>0.92</td>
+<td>-0.17% / -0.21% / -0.18%</td>
+</tr>
+<tr>
+<td>close &gt; SMA20</td>
+<td>31034</td>
+<td><strong>0.98</strong></td>
+<td>0.95</td>
+<td>0.97</td>
+<td>-0.13% / -0.22% / -0.09%</td>
+</tr>
+<tr>
+<td>close crossed above SMA50 (3d)</td>
+<td>5614</td>
+<td><strong>0.97</strong></td>
+<td>1.03</td>
+<td>1.03</td>
+<td>-0.18% / -0.08% / -0.12%</td>
+</tr>
+<tr>
+<td>close &lt; SMA20 - 1.5 ATR</td>
+<td>7892</td>
+<td><strong>0.96</strong></td>
+<td>1.11</td>
+<td>1.09</td>
+<td>-0.39% / -0.32% / -0.30%</td>
+</tr>
+<tr>
+<td>ADX &gt; 25</td>
+<td>21535</td>
+<td><strong>0.96</strong></td>
+<td>1.13</td>
+<td>1.00</td>
+<td>-0.20% / -0.26% / -0.16%</td>
+</tr>
+<tr>
+<td>ADX &lt; 15</td>
+<td>8235</td>
+<td><strong>0.94</strong></td>
+<td>0.97</td>
+<td>1.01</td>
+<td>-0.09% / -0.24% / -0.10%</td>
+</tr>
+<tr>
+<td>RSI2 &gt; 90</td>
+<td>8402</td>
+<td><strong>0.94</strong></td>
+<td>0.86</td>
+<td>0.94</td>
+<td>-0.00% / -0.17% / -0.01%</td>
+</tr>
+<tr>
+<td>5d return &gt; +5%</td>
+<td>6969</td>
+<td><strong>0.94</strong></td>
+<td>0.76</td>
+<td>0.85</td>
+<td>-0.07% / -0.25% / +0.01%</td>
+</tr>
+<tr>
+<td>within 10% of 52w low</td>
+<td>4978</td>
+<td><strong>0.93</strong></td>
+<td>0.97</td>
+<td>1.01</td>
+<td>-0.20% / -0.22% / -0.22%</td>
+</tr>
+<tr>
+<td>close &gt; 1.5 ATR above SMA20</td>
+<td>12751</td>
+<td><strong>0.92</strong></td>
+<td>0.95</td>
+<td>0.92</td>
+<td>-0.08% / -0.22% / -0.04%</td>
+</tr>
+<tr>
+<td>RSI2 &lt; 10</td>
+<td>6291</td>
+<td><strong>0.92</strong></td>
+<td>1.10</td>
+<td>1.06</td>
+<td>-0.41% / -0.42% / -0.31%</td>
+</tr>
+<tr>
+<td>20d return &gt; +10%</td>
+<td>7690</td>
+<td><strong>0.91</strong></td>
+<td>0.86</td>
+<td>0.83</td>
+<td>-0.21% / -0.46% / -0.12%</td>
+</tr>
+<tr>
+<td>close in bottom 20% of range</td>
+<td>11631</td>
+<td><strong>0.89</strong></td>
+<td>0.98</td>
+<td>0.99</td>
+<td>-0.37% / -0.41% / -0.31%</td>
+</tr>
+<tr>
+<td>MACD hist &gt; 0</td>
+<td>27652</td>
+<td><strong>0.88</strong></td>
+<td>0.87</td>
+<td>0.91</td>
+<td>-0.12% / -0.23% / -0.10%</td>
+</tr>
+<tr>
+<td>20d return &lt; -10%</td>
+<td>5499</td>
+<td><strong>0.88</strong></td>
+<td>0.77</td>
+<td>0.87</td>
+<td>-0.36% / -0.48% / -0.41%</td>
+</tr>
+<tr>
+<td>Stoch %K &lt; 20</td>
+<td>8728</td>
+<td><strong>0.87</strong></td>
+<td>1.01</td>
+<td>1.00</td>
+<td>-0.34% / -0.36% / -0.32%</td>
+</tr>
+<tr>
+<td>BB width pct &gt; 80%</td>
+<td>11055</td>
+<td><strong>0.86</strong></td>
+<td>1.06</td>
+<td>0.81</td>
+<td>-0.21% / -0.24% / -0.19%</td>
+</tr>
+<tr>
+<td>VIX &gt; 25</td>
+<td>12088</td>
+<td><strong>0.85</strong></td>
+<td>1.09</td>
+<td>0.95</td>
+<td>-0.30% / -0.36% / -0.31%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 3</td>
+<td>2776</td>
+<td><strong>0.84</strong></td>
+<td>0.92</td>
+<td>0.91</td>
+<td>-0.12% / -0.29% / -0.14%</td>
+</tr>
+<tr>
+<td>Monday</td>
+<td>10275</td>
+<td><strong>0.84</strong></td>
+<td>0.75</td>
+<td>0.84</td>
+<td>-0.19% / -0.31% / -0.21%</td>
+</tr>
+<tr>
+<td>Elliott: down count, wave 5</td>
+<td>2134</td>
+<td><strong>0.84</strong></td>
+<td>0.78</td>
+<td>0.99</td>
+<td>-0.19% / -0.22% / -0.05%</td>
+</tr>
+<tr>
+<td>close &lt; SMA200</td>
+<td>18628</td>
+<td><strong>0.82</strong></td>
+<td>0.92</td>
+<td>0.89</td>
+<td>-0.16% / -0.26% / -0.17%</td>
+</tr>
+<tr>
+<td>5d return &lt; -5%</td>
+<td>5906</td>
+<td><strong>0.79</strong></td>
+<td>0.99</td>
+<td>0.91</td>
+<td>-0.38% / -0.50% / -0.50%</td>
+</tr>
+<tr>
+<td>NR7</td>
+<td>8440</td>
+<td><strong>0.79</strong></td>
+<td>0.85</td>
+<td>0.74</td>
+<td>-0.11% / -0.20% / -0.15%</td>
+</tr>
+<tr>
+<td>volume &lt; 0.7x avg</td>
+<td>10759</td>
+<td><strong>0.72</strong></td>
+<td>0.53</td>
+<td>0.62</td>
+<td>-0.11% / -0.27% / -0.11%</td>
+</tr>
+<tr>
+<td>Friday</td>
+<td>10922</td>
+<td><strong>0.71</strong></td>
+<td>0.66</td>
+<td>0.81</td>
+<td>-0.17% / -0.32% / -0.14%</td>
+</tr>
+<tr>
+<td>Elliott: up count, wave 2</td>
+<td>3667</td>
+<td><strong>0.65</strong></td>
+<td>0.69</td>
+<td>0.79</td>
+<td>-0.07% / -0.35% / -0.17%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Best combinations found on DISCOVERY (stable in both halves 1999–2007 / 2008–2015), then checked out of sample</strong> — 218 stable combos found</p>
+<table>
+<thead>
+<tr>
+<th>combination</th>
+<th>days DISC</th>
+<th>lift DISC</th>
+<th>lift VALID</th>
+<th>lift NEW</th>
+<th>P(event) VALID / NEW</th>
+<th>mean 2d return DISC / VALID / NEW</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SMA200 rising + close &lt; lower BB + VIX up &gt; 15% today</td>
+<td>273</td>
+<td><strong>4.52</strong></td>
+<td>0.70</td>
+<td>2.17</td>
+<td>2.0% / 5.4%</td>
+<td>-0.28% / -0.74% / -0.50%</td>
+</tr>
+<tr>
+<td>SMA200 rising + volume &gt; 1.5x avg + VIX up &gt; 15% today</td>
+<td>306</td>
+<td><strong>3.90</strong></td>
+<td>1.84</td>
+<td>3.31</td>
+<td>5.3% / 8.2%</td>
+<td>-0.33% / -0.18% / -0.31%</td>
+</tr>
+<tr>
+<td>SMA50 &gt; SMA200 + volume &gt; 1.5x avg + VIX up &gt; 15% today</td>
+<td>296</td>
+<td><strong>3.89</strong></td>
+<td>1.98</td>
+<td>3.24</td>
+<td>5.7% / 8.0%</td>
+<td>-0.30% / -0.18% / -0.31%</td>
+</tr>
+<tr>
+<td>BB squeeze (width pct &lt; 20%) + volume &gt; 2x avg + 60d return &gt; SPY 60d</td>
+<td>201</td>
+<td><strong>3.81</strong></td>
+<td>1.83</td>
+<td>3.15</td>
+<td>5.3% / 7.8%</td>
+<td>+0.52% / -0.76% / +0.03%</td>
+</tr>
+<tr>
+<td>MACD hist &lt; 0 &amp; rising + SMA50 rising + volume &gt; 1.5x avg</td>
+<td>461</td>
+<td><strong>3.70</strong></td>
+<td>2.69</td>
+<td>2.13</td>
+<td>7.7% / 5.3%</td>
+<td>+0.09% / -0.08% / -0.36%</td>
+</tr>
+<tr>
+<td>MACD hist &lt; 0 &amp; rising + volume &gt; 1.5x avg + 60d return &gt; SPY 60d</td>
+<td>409</td>
+<td><strong>3.64</strong></td>
+<td>2.87</td>
+<td>2.02</td>
+<td>8.3% / 5.0%</td>
+<td>+0.24% / +0.13% / -0.29%</td>
+</tr>
+<tr>
+<td>SMA200 rising + 60d return &gt; SPY 60d + VIX up &gt; 15% today</td>
+<td>571</td>
+<td><strong>3.58</strong></td>
+<td>1.40</td>
+<td>1.99</td>
+<td>4.0% / 4.9%</td>
+<td>-0.06% / -0.13% / -0.22%</td>
+</tr>
+<tr>
+<td>SMA50 rising + BB squeeze (width pct &lt; 20%) + volume &gt; 2x avg</td>
+<td>251</td>
+<td><strong>3.56</strong></td>
+<td>2.26</td>
+<td>2.87</td>
+<td>6.5% / 7.1%</td>
+<td>+0.32% / -0.43% / +0.15%</td>
+</tr>
+<tr>
+<td>SMA50 &gt; SMA200 + BB squeeze (width pct &lt; 20%) + volume &gt; 2x avg</td>
+<td>240</td>
+<td><strong>3.55</strong></td>
+<td>1.95</td>
+<td>2.47</td>
+<td>5.6% / 6.1%</td>
+<td>+0.41% / -0.77% / -0.06%</td>
+</tr>
+<tr>
+<td>SMA50 rising + volume &gt; 1.5x avg + Elliott: down count, wave 3</td>
+<td>243</td>
+<td><strong>3.51</strong></td>
+<td>1.97</td>
+<td>2.00</td>
+<td>5.7% / 5.0%</td>
+<td>-0.43% / -0.52% / +0.13%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="r10topcombo_symmetrymd">r10/TOPCOMBO_SYMMETRY.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>set</th>
+<th>days</th>
+<th>P(up ≥5%)</th>
+<th>P(down ≥5%)</th>
+<th>base up / down</th>
+<th>mean 2d</th>
+<th>median 2d</th>
+<th>P(2d &gt; 0)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DISC</td>
+<td>781</td>
+<td>28.9%</td>
+<td>15.0%</td>
+<td>6.0% / 5.2%</td>
+<td>+1.53%</td>
+<td>+1.52%</td>
+<td>59%</td>
+</tr>
+<tr>
+<td>VALID</td>
+<td>536</td>
+<td>21.8%</td>
+<td>11.0%</td>
+<td>4.6% / 3.7%</td>
+<td>+1.02%</td>
+<td>+1.13%</td>
+<td>60%</td>
+</tr>
+<tr>
+<td>NEW</td>
+<td>2418</td>
+<td>24.4%</td>
+<td>13.0%</td>
+<td>4.6% / 4.1%</td>
+<td>+1.38%</td>
+<td>+1.27%</td>
+<td>60%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="r10model_historymd">r10/MODEL_HISTORY.md</h2>
+<div class="raw">
+<p>Trades: 2935; distinct selloff episodes: 129.</p>
+<table>
+<thead>
+<tr>
+<th>group</th>
+<th>trades</th>
+<th>stock mean</th>
+<th>stock win</th>
+<th>call (model) mean</th>
+<th>call win</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all</td>
+<td>2935</td>
+<td>+1.14%</td>
+<td>59%</td>
+<td>+13.6%</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>original 15</td>
+<td>1025</td>
+<td>+1.12%</td>
+<td>58%</td>
+<td>+12.5%</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>new 30</td>
+<td>1910</td>
+<td>+1.15%</td>
+<td>60%</td>
+<td>+14.1%</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>year 1999</td>
+<td>21</td>
+<td>+1.02%</td>
+<td>52%</td>
+<td>+0.5%</td>
+<td>38%</td>
+</tr>
+<tr>
+<td>year 2000</td>
+<td>92</td>
+<td>+1.40%</td>
+<td>57%</td>
+<td>+18.1%</td>
+<td>51%</td>
+</tr>
+<tr>
+<td>year 2001</td>
+<td>190</td>
+<td>+0.19%</td>
+<td>52%</td>
+<td>-1.7%</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>year 2002</td>
+<td>243</td>
+<td>+0.82%</td>
+<td>61%</td>
+<td>+7.1%</td>
+<td>54%</td>
+</tr>
+<tr>
+<td>year 2003</td>
+<td>8</td>
+<td>+1.10%</td>
+<td>50%</td>
+<td>-0.9%</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>year 2004</td>
+<td>10</td>
+<td>+1.72%</td>
+<td>70%</td>
+<td>+11.5%</td>
+<td>30%</td>
+</tr>
+<tr>
+<td>year 2005</td>
+<td>5</td>
+<td>+2.09%</td>
+<td>80%</td>
+<td>+44.6%</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>year 2006</td>
+<td>16</td>
+<td>+2.41%</td>
+<td>75%</td>
+<td>+50.0%</td>
+<td>56%</td>
+</tr>
+<tr>
+<td>year 2007</td>
+<td>53</td>
+<td>+1.69%</td>
+<td>58%</td>
+<td>+29.7%</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>year 2008</td>
+<td>514</td>
+<td>+1.71%</td>
+<td>55%</td>
+<td>+21.8%</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>year 2009</td>
+<td>100</td>
+<td>+2.65%</td>
+<td>63%</td>
+<td>+28.3%</td>
+<td>49%</td>
+</tr>
+<tr>
+<td>year 2010</td>
+<td>134</td>
+<td>+0.73%</td>
+<td>59%</td>
+<td>+0.8%</td>
+<td>39%</td>
+</tr>
+<tr>
+<td>year 2011</td>
+<td>184</td>
+<td>+1.32%</td>
+<td>67%</td>
+<td>+23.5%</td>
+<td>57%</td>
+</tr>
+<tr>
+<td>year 2012</td>
+<td>27</td>
+<td>+1.12%</td>
+<td>70%</td>
+<td>+25.7%</td>
+<td>56%</td>
+</tr>
+<tr>
+<td>year 2013</td>
+<td>3</td>
+<td>+1.14%</td>
+<td>67%</td>
+<td>-9.1%</td>
+<td>33%</td>
+</tr>
+<tr>
+<td>year 2014</td>
+<td>21</td>
+<td>+1.09%</td>
+<td>62%</td>
+<td>+9.8%</td>
+<td>48%</td>
+</tr>
+<tr>
+<td>year 2015</td>
+<td>53</td>
+<td>+2.77%</td>
+<td>89%</td>
+<td>+43.9%</td>
+<td>68%</td>
+</tr>
+<tr>
+<td>year 2016</td>
+<td>49</td>
+<td>+1.71%</td>
+<td>69%</td>
+<td>+16.0%</td>
+<td>55%</td>
+</tr>
+<tr>
+<td>year 2018</td>
+<td>158</td>
+<td>+0.77%</td>
+<td>63%</td>
+<td>+15.6%</td>
+<td>47%</td>
+</tr>
+<tr>
+<td>year 2019</td>
+<td>21</td>
+<td>+2.25%</td>
+<td>81%</td>
+<td>+27.6%</td>
+<td>71%</td>
+</tr>
+<tr>
+<td>year 2020</td>
+<td>502</td>
+<td>+0.30%</td>
+<td>54%</td>
+<td>+6.6%</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>year 2021</td>
+<td>16</td>
+<td>+0.89%</td>
+<td>62%</td>
+<td>+20.9%</td>
+<td>62%</td>
+</tr>
+<tr>
+<td>year 2022</td>
+<td>277</td>
+<td>+0.97%</td>
+<td>57%</td>
+<td>+3.9%</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>year 2023</td>
+<td>9</td>
+<td>-0.99%</td>
+<td>33%</td>
+<td>-39.8%</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>year 2024</td>
+<td>43</td>
+<td>+1.25%</td>
+<td>67%</td>
+<td>+10.6%</td>
+<td>51%</td>
+</tr>
+<tr>
+<td>year 2025</td>
+<td>183</td>
+<td>+1.92%</td>
+<td>62%</td>
+<td>+16.8%</td>
+<td>52%</td>
+</tr>
+<tr>
+<td>year 2026</td>
+<td>3</td>
+<td>+6.48%</td>
+<td>100%</td>
+<td>+206.2%</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<h4 id="by-episode-equal-weight-per-episode">By episode (equal weight per episode)</h4>
+<p>Episodes with positive mean stock return: 73% ; with positive mean call return: 56% ; mean of episode means: stock +1.61%, call +14.4%; t over episodes (stock) 6.81, (call) 3.42</p>
+<table>
+<thead>
+<tr>
+<th>episode start</th>
+<th>trades</th>
+<th>stock mean</th>
+<th>call mean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1999-07-22</td>
+<td>10</td>
+<td>-1.19%</td>
+<td>-37.4%</td>
+</tr>
+<tr>
+<td>1999-08-31</td>
+<td>2</td>
+<td>+0.76%</td>
+<td>+10.3%</td>
+</tr>
+<tr>
+<td>1999-09-23</td>
+<td>5</td>
+<td>+1.45%</td>
+<td>+8.7%</td>
+</tr>
+<tr>
+<td>1999-10-13</td>
+<td>4</td>
+<td>+6.14%</td>
+<td>+79.9%</td>
+</tr>
+<tr>
+<td>2000-01-05</td>
+<td>2</td>
+<td>+5.91%</td>
+<td>+58.5%</td>
+</tr>
+<tr>
+<td>2000-01-26</td>
+<td>3</td>
+<td>+2.51%</td>
+<td>+51.2%</td>
+</tr>
+<tr>
+<td>2000-02-22</td>
+<td>20</td>
+<td>+0.23%</td>
+<td>+0.7%</td>
+</tr>
+<tr>
+<td>2000-04-13</td>
+<td>11</td>
+<td>+3.68%</td>
+<td>+33.6%</td>
+</tr>
+<tr>
+<td>2000-05-03</td>
+<td>5</td>
+<td>-1.03%</td>
+<td>-33.1%</td>
+</tr>
+<tr>
+<td>2000-05-22</td>
+<td>7</td>
+<td>-3.29%</td>
+<td>-15.0%</td>
+</tr>
+<tr>
+<td>2000-09-18</td>
+<td>5</td>
+<td>-1.90%</td>
+<td>+87.2%</td>
+</tr>
+<tr>
+<td>2000-10-10</td>
+<td>12</td>
+<td>+3.13%</td>
+<td>+44.6%</td>
+</tr>
+<tr>
+<td>2000-11-10</td>
+<td>9</td>
+<td>+4.32%</td>
+<td>+16.8%</td>
+</tr>
+<tr>
+<td>2000-12-18</td>
+<td>18</td>
+<td>+1.44%</td>
+<td>+8.7%</td>
+</tr>
+<tr>
+<td>2001-01-05</td>
+<td>6</td>
+<td>+4.61%</td>
+<td>-7.3%</td>
+</tr>
+<tr>
+<td>2001-02-08</td>
+<td>1</td>
+<td>+5.39%</td>
+<td>+7.1%</td>
+</tr>
+<tr>
+<td>2001-02-20</td>
+<td>14</td>
+<td>-0.55%</td>
+<td>-14.5%</td>
+</tr>
+<tr>
+<td>2001-03-12</td>
+<td>45</td>
+<td>+0.54%</td>
+<td>-6.4%</td>
+</tr>
+<tr>
+<td>2001-04-03</td>
+<td>5</td>
+<td>+4.81%</td>
+<td>+76.8%</td>
+</tr>
+<tr>
+<td>2001-05-29</td>
+<td>1</td>
+<td>+6.88%</td>
+<td>+121.6%</td>
+</tr>
+<tr>
+<td>2001-07-10</td>
+<td>4</td>
+<td>-0.46%</td>
+<td>-9.5%</td>
+</tr>
+<tr>
+<td>2001-07-24</td>
+<td>2</td>
+<td>+2.11%</td>
+<td>-4.1%</td>
+</tr>
+<tr>
+<td>2001-08-09</td>
+<td>2</td>
+<td>-1.52%</td>
+<td>-43.5%</td>
+</tr>
+<tr>
+<td>2001-08-31</td>
+<td>109</td>
+<td>-0.40%</td>
+<td>-1.0%</td>
+</tr>
+<tr>
+<td>2001-12-13</td>
+<td>1</td>
+<td>-1.33%</td>
+<td>-48.0%</td>
+</tr>
+<tr>
+<td>2002-02-04</td>
+<td>2</td>
+<td>+1.11%</td>
+<td>-0.5%</td>
+</tr>
+<tr>
+<td>2002-02-21</td>
+<td>2</td>
+<td>+5.01%</td>
+<td>+35.8%</td>
+</tr>
+<tr>
+<td>2002-04-26</td>
+<td>5</td>
+<td>+4.41%</td>
+<td>+57.6%</td>
+</tr>
+<tr>
+<td>2002-06-03</td>
+<td>5</td>
+<td>-0.64%</td>
+<td>-17.4%</td>
+</tr>
+<tr>
+<td>2002-06-24</td>
+<td>21</td>
+<td>-0.43%</td>
+<td>-6.7%</td>
+</tr>
+<tr>
+<td>2002-07-10</td>
+<td>118</td>
+<td>+0.38%</td>
+<td>+4.6%</td>
+</tr>
+<tr>
+<td>2002-08-05</td>
+<td>32</td>
+<td>+4.72%</td>
+<td>+47.9%</td>
+</tr>
+<tr>
+<td>2002-08-28</td>
+<td>2</td>
+<td>+3.03%</td>
+<td>+35.9%</td>
+</tr>
+<tr>
+<td>2002-09-17</td>
+<td>55</td>
+<td>-0.38%</td>
+<td>-8.8%</td>
+</tr>
+<tr>
+<td>2002-12-05</td>
+<td>1</td>
+<td>-2.85%</td>
+<td>-55.6%</td>
+</tr>
+<tr>
+<td>2003-01-30</td>
+<td>5</td>
+<td>+1.49%</td>
+<td>+16.3%</td>
+</tr>
+<tr>
+<td>2003-03-10</td>
+<td>1</td>
+<td>-1.45%</td>
+<td>-70.1%</td>
+</tr>
+<tr>
+<td>2003-06-25</td>
+<td>1</td>
+<td>+4.19%</td>
+<td>+36.3%</td>
+</tr>
+<tr>
+<td>2003-09-26</td>
+<td>1</td>
+<td>-1.40%</td>
+<td>-55.2%</td>
+</tr>
+<tr>
+<td>2004-03-11</td>
+<td>4</td>
+<td>-0.63%</td>
+<td>-29.3%</td>
+</tr>
+<tr>
+<td>2004-08-06</td>
+<td>6</td>
+<td>+3.29%</td>
+<td>+38.8%</td>
+</tr>
+<tr>
+<td>2005-04-15</td>
+<td>4</td>
+<td>+2.64%</td>
+<td>+63.6%</td>
+</tr>
+<tr>
+<td>2005-10-10</td>
+<td>1</td>
+<td>-0.08%</td>
+<td>-31.6%</td>
+</tr>
+<tr>
+<td>2006-05-17</td>
+<td>12</td>
+<td>+0.61%</td>
+<td>+0.7%</td>
+</tr>
+<tr>
+<td>2006-06-13</td>
+<td>4</td>
+<td>+7.83%</td>
+<td>+197.7%</td>
+</tr>
+<tr>
+<td>2007-03-05</td>
+<td>1</td>
+<td>+2.94%</td>
+<td>+52.3%</td>
+</tr>
+<tr>
+<td>2007-06-26</td>
+<td>1</td>
+<td>+1.69%</td>
+<td>+3.9%</td>
+</tr>
+<tr>
+<td>2007-07-26</td>
+<td>7</td>
+<td>-0.83%</td>
+<td>-26.4%</td>
+</tr>
+<tr>
+<td>2007-08-14</td>
+<td>12</td>
+<td>+0.05%</td>
+<td>+10.9%</td>
+</tr>
+<tr>
+<td>2007-10-19</td>
+<td>1</td>
+<td>+0.19%</td>
+<td>-27.0%</td>
+</tr>
+<tr>
+<td>2007-11-07</td>
+<td>30</td>
+<td>+2.98%</td>
+<td>+53.8%</td>
+</tr>
+<tr>
+<td>2007-12-17</td>
+<td>1</td>
+<td>+0.38%</td>
+<td>-15.5%</td>
+</tr>
+<tr>
+<td>2008-01-03</td>
+<td>77</td>
+<td>+0.96%</td>
+<td>+11.6%</td>
+</tr>
+<tr>
+<td>2008-02-08</td>
+<td>9</td>
+<td>+1.31%</td>
+<td>+2.2%</td>
+</tr>
+<tr>
+<td>2008-03-05</td>
+<td>13</td>
+<td>+0.23%</td>
+<td>+36.3%</td>
+</tr>
+<tr>
+<td>2008-05-23</td>
+<td>1</td>
+<td>+2.27%</td>
+<td>-8.5%</td>
+</tr>
+<tr>
+<td>2008-06-12</td>
+<td>4</td>
+<td>+2.38%</td>
+<td>+22.9%</td>
+</tr>
+<tr>
+<td>2008-06-23</td>
+<td>18</td>
+<td>-2.77%</td>
+<td>-23.3%</td>
+</tr>
+<tr>
+<td>2008-07-15</td>
+<td>16</td>
+<td>+11.13%</td>
+<td>+222.2%</td>
+</tr>
+<tr>
+<td>2008-09-04</td>
+<td>31</td>
+<td>+4.60%</td>
+<td>+75.8%</td>
+</tr>
+<tr>
+<td>2008-09-29</td>
+<td>338</td>
+<td>+1.27%</td>
+<td>+12.0%</td>
+</tr>
+<tr>
+<td>2008-12-04</td>
+<td>5</td>
+<td>+11.57%</td>
+<td>+27.2%</td>
+</tr>
+<tr>
+<td>2008-12-15</td>
+<td>2</td>
+<td>+8.55%</td>
+<td>+19.3%</td>
+</tr>
+<tr>
+<td>2009-01-16</td>
+<td>8</td>
+<td>+1.49%</td>
+<td>+43.0%</td>
+</tr>
+<tr>
+<td>2009-02-04</td>
+<td>88</td>
+<td>+2.78%</td>
+<td>+28.0%</td>
+</tr>
+<tr>
+<td>2009-05-15</td>
+<td>1</td>
+<td>+8.10%</td>
+<td>+54.0%</td>
+</tr>
+<tr>
+<td>2009-07-07</td>
+<td>2</td>
+<td>+0.78%</td>
+<td>-6.4%</td>
+</tr>
+<tr>
+<td>2009-10-28</td>
+<td>1</td>
+<td>-0.59%</td>
+<td>-17.8%</td>
+</tr>
+<tr>
+<td>2010-01-25</td>
+<td>2</td>
+<td>-0.53%</td>
+<td>-29.1%</td>
+</tr>
+<tr>
+<td>2010-05-06</td>
+<td>107</td>
+<td>+1.01%</td>
+<td>+6.5%</td>
+</tr>
+<tr>
+<td>2010-06-24</td>
+<td>18</td>
+<td>-0.62%</td>
+<td>-23.7%</td>
+</tr>
+<tr>
+<td>2010-08-13</td>
+<td>6</td>
+<td>+0.07%</td>
+<td>-21.8%</td>
+</tr>
+<tr>
+<td>2010-11-17</td>
+<td>1</td>
+<td>+1.74%</td>
+<td>+25.9%</td>
+</tr>
+<tr>
+<td>2011-03-15</td>
+<td>4</td>
+<td>+0.89%</td>
+<td>+10.4%</td>
+</tr>
+<tr>
+<td>2011-06-06</td>
+<td>2</td>
+<td>-0.61%</td>
+<td>-37.0%</td>
+</tr>
+<tr>
+<td>2011-07-28</td>
+<td>137</td>
+<td>+0.82%</td>
+<td>+21.5%</td>
+</tr>
+<tr>
+<td>2011-09-06</td>
+<td>4</td>
+<td>+1.11%</td>
+<td>-12.6%</td>
+</tr>
+<tr>
+<td>2011-09-22</td>
+<td>21</td>
+<td>+5.49%</td>
+<td>+75.1%</td>
+</tr>
+<tr>
+<td>2011-11-21</td>
+<td>16</td>
+<td>+0.56%</td>
+<td>-6.9%</td>
+</tr>
+<tr>
+<td>2012-05-09</td>
+<td>11</td>
+<td>+2.30%</td>
+<td>+58.2%</td>
+</tr>
+<tr>
+<td>2012-06-01</td>
+<td>7</td>
+<td>+1.87%</td>
+<td>+22.1%</td>
+</tr>
+<tr>
+<td>2012-10-24</td>
+<td>3</td>
+<td>+1.22%</td>
+<td>+23.5%</td>
+</tr>
+<tr>
+<td>2012-11-08</td>
+<td>6</td>
+<td>-1.99%</td>
+<td>-28.5%</td>
+</tr>
+<tr>
+<td>2013-04-18</td>
+<td>1</td>
+<td>+0.67%</td>
+<td>-23.7%</td>
+</tr>
+<tr>
+<td>2013-06-24</td>
+<td>2</td>
+<td>+1.37%</td>
+<td>-1.8%</td>
+</tr>
+<tr>
+<td>2014-01-27</td>
+<td>1</td>
+<td>+2.05%</td>
+<td>-1.8%</td>
+</tr>
+<tr>
+<td>2014-10-10</td>
+<td>14</td>
+<td>+1.32%</td>
+<td>+18.1%</td>
+</tr>
+<tr>
+<td>2014-12-12</td>
+<td>6</td>
+<td>+0.40%</td>
+<td>-7.7%</td>
+</tr>
+<tr>
+<td>2015-01-15</td>
+<td>1</td>
+<td>+1.26%</td>
+<td>-12.9%</td>
+</tr>
+<tr>
+<td>2015-06-29</td>
+<td>1</td>
+<td>+0.27%</td>
+<td>-21.6%</td>
+</tr>
+<tr>
+<td>2015-08-21</td>
+<td>48</td>
+<td>+2.90%</td>
+<td>+47.4%</td>
+</tr>
+<tr>
+<td>2015-09-28</td>
+<td>2</td>
+<td>+2.23%</td>
+<td>+48.5%</td>
+</tr>
+<tr>
+<td>2015-11-13</td>
+<td>1</td>
+<td>+2.00%</td>
+<td>-15.1%</td>
+</tr>
+<tr>
+<td>2016-01-06</td>
+<td>32</td>
+<td>+1.32%</td>
+<td>+9.0%</td>
+</tr>
+<tr>
+<td>2016-02-08</td>
+<td>15</td>
+<td>+2.19%</td>
+<td>+19.3%</td>
+</tr>
+<tr>
+<td>2016-06-27</td>
+<td>2</td>
+<td>+4.32%</td>
+<td>+104.8%</td>
+</tr>
+<tr>
+<td>2018-02-02</td>
+<td>17</td>
+<td>+1.08%</td>
+<td>+14.0%</td>
+</tr>
+<tr>
+<td>2018-03-22</td>
+<td>13</td>
+<td>-0.08%</td>
+<td>-6.8%</td>
+</tr>
+<tr>
+<td>2018-10-10</td>
+<td>56</td>
+<td>+1.13%</td>
+<td>+30.2%</td>
+</tr>
+<tr>
+<td>2018-11-14</td>
+<td>18</td>
+<td>+1.62%</td>
+<td>+19.5%</td>
+</tr>
+<tr>
+<td>2018-12-07</td>
+<td>54</td>
+<td>+0.23%</td>
+<td>+5.1%</td>
+</tr>
+<tr>
+<td>2019-05-13</td>
+<td>1</td>
+<td>+1.92%</td>
+<td>+22.0%</td>
+</tr>
+<tr>
+<td>2019-08-02</td>
+<td>20</td>
+<td>+2.26%</td>
+<td>+27.8%</td>
+</tr>
+<tr>
+<td>2020-02-24</td>
+<td>491</td>
+<td>+0.29%</td>
+<td>+6.7%</td>
+</tr>
+<tr>
+<td>2020-09-21</td>
+<td>5</td>
+<td>+1.95%</td>
+<td>+14.9%</td>
+</tr>
+<tr>
+<td>2020-10-28</td>
+<td>6</td>
+<td>-0.04%</td>
+<td>-13.6%</td>
+</tr>
+<tr>
+<td>2021-01-29</td>
+<td>2</td>
+<td>+3.26%</td>
+<td>+76.8%</td>
+</tr>
+<tr>
+<td>2021-09-30</td>
+<td>7</td>
+<td>-0.27%</td>
+<td>-7.9%</td>
+</tr>
+<tr>
+<td>2021-12-01</td>
+<td>7</td>
+<td>+1.37%</td>
+<td>+33.8%</td>
+</tr>
+<tr>
+<td>2022-01-19</td>
+<td>88</td>
+<td>-0.13%</td>
+<td>-4.6%</td>
+</tr>
+<tr>
+<td>2022-02-23</td>
+<td>6</td>
+<td>+7.74%</td>
+<td>+94.5%</td>
+</tr>
+<tr>
+<td>2022-03-07</td>
+<td>15</td>
+<td>+4.87%</td>
+<td>+112.5%</td>
+</tr>
+<tr>
+<td>2022-04-26</td>
+<td>89</td>
+<td>+1.41%</td>
+<td>+2.3%</td>
+</tr>
+<tr>
+<td>2022-06-09</td>
+<td>14</td>
+<td>+0.03%</td>
+<td>-17.7%</td>
+</tr>
+<tr>
+<td>2022-08-23</td>
+<td>10</td>
+<td>-0.71%</td>
+<td>-36.6%</td>
+</tr>
+<tr>
+<td>2022-09-16</td>
+<td>36</td>
+<td>+0.28%</td>
+<td>-13.5%</td>
+</tr>
+<tr>
+<td>2022-10-11</td>
+<td>7</td>
+<td>+3.61%</td>
+<td>+54.0%</td>
+</tr>
+<tr>
+<td>2022-11-04</td>
+<td>3</td>
+<td>+2.61%</td>
+<td>-10.0%</td>
+</tr>
+<tr>
+<td>2022-12-07</td>
+<td>9</td>
+<td>-0.20%</td>
+<td>-25.5%</td>
+</tr>
+<tr>
+<td>2023-03-10</td>
+<td>3</td>
+<td>-0.73%</td>
+<td>-30.2%</td>
+</tr>
+<tr>
+<td>2023-09-21</td>
+<td>5</td>
+<td>-0.52%</td>
+<td>-39.5%</td>
+</tr>
+<tr>
+<td>2023-10-26</td>
+<td>1</td>
+<td>-4.08%</td>
+<td>-69.3%</td>
+</tr>
+<tr>
+<td>2024-04-16</td>
+<td>4</td>
+<td>-0.47%</td>
+<td>-26.6%</td>
+</tr>
+<tr>
+<td>2024-08-05</td>
+<td>33</td>
+<td>+1.61%</td>
+<td>+18.6%</td>
+</tr>
+<tr>
+<td>2024-12-18</td>
+<td>6</td>
+<td>+0.42%</td>
+<td>-8.6%</td>
+</tr>
+<tr>
+<td>2025-02-26</td>
+<td>86</td>
+<td>+0.37%</td>
+<td>-4.3%</td>
+</tr>
+<tr>
+<td>2025-04-03</td>
+<td>92</td>
+<td>+3.65%</td>
+<td>+40.3%</td>
+</tr>
+<tr>
+<td>2025-11-18</td>
+<td>5</td>
+<td>-3.12%</td>
+<td>-53.7%</td>
+</tr>
+<tr>
+<td>2026-03-30</td>
+<td>3</td>
+<td>+6.48%</td>
+<td>+206.2%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="r10optionsmd">r10/OPTIONS.md</h2>
+<div class="raw">
+<p>Rule: BB-width percentile &gt; 80 % AND 20-day return &lt; −10 % AND SPY 5-day return &lt; −3 % → buy at 15:50, exit 15:50 two sessions later.</p>
+<ul>
+<li><strong>orig: stock only, all 5-minute history</strong> — 421 trades, mean +0.75 %, median +1.05 %, win 59 %, t 2.68</li>
+<li><strong>new: stock only, all 5-minute history</strong> — 165 trades, mean +2.46 %, median +1.87 %, win 71 %, t 5.98</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>universe</th>
+<th>period</th>
+<th>STOCK</th>
+<th>CALL (weekly)</th>
+<th>SPREAD (weekly)</th>
+<th>LONG (45–90 d, Δ0.75)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orig</td>
+<td>2024-02→2026-10</td>
+<td>+2.4% (n 73, t 3.30, win 66%)</td>
+<td>+19.5% (n 64, t 1.71, win 48%)</td>
+<td>+5.7% (n 63, t 0.70, win 52%)</td>
+<td>+4.6% (n 4, t 1.47, win 75%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2024-02→2025-06</td>
+<td>+2.4% (n 71, t 3.22, win 66%)</td>
+<td>+20.8% (n 63, t 1.81, win 49%)</td>
+<td>+6.6% (n 62, t 0.82, win 53%)</td>
+<td>+4.6% (n 4, t 1.47, win 75%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2025-07→2026-10</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>2× half-spread</td>
+<td></td>
+<td>+13.0% (n 64, t 1.21, win 48%)</td>
+<td>-7.3% (n 63, t -1.01, win 44%)</td>
+<td>-1.5% (n 4, t -0.50, win 25%)</td>
+</tr>
+<tr>
+<td>orig</td>
+<td>entries by month</td>
+<td>2024-08: 11, 2025-02: 3, 2025-03: 28, 2025-04: 29, 2025-11: 1, 2026-03: 1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>new</td>
+<td>2024-02→2026-10</td>
+<td>+2.6% (n 155, t 6.06, win 73%)</td>
+<td>+18.6% (n 106, t 1.83, win 45%)</td>
+<td>+4.3% (n 81, t 0.62, win 46%)</td>
+<td>-5.7% (n 11, t -0.63, win 27%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2024-02→2025-06</td>
+<td>+2.7% (n 149, t 6.24, win 74%)</td>
+<td>+16.3% (n 100, t 1.87, win 46%)</td>
+<td>+3.3% (n 78, t 0.50, win 46%)</td>
+<td>-3.1% (n 10, t -0.32, win 30%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2025-07→2026-10</td>
+<td>-0.3% (n 6, t -0.11, win 33%)</td>
+<td>+57.2% (n 6, t 0.50, win 33%)</td>
+<td>+31.8% (n 3, t 0.33, win 33%)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>new</td>
+<td>2× half-spread</td>
+<td></td>
+<td>+11.7% (n 106, t 1.22, win 39%)</td>
+<td>-9.5% (n 81, t -1.57, win 37%)</td>
+<td>-11.2% (n 11, t -1.31, win 27%)</td>
+</tr>
+<tr>
+<td>new</td>
+<td>entries by month</td>
+<td>2024-04: 3, 2024-08: 22, 2025-02: 1, 2025-03: 37, 2025-04: 86, 2025-11: 4, 2026-03: 2</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="r10real_robustmd">r10/REAL_ROBUST.md</h2>
+<div class="raw">
+<table>
+<thead>
+<tr>
+<th>cut</th>
+<th>n</th>
+<th>weekly CALL mean (real)</th>
+<th>win</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all (both universes)</td>
+<td>170</td>
+<td>+19.0%</td>
+<td>46%</td>
+</tr>
+<tr>
+<td>without 5 best</td>
+<td>162</td>
+<td>+9.3%</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>without 10 best</td>
+<td>154</td>
+<td>+4.1%</td>
+<td>44%</td>
+</tr>
+<tr>
+<td>month 2024-04</td>
+<td>3</td>
+<td>+6.4%</td>
+<td>33%</td>
+</tr>
+<tr>
+<td>month 2024-08</td>
+<td>28</td>
+<td>+12.0%</td>
+<td>54%</td>
+</tr>
+<tr>
+<td>month 2025-02</td>
+<td>3</td>
+<td>-54.9%</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>month 2025-03</td>
+<td>52</td>
+<td>+14.1%</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>month 2025-04</td>
+<td>77</td>
+<td>+26.2%</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>month 2025-11</td>
+<td>5</td>
+<td>-70.0%</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>month 2026-03</td>
+<td>2</td>
+<td>+316.7%</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>ETFs</td>
+<td>10</td>
+<td>-0.7%</td>
+<td>30%</td>
+</tr>
+<tr>
+<td>stocks</td>
+<td>160</td>
+<td>+20.2%</td>
+<td>48%</td>
+</tr>
+</tbody>
+</table>
+</div></body></html>

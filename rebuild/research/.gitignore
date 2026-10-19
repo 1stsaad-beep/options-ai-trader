@@ -6,3 +6,4 @@ results_*.log
 results/**/*.pkl
 .secrets/
 results/r4/opt_cache.json
+results/r10/opt_cache_r10.json

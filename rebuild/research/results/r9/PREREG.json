@@ -1,0 +1,18 @@
+{
+  "written": "before the first run of r9_run.py",
+  "signals": [
+    "SQZ",
+    "TDL",
+    "FOMC",
+    "S1",
+    "S3"
+  ],
+  "instruments": [
+    "STOCK",
+    "CALL",
+    "SPREAD",
+    "LONG"
+  ],
+  "fills": "5-min option-bar VWAP at entry/exit; each leg pays a half-spread (ETF 1.5%, stock 3%) + $0.65/contract/side",
+  "accept": "a signal x instrument pair is a Paper candidate only if REAL mean return > 0 on the ORIGINAL and on the NEW universe (FOMC: original only), pooled t > 1.0, > 0 in both 2024-02..2025-06 and 2025-07..2026-10, and still > 0 with 2x half-spreads"
+}
