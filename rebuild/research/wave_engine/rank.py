@@ -24,7 +24,7 @@ def learned_logp(scen):
     X = np.zeros((len(scen), len(m["cols"])))
     for r, z in enumerate(scen):
         for k, v in featurize(z).items():
-            i = m["ix"].get(k)
+            i = m["ix"].get("hand_score" if k == "prior_score" else k)
             if i is not None: X[r, i] = v
     s = ((X - m["mu"]) / m["sd"]) @ m["w"]
     s = s - (s.max() + np.log(np.exp(s - s.max()).sum()))
