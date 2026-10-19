@@ -65,6 +65,9 @@ def check(pat: str, y, x, sub, open_end: bool):
             ref = 4.236 if n == 3 else 2.618
             r = L[n - 1] / L[0]; rt = max(D[n - 1], 1) / max(D[0], 1)
             f["open_prop"] = -max(0.0, math.log(r / ref) / math.log(2)) - max(0.0, math.log(rt / 6) / math.log(2))
+        if last_open and n in (2, 4):          # time-based weakening of an open correction that drags on
+            ref = D[0] if n == 2 else D[1]
+            f["open_time"] = -max(0.0, math.log(max(D[n - 1], 1) / max(ref, 1) / 3) / math.log(2))
         if n >= 5 and not last_open:
             if y[5] <= y[3]: f["truncated5"] = 1.0
         if diag and n >= 4:
@@ -167,7 +170,7 @@ def check(pat: str, y, x, sub, open_end: bool):
 W = {"w2_fib": 0.6, "w3_ext": 1.0, "w4_fib": 0.6, "w5_eq1": 0.6, "has_extension": 0.5, "alternation": 0.3,
      "w4_channel": 0.3, "sub_motive": 0.8, "sub_corr": 0.4, "truncated5": -1.0, "b_fib": 0.6, "c_eq_a": 0.8,
      "c_fib": 0.6, "expanded": 0.0, "running": -0.4, "tri_fib": 0.4, "tri_contracting": 0.2, "is_triangle": 0.0,
-     "combo": 0.0, "diag_contracting": 0.2, "complete": 0.1, "prop": 0.8, "open_prop": 1.0}
+     "combo": 0.0, "diag_contracting": 0.2, "complete": 0.1, "prop": 0.8, "open_prop": 1.0, "open_time": 0.6}
 PAT_PRIOR = {"IMPULSE": 0.0, "ZIGZAG": 0.0, "FLAT": -0.2, "LEADING_DIAG": -0.8, "ENDING_DIAG": -0.6,
              "TRIANGLE": -0.7, "DOUBLE_THREE": -0.8, "DOUBLE_THREE_T": -1.2, "TRIPLE_THREE": -1.6}
 FIBKEYS = {"w2_fib", "w3_ext", "w4_fib", "w5_eq1", "b_fib", "c_eq_a", "c_fib", "tri_fib", "w4_channel"}

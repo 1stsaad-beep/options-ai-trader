@@ -111,13 +111,23 @@ def run(sym, asof=None, beam=6, top_tf="M", max_gen=9, stop_tf="5", min_bars=60)
 
 
 def best_two(chains):
+    """two best chains whose LAST generation genuinely differs (opposite expected move first)."""
     if not chains: return []
-    a = chains[0]; ca = a.last.current()
-    for b in chains[1:]:
-        cb = b.last.current()
-        if (cb["pattern"], cb["leg"], cb["leg_up"], round(cb["leg_start_p"], 6)) != (ca["pattern"], ca["leg"], ca["leg_up"], round(ca["leg_start_p"], 6)):
-            return [a, b]
+    a = chains[0]; ca = a.last.current(); na = C.next_dir(a.last)
+    for test in (lambda b, cb: C.next_dir(b.last) != na or cb["leg_up"] != ca["leg_up"],
+                 lambda b, cb: (cb["pattern"], cb["leg"]) != (ca["pattern"], ca["leg"]),
+                 lambda b, cb: round(cb["leg_start_p"], 6) != round(ca["leg_start_p"], 6)):
+        for b in chains[1:]:
+            if test(b, b.last.current()):
+                return [a, b]
     return [a]
+
+
+def probabilities(chains, temp=1.0):
+    """softmax of chain scores -> probabilities (temperature is calibrated in stage 6)."""
+    s = np.array([c.score for c in chains], float)
+    if not len(s): return []
+    e = np.exp((s - s.max()) / temp); return (e / e.sum()).tolist()
 
 
 def describe(ch):

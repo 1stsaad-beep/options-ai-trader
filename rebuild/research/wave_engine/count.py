@@ -14,6 +14,8 @@ from . import patterns as PT
 from .pivots import Pivots
 
 MAX_LEGS = 11
+START_PEN = 0.25        # a start that is not the window's global extreme
+IRR_PEN = 0.4          # an orthodox end that is not the price extreme is allowed but costs evidence
 
 
 @dataclass
@@ -76,27 +78,71 @@ def _points(pv: Pivots):
     return np.array(t), np.array(p, float), np.array(k, int), tent
 
 
-def segmentations(P, K, s, end, max_legs=MAX_LEGS):
-    """monotone boundary sequences s=b0<b1<...<bm=end with alternating kinds."""
+def segmentations(P, K, s, end, max_legs=MAX_LEGS, max_irregular=2, near=0.25, over_frac=0.4):
+    """boundary sequences s=b0<b1<...<bm=end with alternating kinds.
+    Regular boundary: the extreme of its own leg.  IRREGULAR boundary (orthodox end != price extreme, e.g. a
+    truncated fifth, or a wave that ends after a higher internal high): a later pivot of the right kind that is
+    within `near` x leg-range of the leg's extreme; at most `max_irregular` per sequence.  A later price beyond
+    the PREVIOUS boundary (wrong side) still ends the search, except that expanded-flat B's that exceed the
+    prior top are naturally allowed because they belong to the next leg."""
     out = []
 
-    def rec(seq):
+    def rec(seq, irr):
         a = seq[-1]
         if a == end:
-            out.append(tuple(seq)); return
+            out.append((tuple(seq), irr)); return
         if len(seq) - 1 >= max_legs: return
-        ka = K[a]; best = None
+        ka = K[a]; best = None; over = 0
         for j in range(a + 1, end + 1):
-            if K[j] == ka:                          # same-kind point beyond a -> a no longer the extreme
-                if (ka == 1 and P[j] > P[a]) or (ka == -1 and P[j] < P[a]): break
+            if K[j] == ka:
+                if (ka == 1 and P[j] > P[a]) or (ka == -1 and P[j] < P[a]):
+                    # price beyond the previous boundary inside the next leg = an expanded-flat-type B at a lower
+                    # degree; tolerated once if the overshoot is small relative to the leg so far
+                    if over == 0 and best is not None and irr + 1 <= max_irregular and abs(P[j] - P[a]) <= over_frac * abs(best - P[a]):
+                        over = 1; continue
+                    if over == 1 and best is not None and abs(P[j] - P[a]) <= over_frac * abs(best - P[a]):
+                        continue
+                    break
                 continue
-            if best is None or (ka == 1 and P[j] < best) or (ka == -1 and P[j] > best):
-                best = P[j]
-                # j is a running extreme after a -> candidate boundary (must also be extreme until next boundary;
-                # checked in the next recursion by the 'break' above)
-                rec(seq + [j])
-    rec([s])
+            newext = best is None or (ka == 1 and P[j] < best) or (ka == -1 and P[j] > best)
+            if newext:
+                best = P[j]; rec(seq + [j], irr + over)
+            elif irr + over < max_irregular:
+                rng = abs(best - P[a])
+                if abs(P[j] - best) <= near * rng:
+                    rec(seq + [j], irr + over + 1)
+    rec([s], 0)
     return out
+
+
+def major_starts(P, K, n_extra=2):
+    """global low/high + the most prominent other turning points in the first 70 % of the window
+    (prominence = the smaller of the swings into and out of the point): the top count need not start at the
+    absolute extreme (that extreme may itself be an irregular B, a truncation, ...)."""
+    s = {int(np.argmin(P)), int(np.argmax(P))}
+    N = len(P); cut = max(3, int(0.7 * N))
+    prom = []
+    for j in range(1, cut):
+        a = abs(P[j] - P[j - 1]); b = abs(P[j + 1] - P[j]) if j + 1 < N else 0
+        # the point must also be the extreme of everything after it up to the end of the window
+        tail = P[j + 1:]
+        ok = (K[j] == -1 and (tail >= P[j]).all()) or (K[j] == 1 and (tail <= P[j]).all())
+        if ok: prom.append((min(a, b), j))
+    for _, j in sorted(prom, reverse=True)[:n_extra]:
+        s.add(j)
+    return sorted(s)
+
+
+def next_dir(z):
+    """direction of the move expected AFTER the current leg completes (+1 up / -1 down)."""
+    pat, idx = z.parts[-1]; n = len(idx) - 1
+    up = z.pts_p[idx[-1]] > z.pts_p[idx[-2]]
+    full = PT.LEGS[pat]
+    if n < full:                              # next leg of the same pattern alternates
+        return -1 if up else 1
+    # pattern done: after a motive comes a correction (against it); after a correction the larger trend resumes
+    first_up = z.pts_p[idx[1]] > z.pts_p[idx[0]]
+    return (-1 if first_up else 1) if pat in PT.MOTIVE else (-1 if first_up else 1)
 
 
 def count(pv: Pivots, start=None, direction=None, log=False, top=40, max_legs=MAX_LEGS, first_parts=None, anchor=None):
@@ -115,12 +161,16 @@ def count(pv: Pivots, start=None, direction=None, log=False, top=40, max_legs=MA
     Y = np.log(P) if log else P
     X = np.arange(N, dtype=float)          # pivot ordinal; real bar positions below
     BX = BX0
-    starts = [start] if start is not None else sorted({int(np.argmin(P)), int(np.argmax(P))})
+    if start is not None:
+        starts = [start] if np.isscalar(start) else list(start)
+    else:
+        starts = major_starts(P, K)
     res = []
     for s in starts:
         if direction is not None and K[s] != -direction: continue
         d = -K[s]
-        for seg in segmentations(P, K, s, N - 1, max_legs):
+        s_pen = 0.0 if s in (int(np.argmin(P)), int(np.argmax(P))) or start is not None else START_PEN
+        for seg, irr in segmentations(P, K, s, N - 1, max_legs):
             m = len(seg) - 1
             y = d * Y[list(seg)]; x = BX[list(seg)]; sub = np.diff(seg)
             pats1 = first_parts or list(PT.LEGS)
@@ -129,7 +179,8 @@ def count(pv: Pivots, start=None, direction=None, log=False, top=40, max_legs=MA
                 if m <= PT.LEGS[pat]:
                     ok, f = PT.check(pat, y, x, sub, tent)
                     if ok:
-                        res.append(Scenario(PT.score(pat, f), [(pat, list(seg))], d, T, P, tent, f, pv.k, pv.tf))
+                        z = Scenario(PT.score(pat, f) - IRR_PEN * irr - s_pen, [(pat, list(seg))], d, T, P, tent, f, pv.k, pv.tf)
+                        z.irr = irr; res.append(z)
             # (b) complete pattern + next pattern in progress
             for pat in pats1:
                 L = PT.LEGS[pat]
@@ -144,22 +195,25 @@ def count(pv: Pivots, start=None, direction=None, log=False, top=40, max_legs=MA
                         if len(seg2) - 1 <= PT.LEGS[q]:
                             ok2, f2 = PT.check(q, y2, x[L:], sub[L:], tent)
                             if ok2:
-                                sc = PT.score(pat, f) + PT.score(q, f2) - 0.3
-                                res.append(Scenario(sc, [(pat, list(seg[:L + 1])), (q, list(seg2))],
-                                                    d, T, P, tent, {**f, **{"2_" + k: v for k, v in f2.items()}}, pv.k, pv.tf))
+                                sc = PT.score(pat, f) + PT.score(q, f2) - 0.3 - IRR_PEN * irr - s_pen
+                                z = Scenario(sc, [(pat, list(seg[:L + 1])), (q, list(seg2))],
+                                             d, T, P, tent, {**f, **{"2_" + k: v for k, v in f2.items()}}, pv.k, pv.tf)
+                                z.irr = irr; res.append(z)
     for z in res: z.bx = BX
     res.sort(key=lambda z: -z.score)
     return res[:top] if top else res
 
 
-def best_two(scen, min_gap=0.0):
-    """best scenario + the best one that is genuinely different (different current leg/pattern, or the
-    invalidation level on the other side / >1 ATR apart is handled by the caller)."""
+def best_two(scen):
+    """best scenario + the best GENUINELY DIFFERENT alternative.  Preference order for the alternative:
+    (1) it expects the opposite next move (e.g. 'B is done -> C down' vs 'wave 5 still extending'),
+    (2) a different current wave/pattern, (3) a different start of the current leg."""
     if not scen: return []
-    a = scen[0]; ca = a.current()
-    for b in scen[1:]:
-        cb = b.current()
-        if (cb["pattern"], cb["leg"], cb["leg_up"]) != (ca["pattern"], ca["leg"], ca["leg_up"]) or \
-           abs(cb["leg_start_p"] - ca["leg_start_p"]) > 1e-9:
-            return [a, b]
+    a = scen[0]; ca = a.current(); na = next_dir(a)
+    for test in (lambda b, cb: next_dir(b) != na or cb["leg_up"] != ca["leg_up"],
+                 lambda b, cb: (cb["pattern"], cb["leg"]) != (ca["pattern"], ca["leg"]),
+                 lambda b, cb: abs(cb["leg_start_p"] - ca["leg_start_p"]) > 1e-9):
+        for b in scen[1:]:
+            if test(b, b.current()):
+                return [a, b]
     return [a]
