@@ -1,0 +1,16 @@
+{
+ "written": "2026-10-19, before any intraday result was computed",
+ "rule_relative": {
+  "C1": "Bollinger BandWidth(20,2) percentile over the previous 126 bars > 0.80 (same as daily)",
+  "C2": "stock z20 = (close/close[20]-1) / (std of 1-bar log returns over 126 bars * sqrt(20)) < -1.12",
+  "C3": "SPY z5 = (close/close[5]-1) / (std 1-bar log ret 126 bars * sqrt(5)) < -1.25, SPY bar ending at the same time",
+  "thresholds": "frequency-matched on DAILY data 2000-2026 to the absolute rule (-10% / -3%), see calib.json"
+ },
+ "frames_minutes": [5, 15, 60, 120],
+ "bars": "session-anchored resample of 5-min bars from 09:30; indicators run continuously across days (overnight gaps included)",
+ "entry": "close of the signal bar; one open position per symbol per horizon",
+ "horizons": {"primary": "2 bars (fractal analogue of the daily 2-session hold)", "secondary": ["6 bars", "close of same day", "close of next day"]},
+ "control": "the same relative rule on DAILY bars must reproduce the round-10 daily edge",
+ "pass_criteria": "primary horizon: mean > 0 with day-clustered t >= 2 on ORIGINAL 15 (2016-2026), same sign in both halves (2016-2020, 2021-2026) and on NEW 30 (2023-2026); then mean must exceed a real-option cost hurdle; only passing frames get the real option replay",
+ "universes": {"orig": "15 symbols 2016-01 -> 2026-10", "new": "30 symbols 2023-01 -> 2026-10"}
+}

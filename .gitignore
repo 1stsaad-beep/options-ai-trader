@@ -34,3 +34,8 @@ key.properties
 *.apk
 *.idsig
 flutter-tests.json
+
+# round 11 heavy/intermediate outputs
+rebuild/research/results/r11/*.pkl
+rebuild/research/results/r11/opt_cache_r11.json
+rebuild/research/results/r11/*.log
