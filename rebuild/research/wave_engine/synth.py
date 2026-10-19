@@ -95,15 +95,24 @@ class G:
 
 
 CASES = {
-    # name: (list of (pattern, kind) at top degree in sequence, how many legs of the LAST pattern are shown)
+    # name: (sequence of (pattern, kind) at the top degree, how many legs of the LAST pattern are shown)
+    "impulse_in_2": ([("IMPULSE", None)], 2),
     "impulse_in_3": ([("IMPULSE", None)], 3),
+    "impulse_in_4": ([("IMPULSE", None)], 4),
     "impulse_in_5": ([("IMPULSE", None)], 5),
+    "zigzag_in_B": ([("ZIGZAG", None)], 2),
+    "zigzag_in_C": ([("ZIGZAG", None)], 3),
+    "exp_flat_in_C": ([("FLAT", "expanded")], 3),
     "impulse_then_zigzag_B": ([("IMPULSE", None), ("ZIGZAG", None)], 2),
-    "impulse_then_expanded_flat_B": ([("IMPULSE", None), ("FLAT", "expanded")], 2),   # B above the top of 5
+    "impulse_then_zigzag_C": ([("IMPULSE", None), ("ZIGZAG", None)], 3),
+    "impulse_then_expanded_flat_B": ([("IMPULSE", None), ("FLAT", "expanded")], 2),
     "impulse_then_expanded_flat_C": ([("IMPULSE", None), ("FLAT", "expanded")], 3),
     "truncated_5_then_zigzag": ([("IMPULSE", "trunc"), ("ZIGZAG", None)], 2),
     "impulse_then_running_flat_C": ([("IMPULSE", None), ("FLAT", "running")], 3),
     "impulse_then_triangle_D": ([("IMPULSE", None), ("TRIANGLE", None)], 4),
+    "zigzag_then_impulse_3": ([("ZIGZAG", None), ("IMPULSE", None)], 3),
+    "zigzag_then_impulse_5": ([("ZIGZAG", None), ("IMPULSE", None)], 5),
+    "flat_then_impulse_3": ([("FLAT", "regular"), ("IMPULSE", None)], 3),
 }
 LBL = {"IMPULSE": ["1", "2", "3", "4", "5"], "ZIGZAG": ["A", "B", "C"], "FLAT": ["A", "B", "C"], "TRIANGLE": ["A", "B", "C", "D", "E"]}
 
@@ -118,6 +127,6 @@ def make(case, seed=0, depth=2, noise=0.25):
             gg = [[-x for x in grp] for grp in gg]
         if j == len(seq) - 1: gg = gg[:shown]
         groups += gg; labels += [(pat, LBL[pat][i]) for i in range(len(gg))]
-        L = abs(sum(sum(x) for x in gg)) * 0.6
+        L = abs(sum(sum(x) for x in gg)) * (0.6 if pat == 'IMPULSE' else 0.45)
     df, bounds = g.path(groups)
     return df, dict(bounds=bounds, labels=labels, case=case, seed=seed)

@@ -12,14 +12,14 @@ OUT = Path("results/wave"); OUT.mkdir(parents=True, exist_ok=True)
 
 def featurize(z):
     f = {}
-    for j, (pat, idx) in enumerate(z.parts):
-        f[f"p{j}_{pat}"] = 1.0
-        f[f"p{j}_legs"] = len(idx) - 1
-    for k, v in z.feats.items():
-        f[k] = float(v)
-    f["n_parts"] = len(z.parts)
+    # structural descriptors (pattern types, leg counts) are deliberately NOT features: they would only learn the
+    # mix of the synthetic cases; the pattern-type prior stays the neutral hand prior
+    for k, v in z.feats.items():                 # evidence features pooled over both parts of the scenario
+        key = k[2:] if k.startswith("2_") else k
+        f[key] = f.get(key, 0.0) + float(v)
     f["irregular"] = float(getattr(z, "irr", 0))
-    f["prior_score"] = float(z.score)
+    f["prior_score"] = float(getattr(z, "raw_score", z.score))
+    for k in ("complete", "combo", "is_triangle"): f.pop(k, None)
     return f
 
 
@@ -73,10 +73,9 @@ def evaluate(D, model, target="ys"):
 
 
 if __name__ == "__main__":
-    if sys.argv[1:] == ["train"]:
-        collect(range(0, 14), path=OUT / "rank_train.pkl"); sys.exit()
-    if sys.argv[1:] == ["test"]:
-        collect(range(100, 106), path=OUT / "rank_test.pkl"); sys.exit()
+    if sys.argv[1:2] == ["collect"]:
+        a, b, depth, name = int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), sys.argv[5]
+        collect(range(a, b), depths=(depth,), path=OUT / f"{name}.pkl"); sys.exit()
     tr = pd.read_pickle(OUT / "rank_train.pkl"); te = pd.read_pickle(OUT / "rank_test.pkl")
     for target in ("ys", "y"):
         m = fit(tr, target)

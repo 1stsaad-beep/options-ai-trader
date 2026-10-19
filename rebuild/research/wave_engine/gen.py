@@ -63,6 +63,11 @@ def counts_for(sym, tf, t0, asof, direction=None, patterns=None, ks=None, top=12
             if key in seen: continue
             seen.add(key); out.append(z)
     out.sort(key=lambda z: -z.score)
+    out = out[:max(top * 2, 20)]
+    from .bottomup import rescore
+    from .rank import learned_logp
+    out = rescore(out, b, top=len(out))
+    out = learned_logp(out)
     return out[:top]
 
 
