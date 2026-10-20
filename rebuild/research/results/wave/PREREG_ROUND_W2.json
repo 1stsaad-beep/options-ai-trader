@@ -1,0 +1,19 @@
+{
+ "written": "2026-10-20 12:20 (Kuwait), before any of these tests was computed",
+ "indicators": "on the scenario's own timeframe at the as-of bar: RSI(14), MACD(12,26,9) line/hist, Bollinger(20,2) %B, EMA20, EMA50, SMA200, ATR(14). Down waves are mirrored (RSI -> 100-RSI, MACD and price-vs-average signs flipped).",
+ "personality_rules (user's table)": {
+  "1": "RSI 50-75 and rising over 5 bars; MACD hist > 0; close > EMA20",
+  "2": "RSI 35-55; MACD line > -0.5*ATR (no collapse); close within [EMA50 - 1 ATR, EMA20 + 0.5 ATR]; close > SMA200",
+  "3": "RSI > 60; MACD hist >= 80th percentile of last 50 bars; %B > 0.8; EMA20 > EMA50 > SMA200; close > EMA20",
+  "4": "RSI 38-55; MACD line > 0 and hist < 0; close within [EMA50 - 0.5 ATR, EMA20 + 0.5 ATR]; close > SMA200",
+  "5": "close >= 0.99 x 50-bar high AND RSI <= 50-bar max RSI - 5 (divergence); MACD hist < its 50-bar max",
+  "A": "RSI 35-55 and falling; MACD hist < 0; close < EMA20",
+  "B": "RSI <= 50-bar max RSI - 5; MACD line < its 50-bar max; close within 1 ATR of EMA20",
+  "C": "RSI < 40 or (close <= 1.01 x 50-bar low AND RSI >= 50-bar min RSI + 5)"
+ },
+ "match": "fraction of the wave's rules satisfied (0..1)",
+ "T4a_selection": "walk-forward rows (1h, 5m, daily): when both scenarios give a forecast, pick the one with the higher personality match (ties -> scenario 1). Outcome recomputed with a fixed 150-bar horizon for chosen, scenario-1 and the drift-matched null. PASS: chosen skill - scenario-1 skill >= +0.03 with t >= 2 on 1h AND daily",
+ "T4b_filter": "decision-point setups: keep early-3 only when wave-2 personality match >= 0.75 at entry, early-5 only when wave-4 match >= 0.75. PASS = same rule as PREREG_SETUPS (skill >= +0.05, t >= 2, both directions >= 0, both symbol groups)",
+ "T5_end5": "new setup: the just-confirmed pivot is the END OF WAVE 5 of an impulse (scenario = impulse complete, or impulse + correction with its first leg running). Entry = close of confirmation bar, stop = the wave-5 extreme, target = end of wave 4, horizon 3 x wave-5 duration (20..400). Variant DIV: RSI at the wave-5 extreme < RSI at the wave-3 extreme (mirrored for down). PASS = PREREG_SETUPS rule, on 1h and daily",
+ "T3_time": "zigzag swings (k=2.5) on 1h and daily, 45 symbols: share of same-direction duration ratios t(n+2)/t(n) within +-10 % of {0.618, 1, 1.618, 2.618} vs the same share when durations are shuffled within symbol (1000 shuffles). PASS: observed share exceeds the 97.5 % shuffle quantile on both timeframes"
+}
