@@ -68,3 +68,4 @@ Benchmark: drift-matched null (same symbol, direction, target/stop %, horizon, r
 - **Daily, 45 symbols 2008-2026, 3,664 setups:** skill +1.6 % (all early-3, t -0.6), +3.4 % (inner 5), +2.5 % (early-5 + parent + grandparent, t 1.1), +7.1 % on 25 trades with all filters (t 1.2). No pass; small positive tilt, statistically indistinguishable from zero.
 - **5-minute (original 15, 2025-07 → 2026-09):** interim on 6 symbols negative; remaining symbols running.
 - **Verdict:** neither decision points nor multi-generation context give a measurable edge. Elliott counting does not carry predictive information beyond drift in these tests.
+- **5-minute decision points (14 of the original 15 symbols, 2025-07 → 2026-09, 6,883 setups):** early-3 skill -0.1 % (all), parent -1.5 %, parent+grand -1.1 %; early-5 all -1.4 %. One cell (early-5 + all filters, 30 trades) +15.6 % (t 2.1) — a single small cell out of ~60 variant cells tested, not counted as a pass.

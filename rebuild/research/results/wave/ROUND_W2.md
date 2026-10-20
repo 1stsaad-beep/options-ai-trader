@@ -29,3 +29,6 @@ FAIL (300 shuffles instead of the planned 1000 for compute; the observed value i
 | daily | divergence | 253 | 33.5 % | 33.5 % | -0.2 % | 0.05 |
 FAIL (closest yet: hourly divergence positive in all four direction x symbol-group cells, but below +5 % / t 2 and absent on daily).
 A confirmation on untouched data (60 volatile symbols, hourly) was pre-registered before running (T5_confirm).
+
+## T5_confirm — hourly end-of-5 with divergence on 57 untouched volatile symbols (2023-03 → 2026-09)
+divergence: 454 setups, hit 35.7 % vs null 34.0 %, skill +1.4 % (t 0.77); no divergence: -0.4 %. FAIL -> the hourly T5 result was chance.
