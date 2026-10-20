@@ -200,6 +200,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _section('أوزان المحركات (0 = تعطيل، 0–3)', [
             Text('الوزن يحدد تأثير كل محرك في النتيجة المركبة.', style: Theme.of(context).textTheme.bodySmall),
             for (final id in EngineId.values)
+              if (id.descriptiveOnly)
+                ListTile(
+                  key: Key('weight-${id.name}-locked'),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  title: Text('${id.arabic}: 0 (مقفل)'),
+                  subtitle: const Text('$kElliottNoticeAr — يظهر على الشارت فقط ولا يدخل في النتيجة أو أي أمر.'),
+                )
+              else
               Row(children: [
                 SizedBox(width: 130, child: Text(id.arabic)),
                 Expanded(

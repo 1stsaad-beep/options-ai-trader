@@ -466,3 +466,27 @@ and clustered. Status: **Paper candidate** — not a proven live edge.
 
 **Safety:** Paper only. Nothing here touches `LiveTradingGuard` / `OAT_ENABLE_LIVE`; live stays compiled out and
 needs the user's explicit approval after a Paper review (suggested: ≥ 2 selloff episodes or ≥ 20 paper trades).
+
+## 14. Elliott waves are descriptive only (2026-10-20, owner's decision; written WITHOUT a Dart toolchain)
+
+Research on the Elliott-wave engine found no forecasting edge. The following now applies:
+- **Never in any decision:** `EngineId.elliott` is `descriptiveOnly`. It never enters the composite score, entries, exits, scale-ins or any order, in Paper or Live, whatever weight is saved. This is enforced in `Analyzer.analyzeWithFindings`.
+- **Chart overlay kept:** Elliott findings still appear in `findings`, so the chart can draw them, but never in `report.signals` or `report.score`.
+- **Weight forced to 0:**
+  - The default `engineWeights[elliott]` is 0.
+  - `AccountSettings.fromJson` migrates any saved Elliott weight to 0.
+  - `copyWith(engineWeights:)` also forces it to 0, through `withoutDescriptiveWeights`.
+- **Notice text:** `kElliottNoticeAr` = «تحليل وصفي — لم يُثبت قدرة تنبؤية، لا يُستخدم كإشارة تداول». It appears in four places:
+  - the chart layer sheet (subtitle of the layer «موجات إليوت (وصفي فقط)»)
+  - under the chart, whenever the Elliott layer is on and has findings
+  - on every Elliott row in the findings panel
+  - as a locked «0 (مقفل)» row in the settings weight list
+- **Tests:** `trader_core/test/elliott_descriptive_test.dart` covers:
+  - a control setup that trades on a non-Elliott signal
+  - an Elliott-only setup with every engine on, which never produces an order, both through migrated settings and with a weight of 3 forced in directly
+  - score and overlay behaviour
+  - defaults and migration
+
+**For the dev bot:**
+- Run `dart analyze && dart test` in `trader_core`, then `flutter analyze && flutter test` in `app`, and fix any compile error without changing the behaviour above.
+- `minAgreeingEngines` may still allow up to 6 in validation; effectively 5 engines can agree now.

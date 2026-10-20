@@ -6,7 +6,7 @@ enum ChartLayer {
   zigzag('ZigZag والقمم/القيعان المؤكدة', true),
   classical('الأنماط الكلاسيكية', true),
   harmonic('الهارمونيك XABCD + PRZ', true),
-  elliott('موجات إليوت', true),
+  elliott('موجات إليوت (وصفي فقط)', true),
   divergence('الدايفرجنس', true),
   targets('الأهداف ومستوى الإبطال', true),
   trades('صفقات الحساب', true),

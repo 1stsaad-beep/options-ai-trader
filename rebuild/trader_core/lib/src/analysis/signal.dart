@@ -31,7 +31,14 @@ enum EngineId {
         EngineId.elliott => 'موجات إليوت',
         EngineId.classical => 'الأنماط الكلاسيكية',
       };
+
+  /// Descriptive-only engines are drawn on the chart but NEVER enter the composite score, the entry decision,
+  /// exits or any order — whatever weight is saved (research: no proven forecasting edge for Elliott waves).
+  bool get descriptiveOnly => this == EngineId.elliott;
 }
+
+/// Notice shown wherever Elliott-wave findings are displayed.
+const String kElliottNoticeAr = 'تحليل وصفي — لم يُثبت قدرة تنبؤية، لا يُستخدم كإشارة تداول';
 
 /// One finding of one engine. Engines may return several; the analyzer keeps
 /// the strongest per engine.

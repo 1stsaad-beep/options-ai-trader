@@ -137,7 +137,7 @@ class AccountSettings {
       EngineId.momentum: 1.0,
       EngineId.divergence: 1.0,
       EngineId.harmonic: 0.8,
-      EngineId.elliott: 0.8,
+      EngineId.elliott: 0, // descriptive only: never part of the score or any order (see EngineId.descriptiveOnly)
       EngineId.classical: 1.0,
     },
     this.minDaysToExpiry = 7,
@@ -194,6 +194,10 @@ class AccountSettings {
     exitOnUnderlyingInvalidation: false,
     maxHoldingDays: 5,
   );
+
+  /// [w] with every descriptive-only engine (Elliott) forced to 0.
+  static Map<EngineId, double> withoutDescriptiveWeights(Map<EngineId, double> w) =>
+      {...w, for (final id in EngineId.values) if (id.descriptiveOnly) id: 0.0};
 
   /// Allowed ranges enforced by [validate] (key = JSON key). Shown in the
   /// settings screen next to each parameter.
@@ -316,7 +320,7 @@ class AccountSettings {
         requireTrendAlignment: requireTrendAlignment ?? this.requireTrendAlignment,
         allowCalls: allowCalls ?? this.allowCalls,
         allowPuts: allowPuts ?? this.allowPuts,
-        engineWeights: engineWeights ?? this.engineWeights,
+        engineWeights: engineWeights == null ? this.engineWeights : withoutDescriptiveWeights(engineWeights),
         minDaysToExpiry: minDaysToExpiry ?? this.minDaysToExpiry,
         maxDaysToExpiry: maxDaysToExpiry ?? this.maxDaysToExpiry,
         targetDelta: targetDelta ?? this.targetDelta,
@@ -396,6 +400,10 @@ class AccountSettings {
         final v = rawWeights[id.name];
         if (v is num) weights[id] = v.toDouble();
       }
+    }
+    // Migration: any saved Elliott weight becomes 0 (Elliott is a chart overlay only).
+    for (final id in EngineId.values) {
+      if (id.descriptiveOnly) weights[id] = 0;
     }
     return AccountSettings(
       riskPerTradePercent: dbl('riskPerTradePercent', d.riskPerTradePercent),

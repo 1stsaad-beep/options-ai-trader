@@ -124,6 +124,7 @@ class _ChartScreenState extends State<ChartScreen> {
               key: Key('layer-${l.name}'),
               dense: true,
               title: Text(l.labelAr),
+              subtitle: l == ChartLayer.elliott ? const Text(kElliottNoticeAr) : null,
               value: _layers.contains(l),
               onChanged: (v) {
                 final next = {..._layers};
@@ -184,6 +185,14 @@ class _ChartScreenState extends State<ChartScreen> {
           Material(
             color: Theme.of(context).colorScheme.errorContainer,
             child: Padding(padding: const EdgeInsets.all(6), child: Text('آخر تحديث فشل: $_error', maxLines: 2)),
+          ),
+        if (data != null &&
+            _layers.contains(ChartLayer.elliott) &&
+            (data.analysis.findings[EngineId.elliott]?.isNotEmpty ?? false))
+          Padding(
+            key: const Key('elliott-notice'),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            child: Text('موجات إليوت: $kElliottNoticeAr', style: Theme.of(context).textTheme.bodySmall),
           ),
         if (data != null) _FindingsPanel(data: data),
       ]),
@@ -255,7 +264,7 @@ class _FindingsPanel extends StatelessWidget {
                         color: colors.bias(s.bias),
                       ),
                       title: Text('${s.engine.arabic} • ${s.pattern}${counted.contains(s) ? ' ✓' : ''}'),
-                      subtitle: Text('${s.reasonAr}\nالقوة ${(s.strength * 100).toStringAsFixed(0)}%'
+                      subtitle: Text('${s.engine.descriptiveOnly ? '$kElliottNoticeAr\n' : ''}${s.reasonAr}\nالقوة ${(s.strength * 100).toStringAsFixed(0)}%'
                           '${s.invalidation != null ? ' • الإبطال ${CandleChartPainter.fmt(s.invalidation!)}' : ''}'),
                     ),
                 ]),

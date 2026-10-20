@@ -90,21 +90,29 @@ class Analyzer {
   };
 
   /// [weights]: engine -> weight (0 disables). Missing engines default to 1.
+  /// Descriptive-only engines ([EngineId.descriptiveOnly], i.e. Elliott) never count, whatever their weight.
   AnalysisReport analyze(String symbol, List<Candle> candles, {Map<EngineId, double> weights = const {}}) =>
-      analyzeWithFindings(symbol, candles, weights: weights).report;
+      analyzeWithFindings(symbol, candles, weights: weights, includeDescriptive: false).report;
 
   /// Same as [analyze] but also returns every finding of every enabled engine
   /// (not only the strongest), for charting. The report is identical.
+  /// Descriptive-only engines (Elliott) are added to [findings] for the chart overlay when
+  /// [includeDescriptive] is true, but never to the report's signals or score.
   ({AnalysisReport report, Map<EngineId, List<EngineSignal>> findings}) analyzeWithFindings(
     String symbol,
     List<Candle> candles, {
     Map<EngineId, double> weights = const {},
+    bool includeDescriptive = true,
   }) {
     final findings = <EngineId, List<EngineSignal>>{};
     if (candles.isEmpty) throw ArgumentError('No candles for $symbol');
     final best = <EngineSignal>[];
     var numerator = 0.0, denominator = 0.0;
     for (final entry in engines.entries) {
+      if (entry.key.descriptiveOnly) {
+        if (includeDescriptive) findings[entry.key] = entry.value(candles); // chart overlay only
+        continue;
+      }
       final w = weights[entry.key] ?? 1.0;
       if (w <= 0) continue;
       denominator += w;
