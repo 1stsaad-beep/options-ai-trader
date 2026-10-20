@@ -18,8 +18,8 @@ import pandas as pd
 from . import bars as B, gen as G, project as PJ, pivots as PV, count as C
 
 OUT = Path(__file__).resolve().parents[1] / "results/wave"
-WINDOW = {"60": 420, "5": 700}
-STEP = {"60": 35, "5": 480}             # as-of spacing in bars (hourly ~ every 5 sessions; 5-min ~ every 3 sessions)
+WINDOW = {"60": 420, "5": 700, "D": 500}
+STEP = {"60": 35, "5": 480, "D": 21}             # as-of spacing in bars (hourly ~ every 5 sessions; 5-min ~ every 3 sessions)
 
 
 def first_touch(fut, up, target, stop, price):
@@ -59,7 +59,8 @@ def naive_from(b):
     return dict(up=bool(up), target=float(tgt), stop=float(stop))
 
 
-def run_symbol(sym, tf, start="2023-03-01", end="2026-09-30"):
+def run_symbol(sym, tf, start=None, end="2026-09-30"):
+    start = start or ("2008-01-01" if tf == "D" else "2023-03-01")
     full = B.bars(sym, tf)
     full = full[(full.index >= start) & (full.index <= end)]
     allb = B.bars(sym, tf)

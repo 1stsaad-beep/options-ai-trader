@@ -1,0 +1,10 @@
+{
+ "written": "2026-10-20, after the stage-5 null result and BEFORE running any of these tests",
+ "tests": {
+  "T1_daily": "same forecast rule on DAILY bars (window 500, as-of every 21 sessions, 2008-2026), 45 symbols",
+  "T2_confluence": "wave-1 forecasts (1h, 5m, daily) kept only when ALL agree with the forecast direction: (a) higher timeframe trend: previous daily close vs daily SMA50; (b) MACD(12,26) line on the forecast timeframe on the forecast's side of zero; (c) EMA50 on the forecast timeframe sloping with the forecast (vs 5 bars ago). Also each filter alone.",
+  "T3_agree": "both scenarios forecast the same direction (already measured on 1h/5m: no edge) — repeated on daily"
+ },
+ "pass": "edge = hit - random-walk probability >= +0.03 AND exp_R > 0 with day-clustered t >= 2, in BOTH the original 15 and the new 30 symbols, for UP and DOWN forecasts separately (so market drift cannot pass it)",
+ "if_all_fail": "the engine is shipped as an analysis / labelling tool with an explicit 'no proven trading edge' notice, not as a signal generator"
+}
