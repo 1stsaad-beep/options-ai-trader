@@ -52,3 +52,10 @@ Random-walk benchmark: P(target first) = stop distance / (target + stop distance
 
 ## Verdict
 No edge over a driftless random walk on 1-hour or 5-minute; no current-wave subgroup, probability bucket or year holds up. Up-forecast profits mirror the naive continuation forecaster (market drift).
+## Stage 5b (pre-registered in PREREG_STAGE5B.json)
+- **T2 confluence (1h, 5m):** no filter (daily trend, MACD side, EMA50 slope, all three) passed; up forecasts positive / down negative everywhere = drift.
+- **T1 daily, 45 symbols, 2008-2026:** vs a driftless random walk, up forecasts +10-13 %, down forecasts -12-16 % (same for the naive forecaster) = drift.
+  Against a **drift-matched null** (same symbol, same direction, same target/stop %, random dates):
+  wave 1 up +2.0 % (t 1.6), down -3.0 %; wave 2 up +2.4 %, down -1.5 %; naive up +0.9 %, down -3.2 %.
+- **Verdict:** no forecasting edge on daily, hourly or 5-minute. Per the pre-registration the engine is delivered as an
+  analysis / labelling tool with an explicit "no proven trading edge" notice, not as a signal generator.
