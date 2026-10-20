@@ -18,3 +18,14 @@ Daily early-3: all +1.6 %, >= 0.75 +1.5 %, = 1.0 +1.1 %, low +1.9 %. Early-5 sim
 | daily (2000+) | 22.7 % | 23.0 % | 23.6 % | 19,377 |
 | 1-hour | 23.6 % | 23.4 % | 23.8 % | 38,516 |
 FAIL (300 shuffles instead of the planned 1000 for compute; the observed value is at the shuffle mean, so more shuffles cannot change the verdict).
+
+## T5 — end of wave 5 (reversal toward the end of wave 4), with / without RSI divergence 3 -> 5
+| tf | variant | n | hit | null | skill | t |
+|---|---|---|---|---|---|---|
+| 1-hour | all | 572 | 34.1 % | 31.4 % | +2.4 % | 1.15 |
+| 1-hour | **divergence** | 336 | 39.3 % | 34.1 % | **+4.9 %** | 1.53 |
+| 1-hour | no divergence | 236 | 26.5 % | 27.7 % | -1.2 % | -0.82 |
+| daily | all | 464 | 31.8 % | 30.5 % | +1.5 % | 0.53 |
+| daily | divergence | 253 | 33.5 % | 33.5 % | -0.2 % | 0.05 |
+FAIL (closest yet: hourly divergence positive in all four direction x symbol-group cells, but below +5 % / t 2 and absent on daily).
+A confirmation on untouched data (60 volatile symbols, hourly) was pre-registered before running (T5_confirm).
