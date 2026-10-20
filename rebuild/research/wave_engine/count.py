@@ -145,7 +145,7 @@ def next_dir(z):
     return (-1 if first_up else 1) if pat in PT.MOTIVE else (-1 if first_up else 1)
 
 
-def count(pv: Pivots, start=None, direction=None, log=False, top=40, max_legs=MAX_LEGS, first_parts=None, anchor=None):
+def count(pv: Pivots, start=None, direction=None, log=False, top=40, max_legs=MAX_LEGS, first_parts=None, anchor=None, max_irregular=2):
     """all scenarios from a start pivot to now.  start: index into the point list (default: global extremes)."""
     T, P, K, tent = _points(pv)
     BX0 = np.r_[pv.i, [pv.tent[3]] if tent else []].astype(float)
@@ -170,7 +170,7 @@ def count(pv: Pivots, start=None, direction=None, log=False, top=40, max_legs=MA
         if direction is not None and K[s] != -direction: continue
         d = -K[s]
         s_pen = 0.0 if s in (int(np.argmin(P)), int(np.argmax(P))) or start is not None else START_PEN
-        for seg, irr in segmentations(P, K, s, N - 1, max_legs):
+        for seg, irr in segmentations(P, K, s, N - 1, max_legs, max_irregular=max_irregular):
             m = len(seg) - 1
             y = d * Y[list(seg)]; x = BX[list(seg)]; sub = np.diff(seg)
             pats1 = first_parts or list(PT.LEGS)
@@ -190,7 +190,7 @@ def count(pv: Pivots, start=None, direction=None, log=False, top=40, max_legs=MA
                     seg2 = seg[L:]; y2 = -y[L:] if True else None
                     # second pattern's first leg is opposite to the last leg of the first pattern
                     y2 = (y[L:] * (1 if y[L + 1] > y[L] else -1))
-                    nexts = [q for q in PT.LEGS if (pat not in PT.MOTIVE or q not in PT.MOTIVE)]
+                    nexts = [q for q in (first_parts or PT.LEGS) if (pat not in PT.MOTIVE or q not in PT.MOTIVE)]
                     for q in nexts:
                         if len(seg2) - 1 <= PT.LEGS[q]:
                             ok2, f2 = PT.check(q, y2, x[L:], sub[L:], tent)

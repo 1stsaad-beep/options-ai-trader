@@ -1,0 +1,21 @@
+{
+ "written": "2026-10-20, before building or running the setup scanner",
+ "idea": "trade only Elliott decision points, as practitioners do, and test whether the parent / grandparent count (multi-generation context) adds skill",
+ "events": "a new pivot is CONFIRMED (causal ATR zigzag, k=2.5) on tf in {5-min, 1-hour, daily}; the engine counts the last 30 known pivots + the running leg",
+ "setups": {
+  "S12_early3": "best scenario = IMPULSE (or LEADING_DIAG) with waves 1-2 complete, the just-confirmed pivot is the END OF WAVE 2, price has not yet passed the end of wave 1. Entry = close of the confirmation bar; stop = end of wave 2; target = end of 2 + 1.0 x wave 1 (secondary 1.618 x)",
+  "S45_early5": "best scenario = IMPULSE with 1-4 complete, the just-confirmed pivot is the END OF WAVE 4, price below the end of wave 3. Stop = end of 4; target = end of 4 + 0.618 x wave 1"
+ },
+ "variants": {
+  "A_all": "every setup",
+  "B_parent": "parent count (next coarser timeframe: 5m->1h, 1h->daily, daily->weekly) is in a MOTIVE leg in the SAME direction",
+  "C_parent_grand": "B and the grandparent (two timeframes up) also in a motive leg in the same direction",
+  "D_inner5": "A and wave 1 subdivides best as a 5-wave motive (bottom-up evidence > 0)",
+  "E_all_filters": "C and D"
+ },
+ "horizon": "until target or stop, max 3 x the duration of wave 1 (min 20, max 400 bars)",
+ "benchmark": "drift-matched null: same symbol, same direction, same target % and stop %, same horizon, 40 random dates",
+ "pass": "skill (hit - null hit) >= +0.05 AND R-expectancy above the null's with day-clustered t >= 2, for up and down setups each >= 0 skill, in both original-15 and new-30 symbol groups",
+ "periods": "5-min and 1-hour 2023-03 -> 2026-09 (45 symbols); daily 2008 -> 2026",
+ "amendment_before_results": "2026-10-20: compute limits -> 5-min run restricted to the original 15 symbols, 2025-07-01 -> 2026-09 (~1,700 events each); 1-hour and daily unchanged (45 symbols). Scanner counts the last 20 pivots with at most 1 irregular end and without triple-threes (speed)."
+}
