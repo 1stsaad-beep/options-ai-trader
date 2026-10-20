@@ -32,3 +32,18 @@ A confirmation on untouched data (60 volatile symbols, hourly) was pre-registere
 
 ## T5_confirm — hourly end-of-5 with divergence on 57 untouched volatile symbols (2023-03 → 2026-09)
 divergence: 454 setups, hit 35.7 % vs null 34.0 %, skill +1.4 % (t 0.77); no divergence: -0.4 %. FAIL -> the hourly T5 result was chance.
+
+## T2 — engine 2 with a typical user's drawing (most prominent recent parent swing = wave 1/A; trade wave 3 after the correction)
+| tf | variant | n | hit | null | skill | t |
+|---|---|---|---|---|---|---|
+| 1-hour | all | 220 | 7.4 % | 7.0 % | -0.0 % | -0.83 |
+| 1-hour | drawn wave = 5 inside | 61 | 5.9 % | 7.5 % | -2.2 % | -0.60 |
+| daily | all | 241 | 14.4 % | 15.8 % | -0.8 % | 0.03 |
+| daily | drawn wave = 5 inside | 50 | 6.1 % | 11.5 % | -5.2 % | -2.35 |
+FAIL.
+
+## Overall verdict (all wave tests)
+Counting is correct (synthetic recovery), but no Elliott-based forecast tested here beats a drift-matched null: random-time
+forecasts (5m / 1h / daily), indicator confluence, decision points (early 3 / early 5), parent & grandparent context,
+wave personality (selection and filter), Fibonacci time ratios, end-of-5 with divergence (hourly near-pass failed its
+confirmation on 57 untouched stocks), and the engine-2 simulation.
