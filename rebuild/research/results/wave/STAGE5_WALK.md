@@ -59,3 +59,12 @@ No edge over a driftless random walk on 1-hour or 5-minute; no current-wave subg
   wave 1 up +2.0 % (t 1.6), down -3.0 %; wave 2 up +2.4 %, down -1.5 %; naive up +0.9 %, down -3.2 %.
 - **Verdict:** no forecasting edge on daily, hourly or 5-minute. Per the pre-registration the engine is delivered as an
   analysis / labelling tool with an explicit "no proven trading edge" notice, not as a signal generator.
+
+## Decision-point test (pre-registered in PREREG_SETUPS.json)
+Setups: early wave 3 after a confirmed 1-2 (stop = end of 2, target = 1.0 x wave 1) and early wave 5 after a confirmed 4
+(stop = end of 4, target = 0.618 x wave 1); variants add parent / grandparent agreement and a 5-wave inner wave 1.
+Benchmark: drift-matched null (same symbol, direction, target/stop %, horizon, random dates).
+- **1-hour, 45 symbols, 6,075 setups:** skill +0.3 % (all) ... -2.8 % (parent + grandparent) ... -4.0 % (wave 5 + parent + grandparent). No pass; more Elliott context made it slightly worse.
+- **Daily, 45 symbols 2008-2026, 3,664 setups:** skill +1.6 % (all early-3, t -0.6), +3.4 % (inner 5), +2.5 % (early-5 + parent + grandparent, t 1.1), +7.1 % on 25 trades with all filters (t 1.2). No pass; small positive tilt, statistically indistinguishable from zero.
+- **5-minute (original 15, 2025-07 → 2026-09):** interim on 6 symbols negative; remaining symbols running.
+- **Verdict:** neither decision points nor multi-generation context give a measurable edge. Elliott counting does not carry predictive information beyond drift in these tests.
