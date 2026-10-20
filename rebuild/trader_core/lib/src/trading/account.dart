@@ -7,6 +7,12 @@ import '../brokers/broker_adapter.dart';
 import '../brokers/live_guard.dart';
 import '../models.dart';
 
+/// Which entry/exit logic an account runs.
+/// - [composite]: the original multi-engine score (no proven edge in research — keep it Paper).
+/// - [capitulationRebound]: the research-validated daily rule (strategies/capitulation_rebound.dart):
+///   calls only, entries 15:45–15:57 New York, time exit after 2 sessions, no stop / target.
+enum EntryStrategy { composite, capitulationRebound }
+
 /// All tunable risk/entry/exit parameters of one account.
 /// Percentages are plain numbers (35 = 35%).
 class AccountSettings {
@@ -37,6 +43,7 @@ class AccountSettings {
   final bool pauseNewEntries;
 
   // ---- entry criteria ----
+  final EntryStrategy entryStrategy;
   final BarTimeframe timeframe;
 
   /// Minimum |composite score| (0..100) to open a trade.
@@ -118,6 +125,7 @@ class AccountSettings {
     this.maxOrdersPerDay = 10,
     this.symbolCooldownMinutes = 60,
     this.pauseNewEntries = false,
+    this.entryStrategy = EntryStrategy.composite,
     this.timeframe = BarTimeframe.m15,
     this.minScore = 35,
     this.minAgreeingEngines = 2,
@@ -155,6 +163,37 @@ class AccountSettings {
     this.scaleInMinScore = 50,
     this.scaleInFraction = 0.5,
   });
+
+  /// Research preset for [EntryStrategy.capitulationRebound] (report10 / HANDOFF "Capitulation rebound"):
+  /// ~0.5-delta weekly call (4–10 days), ≈0.75 % of equity premium per trade (riskPerTradePercent 0.75 with
+  /// stopLossPercent 95 ⇒ premium ≈ 0.79 %), ≤ 5 positions, ≤ 5 % of equity in premium per selloff episode.
+  /// Stops/targets/trailing/partials/scale-ins are ignored by this strategy; only the time exit and the
+  /// expiry guard apply.
+  static const capitulationPreset = AccountSettings(
+    entryStrategy: EntryStrategy.capitulationRebound,
+    timeframe: BarTimeframe.d1,
+    riskPerTradePercent: 0.75,
+    stopLossPercent: 95,
+    maxPositionPercent: 1,
+    maxOpenPositions: 5,
+    maxTotalExposurePercent: 5,
+    maxContractsPerTrade: 20,
+    maxOrdersPerDay: 5,
+    symbolCooldownMinutes: 0,
+    allowCalls: true,
+    allowPuts: false,
+    minDaysToExpiry: 4,
+    maxDaysToExpiry: 10,
+    targetDelta: 0.5,
+    maxSpreadPercent: 10,
+    entryAggressiveness: 0.5, // limit at mid (research fills)
+    exitDaysBeforeExpiry: 0,
+    scaleInEnabled: false,
+    partialTakeProfitFraction: 0,
+    exitOnOppositeSignal: false,
+    exitOnUnderlyingInvalidation: false,
+    maxHoldingDays: 5,
+  );
 
   /// Allowed ranges enforced by [validate] (key = JSON key). Shown in the
   /// settings screen next to each parameter.
@@ -209,6 +248,10 @@ class AccountSettings {
     range(trailingStopPercent, 1, 90, 'الوقف المتحرك');
     range(scaleInFraction, 0.1, 2, 'نسبة التعزيز');
     if (!allowCalls && !allowPuts) e.add('يجب السماح بـ Call أو Put على الأقل');
+    if (entryStrategy == EntryStrategy.capitulationRebound) {
+      if (!allowCalls) e.add('استراتيجية الارتداد تشتري Call فقط — يجب السماح بـ Call');
+      if (maxDaysToExpiry < 4) e.add('استراتيجية الارتداد تحتاج عقودًا لا تقل عن 4 أيام للانتهاء');
+    }
     if (partialTakeProfitFraction > 0 && partialTakeProfitPercent >= takeProfitPercent) {
       e.add('الجني الجزئي يجب أن يكون أقل من هدف الربح الكامل');
     }
@@ -225,6 +268,7 @@ class AccountSettings {
     int? maxOrdersPerDay,
     int? symbolCooldownMinutes,
     bool? pauseNewEntries,
+    EntryStrategy? entryStrategy,
     BarTimeframe? timeframe,
     double? minScore,
     int? minAgreeingEngines,
@@ -265,6 +309,7 @@ class AccountSettings {
         maxOrdersPerDay: maxOrdersPerDay ?? this.maxOrdersPerDay,
         symbolCooldownMinutes: symbolCooldownMinutes ?? this.symbolCooldownMinutes,
         pauseNewEntries: pauseNewEntries ?? this.pauseNewEntries,
+        entryStrategy: entryStrategy ?? this.entryStrategy,
         timeframe: timeframe ?? this.timeframe,
         minScore: minScore ?? this.minScore,
         minAgreeingEngines: minAgreeingEngines ?? this.minAgreeingEngines,
@@ -306,6 +351,7 @@ class AccountSettings {
         'maxOrdersPerDay': maxOrdersPerDay,
         'symbolCooldownMinutes': symbolCooldownMinutes,
         'pauseNewEntries': pauseNewEntries,
+        'entryStrategy': entryStrategy.name,
         'timeframe': timeframe.name,
         'minScore': minScore,
         'minAgreeingEngines': minAgreeingEngines,
@@ -361,6 +407,7 @@ class AccountSettings {
       maxOrdersPerDay: integer('maxOrdersPerDay', d.maxOrdersPerDay),
       symbolCooldownMinutes: integer('symbolCooldownMinutes', d.symbolCooldownMinutes),
       pauseNewEntries: flag('pauseNewEntries', d.pauseNewEntries),
+      entryStrategy: EntryStrategy.values.firstWhere((t) => t.name == j['entryStrategy'], orElse: () => d.entryStrategy),
       timeframe: BarTimeframe.values.firstWhere((t) => t.name == j['timeframe'], orElse: () => d.timeframe),
       minScore: dbl('minScore', d.minScore),
       minAgreeingEngines: integer('minAgreeingEngines', d.minAgreeingEngines),

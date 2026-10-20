@@ -19,6 +19,7 @@ import '../analysis/signal.dart';
 import '../brokers/broker_adapter.dart';
 import '../market/market_calendar.dart';
 import '../models.dart';
+import '../strategies/capitulation_rebound.dart';
 import 'account.dart';
 import 'account_state.dart';
 import 'cycle_record.dart';
@@ -182,7 +183,9 @@ class TradingEngine {
       final symbols = <String>{...profile.watchlist, ...positions.map((p) => p.contract.underlying)};
       final reports = <String, AnalysisReport>{};
       final prices = <String, double>{};
-      for (final sym in symbols) {
+      // The capitulation strategy does not use the composite engines (its own daily check runs at entry time).
+      final capit = s.entryStrategy == EntryStrategy.capitulationRebound;
+      for (final sym in capit ? const <String>{} : symbols) {
         try {
           final raw = await broker.bars(sym, s.timeframe, limit: 300);
           // Engines see completed bars only (the forming bar would repaint).
@@ -219,14 +222,17 @@ class TradingEngine {
           }
           final meta = state.metas[occ]!;
           final report = reports[p.contract.underlying];
-          final exit = rules.evaluateExit(
-            position: p,
-            meta: meta,
-            markCents: q.bidCents,
-            underlyingPrice: prices[p.contract.underlying],
-            report: report,
-            now: now,
-          );
+          final exit = capit
+              ? capitulationExit(
+                  position: p, meta: meta, now: now, exitDaysBeforeExpiry: s.exitDaysBeforeExpiry, cal: calendar)
+              : rules.evaluateExit(
+                  position: p,
+                  meta: meta,
+                  markCents: q.bidCents,
+                  underlyingPrice: prices[p.contract.underlying],
+                  report: report,
+                  now: now,
+                );
           if (exit != null) {
             final escalated = state.escalate.remove(occ);
             final price = exit.urgent || escalated ? q.bidCents : sellLimitPrice(q, s.entryAggressiveness);
@@ -249,6 +255,7 @@ class TradingEngine {
             }
             continue;
           }
+          if (capit) continue; // no scale-ins in the capitulation strategy
           final scale = rules.evaluateScaleIn(position: p, meta: meta, markCents: q.bidCents, report: report);
           if (scale != null) {
             final lock = DirectionLock.canOpen(
@@ -315,13 +322,18 @@ class TradingEngine {
       positions = await broker.positions();
       openOrders = await broker.openOrders();
       var openCount = _openSlotsUsed(positions, openOrders);
+      if (capit && !inEntryWindow(now, calendar)) {
+        return CycleSummary(ran: true, ordersSubmitted: submitted, errors: errors, noteAr: 'خارج نافذة دخول الارتداد (15:45–15:57 نيويورك)');
+      }
+      List<double>? spyCloses;
+      double? spyPrice;
       for (final sym in profile.watchlist) {
         if (openCount >= s.maxOpenPositions) {
           _log(JournalAction.skip, 'تم بلوغ الحد الأقصى للمراكز المفتوحة (${s.maxOpenPositions})', symbol: sym);
           break;
         }
-        final report = reports[sym];
-        if (report == null) continue;
+        var report = reports[sym];
+        if (report == null && !capit) continue;
         if (exitedUnderlyings.contains(sym)) {
           _log(JournalAction.skip, 'تم إرسال أمر خروج في هذه الدورة — لا دخول جديد قبل تأكيد الإغلاق', symbol: sym);
           continue;
@@ -335,8 +347,27 @@ class TradingEngine {
         }
         if (_openingCapReached()) break;
         try {
-          final intent = rules.evaluateEntry(sym, report,
-              rejection: (r) => _log(JournalAction.skip, r, symbol: sym, details: {'score': report.score}));
+          final EntryIntent? intent;
+          if (capit) {
+            if (spyCloses == null || spyPrice == null) {
+              spyCloses = closesBeforeToday(await broker.bars('SPY', BarTimeframe.d1, limit: 300), now, calendar);
+              spyPrice = await broker.lastPrice('SPY');
+            }
+            final closes = closesBeforeToday(await broker.bars(sym, BarTimeframe.d1, limit: 300), now, calendar);
+            final price = await broker.lastPrice(sym);
+            final sig = evaluateCapitulation(dailyCloses: closes, price: price, spyCloses: spyCloses, spyPrice: spyPrice);
+            _current?.symbol(sym).bias = sig.fire ? Bias.bullish.name : Bias.neutral.name;
+            if (!sig.fire) {
+              _log(JournalAction.skip, sig.reasonAr, symbol: sym, details: {'capitulation': sig.toJson()});
+              continue;
+            }
+            report = AnalysisReport(symbol: sym, time: now, lastClose: price, atr: null, signals: const [], score: 0);
+            intent = EntryIntent(sym, OptionRight.call, report, sig.reasonAr);
+          } else {
+            final r0 = report!;
+            intent = rules.evaluateEntry(sym, r0,
+                rejection: (r) => _log(JournalAction.skip, r, symbol: sym, details: {'score': r0.score}));
+          }
           if (intent == null) continue;
           final ok = await _enter(intent, account, positions, openOrders, now);
           if (ok) {

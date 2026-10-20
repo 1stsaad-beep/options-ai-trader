@@ -35,3 +35,4 @@ export 'src/trading/journal.dart';
 export 'src/trading/cycle_record.dart';
 export 'src/trading/report.dart';
 export 'src/trading/trading_engine.dart';
+export 'src/strategies/capitulation_rebound.dart';
