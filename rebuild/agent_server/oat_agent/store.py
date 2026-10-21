@@ -19,6 +19,7 @@ create table if not exists costs(seq integer primary key autoincrement, ts text 
                                  output_tokens integer, usd real not null, purpose text);
 create table if not exists snapshots(id text primary key, ts text not null, journal_id text, kind text not null,
                                      model_id text, prompt_version text, blob blob not null);
+create table if not exists snapshot_links(sid text not null, journal_id text not null, primary key(sid, journal_id));
 create table if not exists shadow(journal_id text primary key, ts text not null, status text not null, body text not null);
 create trigger if not exists snapshots_no_update before update on snapshots begin select raise(abort, 'snapshots are append-only'); end;
 create trigger if not exists snapshots_no_delete before delete on snapshots begin select raise(abort, 'snapshots are append-only'); end;
@@ -145,8 +146,12 @@ class Store:
         return dict(id=r[0], ts=r[1], journal_id=r[2], kind=r[3], model_id=r[4], prompt_version=r[5],
                     payload=json.loads(gzip.decompress(r[6])))
 
+    def snapshot_link(self, sid, journal_id):
+        self._x("insert or ignore into snapshot_links(sid, journal_id) values(?,?)", (sid, journal_id))
+
     def snapshots_for(self, journal_id):
-        return [r[0] for r in self._x("select id from snapshots where journal_id=? order by ts", (journal_id,))]
+        return [r[0] for r in self._x("select id from snapshots where journal_id=? or id in (select sid from snapshot_links "
+                                      "where journal_id=?) order by ts", (journal_id, journal_id))]
 
     # ---- shadow ledger (§11)
     def shadow_put(self, journal_id, now, status, body):

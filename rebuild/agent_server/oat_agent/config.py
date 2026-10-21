@@ -27,6 +27,9 @@ class OwnerSettings:
     monthly_cap_usd: float = 300.0              # model + data spend of this agent per calendar month (spec §5)
     quote_max_age_s: float = 60.0               # entries only (spec §6); exits never blocked by data age
     same_day_exit_hhmm: str = "15:50"           # time exit (ET) for same-day expiries (spec §5)
+    strong_model: str = "claude-fable-5-1"      # "strongest Claude available" (spec §5); owner may pick claude-opus-5-5
+    watcher_model: str = "claude-haiku-5-5"
+    universe: tuple = ("NVDA", "AAPL", "TSLA", "AMD", "META", "MSFT", "AMZN", "GOOGL", "AVGO", "NFLX", "PLTR", "SPY", "QQQ")
 
     @staticmethod
     def from_env(env=None) -> "OwnerSettings":
@@ -36,4 +39,5 @@ class OwnerSettings:
         allowed = {f.name for f in fields(OwnerSettings)}
         unknown = set(data) - allowed
         if unknown: raise ValueError(f"unknown settings: {sorted(unknown)}")
+        if "universe" in data: data["universe"] = tuple(data["universe"])
         return OwnerSettings(**data)

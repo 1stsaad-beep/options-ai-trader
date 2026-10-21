@@ -42,15 +42,19 @@ def make_handler(store, executor, env=None):
                     paper_only=True, paused=st.paused, flatten_requested=bool(store.get("flatten_requested", False)),
                     settings=asdict(executor.s), month_spend_usd=round(executor.cost.month_spend(now), 4),
                     day_spend_usd=round(executor.cost.day_spend(now), 4), cap_reached=executor.cost.reached(now),
-                    orders_today=st.orders_today, day_start_equity=st.day_start_equity,
+                    agent_enabled=bool(store.get("agent_enabled", False)), orders_today=st.orders_today, day_start_equity=st.day_start_equity,
                     positions=len(executor.broker.positions()), market_open=executor.status(now).is_open))
             self._send(404, {"error": "not found"})
 
         def do_POST(self):
-            if self.path not in ("/kill", "/resume", "/flatten"): return self._send(404, {"error": "not found"})
+            if self.path not in ("/kill", "/resume", "/flatten", "/agent/on", "/agent/off"): return self._send(404, {"error": "not found"})
             if not self._auth(): return
             now = executor.clock()
             st = store.guard_state()
+            if self.path in ("/agent/on", "/agent/off"):
+                store.put("agent_enabled", self.path == "/agent/on")
+                store.event(now, "owner_control", {"action": self.path[1:]})
+                return self._send(200, {"ok": True, "agent_enabled": bool(store.get("agent_enabled", False))})
             if self.path == "/kill": st.paused = True
             elif self.path == "/resume":
                 st.paused = False

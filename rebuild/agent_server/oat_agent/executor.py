@@ -24,6 +24,7 @@ class Executor:
     def __init__(self, broker, store, settings: OwnerSettings, clock, gate: nyse.MarketHoursGate | None = None, shadow=None):
         self.broker, self.store, self.s, self.clock = broker, store, settings, clock
         self.shadow = shadow
+        self.on_exit_done = None          # callback(journal_id, order) after an exit order is finished (outcome)
         self.gate = gate or nyse.MarketHoursGate(getattr(broker, "clock", None))
         self.cost = CostCap(store, settings.monthly_cap_usd)
 
@@ -142,6 +143,8 @@ class Executor:
                         self.store.shadow_put(jid, now, r["status"], r["body"])
                 if o.filled_qty > 0 and not any(p.contract == o.contract for p in self.broker.positions()):
                     self.store.meta_drop(o.contract.occ)
+                if jid and o.filled_qty > 0 and self.on_exit_done is not None:
+                    self.on_exit_done(jid, o)
                 self.store.event(now, "exit_done", dict(order_id=oid, journal_id=jid, status=o.status, price=o.filled_avg),
                                  sym=o.contract.underlying)
                 pend.pop(oid)

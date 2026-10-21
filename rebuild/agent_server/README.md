@@ -1,6 +1,6 @@
 # AI trader agent server (PAPER ONLY)
 
-The server-side Claude agent of Options AI Trader, per `AI_TRADER_AGENT_SPEC v2.1`. It is built in stages. **Stages 1 and 2 are in this folder.** Stage 1 is the executor guards and the code layer. Stage 2 is the data tools, the shadow ledger and the decision snapshots. The server never makes an entry in stages 1 and 2. Paper trading starts only after the owner approves stage 3.
+The server-side Claude agent of Options AI Trader, per `AI_TRADER_AGENT_SPEC v2.1`. It is built in stages. **Stages 1–3 are in this folder.** Stage 1 is the executor guards and the code layer. Stage 2 is the data tools, the shadow ledger and the decision snapshots. The model layer is OFF on a fresh install. Paper trading starts only after the owner calls `POST /agent/on`. Paper trading starts only after the owner approves stage 3.
 
 ## Hard rules
 
@@ -110,6 +110,38 @@ The ATLAS server provides three agent routes (contract: `AI-LAYERS.md`, "Agent r
 
 ATLAS no longer sends recommendations. `/v1/bridge/orders` and `/v1/bridge/ack` are removed, and this server never had them.
 
+## Stage 3: model layer
+
+### Models (`llm.py`)
+- Calls go to the Claude Messages API through the allow-listed HTTP client.
+- **Pricing:** every call is priced from the published table (platform.claude.com pricing, read 2026-10-21) and counted against the monthly cap. The owner can override the table with `OAT_MODEL_PRICES_JSON`.
+- **Refusals:** an unknown model is refused, because without a price the cap cannot be enforced. At the cap, no model is called.
+- **Caching:** prompt caching uses the system prompt plus one moving breakpoint on the newest message.
+
+### Strong model (`session.py`, `agent_tools.py`, `prompts.py`)
+- **Model:** `strong_model` (default `claude-fable-5-1`, the strongest available). Set `claude-opus-5-5` in `OAT_SETTINGS_JSON` to cut the cost about 2.5×.
+- **Tools:** the tools of spec §4.
+- **Order of work:** the thesis must be written before an order, and `place_order` must use that thesis's journal id and contract.
+- **Guards:** every order passes the executor guards.
+- **Snapshots:** every session saves one replayable snapshot, linked to its journal ids.
+
+### Watcher (`agent.py`)
+- **Model:** `watcher_model` (default `claude-haiku-5-5`).
+- **No tools:** it answers only `{"wake": true|false, "reason": ...}`.
+- **When it runs:** on alert hits, and every 5 minutes while a position is open.
+- **Wake limit:** it wakes the strong model at most once every 3 minutes.
+
+### Schedule (ET, trading days)
+- 08:45 plan, with the tradable list and alerts
+- 09:46 re-plan, after the first 15m bar
+- event sessions during regular hours
+- 16:15 review, or 15 minutes after an early close. The review grades the trades, adds hypotheses, writes dossier notes and refreshes the dossier statistics.
+
+### Journal (`outcomes.py`)
+- The thesis (§8) is written before the order.
+- The outcome (fills, exit reason, realistic P&L, Alpaca-fill P&L) is written after the exit fill.
+- Both are stored locally and queued for ATLAS «صفقات الوكيل».
+
 ## Control API (`oat_agent/control_api.py`)
 
 - `GET /health` needs no authentication.
@@ -118,6 +150,7 @@ ATLAS no longer sends recommendations. `/v1/bridge/orders` and `/v1/bridge/ack` 
   - `POST /kill` stops new entries.
   - `POST /resume`
   - `POST /flatten` stops new entries and closes every position.
+  - `POST /agent/on` and `POST /agent/off` turn the model layer on or off. It is off by default.
 - If no token is configured, every protected route answers 503.
 
 ## Run the tests
