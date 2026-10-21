@@ -1,0 +1,2 @@
+# stdlib only at runtime; tzdata gives zoneinfo its database on slim images
+tzdata>=2024.1
