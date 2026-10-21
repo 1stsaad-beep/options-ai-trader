@@ -95,6 +95,10 @@ class Store:
     def event(self, now, kind, body, sym=None):
         self._x("insert into events(ts,kind,sym,body) values(?,?,?,?)", (iso(now), kind, sym, json.dumps(body, ensure_ascii=False)))
 
+    def event_safe(self, kind, body, sym=None):
+        import datetime as _dt
+        self.event(_dt.datetime.now(_dt.timezone.utc), kind, body, sym)
+
     def events(self, kind=None, limit=500):
         q = "select ts,kind,sym,body from events" + (" where kind=?" if kind else "") + " order by seq desc limit ?"
         return [dict(ts=r[0], kind=r[1], sym=r[2], body=json.loads(r[3])) for r in self._x(q, ((kind, limit) if kind else (limit,)))]

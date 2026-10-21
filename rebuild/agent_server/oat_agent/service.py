@@ -40,6 +40,10 @@ def main():
     x = Executor(broker, store, settings, utcnow, shadow=ShadowLedger(store, data, master))
     layer = CodeLayer(x, store, settings, utcnow)
     feed = BarFeed(data, store, broker, layer, utcnow)
+    from .atlas_client import AtlasClient, JournalOutbox, size_tools_from_env
+    from .net import Http
+    size_tools, _ = size_tools_from_env()
+    outbox = JournalOutbox(store, AtlasClient(Http(os.environ.get("ATLAS_BASE_URL"))), live=os.environ.get("OAT_ATLAS_LIVE") == "1")
     srv = serve(store, x)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     log.info("agent service started (paper only)")
@@ -51,6 +55,7 @@ def main():
                 x.reconcile()
                 feed.poll()
                 layer.tick()
+            outbox.flush()
         except Exception as e:  # noqa: BLE001 — one bad cycle never stops the loop
             log.error("cycle failed: %s", e)
         time.sleep(5)

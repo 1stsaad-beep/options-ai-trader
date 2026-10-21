@@ -35,6 +35,16 @@ class Http:
         self.timeout = timeout
         self._open = opener or urllib.request.urlopen
 
+    def request_raw(self, method: str, url: str, headers=None, data: bytes | None = None):
+        """Exact bytes in and out (needed for HMAC-signed calls). Returns (status, headers, raw body)."""
+        check_url(url, self.allow)
+        req = urllib.request.Request(url, data=data, method=method, headers={**({"Content-Type": "application/json"} if data is not None else {}), **(headers or {})})
+        try:
+            with self._open(req, timeout=self.timeout) as r:
+                return r.status, {k.lower(): v for k, v in r.headers.items()}, r.read()
+        except urllib.error.HTTPError as e:
+            return e.code, {k.lower(): v for k, v in (e.headers or {}).items()}, e.read()
+
     def request(self, method: str, url: str, headers=None, body=None):
         check_url(url, self.allow)
         data = None if body is None else (body if isinstance(body, bytes) else json.dumps(body).encode())

@@ -85,6 +85,31 @@ The shared vectors are in `tests/vectors/guard_vectors.json`. Each vector names 
 - They hold every tool call with its exact result, the model id and the prompt version.
 - They also hold the full guard inputs of every entry attempt (`order_check`).
 
+## ATLAS agent routes (`atlas_client.py`)
+
+The ATLAS server provides three agent routes (contract: `AI-LAYERS.md`, "Agent routes"):
+- `GET /v1/agent/expected_range` — ER3/BV1
+- `GET /v1/agent/check_target`
+- `POST /v1/agent/journal` — the thesis before the order and the outcome after the exit, for the «صفقات الوكيل» layer
+
+**How the calls are made**
+- The base URL comes only from `ATLAS_BASE_URL`.
+- Auth: `Bearer BRIDGE_TOKEN`.
+- Both directions are signed with HMAC-SHA256 over `ts + "\n" + raw body`, using `X-Atlas-Ts`, `X-Atlas-Sig` and `X-Atlas-Key-Id`.
+- `BRIDGE_HMAC_KEY` supports key rotation (`k1:…,k2:…`).
+
+**When an answer is not trusted**
+- Unsigned, tampered or stale (> 60 s) answers are rejected.
+- `AGENT_NO_RANGE` and every failure mean "unavailable". A target is never reported as "within" without a verified answer.
+
+**Before ATLAS is live**
+- Until the owner sets `OAT_ATLAS_LIVE=1`, the size tools stay on the stub.
+- Journal posts wait in a local outbox, and are sent in order once ATLAS is live.
+
+**Contract tests** use fixtures signed with ATLAS's own `sign()`: valid, tampered, stale, rotated key, `NO_RANGE` and unsigned.
+
+ATLAS no longer sends recommendations. `/v1/bridge/orders` and `/v1/bridge/ack` are removed, and this server never had them.
+
 ## Control API (`oat_agent/control_api.py`)
 
 - `GET /health` needs no authentication.

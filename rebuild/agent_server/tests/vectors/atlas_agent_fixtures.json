@@ -1,0 +1,82 @@
+{
+ "note": "Signed with ATLAS's own sign() implementation (cross-checked). Test-only secrets, not real.",
+ "bridge_hmac_key": "k1:test-signing-secret-0001,k2:test-rotation-secret-0002",
+ "now_ms": 1792422000000,
+ "responses": {
+  "expected_range_valid": {
+   "status": 200,
+   "headers": {
+    "X-Atlas-Ts": "1792422000000",
+    "X-Atlas-Sig": "d73f787c51bdb8c46d5723bbae4d88194cc55398aa8b1b8adb1a013a557035ef",
+    "X-Atlas-Key-Id": "k1"
+   },
+   "body": "{\"symbol\":\"NVDA\",\"server_time\":\"2026-10-19T15:00:00Z\",\"note\":\"size only, not direction\",\"er3\":{\"tf\":\"15m\",\"as_of\":\"2026-10-19T14:45:00Z\",\"last_close\":240.5,\"badge\":\"proven\",\"available\":true,\"h4\":{\"close_lo\":\"238.20\",\"close_hi\":\"242.90\",\"path_lo\":\"237.10\",\"path_hi\":\"244.10\"},\"h16\":{\"close_lo\":\"234.00\",\"close_hi\":\"247.00\",\"path_lo\":\"232.50\",\"path_hi\":\"248.60\"}},\"bv1\":{\"tf\":\"1h\",\"as_of\":\"2026-10-19T14:00:00Z\",\"last_close\":240.1,\"badge\":\"descriptive_calibrated\",\"available\":true,\"h4\":{\"close_lo\":\"236.00\",\"close_hi\":\"245.00\",\"path_lo\":null,\"path_hi\":null},\"h12\":{\"close_lo\":\"231.00\",\"close_hi\":\"250.00\",\"path_lo\":null,\"path_hi\":null}}}"
+  },
+  "expected_range_tampered": {
+   "status": 200,
+   "headers": {
+    "X-Atlas-Ts": "1792422000000",
+    "X-Atlas-Sig": "d73f787c51bdb8c46d5723bbae4d88194cc55398aa8b1b8adb1a013a557035ef",
+    "X-Atlas-Key-Id": "k1"
+   },
+   "body": "{\"symbol\":\"NVDA\",\"server_time\":\"2026-10-19T15:00:00Z\",\"note\":\"size only, not direction\",\"er3\":{\"tf\":\"15m\",\"as_of\":\"2026-10-19T14:45:00Z\",\"last_close\":240.5,\"badge\":\"proven\",\"available\":true,\"h4\":{\"close_lo\":\"238.20\",\"close_hi\":\"242.90\",\"path_lo\":\"237.10\",\"path_hi\":\"254.10\"},\"h16\":{\"close_lo\":\"234.00\",\"close_hi\":\"247.00\",\"path_lo\":\"232.50\",\"path_hi\":\"248.60\"}},\"bv1\":{\"tf\":\"1h\",\"as_of\":\"2026-10-19T14:00:00Z\",\"last_close\":240.1,\"badge\":\"descriptive_calibrated\",\"available\":true,\"h4\":{\"close_lo\":\"236.00\",\"close_hi\":\"245.00\",\"path_lo\":null,\"path_hi\":null},\"h12\":{\"close_lo\":\"231.00\",\"close_hi\":\"250.00\",\"path_lo\":null,\"path_hi\":null}}}"
+  },
+  "expected_range_stale": {
+   "status": 200,
+   "headers": {
+    "X-Atlas-Ts": "1792421939000",
+    "X-Atlas-Sig": "e0eb32bc6f9e65d14e8d15894c7bd62977d091ac41ee3968e2ddbb82cff1707a",
+    "X-Atlas-Key-Id": "k1"
+   },
+   "body": "{\"symbol\":\"NVDA\",\"server_time\":\"2026-10-19T15:00:00Z\",\"note\":\"size only, not direction\",\"er3\":{\"tf\":\"15m\",\"as_of\":\"2026-10-19T14:45:00Z\",\"last_close\":240.5,\"badge\":\"proven\",\"available\":true,\"h4\":{\"close_lo\":\"238.20\",\"close_hi\":\"242.90\",\"path_lo\":\"237.10\",\"path_hi\":\"244.10\"},\"h16\":{\"close_lo\":\"234.00\",\"close_hi\":\"247.00\",\"path_lo\":\"232.50\",\"path_hi\":\"248.60\"}},\"bv1\":{\"tf\":\"1h\",\"as_of\":\"2026-10-19T14:00:00Z\",\"last_close\":240.1,\"badge\":\"descriptive_calibrated\",\"available\":true,\"h4\":{\"close_lo\":\"236.00\",\"close_hi\":\"245.00\",\"path_lo\":null,\"path_hi\":null},\"h12\":{\"close_lo\":\"231.00\",\"close_hi\":\"250.00\",\"path_lo\":null,\"path_hi\":null}}}"
+  },
+  "expected_range_rotated_key": {
+   "status": 200,
+   "headers": {
+    "X-Atlas-Ts": "1792422000000",
+    "X-Atlas-Sig": "dba974ab2d50c6fb29a6c77717ff39f96e663544ba24d9fcb741ea292cccd42c",
+    "X-Atlas-Key-Id": "k2"
+   },
+   "body": "{\"symbol\":\"NVDA\",\"server_time\":\"2026-10-19T15:00:00Z\",\"note\":\"size only, not direction\",\"er3\":{\"tf\":\"15m\",\"as_of\":\"2026-10-19T14:45:00Z\",\"last_close\":240.5,\"badge\":\"proven\",\"available\":true,\"h4\":{\"close_lo\":\"238.20\",\"close_hi\":\"242.90\",\"path_lo\":\"237.10\",\"path_hi\":\"244.10\"},\"h16\":{\"close_lo\":\"234.00\",\"close_hi\":\"247.00\",\"path_lo\":\"232.50\",\"path_hi\":\"248.60\"}},\"bv1\":{\"tf\":\"1h\",\"as_of\":\"2026-10-19T14:00:00Z\",\"last_close\":240.1,\"badge\":\"descriptive_calibrated\",\"available\":true,\"h4\":{\"close_lo\":\"236.00\",\"close_hi\":\"245.00\",\"path_lo\":null,\"path_hi\":null},\"h12\":{\"close_lo\":\"231.00\",\"close_hi\":\"250.00\",\"path_lo\":null,\"path_hi\":null}}}"
+  },
+  "check_target_valid": {
+   "status": 200,
+   "headers": {
+    "X-Atlas-Ts": "1792422000000",
+    "X-Atlas-Sig": "884ec94d7d879fcbf1c268c7963b8170e96cca165f88aef009f1289241cf8006",
+    "X-Atlas-Key-Id": "k1"
+   },
+   "body": "{\"symbol\":\"NVDA\",\"price\":\"243.5\",\"verdict\":\"within_1h\",\"server_time\":\"2026-10-19T15:00:00Z\",\"checks\":[{\"horizon\":\"within_1h\",\"available\":true,\"band\":\"path\",\"lo\":\"237.10\",\"hi\":\"244.10\",\"inside\":true,\"source\":\"er3\",\"bars_ahead\":4},{\"horizon\":\"within_today\",\"available\":true,\"band\":\"path\",\"lo\":\"232.50\",\"hi\":\"248.60\",\"inside\":true,\"source\":\"er3\",\"bars_ahead\":16},{\"horizon\":\"within_2_sessions\",\"available\":true,\"band\":\"close\",\"lo\":\"231.00\",\"hi\":\"250.00\",\"inside\":true,\"source\":\"bv1\",\"bars_ahead\":12}],\"note\":\"normal move for the time, or outside (a lottery ticket); size only, not direction\"}"
+  },
+  "no_range": {
+   "status": 422,
+   "headers": {
+    "X-Atlas-Ts": "1792422000000",
+    "X-Atlas-Sig": "f8fc786c025c35506e6127d91224ac4a724fab22714b28711fc7f2dc739e1a8c",
+    "X-Atlas-Key-Id": "k1"
+   },
+   "body": "{\"code\":\"AGENT_NO_RANGE\",\"message_ar\":\"لا يوجد مدى متوقع الآن\"}"
+  },
+  "journal_stored": {
+   "status": 200,
+   "headers": {
+    "X-Atlas-Ts": "1792422000000",
+    "X-Atlas-Sig": "4b43641050b61340ea0a205532dd8fea0518ba1edb1481d8c98fe5e1991f6080",
+    "X-Atlas-Key-Id": "k1"
+   },
+   "body": "{\"journal_id\":\"J20261019150000-ab12cd34\",\"kind\":\"thesis\",\"stored\":true,\"duplicate\":false,\"server_time\":\"2026-10-19T15:00:00Z\"}"
+  },
+  "not_configured_unsigned": {
+   "status": 503,
+   "headers": {},
+   "body": "{\"code\": \"AGENT_NOT_CONFIGURED\", \"message_ar\": \"x\"}"
+  }
+ },
+ "post_signature": {
+  "ts": "1792422000000",
+  "raw_body": "{\"kind\":\"outcome\",\"body\":{\"journal_id\":\"J20261019150000-ab12cd34\",\"fills\":[],\"exit_reason\":\"TIME_EXIT\",\"pnl_realistic\":\"-12.5\",\"pnl_alpaca_fill\":\"-10\"}}",
+  "key_id": "k1",
+  "atlas_sig": "8faf60df8f88e1cd5e39da903d82df20daa269dd958ddeaf0208ee1d28737fb7",
+  "atlas_verifies": true
+ }
+}
