@@ -8,6 +8,7 @@ from dataclasses import dataclass, fields
 PAPER_TRADING_URL = "https://paper-api.alpaca.markets"      # hard-coded; never configurable
 MARKET_DATA_URL = "https://data.alpaca.markets"
 ANTHROPIC_URL = "https://api.anthropic.com"
+FINNHUB_URL = "https://finnhub.io"
 LIVE_TRADING_HOSTS = frozenset({"api.alpaca.markets", "broker-api.alpaca.markets"})
 
 # Names of the secret variables (values only ever come from the environment = Railway variables set by the owner).

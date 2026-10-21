@@ -48,6 +48,8 @@ class Order:
     qty: int
     limit: float
     status: str
+    filled_qty: int = 0
+    filled_avg: float | None = None
 
     @property
     def is_open(self): return self.status in OPEN_ORDER_STATUSES

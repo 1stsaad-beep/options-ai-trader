@@ -17,6 +17,11 @@ create table if not exists positions_meta(occ text primary key, sym text not nul
                                           invalidation real not null, entry_ts text not null, body text not null);
 create table if not exists costs(seq integer primary key autoincrement, ts text not null, model text, input_tokens integer,
                                  output_tokens integer, usd real not null, purpose text);
+create table if not exists snapshots(id text primary key, ts text not null, journal_id text, kind text not null,
+                                     model_id text, prompt_version text, blob blob not null);
+create table if not exists shadow(journal_id text primary key, ts text not null, status text not null, body text not null);
+create trigger if not exists snapshots_no_update before update on snapshots begin select raise(abort, 'snapshots are append-only'); end;
+create trigger if not exists snapshots_no_delete before delete on snapshots begin select raise(abort, 'snapshots are append-only'); end;
 create trigger if not exists journal_no_update before update on journal begin select raise(abort, 'journal is append-only'); end;
 create trigger if not exists journal_no_delete before delete on journal begin select raise(abort, 'journal is append-only'); end;
 create trigger if not exists events_no_update before update on events begin select raise(abort, 'events are append-only'); end;
@@ -119,6 +124,38 @@ class Store:
 
     def meta_drop(self, occ):
         self._x("delete from positions_meta where occ=?", (occ,))
+
+    # ---- decision snapshots (gzip JSON, append-only, replayable)
+    def snapshot_add(self, now, kind, payload, journal_id=None, model_id=None, prompt_version=None) -> str:
+        import gzip
+        sid = f"S{now:%Y%m%d%H%M%S}-{uuid.uuid4().hex[:8]}"
+        blob = gzip.compress(json.dumps(payload, ensure_ascii=False, default=str, sort_keys=True).encode(), mtime=0)
+        self._x("insert into snapshots(id,ts,journal_id,kind,model_id,prompt_version,blob) values(?,?,?,?,?,?,?)",
+                (sid, iso(now), journal_id, kind, model_id, prompt_version, blob))
+        return sid
+
+    def snapshot_get(self, sid):
+        import gzip
+        r = self._x("select id,ts,journal_id,kind,model_id,prompt_version,blob from snapshots where id=?", (sid,)).fetchone()
+        if r is None: return None
+        return dict(id=r[0], ts=r[1], journal_id=r[2], kind=r[3], model_id=r[4], prompt_version=r[5],
+                    payload=json.loads(gzip.decompress(r[6])))
+
+    def snapshots_for(self, journal_id):
+        return [r[0] for r in self._x("select id from snapshots where journal_id=? order by ts", (journal_id,))]
+
+    # ---- shadow ledger (§11)
+    def shadow_put(self, journal_id, now, status, body):
+        self._x("insert into shadow(journal_id,ts,status,body) values(?,?,?,?) on conflict(journal_id) do update set "
+                "status=excluded.status, body=excluded.body", (journal_id, iso(now), status, json.dumps(body, ensure_ascii=False, default=str)))
+
+    def shadow_get(self, journal_id):
+        r = self._x("select journal_id,ts,status,body from shadow where journal_id=?", (journal_id,)).fetchone()
+        return None if r is None else dict(journal_id=r[0], ts=r[1], status=r[2], body=json.loads(r[3]))
+
+    def shadows(self, status=None):
+        q = "select journal_id,ts,status,body from shadow" + (" where status=?" if status else "") + " order by ts"
+        return [dict(journal_id=r[0], ts=r[1], status=r[2], body=json.loads(r[3])) for r in self._x(q, (status,) if status else ())]
 
     # ---- costs (model + data spend of this agent)
     def cost_add(self, now, usd, model=None, input_tokens=0, output_tokens=0, purpose=None):

@@ -13,7 +13,7 @@ class ForbiddenHost(Exception):
 
 
 def allowed_hosts(atlas_base_url: str | None = None):
-    hosts = {urlsplit(u).hostname for u in (config.PAPER_TRADING_URL, config.MARKET_DATA_URL, config.ANTHROPIC_URL)}
+    hosts = {urlsplit(u).hostname for u in (config.PAPER_TRADING_URL, config.MARKET_DATA_URL, config.ANTHROPIC_URL, config.FINNHUB_URL)}
     if atlas_base_url: hosts.add(urlsplit(atlas_base_url).hostname)
     return frozenset(h for h in hosts if h)
 

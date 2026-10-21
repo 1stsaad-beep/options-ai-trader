@@ -81,6 +81,13 @@ class AlpacaPaper:
         if code >= 300: raise BrokerError(f"order rejected ({code}): {(r or {}).get('message', '')[:200]}")
         return Order(r["id"], contract, side, int(qty), float(body["limit_price"]), r["status"])
 
+    def get_order(self, order_id: str) -> Order:
+        o = self._get(f"{self.base}/v2/orders/{order_id}")
+        side = "buy_to_open" if o["side"] == "buy" else "sell_to_close"
+        return Order(o["id"], Contract.from_occ(o["symbol"]), side, int(float(o["qty"])), float(o.get("limit_price") or 0),
+                     o["status"], int(float(o.get("filled_qty") or 0)),
+                     float(o["filled_avg_price"]) if o.get("filled_avg_price") else None)
+
     def cancel(self, order_id: str):
         code, _ = self.http.request("DELETE", f"{self.base}/v2/orders/{order_id}", self._h())
         return code < 300
@@ -141,12 +148,17 @@ class FakeBroker:
                 left = (p.qty if p else 0) - qty
                 if left > 0: self.pos[contract.occ] = Position(contract, left, p.avg_price)
                 else: self.pos.pop(contract.occ, None)
-        o = Order(oid, contract, side, qty, limit, "filled" if filled else "new")
+        o = Order(oid, contract, side, qty, limit, "filled" if filled else "new", qty if filled else 0,
+                  (q.ask if side == "buy_to_open" else q.bid) if filled else None)
         self.orders.append(o)
         return o
 
+    def get_order(self, order_id):
+        return next(o for o in self.orders if o.id == order_id)
+
     def cancel(self, order_id):
-        self.orders = [Order(o.id, o.contract, o.side, o.qty, o.limit, "canceled") if o.id == order_id else o for o in self.orders]
+        self.orders = [Order(o.id, o.contract, o.side, o.qty, o.limit, "canceled", o.filled_qty, o.filled_avg) if o.id == order_id else o
+                       for o in self.orders]
         return True
 
     def stock_last(self, sym): return self.stock[sym]
